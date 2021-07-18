@@ -7,6 +7,7 @@ use DAI\Utils\Helpers\BLoC;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use DAI\Utils\Exceptions\ValidationException as DAIValidationException;
 
 class AuthController extends Controller
 {
@@ -16,8 +17,7 @@ class AuthController extends Controller
             $credentials = $request->all();
             $result = BLoC::call('login', $credentials);
             if (!$result['access_token']) {
-
-                return $this::unauthorized(__('response.401'));
+                throw new DAIValidationException(__('response.invalid_credential'));
             }
 
             return $this::success($result);

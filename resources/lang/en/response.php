@@ -12,4 +12,5 @@ return [
     '500' => 'An error occurred in the system',
     '502' => '',
     '503' => 'Service Unavailable',
+    'invalid_credential' => "Invalid credential"
 ];
