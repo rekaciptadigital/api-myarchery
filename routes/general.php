@@ -16,21 +16,18 @@ $router->get('/', function () use ($router) {
 });
 
 
-$router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers\General'], function () use ($router) {
+$router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->group(['prefix' => 'auth'], function () use ($router) {
-            $router->post('/login', 'AuthController@login');
-            $router->post('/register', 'AuthController@register');
-            $router->put('/reset-password', 'AuthController@resetPassword');
-            $router->put('/forgot-password', 'AuthController@forgotPassword');
+            $router->post('/login', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:login']);
+            $router->post('/register', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:register']);
+            $router->post('/reset-password', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:resetPassword']);
+            $router->post('/forgot-password', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:forgotPassword']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth'], function () use ($router) {
-            $router->post('/logout', 'UserController@logout');
-            $router->get('/', 'UserController@index');
-            $router->put('/change-password', 'UserController@changePassword');
-            $router->put('/profile', 'UserController@updateProfile');
-            $router->put('/profile-image', 'UserController@updateProfileImage');
+            $router->post('/logout', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:logout']);
+            $router->get('/', ['uses' => 'BloCController@execute', 'middleware' => 'bloc:getUserProfile']);
         });
     });
 });

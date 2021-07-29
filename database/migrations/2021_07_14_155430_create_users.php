@@ -13,13 +13,22 @@ class CreateUsers extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('email');
-            $table->string('password');
-            $table->timestamps();
-        });
+        try {
+            Schema::create('users', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('email');
+                $table->string('password');
+                $table->date('date_of_birth')->nullable();
+                $table->string('place_of_birth')->nullable();
+                $table->string('phone_number')->nullable();
+                $table->string('avatar')->nullable();
+                $table->timestamps();
+            });
+        } catch (PDOException $ex) {
+            $this->down();
+            throw $ex;
+        }
     }
 
     /**
@@ -29,6 +38,6 @@ class CreateUsers extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('table_user');
+        Schema::dropIfExists('users');
     }
 }

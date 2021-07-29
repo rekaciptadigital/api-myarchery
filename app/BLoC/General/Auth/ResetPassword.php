@@ -1,5 +1,5 @@
 <?php
-namespace App\BLoC\General;
+namespace App\BLoC\General\Auth;
 
 use DAI\Utils\Abstracts\Transactional;
 
@@ -7,19 +7,15 @@ class ResetPassword extends Transactional
 {
     public function getDescription()
     {
+        return "";
     }
 
-    protected function prepare($params, $original_params)
+    protected function process($parameters)
     {
-        return $params;
+        return $parameters;
     }
 
-    protected function process($params, $original_params)
-    {
-        return $params;
-    }
-
-    protected function rules()
+    protected function validation($parameters)
     {
         return [
             'token' => 'required',

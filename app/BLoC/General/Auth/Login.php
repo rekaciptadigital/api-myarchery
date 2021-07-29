@@ -1,25 +1,24 @@
 <?php
 
-namespace App\BLoC\General;
+namespace App\BLoC\General\Auth;
 
 use DAI\Utils\Abstracts\Transactional;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
 class Login extends Transactional
 {
     public function getDescription()
     {
+        return "";
     }
 
-    protected function prepare($params, $original_params)
+    protected function process($parameters)
     {
-        return $params;
-    }
-
-    protected function process($params, $original_params)
-    {
-        $token = Auth::setTTL(60 * 24 * 7)->attempt($params);
-
+        $token = Auth::setTTL(60 * 24 * 7)->attempt($parameters->all());
+        if (!$token) {
+            throw new BLoCException(__('response.invalid_credential'));
+        }
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -27,7 +26,7 @@ class Login extends Transactional
         ];
     }
 
-    protected function rules()
+    protected function validation($parameters)
     {
         return [
             'email' => 'required',

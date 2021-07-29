@@ -7,7 +7,7 @@
     "require": {
         "php": ">=7.1.3",
         "laravel/lumen-framework": "5.7.*",
-        "sulfanoaf/api-util": "^1.0",
+        "sulfanoaf/api-util": "^1.0@alpha",
         "tymon/jwt-auth": "^1.0",
         "vlucas/phpdotenv": "~2.2"
     },
