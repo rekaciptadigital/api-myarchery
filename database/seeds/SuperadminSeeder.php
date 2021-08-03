@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
-use App\Models\UserRole;
+use App\Models\Admin;
+use App\Models\AdminRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,16 +18,16 @@ class SuperadminSeeder extends Seeder
     {
         DB::beginTransaction();
         try {
-            $user = new User();
-            $user->name = 'Developer Superadmin';
-            $user->email = 'developer-superadmin@archery.com';
-            $user->password = '$2y$10$droXr42bDgp8DQ2yH7kRPOCziZKFFkEIROgWL1mFGwPthauMkbnai';
-            $user->save();
+            $admin = new Admin();
+            $admin->name = 'Developer Superadmin';
+            $admin->email = 'developer-superadmin@archery.com';
+            $admin->password = '$2y$10$droXr42bDgp8DQ2yH7kRPOCziZKFFkEIROgWL1mFGwPthauMkbnai';
+            $admin->save();
 
-            $user_role = new UserRole();
-            $user_role->user_id = $user->id;
-            $user_role->role_id = 1;
-            $user_role->save();
+            $admin_role = new AdminRole();
+            $admin_role->admin_id = $admin->id;
+            $admin_role->role_id = 1;
+            $admin_role->save();
             DB::commit();
         } catch (Exception $e) {
             throw new Exception('Exception occur '.$e);

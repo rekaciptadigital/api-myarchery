@@ -37,6 +37,11 @@ class RolesSeeder extends Seeder
                     'display_name' => 'Event Organizer',
                     'description' => 'Event Organizer',
                 ],
+                4 => [
+                    'name' => 'judges',
+                    'display_name' => 'Judges',
+                    'description' => 'Judges',
+                ],
             ];
 
             $new_roles = [];

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\General\Auth;
+namespace App\BLoC\Web\AdminAuth;
 
 use DAI\Utils\Abstracts\Transactional;
 

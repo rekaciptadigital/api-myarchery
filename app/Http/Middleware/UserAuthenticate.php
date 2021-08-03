@@ -6,7 +6,7 @@ use Closure;
 use DAI\Utils\Traits\ApiResponse;
 use Illuminate\Contracts\Auth\Factory as Auth;
 
-class Authenticate
+class UserAuthenticate
 {
     use ApiResponse;
     /**
@@ -37,7 +37,7 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
+        if ($this->auth->guard('app-api')->guest()) {
             return $this::unauthorized();
         }
 

@@ -5,7 +5,7 @@ namespace App\BLoC\Web\Menu;
 use App\Models\Menu;
 use DAI\Utils\Abstracts\Transactional;
 
-class UpdateMenu extends Transactional
+class EditMenu extends Transactional
 {
     public function getDescription()
     {

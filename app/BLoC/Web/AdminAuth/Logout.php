@@ -1,9 +1,11 @@
 <?php
-namespace App\BLoC\General\Auth;
+
+namespace App\BLoC\Web\AdminAuth;
 
 use DAI\Utils\Abstracts\Transactional;
+use Illuminate\Support\Facades\Auth;
 
-class ResetPassword extends Transactional
+class Logout extends Transactional
 {
     public function getDescription()
     {
@@ -12,14 +14,11 @@ class ResetPassword extends Transactional
 
     protected function process($parameters)
     {
-        return $parameters;
+        Auth::logout();
     }
 
     protected function validation($parameters)
     {
-        return [
-            'token' => 'required',
-            'password' => 'required',
-        ];
+        return [];
     }
 }

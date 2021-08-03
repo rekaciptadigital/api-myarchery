@@ -1,11 +1,11 @@
 <?php
 
-namespace App\BLoC\Web\UserRole;
+namespace App\BLoC\Web\AdminRole;
 
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\DB;
 
-class GetAllRoleWithUser extends Retrieval
+class GetAllRoleWithAdmin extends Retrieval
 {
     public function getDescription()
     {
@@ -17,23 +17,23 @@ class GetAllRoleWithUser extends Retrieval
         $query = '
                 SELECT A.*,
                     CASE
-                        WHEN B.user_id is not null then 1
+                        WHEN B.admin_id is not null then 1
                         else 0
                     END as selected
                 FROM roles A
-                LEFT JOIN user_roles B ON A.id = B.role_id AND B.user_id = :user_id
+                LEFT JOIN admin_roles B ON A.id = B.role_id AND B.admin_id = :admin_id
             ';
-        $user_roles = DB::select($query, [
-            'user_id' => $parameters->get('user_id'),
+        $admin_roles = DB::select($query, [
+            'admin_id' => $parameters->get('admin_id'),
         ]);
 
-        return $user_roles;
+        return $admin_roles;
     }
 
     protected function validation($parameters)
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            'admin_id' => 'required|exists:admins,id',
         ];
     }
 }

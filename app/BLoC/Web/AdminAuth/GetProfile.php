@@ -1,11 +1,11 @@
 <?php
 
-namespace App\BLoC\General\User;
+namespace App\BLoC\Web\AdminAuth;
 
-use DAI\Utils\Abstracts\Transactional;
+use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
 
-class Logout extends Transactional
+class GetProfile extends Retrieval
 {
     public function getDescription()
     {
@@ -14,7 +14,7 @@ class Logout extends Transactional
 
     protected function process($parameters)
     {
-        Auth::logout();
+        return Auth::user();
     }
 
     protected function validation($parameters)

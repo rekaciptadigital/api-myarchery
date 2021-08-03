@@ -1,12 +1,12 @@
 <?php
 
-namespace App\BLoC\General\Auth;
+namespace App\BLoC\App\UserAuth;
 
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class Login extends Transactional
+class UserLogin extends Transactional
 {
     public function getDescription()
     {
@@ -15,7 +15,7 @@ class Login extends Transactional
 
     protected function process($parameters)
     {
-        $token = Auth::setTTL(60 * 24 * 7)->attempt($parameters->all());
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt($parameters->all());
         if (!$token) {
             throw new BLoCException(__('response.invalid_credential'));
         }

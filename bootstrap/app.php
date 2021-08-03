@@ -69,7 +69,8 @@ $app->middleware([
 
 $app->routeMiddleware([
     'apiGate' => App\Http\Middleware\ApiGate::class,
-    'auth' => App\Http\Middleware\Authenticate::class,
+    'auth.admin' => App\Http\Middleware\AdminAuthenticate::class,
+    'auth.user' => App\Http\Middleware\UserAuthenticate::class,
     'bloc' => App\Http\Middleware\BLoCMapper::class,
 ]);
 

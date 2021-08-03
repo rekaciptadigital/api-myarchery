@@ -42,7 +42,7 @@ class MenuItemPermissionsSeeder extends Seeder
                     ->where('permission_id', $value['permission_id'])
                     ->first();
 
-                if (is_null($value['permission_id']) && isset($menu_item_permission)) {
+                if (is_null($value['permission_id']) || isset($menu_item_permission)) {
                     continue;
                 }
                 $value['id'] = $key + 1;

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\BLoC\Web\UserRole;
+namespace App\BLoC\Web\AdminRole;
 
-use App\Models\UserRole;
+use App\Models\AdminRole;
 use DAI\Utils\Abstracts\Retrieval;
 
-class GetAllUserRole extends Retrieval
+class GetAllAdminRole extends Retrieval
 {
     public function getDescription()
     {
@@ -14,8 +14,8 @@ class GetAllUserRole extends Retrieval
 
     protected function process($parameters)
     {
-        $user_roles = UserRole::all();
+        $admin_roles = AdminRole::all();
 
-        return $user_roles;
+        return $admin_roles;
     }
 }

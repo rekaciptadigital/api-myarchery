@@ -1,14 +1,13 @@
 <?php
 
-namespace App\BLoC\General\Auth;
+namespace App\BLoC\App\UserAuth;
 
 use App\Models\User;
-use App\Models\UserRole;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class Register extends Transactional
+class UserRegister extends Transactional
 {
     public function getDescription()
     {
@@ -26,12 +25,7 @@ class Register extends Transactional
             'phone_number' => $parameters->get('phone_number'),
         ]);
 
-        $user_role = new UserRole();
-        $user_role->user_id = $user->id;
-        $user_role->role_id = 2;
-        $user_role->save();
-
-        $token = Auth::setTTL(60 * 24 * 7)->attempt([
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
             'password' => $parameters->get('password'),
         ]);

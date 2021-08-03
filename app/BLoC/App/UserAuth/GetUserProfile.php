@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\General\User;
+namespace App\BLoC\App\UserAuth;
 
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +14,7 @@ class GetUserProfile extends Retrieval
 
     protected function process($parameters)
     {
-        return Auth::user();
+        return Auth::guard('app-api')->user();
     }
 
     protected function validation($parameters)

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserRoles extends Migration
+class CreateAdmins extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +14,15 @@ class CreateUserRoles extends Migration
     public function up()
     {
         try {
-            Schema::create('user_roles', function (Blueprint $table) {
+            Schema::create('admins', function (Blueprint $table) {
                 $table->increments('id');
-                $table->unsignedInteger('user_id')->index();
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-                $table->unsignedInteger('role_id')->index();
-                $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+                $table->string('name');
+                $table->string('email');
+                $table->string('password');
+                $table->date('date_of_birth')->nullable();
+                $table->string('place_of_birth')->nullable();
+                $table->string('phone_number')->nullable();
+                $table->string('avatar')->nullable();
                 $table->timestamps();
             });
         } catch (PDOException $ex) {
@@ -35,6 +38,6 @@ class CreateUserRoles extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('users');
     }
 }
