@@ -20,6 +20,8 @@ class CreateUserArcheryInfo extends Migration
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
                 $table->unsignedInteger('archery_category_id')->index();
                 $table->foreign('archery_category_id')->references('id')->on('archery_categories')->onDelete('restrict');
+                $table->unsignedInteger('archery_club_id')->index();
+                $table->foreign('archery_club_id')->references('id')->on('archery_clubs')->onDelete('restrict');
                 $table->timestamps();
             });
         } catch (PDOException $ex) {

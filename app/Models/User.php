@@ -49,4 +49,8 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     {
         return [];
     }
+
+    public function userArcheryInfo() {
+        return $this->hasOne(UserArcheryInfo::class);
+    }
 }
