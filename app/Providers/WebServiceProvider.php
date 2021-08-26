@@ -38,6 +38,11 @@ use App\BLoC\Web\ArcheryClub\DeleteArcheryClub;
 use App\BLoC\Web\ArcheryClub\EditArcheryClub;
 use App\BLoC\Web\ArcheryClub\AddArcheryClub;
 use App\BLoC\Web\ArcheryClub\GetArcheryClub;
+use App\BLoC\Web\ArcheryEvent\EditArcheryEvent;
+use App\BLoC\Web\ArcheryEvent\DeleteArcheryEvent;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
+use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
+use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\Menu\AddMenu;
 use App\BLoC\Web\Menu\DeleteMenu;
 use App\BLoC\Web\Menu\EditMenu;
@@ -156,6 +161,11 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("editArcheryClub", EditArcheryClub::class);
         $this->registerService("addArcheryClub", AddArcheryClub::class);
         $this->registerService("getArcheryClub", GetArcheryClub::class);
+        $this->registerService("editArcheryEvent", EditArcheryEvent::class);
+        $this->registerService("deleteArcheryEvent", DeleteArcheryEvent::class);
+        $this->registerService("getArcheryEvent", GetArcheryEvent::class);
+        $this->registerService("addArcheryEvent", AddArcheryEvent::class);
+        $this->registerService("findArcheryEvent", FindArcheryEvent::class);
     }
 
     private function registerService($serviceName, $className)

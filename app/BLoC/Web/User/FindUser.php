@@ -15,7 +15,12 @@ class FindUser extends Retrieval
     protected function process($parameters)
     {
         $user = User::find($parameters->get('id'));
-
+        if(!is_null($user)) {
+            if($user->userArcheryInfo) {
+                $user->userArcheryInfo->archeryCategory;
+                $user->userArcheryInfo->archeryClub;
+            }
+        }
         return $user;
     }
 

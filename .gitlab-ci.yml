@@ -1,0 +1,38 @@
+before_script: 
+  - apt-get update -qq
+  - apt-get install -qq git
+  # Setup SSH deploy keys
+  - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$PRIVATEKEY_ARCHERY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+ 
+stages:
+  - update
+  
+update_production:
+    stage: update
+    script:
+        - echo "Updating Production"
+        - ssh -p22 root@103.31.38.37 "GIT_DIR=/var/www/api-archery/.git GIT_WORK_TREE=/var/www/api-archery git checkout master && GIT_DIR=/var/www/api-archery/.git GIT_WORK_TREE=/var/www/api-archery git fetch origin master && GIT_DIR=/var/www/api-archery/.git GIT_WORK_TREE=/var/www/api-archery git reset --hard FETCH_HEAD && GIT_DIR=/var/www/api-archery/.git GIT_WORK_TREE=/var/www/api-archery git pull origin master"
+        - echo "Removing vendor folder"
+        - ssh -p22 root@103.31.38.37 "rm -rf /var/www/api-archery/vendor"
+        - echo "Updating component"
+        - ssh -p22 root@103.31.38.37 "composer update -d /var/www/api-archery"
+        - echo "Code Updated"
+    only:
+        - master
+
+update_staging:
+    stage: update
+    script:
+        - echo "Updating Staging"
+        - ssh -p22 root@103.31.38.37 "GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git checkout develop && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git fetch origin develop && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git reset --hard FETCH_HEAD && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery git pull origin develop"
+        - echo "Removing vendor folder"
+        - ssh -p22 root@103.31.38.37 "rm -rf /var/www/api-archery-stg/vendor"
+        - echo "Updating component"
+        - ssh -p22 root@103.31.38.37 "composer update -d /var/www/api-archery-stg"
+        - echo "Code Updated"
+    only:
+        - develop

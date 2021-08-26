@@ -16,7 +16,7 @@ class CreateArcheryClubs extends Migration
         Schema::create('archery_clubs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->text('address');
+            $table->text('address')->nullable();
             $table->decimal('latitude', 20, 8)->nullable();
             $table->decimal('longitude', 20, 8)->nullable();
             $table->enum('location_type', ['Indoor', 'Outdoor', 'Indoor/Outdoor'])->nullable();
