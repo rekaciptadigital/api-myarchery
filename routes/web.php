@@ -112,6 +112,14 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryClub']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClub']);
             });
+            $router->group(['prefix' => 'events'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEvent']);
+                // $router->delete('/bulk', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDeleteArcheryClub']);
+                // $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryClub']);
+                // $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryClub']);
+                // $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryClub']);
+                // $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClub']);
+            });
         });
     });
 });

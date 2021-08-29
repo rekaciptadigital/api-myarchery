@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateArcheryEventCategories extends Migration
+class CreateArcheryEventRegistrationFees extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateArcheryEventCategories extends Migration
      */
     public function up()
     {
-        Schema::create('archery_event_categories', function (Blueprint $table) {
+        Schema::create('archery_event_registration_fees', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('event_id');
-            $table->string('age_category_id');
-            $table->string('age_category_label');
-            $table->date('max_date_of_birth');
+            $table->string('registration_type');
+            $table->double('price');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateArcheryEventCategories extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('archery_event_categories');
+        Schema::dropIfExists('archery_event_registration_fees');
     }
 }

@@ -15,23 +15,19 @@ class CreateArcheryEvents extends Migration
     {
         Schema::create('archery_events', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('poster');
-            $table->text('technical_handbook')->nullable();
-            $table->string('name');
-            $table->date('registration_start_date');
-            $table->date('registration_end_date');
-            $table->date('execution_start_date');
-            $table->date('execution_end_date');
-            $table->string('phone_number');
+            $table->string('event_type');
+            $table->text('poster')->nullable();
+            $table->text('handbook')->nullable();
+            $table->string('event_name');
+            $table->dateTime('registration_start_datetime');
+            $table->dateTime('registration_end_datetime');
+            $table->dateTime('event_start_datetime');
+            $table->dateTime('event_end_datetime');
             $table->text('location');
             $table->enum('location_type', ['Indoor', 'Outdoor', 'Both']);
-            $table->decimal('total_price');
-            $table->string('total_price_currency')->default('Rp');
             $table->text('description');
-            $table->boolean('is_public');
-            $table->date('published_datetime');
-            $table->unsignedInteger('admin_id')->index();
-            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
+            $table->boolean('is_flat_registration_fee');
+            $table->date('published_datetime')->nullable();
             $table->timestamps();
         });
     }
