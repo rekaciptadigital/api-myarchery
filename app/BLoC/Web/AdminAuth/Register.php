@@ -4,6 +4,7 @@ namespace App\BLoC\Web\AdminAuth;
 
 use App\Models\Admin;
 use App\Models\AdminRole;
+use App\Models\Role;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -26,9 +27,11 @@ class Register extends Transactional
             'phone_number' => $parameters->get('phone_number'),
         ]);
 
+        $role = Role::where('name', 'event_organizer')->first();
+
         $admin_role = new AdminRole();
         $admin_role->admin_id = $admin->id;
-        $admin_role->role_id = 2;
+        $admin_role->role_id = !is_null($role) ? $role->id : null;
         $admin_role->save();
 
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
@@ -48,9 +51,6 @@ class Register extends Transactional
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:admins',
             'password' => 'required|string|min:6|confirmed',
-            // 'date_of_birth' => 'required|date',
-            // 'place_of_birth' => 'required|string',
-            // 'phone_number' => 'required|string',
         ];
     }
 }

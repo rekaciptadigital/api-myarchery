@@ -25,68 +25,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
         });
 
-        $router->group(['prefix' => 'menus'], function () use ($router) {
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addMenu']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteMenu']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editMenu']);
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findMenu']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMenu']);
-        });
-
-        $router->group(['prefix' => 'menu-items'], function () use ($router) {
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMenuItem']);
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addMenuItem']);
-            $router->put('/sort', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkUpdateMenuItemOrder']);
-            $router->get('/key', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMenuItemByKey']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteMenuItem']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editMenuItem']);
-            $router->put('/{id}/move', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editMenuItemOrder']);
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findMenuItem']);
-            $router->get('/{id}/permissions', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMenuItemPermission']);
-            $router->post('/{id}/permissions', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setMenuItemPermission']);
-        });
-
-        $router->group(['prefix' => 'permissions'], function () use ($router) {
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addPermission']);
-            $router->delete('/bulk', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDeletePermission']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deletePermission']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editPermission']);
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findPermission']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getPermission']);
-        });
-
-        $router->group(['prefix' => 'roles'], function () use ($router) {
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addRole']);
-            $router->delete('/bulk', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDeleteRole']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteRole']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editRole']);
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findRole']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getRole']);
-        });
-
-        $router->group(['prefix' => 'role-permissions'], function () use ($router) {
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getRolePermission']);
-            $router->post('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrEditRolePermission']);
-            $router->get('/{id}/all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllPermissionWithRole']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllRolePermission']);
-        });
-
-        $router->group(['prefix' => 'users'], function () use ($router) {
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUser']);
-            $router->delete('/bulk', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDeleteUser']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteUser']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editUser']);
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findUser']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUser']);
-        });
-
-        $router->group(['prefix' => 'user-roles'], function () use ($router) {
-            $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUserRole']);
-            $router->post('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrEditUserRole']);
-            $router->get('/{id}/all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllRoleWithUser']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllUserRole']);
-        });
-
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryAgeCategory']);

@@ -5,10 +5,11 @@ namespace App\BLoC\Web\ArcheryEvent;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategory;
 use App\Models\ArcheryEventCategoryCompetition;
-use App\Models\ArcheryEventCategoryTeam;
+use App\Models\ArcheryEventCategoryCompetitionTeam;
+use App\Models\ArcheryEventQualification;
+use App\Models\ArcheryEventQualificationDetail;
 use App\Models\ArcheryEventRegistrationFee;
 use App\Models\ArcheryEventRegistrationFeePerCategory;
-use App\Models\ArcheryEventStep;
 use App\Models\ArcheryEventTarget;
 use App\Models\ArcheryEventTeamCategory;
 use DAI\Utils\Abstracts\Transactional;
@@ -36,19 +37,30 @@ class AddArcheryEvent extends Transactional
         $archery_event->description = $parameters->get('description');
         $archery_event->is_flat_registration_fee = $parameters->get('is_flat_registration_fee');
         $archery_event->published_datetime = $parameters->get('published_datetime');
+        $archery_event->quatification_start_datetime = $parameters->get('quatification_start_datetime');
+        $archery_event->quatification_end_datetime = $parameters->get('quatification_end_datetime');
+        $archery_event->qualification_weekdays_only = $parameters->get('qualification_eeekdays_only');
+        $archery_event->qualification_session_length = $parameters->get('qualification_session_length') ? json_encode($parameters->get('qualification_session_length')) : null;
         $archery_event->save();
 
         if ($archery_event->event_type === 'marathon') {
-            $archery_event_step = new ArcheryEventStep();
-            $archery_event_step->event_id = $archery_event->id;
-            $archery_event_step->qualification_start_datetime = $parameters->get('qualification_start_datetime');
-            $archery_event_step->qualification_end_datetime = $parameters->get('qualification_end_datetime');
-            $archery_event_step->qualification_session_per_day = $parameters->get('qualification_session_per_day');
-            $archery_event_step->qualification_quota_per_day = $parameters->get('qualification_quota_per_day');
-            $archery_event_step->elimination_start_datetime = $parameters->get('elimination_start_datetime');
-            $archery_event_step->elimination_end_datetime = $parameters->get('elimination_end_datetime');
-            $archery_event_step->elimination_session_per_day = $parameters->get('elimination_session_per_day');
-            $archery_event_step->elimination_quota_per_day = $parameters->get('elimination_quota_per_day');
+            $qualification_days = $parameters->get('qualification_days');
+            foreach ($qualification_days as $qualification_day) {
+                $archery_event_qualification = new ArcheryEventQualification();
+                $archery_event_qualification->day_id = $qualification_day['id'];
+                $archery_event_qualification->day_label = $qualification_day['label'];
+                $archery_event_qualification->save();
+
+                $details = $qualification_day['details'];
+                foreach ($details as $detail) {
+                    $archery_event_qualification_detail = new ArcheryEventQualificationDetail();
+                    $archery_event_qualification_detail->event_qualification_id = $archery_event_qualification->id;
+                    $archery_event_qualification_detail->start_time = $detail['start_time'];
+                    $archery_event_qualification_detail->end_time = $detail['end_time'];
+                    $archery_event_qualification_detail->quota = $detail['quota'];
+                    $archery_event_qualification_detail->save();
+                }
+            }
         }
 
         $targets = $parameters->get('targets');
@@ -84,18 +96,18 @@ class AddArcheryEvent extends Transactional
                 $archery_event_category_competition->event_category_id = $archery_event_category->id;
                 $archery_event_category_competition->competition_category_id = $competition_category['competition_category']['id'];
                 $archery_event_category_competition->competition_category_label = $competition_category['competition_category']['label'];
-                $archery_event_category_competition->distances = implode(",", $competition_category['distances']);
+                $archery_event_category_competition->distances = json_encode($competition_category['distances']);
                 $archery_event_category_competition->save();
-            }
 
-            $team_categories = $event_category['team_categories'];
-            foreach ($team_categories as $team_category) {
-                $archery_event_category_team = new ArcheryEventCategoryTeam();
-                $archery_event_category_team->event_category_id = $archery_event_category->id;
-                $archery_event_category_team->team_category_id = $team_category['id'];
-                $archery_event_category_team->team_category_label = $team_category['label'];
-                $archery_event_category_team->quota = $team_category['quota'];
-                $archery_event_category_team->save();
+                $team_categories = $competition_category['team_categories'];
+                foreach ($team_categories as $team_category) {
+                    $archery_event_category_team = new ArcheryEventCategoryCompetitionTeam();
+                    $archery_event_category_team->event_category_competition_id = $archery_event_category_competition->id;
+                    $archery_event_category_team->team_category_id = $team_category['id'];
+                    $archery_event_category_team->team_category_label = $team_category['label'];
+                    $archery_event_category_team->quota = $team_category['quota'];
+                    $archery_event_category_team->save();
+                }
             }
         }
 

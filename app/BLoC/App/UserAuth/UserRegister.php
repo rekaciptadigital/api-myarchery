@@ -28,17 +28,21 @@ class UserRegister extends Transactional
         ]);
 
         $club = $parameters->get('club');
-        $club_id = array_key_exists('id', $club) ? $club['id'] : null;
-        if (!$club_id) {
+        $club_id = null;
+        $club_name = null;
+        if (!is_null($club)) {
+            $club_id = array_key_exists('id', $club) ? $club['id'] : null;
+            $club_name = array_key_exists('name', $club) ? $club['name'] : null;
+        }
+        if (!$club_id && !is_null($club_name)) {
             $new_club = new ArcheryClub();
-            $new_club->name = $club['name'];
+            $new_club->name = $club_name;
             $new_club->save();
             $club_id = $new_club->id;
         }
 
         $user_archery_info = new UserArcheryInfo();
         $user_archery_info->user_id = $user->id;
-        $user_archery_info->archery_category_id = $parameters->get('archery_category_id');
         $user_archery_info->archery_club_id = $club_id;
         $user_archery_info->save();
 
@@ -59,11 +63,6 @@ class UserRegister extends Transactional
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'date_of_birth' => 'required|date',
-            'place_of_birth' => 'required|string',
-            'phone_number' => 'required|string',
-            'archery_category_id' => 'required|exists:archery_categories,id',
-            'club.name' => 'required',
         ];
     }
 }
