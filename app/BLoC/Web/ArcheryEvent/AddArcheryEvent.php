@@ -13,6 +13,8 @@ use App\Models\ArcheryEventRegistrationFeePerCategory;
 use App\Models\ArcheryEventTarget;
 use App\Models\ArcheryEventTeamCategory;
 use DAI\Utils\Abstracts\Transactional;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AddArcheryEvent extends Transactional
 {
@@ -23,11 +25,16 @@ class AddArcheryEvent extends Transactional
 
     protected function process($parameters)
     {
+        $admin = Auth::user();
+        $time = time();
+        $event_slug = $time . '-' . Str::slug($parameters->get('event_name'));
+
         $archery_event = new ArcheryEvent();
         $archery_event->event_type = $parameters->get('event_type');
-        $archery_event->poster = $parameters->get('poster');
-        $archery_event->handbook = $parameters->get('handbook');
+        $archery_event->poster = $this->saveFile($parameters->get('poster'), 'poster', $event_slug, $time);
+        $archery_event->handbook = $this->saveFile($parameters->get('handbook'), 'handbook', $event_slug, $time);
         $archery_event->event_name = $parameters->get('event_name');
+        $archery_event->event_slug = $event_slug;
         $archery_event->registration_start_datetime = $parameters->get('registration_start_datetime');
         $archery_event->registration_end_datetime = $parameters->get('registration_end_datetime');
         $archery_event->event_start_datetime = $parameters->get('event_start_datetime');
@@ -39,8 +46,9 @@ class AddArcheryEvent extends Transactional
         $archery_event->published_datetime = $parameters->get('published_datetime');
         $archery_event->quatification_start_datetime = $parameters->get('quatification_start_datetime');
         $archery_event->quatification_end_datetime = $parameters->get('quatification_end_datetime');
-        $archery_event->qualification_weekdays_only = $parameters->get('qualification_eeekdays_only');
+        $archery_event->qualification_weekdays_only = $parameters->get('qualification_weekdays_only');
         $archery_event->qualification_session_length = $parameters->get('qualification_session_length') ? json_encode($parameters->get('qualification_session_length')) : null;
+        $archery_event->admin_id = $admin['id'];
         $archery_event->save();
 
         if ($archery_event->event_type === 'marathon') {

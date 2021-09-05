@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
+use Illuminate\Support\Facades\Auth;
 
 class GetArcheryEvent extends Retrieval
 {
@@ -14,7 +15,8 @@ class GetArcheryEvent extends Retrieval
 
     protected function process($parameters)
     {
-        $archery_event = ArcheryEvent::all();
+        $admin = Auth::user();
+        $archery_event = ArcheryEvent::where('admin_id', $admin['id'])->get();
 
         return $archery_event;
     }

@@ -17,6 +17,9 @@ $router->get('/', function () use ($router) {
 
 
 $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
+    $router->get('display', [
+        'as' => 'api_display', 'uses' => 'Controller@display'
+    ]);
     $router->group(['prefix' => 'v1'], function () use ($router) {
     });
 });
