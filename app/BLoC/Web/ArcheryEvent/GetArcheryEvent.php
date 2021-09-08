@@ -16,7 +16,7 @@ class GetArcheryEvent extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $archery_event = ArcheryEvent::where('admin_id', $admin['id'])->get();
+        $archery_event = ArcheryEvent::where('admin_id', $admin['id'])->orderBy('created_at', 'DESC')->get();
 
         return $archery_event;
     }

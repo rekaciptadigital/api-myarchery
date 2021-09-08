@@ -33,9 +33,11 @@ class ApiGate
 
         app('translator')->setLocale($lang);
 
-        $request->merge(CaseConvert::snake($request->all()));
-
+        $request_data = $request->all();
+        $converted_request_data = CaseConvert::snake($request_data);
+        $request->merge($converted_request_data);
         $response = $next($request);
+
         foreach ($headers as $key => $value) {
             $response->header($key, $value);
         }

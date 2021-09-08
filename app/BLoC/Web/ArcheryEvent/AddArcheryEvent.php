@@ -31,8 +31,8 @@ class AddArcheryEvent extends Transactional
 
         $archery_event = new ArcheryEvent();
         $archery_event->event_type = $parameters->get('event_type');
-        $archery_event->poster = $this->saveFile($parameters->get('poster'), 'poster', $event_slug, $time);
-        $archery_event->handbook = $this->saveFile($parameters->get('handbook'), 'handbook', $event_slug, $time);
+        $archery_event->poster = $parameters->get('poster') ? $this->saveFile($parameters->get('poster'), 'poster', $event_slug, $time) : null;
+        $archery_event->handbook = $parameters->get('handbook') ? $this->saveFile($parameters->get('handbook'), 'handbook', $event_slug, $time) : null;
         $archery_event->event_name = $parameters->get('event_name');
         $archery_event->event_slug = $event_slug;
         $archery_event->registration_start_datetime = $parameters->get('registration_start_datetime');
@@ -55,6 +55,7 @@ class AddArcheryEvent extends Transactional
             $qualification_days = $parameters->get('qualification_days');
             foreach ($qualification_days as $qualification_day) {
                 $archery_event_qualification = new ArcheryEventQualification();
+                $archery_event_qualification->event_id = $archery_event->id;
                 $archery_event_qualification->day_id = $qualification_day['id'];
                 $archery_event_qualification->day_label = $qualification_day['label'];
                 $archery_event_qualification->save();
@@ -125,6 +126,8 @@ class AddArcheryEvent extends Transactional
             $archery_event_registration_fee->event_id = $archery_event->id;
             $archery_event_registration_fee->registration_type = $registration_fee['registration_type'];
             $archery_event_registration_fee->price = $registration_fee['price'];
+            $archery_event_registration_fee->start_date = $registration_fee['start_date'];
+            $archery_event_registration_fee->end_date = $registration_fee['end_date'];
             $archery_event_registration_fee->save();
 
             $category_prices = $registration_fee['category_prices'];
@@ -137,7 +140,7 @@ class AddArcheryEvent extends Transactional
             }
         }
 
-        return [];
+        return $archery_event;
     }
 
     protected function validation($parameters)

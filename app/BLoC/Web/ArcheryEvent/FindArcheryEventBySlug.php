@@ -5,7 +5,7 @@ namespace App\BLoC\Web\ArcheryEvent;
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
 
-class FindArcheryEvent extends Retrieval
+class FindArcheryEventBySlug extends Retrieval
 {
     public function getDescription()
     {
@@ -14,7 +14,7 @@ class FindArcheryEvent extends Retrieval
 
     protected function process($parameters)
     {
-        $archery_event = ArcheryEvent::find($parameters->get('id'));
+        $archery_event = ArcheryEvent::where('event_slug', $parameters->get('slug'))->first();
         $archery_event_categories = $archery_event->archeryEventCategories;
         foreach ($archery_event_categories as $archery_event_category) {
             $archery_event_category_competitions = $archery_event_category->archeryEventCategoryCompetitions;
@@ -38,7 +38,7 @@ class FindArcheryEvent extends Retrieval
     protected function validation($archery_event)
     {
         return [
-            'id' => 'required|exists:archery_events,id',
+            'slug' => 'required|exists:archery_events,event_slug',
         ];
     }
 }

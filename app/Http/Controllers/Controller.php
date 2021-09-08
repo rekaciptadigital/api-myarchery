@@ -14,7 +14,8 @@ class Controller extends BaseController
     use ApiResponse;
     use FileHandler;
 
-    public function execute($function, $params = []) {
+    public function execute($function, $params = [])
+    {
         try {
             $result = BLoC::call($function, $params);
             return $this::success($result);
@@ -23,7 +24,13 @@ class Controller extends BaseController
         }
     }
 
-    public function display(Request $request) {
+    public function display(Request $request)
+    {
         return $this->viewFile($request->file_path);
+    }
+
+    public function download(Request $request)
+    {
+        return $this->downloadFile($request->file_path);
     }
 }

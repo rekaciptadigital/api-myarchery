@@ -33,6 +33,7 @@ use App\BLoC\Web\ArcheryEvent\DeleteArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
+use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -72,6 +73,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEvent", GetArcheryEvent::class);
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
+        $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
     }
 
     private function registerService($serviceName, $className)
