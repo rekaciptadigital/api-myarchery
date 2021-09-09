@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\BLoC\App\ArcheryEventParticipant\AddParticipant;
+use App\BLoC\App\ArcheryEventParticipant\AddScore;
+use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
+use App\BLoC\App\ArcheryEventParticipant\GetEnd;
+use App\BLoC\App\ArcheryEventParticipant\GetEndDetail;
+use App\BLoC\App\ArcheryEventParticipant\GetScoreSummary;
 use Illuminate\Support\ServiceProvider;
 
 use App\BLoC\App\UserAuth\UserForgotPassword;
@@ -26,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("userResetPassword", UserResetPassword::class);
         $this->registerService("getUserProfile", GetUserProfile::class);
         $this->registerService("userLogout", UserLogout::class);
+        $this->registerService("addParticipant", AddParticipant::class);
+        $this->registerService("addScore", AddScore::class);
+        $this->registerService("editParticipantProfile", EditParticipantProfile::class);
+        $this->registerService("getEnd", GetEnd::class);
+        $this->registerService("getEndDetail", GetEndDetail::class);
+        $this->registerService("getScoreSummary", GetScoreSummary::class);
     }
 
     private function registerService($serviceName, $className)
