@@ -41,6 +41,10 @@ use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantScore;
 use App\BLoC\Web\ArcheryEventScoringSystem\AddArcheryEventScoringSystem;
 use App\BLoC\Web\ArcheryEventScoringSystem\EditArcheryEventScoringSystemDetail;
 use App\BLoC\Web\ArcheryEventScoringSystem\GetArcheryEventScoringSytem;
+use App\BLoC\Web\EventOrder\AddEventOrder;
+use App\BLoC\Web\EventOrder\DetailEventOrder;
+use App\BLoC\Web\EventOrder\GetEventOrder;
+use App\BLoC\Web\Transaction\CallbackMidtrans;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -88,6 +92,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEventScoringSystem", AddArcheryEventScoringSystem::class);
         $this->registerService("editArcheryEventScoringSystemDetail", EditArcheryEventScoringSystemDetail::class);
         $this->registerService("getArcheryEventScoringSytem", GetArcheryEventScoringSytem::class);
+        $this->registerService("addEventOrder", AddEventOrder::class);
+        $this->registerService("detailEventOrder", DetailEventOrder::class);
+        $this->registerService("getEventOrder", GetEventOrder::class);
+        $this->registerService("callbackMidtrans", CallbackMidtrans::class);
     }
 
     private function registerService($serviceName, $className)

@@ -67,6 +67,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
             });
+
+            $router->group(['prefix' => 'event-order'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrder']);
+                $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
+            });
         });
 
         $router->group(['prefix' => 'archery'], function () use ($router) {
