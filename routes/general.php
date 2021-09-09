@@ -15,6 +15,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->post('/midtrans/notification/callback', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:callbackMidtrans']);
+
 
 $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {

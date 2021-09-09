@@ -43,6 +43,9 @@ use App\BLoC\Web\ArcheryEvent\DeleteArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
+use App\BLoC\Web\EventOrder\AddEventOrder;
+use App\BLoC\Web\EventOrder\DetailEventOrder;
+use App\BLoC\Web\EventOrder\GetEventOrder;
 use App\BLoC\Web\Menu\AddMenu;
 use App\BLoC\Web\Menu\DeleteMenu;
 use App\BLoC\Web\Menu\EditMenu;
@@ -80,6 +83,7 @@ use App\BLoC\Web\User\DeleteUser;
 use App\BLoC\Web\User\EditUser;
 use App\BLoC\Web\User\FindUser;
 use App\BLoC\Web\User\GetUser;
+use App\BLoC\Web\Transaction\CallbackMidtrans;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -166,6 +170,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEvent", GetArcheryEvent::class);
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
+        $this->registerService("addEventOrder", AddEventOrder::class);
+        $this->registerService("detailEventOrder", DetailEventOrder::class);
+        $this->registerService("getEventOrder", GetEventOrder::class);
+        $this->registerService("callbackMidtrans", CallbackMidtrans::class);
     }
 
     private function registerService($serviceName, $className)
