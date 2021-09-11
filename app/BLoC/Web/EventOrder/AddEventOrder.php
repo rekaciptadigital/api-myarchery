@@ -7,7 +7,9 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AddEventOrder extends Transactional
 {
@@ -22,16 +24,33 @@ class AddEventOrder extends Transactional
         $event = ArcheryEvent::find($parameters->event_id);
         $total_price = 0;
         // TODO START ADD LOGIC FOR PRICE
-        $total_price =10000; // sampel data
-        if(!$event->is_flat_registration_fee){
+        $archery_event_price_query = "
+            SELECT *
+            FROM archery_events A
+            JOIN archery_event_registration_fees B ON A.id = B.event_id
+            JOIN archery_event_registration_fees_per_category C ON B.id = C.event_registration_fee_id
+            WHERE A.id = :event_id
+            AND C.team_category = :team_category
+        ";
+        $event_category = $parameters->get('category_event');
+        $archery_event_price_results = DB::SELECT($archery_event_price_query, [
+            "event_id" => $parameters->event_id,
+            "team_category" => $event_category['team_category']
+        ]);
+        $archery_event_price_result = collect($archery_event_price_results)->first();
 
+        if (is_null($archery_event_price_result)) {
+            throw new BLoCException("Price Not Found");
+        }
+        $total_price = $archery_event_price_result->price; // sampel data
+        if (!$event->is_flat_registration_fee) {
         }
         // TODO END ADD LOGIC FOR PRICE
 
         $participant = new ArcheryEventParticipant;
         $participant->event_id = $event->id;
         $participant->user_id = $user["id"];
-        $participant->name = "-";
+        $participant->name = $parameters->team_name;
         $participant->club = $parameters->club_name;
         $participant->email = $parameters->email;
         $participant->type = $parameters->type;
@@ -43,9 +62,9 @@ class AddEventOrder extends Transactional
         $participant->distance = 0;
         $participant->transaction_log_id = 0;
         $participant->save();
-        
+
         $member = array();
-        $order_id = env("ORDER_ID_PREFIX","OE-S").$participant->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         foreach ($parameters->participant_members as $key => $value) {
             $birth_date = explode("-", $value["birthdate"]);
             //get age from date or birthdate
@@ -63,16 +82,16 @@ class AddEventOrder extends Transactional
             ];
         }
         ArcheryEventParticipantMember::insert($member);
-        
-        $payment = PaymentGateWay::setTransactionDetail($total_price,$order_id)
-                                    ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
-                                    ->setCustomerDetails($user["name"],$user["email"],$user["phone_number"])
-                                    ->addItemDetail($event->id,$total_price,$event->event_name)
-                                    ->CreateSnap();
+
+        $payment = PaymentGateWay::setTransactionDetail($total_price, $order_id)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
+            ->setCustomerDetails($user["name"], $user["email"], $user["phone_number"])
+            ->addItemDetail($event->id, $total_price, $event->event_name)
+            ->CreateSnap();
 
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
-       
+
         return ["archery_event_participant_id" => $participant->id];
     }
 
