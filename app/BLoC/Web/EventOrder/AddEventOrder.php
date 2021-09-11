@@ -52,7 +52,7 @@ class AddEventOrder extends Transactional
         $participant->email = $parameters->email;
         $participant->type = $parameters->type;
         $participant->phone_number = $parameters->phone_number;
-        $participant->competition_category = $parameters->category_event;
+        $participant->competition_category = $event_category['competition_category_id'];
         $participant->team_name = $parameters->team_name;
         $participant->team_category = $event_category['team_category_id'];
         $participant->age_category = $event_category['age_category_id'];
