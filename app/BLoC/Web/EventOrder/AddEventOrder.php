@@ -23,9 +23,9 @@ class AddEventOrder extends Transactional
         $user = Auth::user();
         $event = ArcheryEvent::find($parameters->event_id);
         $total_price = 0;
-        // TODO START ADD LOGIC FOR PRICE
+
         $archery_event_price_query = "
-            SELECT *
+            SELECT C.*
             FROM archery_events A
             JOIN archery_event_registration_fees B ON A.id = B.event_id
             JOIN archery_event_registration_fees_per_category C ON B.id = C.event_registration_fee_id
@@ -35,17 +35,14 @@ class AddEventOrder extends Transactional
         $event_category = $parameters->get('category_event');
         $archery_event_price_results = DB::SELECT($archery_event_price_query, [
             "event_id" => $parameters->event_id,
-            "team_category" => $event_category['team_category']
+            "team_category" => $event_category['team_category_id']
         ]);
         $archery_event_price_result = collect($archery_event_price_results)->first();
 
         if (is_null($archery_event_price_result)) {
             throw new BLoCException("Price Not Found");
         }
-        $total_price = $archery_event_price_result->price; // sampel data
-        if (!$event->is_flat_registration_fee) {
-        }
-        // TODO END ADD LOGIC FOR PRICE
+        $total_price = $archery_event_price_result->price;
 
         $participant = new ArcheryEventParticipant;
         $participant->event_id = $event->id;
@@ -57,9 +54,9 @@ class AddEventOrder extends Transactional
         $participant->phone_number = $parameters->phone_number;
         $participant->competition_category = $parameters->category_event;
         $participant->team_name = $parameters->team_name;
-        $participant->team_category = "-";
-        $participant->age_category = "-";
-        $participant->distance = 0;
+        $participant->team_category = $event_category['team_category_id'];
+        $participant->age_category = $event_category['age_category_id'];
+        $participant->distance = $event_category['distance'];
         $participant->transaction_log_id = 0;
         $participant->save();
 
@@ -78,7 +75,7 @@ class AddEventOrder extends Transactional
                 "gender" => $value["gender"],
                 "birthdate" => $value["birthdate"],
                 "age" => $age,
-                "team_category" => "-"
+                "team_category" => $event_category['team_category_id']
             ];
         }
         ArcheryEventParticipantMember::insert($member);
