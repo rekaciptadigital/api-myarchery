@@ -118,7 +118,7 @@ class AddEventOrder extends Transactional
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
 
-        return ["archery_event_participant_unique_id" => $participant->unique_id];
+        return ["archery_event_participant_id" => $participant->id];
     }
 
     protected function validation($parameters)
