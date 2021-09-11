@@ -16,10 +16,10 @@ class CreateArcheryEventScoringSystemCategories extends Migration
         Schema::create('archery_event_scoring_system_categories', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('event_id');
-            $table->string('team_category');
-            $table->string('age_category');
-            $table->string('competition_category');
-            $table->integer('distance');
+            $table->string('team_category_id');
+            $table->string('age_category_id');
+            $table->string('competition_category_id');
+            $table->integer('distance_id');
             $table->timestamps();
         });
     }

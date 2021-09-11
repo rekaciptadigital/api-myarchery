@@ -17,7 +17,6 @@ class CreateArcheryEventTeamCategories extends Migration
             $table->increments('id');
             $table->unsignedInteger('event_id');
             $table->string('team_category_id');
-            $table->string('team_category_label');
             $table->timestamps();
         });
     }

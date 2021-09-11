@@ -17,7 +17,6 @@ class CreateArcheryEventCategoryCompetitions extends Migration
             $table->increments('id');
             $table->unsignedInteger('event_category_id');
             $table->string('competition_category_id');
-            $table->string('competition_category_label');
             $table->string('distances');
             $table->timestamps();
         });

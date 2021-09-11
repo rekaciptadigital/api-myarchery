@@ -31,20 +31,20 @@ class AddEventOrder extends Transactional
             SELECT A.*, C.*, B.price as flat_price,
                 B.start_date as early_bird_start_date,
                 B.end_date as early_bird_end_date,
-                B.registration_type
+                B.registration_type_id
             FROM archery_events A
             JOIN archery_event_registration_fees B ON A.id = B.event_id
             JOIN archery_event_registration_fees_per_category C ON B.id = C.event_registration_fee_id
             WHERE A.id = :event_id
-            AND C.team_category = :team_category
+            AND C.team_category_id = :team_category_id
         ";
         $archery_event_price_results = DB::SELECT($archery_event_price_query, [
             "event_id" => $parameters->event_id,
-            "team_category" => $event_category['team_category_id']
+            "team_category_id" => $event_category['team_category_id']
         ]);
-
-        $archery_event_price_normal = collect($archery_event_price_results)->firstWhere('registration_type', '=', 'normal');
-        $archery_event_price_early_bird = collect($archery_event_price_results)->firstWhere('registration_type', '=', 'early_bird');
+        
+        $archery_event_price_normal = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'normal');
+        $archery_event_price_early_bird = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'early_bird');
 
         if (is_null($archery_event_price_normal) && is_null($archery_event_price_early_bird)) {
             throw new BLoCException("Price Not Found");
@@ -80,11 +80,11 @@ class AddEventOrder extends Transactional
         $participant->email = $parameters->email;
         $participant->type = $parameters->type;
         $participant->phone_number = $parameters->phone_number;
-        $participant->competition_category = $event_category['competition_category_id'];
         $participant->team_name = $parameters->team_name;
-        $participant->team_category = $event_category['team_category_id'];
-        $participant->age_category = $event_category['age_category_id'];
-        $participant->distance = $event_category['distance_id'];
+        $participant->competition_category_id = $event_category['competition_category_id'];
+        $participant->team_category_id = $event_category['team_category_id'];
+        $participant->age_category_id = $event_category['age_category_id'];
+        $participant->distance_id = $event_category['distance_id'];
         $participant->transaction_log_id = 0;
         $participant->unique_id = Str::uuid();
         $participant->save();
@@ -104,7 +104,7 @@ class AddEventOrder extends Transactional
                 "gender" => $value["gender"],
                 "birthdate" => $value["birthdate"],
                 "age" => $age,
-                "team_category" => $event_category['team_category_id']
+                "team_category_id" => $event_category['team_category_id']
             ];
         }
         ArcheryEventParticipantMember::insert($member);
