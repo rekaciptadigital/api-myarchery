@@ -21,7 +21,7 @@ class CreateArcheryEventParticipantMembers extends Migration
             $table->string('email')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('club')->nullable();
-            $table->number('age')->nullable();
+            $table->integer('age')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->date('qualification_date')->nullable();
             $table->timestamps();

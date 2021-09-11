@@ -19,7 +19,7 @@ class CreateArcheryEventScoringSystemCategories extends Migration
             $table->string('team_category');
             $table->string('age_category');
             $table->string('competition_category');
-            $table->number('distance');
+            $table->integer('distance');
             $table->timestamps();
         });
     }

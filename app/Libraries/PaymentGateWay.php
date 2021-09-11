@@ -51,12 +51,12 @@ class PaymentGateWay{
         return (new self);
     }
 
-    public static function addItemDetail($id, $price, $name, $brand = "test", $quantity = 1, $category = "test", $merchant_name = "test"){
+    public static function addItemDetail($id, $price, $name, $brand = "", $quantity = 1, $category = "", $merchant_name = ""){
         self::$item_details[] = array(
             "id" => $id,
             "price" => $price,
             "quantity" => $quantity,
-            "name" => $name,
+            "name" => substr($name, 0, 50),
             "brand" => $brand,
             "category" => $category,
             "merchant_name" => $merchant_name
@@ -95,19 +95,27 @@ class PaymentGateWay{
             'enabled_payments' => self::$enabled_payments
         );
         
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-        if($snapToken){
-            $activity = array("request_snap_token" => array("params" => $params, "response" => $snapToken));
+        $snap_token = \Midtrans\Snap::getSnapToken($params);
+        if($snap_token){
+            $activity = array("request_snap_token" => array("params" => $params, "response" => $snap_token));
             $transaction_log = new TransactionLog;
             $transaction_log->order_id = $transaction_details["order_id"];
             $transaction_log->transaction_log_activity = json_encode($activity);
             $transaction_log->amount = $transaction_details["gross_amount"];
             $transaction_log->status = 0;
+            $transaction_log->token = $snap_token;
             $transaction_log->save();
         }
-        return (object)array("transaction_log_id"=>$transaction_log->id,"snap_token"=>$snapToken,"client_key"=>env("MIDTRANS_CLIENT_KEY"),"client_lib_link"=>env("MIDTRANS_CLIENT_LIB_LINK"));
+        return (object)array("order_id"=>$transaction_details["order_id"],"total"=> $transaction_details["gross_amount"],"status"=>TransactionLog::getStatus(0),"transaction_log_id"=>$transaction_log->id,"snap_token"=>$snap_token,"client_key"=>env("MIDTRANS_CLIENT_KEY"),"client_lib_link"=>env("MIDTRANS_CLIENT_LIB_LINK"));
     }
     
+    public static function TransactionLogPaymentInfo($transaction_log_id)
+    {
+            $transaction_log = TransactionLog::find($transaction_log_id);
+            if(!$transaction_log) return false;
+            return (object)array("order_id"=>$transaction_log->order_id,"total"=>$transaction_log->amount,"status"=>TransactionLog::getStatus($transaction_log->status),"transaction_log_id"=>$transaction_log->id,"snap_token"=>$transaction_log->token,"client_key"=>env("MIDTRANS_CLIENT_KEY"),"client_lib_link"=>env("MIDTRANS_CLIENT_LIB_LINK"));
+    }
+
     public static function NotificationCallbackPaymnet()
     {
         \Midtrans\Config::$isProduction = false;

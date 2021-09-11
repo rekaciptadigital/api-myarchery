@@ -4,6 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EventOrder extends Model
+class ArcheryEventParticipant extends Model
 {
 }

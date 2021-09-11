@@ -16,8 +16,8 @@ class CreateArcheryEventEndScores extends Migration
         Schema::create('archery_event_end_scores', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('archery_event_score_id');
-            $table->number('end');
-            $table->number('total_score');
+            $table->integer('end');
+            $table->integer('total_score');
             $table->timestamps();
         });
     }
