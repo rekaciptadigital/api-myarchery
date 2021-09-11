@@ -25,7 +25,7 @@ class AddEventOrder extends Transactional
         $total_price = 0;
 
         $archery_event_price_query = "
-            SELECT C.*
+            SELECT A.*, C.*, B.price as flat_price
             FROM archery_events A
             JOIN archery_event_registration_fees B ON A.id = B.event_id
             JOIN archery_event_registration_fees_per_category C ON B.id = C.event_registration_fee_id
@@ -43,6 +43,9 @@ class AddEventOrder extends Transactional
             throw new BLoCException("Price Not Found");
         }
         $total_price = $archery_event_price_result->price;
+        if ($archery_event_price_result->is_flat_registration_fee) {
+            $total_price = $archery_event_price_result->flat_price;
+        }
 
         $participant = new ArcheryEventParticipant;
         $participant->event_id = $event->id;
