@@ -16,11 +16,11 @@ class CreateArcheryEventScoringSystemDetails extends Migration
         Schema::create('archery_event_scoring_system_details', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('archery_event_scoring_system_category_id');
-            $table->number('total_session');
+            $table->integer('total_session');
             $table->string('round_type_id');
             $table->string('round_type_label');
-            $table->number('total_end');
-            $table->number('total_shoot');
+            $table->integer('total_end');
+            $table->integer('total_shoot');
             $table->string('target_face');
             $table->timestamps();
         });
