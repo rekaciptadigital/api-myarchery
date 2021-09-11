@@ -33,10 +33,10 @@ class CreateArcheryEventParticipants extends Migration
             $table->string('club')->nullable();
             $table->integer('age')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
-            $table->string('team_category');
-            $table->string('age_category');
-            $table->string('competition_category');
-            $table->integer('distance');
+            $table->string('team_category_id');
+            $table->string('age_category_id');
+            $table->string('competition_category_id');
+            $table->integer('distance_id');
             $table->date('qualification_date')->nullable();
             $table->integer('transaction_log_id')->index();
             $table->string('unique_id')->unique()->index();

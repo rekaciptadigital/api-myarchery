@@ -17,7 +17,6 @@ class CreateArcheryEventCategories extends Migration
             $table->increments('id');
             $table->unsignedInteger('event_id');
             $table->string('age_category_id');
-            $table->string('age_category_label');
             $table->date('max_date_of_birth');
             $table->timestamps();
         });

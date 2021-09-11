@@ -16,7 +16,7 @@ class CreateArcheryEventRegistrationFeesPerCategory extends Migration
         Schema::create('archery_event_registration_fees_per_category', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('event_registration_fee_id');
-            $table->string('team_category');
+            $table->string('team_category_id');
             $table->double('price');
             $table->timestamps();
         });

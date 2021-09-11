@@ -18,7 +18,6 @@ class CreateArcheryEventScoringSystemDetails extends Migration
             $table->unsignedInteger('archery_event_scoring_system_category_id');
             $table->integer('total_session');
             $table->string('round_type_id');
-            $table->string('round_type_label');
             $table->integer('total_end');
             $table->integer('total_shoot');
             $table->string('target_face');

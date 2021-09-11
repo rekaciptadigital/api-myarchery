@@ -17,7 +17,7 @@ class CreateArcheryEventParticipantMembers extends Migration
             $table->increments('id');
             $table->unsignedInteger('archery_event_participant_id');
             $table->string('name');
-            $table->string('team_category');
+            $table->string('team_category_id');
             $table->string('email')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('club')->nullable();
