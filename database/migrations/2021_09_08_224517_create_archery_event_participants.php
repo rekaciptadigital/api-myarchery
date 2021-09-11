@@ -39,6 +39,7 @@ class CreateArcheryEventParticipants extends Migration
             $table->integer('distance');
             $table->date('qualification_date')->nullable();
             $table->integer('transaction_log_id')->index();
+            $table->string('unique_id')->unique()->index();
             $table->timestamps();
         });
     }
@@ -50,6 +51,7 @@ class CreateArcheryEventParticipants extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('transaction_logs');
         Schema::dropIfExists('archery_event_participants');
     }
 }

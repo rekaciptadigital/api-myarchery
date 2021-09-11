@@ -5,6 +5,7 @@ namespace App\BLoC\Web\ArcheryEvent;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategory;
 use App\Models\ArcheryEventCategoryCompetition;
+use App\Models\ArcheryEventCategoryCompetitionDistance;
 use App\Models\ArcheryEventCategoryCompetitionTeam;
 use App\Models\ArcheryEventQualification;
 use App\Models\ArcheryEventQualificationDetail;
@@ -105,17 +106,25 @@ class AddArcheryEvent extends Transactional
                 $archery_event_category_competition->event_category_id = $archery_event_category->id;
                 $archery_event_category_competition->competition_category_id = $competition_category['competition_category']['id'];
                 $archery_event_category_competition->competition_category_label = $competition_category['competition_category']['label'];
-                $archery_event_category_competition->distances = json_encode($competition_category['distances']);
                 $archery_event_category_competition->save();
 
                 $team_categories = $competition_category['team_categories'];
                 foreach ($team_categories as $team_category) {
-                    $archery_event_category_team = new ArcheryEventCategoryCompetitionTeam();
-                    $archery_event_category_team->event_category_competition_id = $archery_event_category_competition->id;
-                    $archery_event_category_team->team_category_id = $team_category['id'];
-                    $archery_event_category_team->team_category_label = $team_category['label'];
-                    $archery_event_category_team->quota = $team_category['quota'];
-                    $archery_event_category_team->save();
+                    $archery_event_category_competition_team = new ArcheryEventCategoryCompetitionTeam();
+                    $archery_event_category_competition_team->event_category_competition_id = $archery_event_category_competition->id;
+                    $archery_event_category_competition_team->team_category_id = $team_category['id'];
+                    $archery_event_category_competition_team->team_category_label = $team_category['label'];
+                    $archery_event_category_competition_team->quota = $team_category['quota'];
+                    $archery_event_category_competition_team->save();
+                }
+
+                $distances = $competition_category['distances'];
+                foreach ($distances as $distance) {
+                    $archery_event_category_competition_distance = new ArcheryEventCategoryCompetitionDistance();
+                    $archery_event_category_competition_distance->event_category_competition_id = $archery_event_category_competition->id;
+                    $archery_event_category_competition_distance->distance_id = $distance['id'];
+                    $archery_event_category_competition_distance->distance_label = $distance['label'];
+                    $archery_event_category_competition_distance->save();
                 }
             }
         }
