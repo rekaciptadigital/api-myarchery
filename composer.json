@@ -10,6 +10,7 @@
         "laravel/lumen-framework": "5.7.*",
         "league/flysystem": "^1.0",
         "midtrans/midtrans-php": "^2.5",
+        "ramsey/collection": "1.1.4",
         "ramsey/uuid": "^4.2",
         "sulfanoaf/api-util": "^1.0@alpha",
         "tymon/jwt-auth": "^1.0",
