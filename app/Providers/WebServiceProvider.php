@@ -34,6 +34,17 @@ use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
+use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategory;
+use App\BLoC\Web\ArcheryEventParticipant\EditArcheryEventParticipantScore;
+use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipant;
+use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantScore;
+use App\BLoC\Web\ArcheryEventScoringSystem\AddArcheryEventScoringSystem;
+use App\BLoC\Web\ArcheryEventScoringSystem\EditArcheryEventScoringSystemDetail;
+use App\BLoC\Web\ArcheryEventScoringSystem\GetArcheryEventScoringSytem;
+use App\BLoC\Web\EventOrder\AddEventOrder;
+use App\BLoC\Web\EventOrder\DetailEventOrder;
+use App\BLoC\Web\EventOrder\GetEventOrder;
+use App\BLoC\Web\Transaction\CallbackMidtrans;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -74,6 +85,17 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
+        $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
+        $this->registerService("editArcheryEventParticipantScore", EditArcheryEventParticipantScore::class);
+        $this->registerService("getArcheryEventParticipant", GetArcheryEventParticipant::class);
+        $this->registerService("getArcheryEventParticipantScore", GetArcheryEventParticipantScore::class);
+        $this->registerService("addArcheryEventScoringSystem", AddArcheryEventScoringSystem::class);
+        $this->registerService("editArcheryEventScoringSystemDetail", EditArcheryEventScoringSystemDetail::class);
+        $this->registerService("getArcheryEventScoringSytem", GetArcheryEventScoringSytem::class);
+        $this->registerService("addEventOrder", AddEventOrder::class);
+        $this->registerService("detailEventOrder", DetailEventOrder::class);
+        $this->registerService("getEventOrder", GetEventOrder::class);
+        $this->registerService("callbackMidtrans", CallbackMidtrans::class);
     }
 
     private function registerService($serviceName, $className)

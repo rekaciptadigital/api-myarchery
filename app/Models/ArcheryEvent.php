@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url'];
+    protected $appends = ['event_url', 'flat_categories'];
 
     public function archeryEventCategories()
     {
@@ -63,5 +64,28 @@ class ArcheryEvent extends Model
     public function getEventUrlAttribute()
     {
         return env('WEB_DOMAIN', 'https://my-archery.id') . '/' . Str::slug($this->admin->name) . '/' . $this->event_slug;
+    }
+
+    public function getFlatCategoriesAttribute()
+    {
+        $query = "
+            SELECT A.id as archery_event_id,
+                B.age_category_id, B.age_category_label,
+                C.competition_category_id, C.competition_category_label,
+                D.team_category_id, D.team_category_label,
+                E.distance_id, E.distance_label,
+                CONCAT(D.team_category_label, ' - ', B.age_category_label, ' - ', C.competition_category_label, ' - ', E.distance_label) as archery_event_category_label
+            FROM archery_events A
+            JOIN archery_event_categories B ON A.id = B.event_id
+            JOIN archery_event_category_competitions C ON B.id = C.event_category_id
+            JOIN archery_event_category_competition_teams D ON C.id = D.event_category_competition_id
+            JOIN archery_event_category_competition_distances E ON C.id = E.event_category_competition_id
+            WHERE A.id = :event_id
+            ORDER BY D.team_category_label, B.age_category_label, C.competition_category_label, E.distance_label
+        ";
+
+        $results = DB::select($query, ['event_id' => $this->id]);
+
+        return $results;
     }
 }
