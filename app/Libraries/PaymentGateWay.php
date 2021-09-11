@@ -106,7 +106,7 @@ class PaymentGateWay{
             $transaction_log->token = $snap_token;
             $transaction_log->save();
         }
-        return (object)array("order_id"=>$order_id,"total"=> $transaction_details["gross_amount"],"status"=>TransactionLog::getStatus(0),"transaction_log_id"=>$transaction_log->id,"snap_token"=>$snap_token,"client_key"=>env("MIDTRANS_CLIENT_KEY"),"client_lib_link"=>env("MIDTRANS_CLIENT_LIB_LINK"));
+        return (object)array("order_id"=>$transaction_details["order_id"],"total"=> $transaction_details["gross_amount"],"status"=>TransactionLog::getStatus(0),"transaction_log_id"=>$transaction_log->id,"snap_token"=>$snap_token,"client_key"=>env("MIDTRANS_CLIENT_KEY"),"client_lib_link"=>env("MIDTRANS_CLIENT_LIB_LINK"));
     }
     
     public static function TransactionLogPaymentInfo($transaction_log_id)
