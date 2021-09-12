@@ -14,6 +14,6 @@ class TransactionLog extends Model
     ];
 
     public static function getStatus($status){
-        return isset(self::$status[$status]) ? self::$status[$status] : "none"; 
+        return isset(self::$status[$status]) || self::$status[$status] == 0 ? self::$status[$status] : "none"; 
     }
 }
