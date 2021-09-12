@@ -15,18 +15,10 @@ class CreateArcheryEventCategories extends Migration
     {
         Schema::create('archery_event_categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('archery_age_category_id')->index();
+            $table->unsignedInteger('event_id');
+            $table->string('age_category_id');
             $table->date('max_date_of_birth');
-            $table->unsignedInteger('archery_category_id')->index();
-            $table->float('distance');
-            $table->integer('quota');
-            $table->boolean('allow_individual');
-            $table->decimal('individual_registration_price')->nullable();
-            $table->boolean('allow_group');
-            $table->decimal('group_registration_price')->nullable();
             $table->timestamps();
-            $table->foreign('archery_age_category_id')->references('id')->on('archery_age_categories')->onDelete('restrict');
-            $table->foreign('archery_category_id')->references('id')->on('archery_categories')->onDelete('restrict');
         });
     }
 

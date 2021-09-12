@@ -19,6 +19,12 @@ $router->post('/midtrans/notification/callback', ['uses' => 'BLoCController@exec
 
 
 $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
+    $router->get('display', [
+        'as' => 'api_display', 'uses' => 'Controller@display'
+    ]);
+    $router->get('download', [
+        'as' => 'api_download', 'uses' => 'Controller@download'
+    ]);
     $router->group(['prefix' => 'v1'], function () use ($router) {
     });
 });

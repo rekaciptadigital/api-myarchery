@@ -15,7 +15,22 @@ class FindArcheryEvent extends Retrieval
     protected function process($parameters)
     {
         $archery_event = ArcheryEvent::find($parameters->get('id'));
-        $archery_event->archeryEventCategories;
+        $archery_event_categories = $archery_event->archeryEventCategories;
+        foreach ($archery_event_categories as $archery_event_category) {
+            $archery_event_category_competitions = $archery_event_category->archeryEventCategoryCompetitions;
+            foreach ($archery_event_category_competitions as $archery_event_category_competition) {
+                $archery_event_category_competition->archeryEventCategoryCompetitionTeams;
+            }
+        }
+        $archery_event_qualifications = $archery_event->archeryEventQualifications;
+        foreach ($archery_event_qualifications as $archery_event_qualification) {
+            $archery_event_qualification->archeryEventQualificationDetails;
+        }
+        $archery_event_registration_fees = $archery_event->archeryEventRegistrationFees;
+        foreach ($archery_event_registration_fees as $archery_event_registration_fee) {
+            $archery_event_registration_fee->archeryEventRegistrationFeePerCategory;
+        }
+        $archery_event_targets = $archery_event->archeryEventTargets;
 
         return $archery_event;
     }
@@ -23,7 +38,7 @@ class FindArcheryEvent extends Retrieval
     protected function validation($archery_event)
     {
         return [
-            'id' => 'required|exists:roles,id',
+            'id' => 'required|exists:archery_events,id',
         ];
     }
 }
