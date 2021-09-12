@@ -129,8 +129,8 @@ class AddArcheryEvent extends Transactional
             $archery_event_registration_fee->event_id = $archery_event->id;
             $archery_event_registration_fee->registration_type_id = $registration_fee['id'];
             $archery_event_registration_fee->price = $registration_fee['price'];
-            $archery_event_registration_fee->start_date = $registration_fee['start_date'];
-            $archery_event_registration_fee->end_date = $registration_fee['end_date'];
+            $archery_event_registration_fee->start_date = array_key_exists('start_date', $registration_fee) ? $registration_fee['start_date'] : null;
+            $archery_event_registration_fee->end_date = array_key_exists('end_date', $registration_fee) ? $registration_fee['end_date'] : null;
             $archery_event_registration_fee->save();
 
             $category_prices = $registration_fee['category_prices'];
