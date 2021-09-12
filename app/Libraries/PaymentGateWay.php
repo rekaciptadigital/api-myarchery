@@ -110,7 +110,7 @@ class PaymentGateWay
             $transaction_log->order_id = $transaction_details["order_id"];
             $transaction_log->transaction_log_activity = json_encode($activity);
             $transaction_log->amount = $transaction_details["gross_amount"];
-            $transaction_log->status = 0;
+            $transaction_log->status = 4;
             $transaction_log->token = $snap_token;
             $transaction_log->save();
         }
@@ -162,7 +162,7 @@ class PaymentGateWay
         if ($transaction == 'settlement') {
             $status = 1;
         } else if ($transaction == 'pending') {
-            $status = 0;
+            $status = 4;
         } else if ($transaction == 'expire') {
             $status = 2;
         }
