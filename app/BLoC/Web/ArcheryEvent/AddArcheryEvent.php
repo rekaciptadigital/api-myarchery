@@ -138,7 +138,7 @@ class AddArcheryEvent extends Transactional
                 $archery_event_registration_fee_per_category = new ArcheryEventRegistrationFeePerCategory();
                 $archery_event_registration_fee_per_category->event_registration_fee_id = $archery_event_registration_fee->id;
                 $archery_event_registration_fee_per_category->team_category_id = $category_price['id'];
-                $archery_event_registration_fee_per_category->price = $category_price['price'];
+                $archery_event_registration_fee_per_category->price = $archery_event->is_flat_registration_fee ? $registration_fee['price'] : $category_price['price'];
                 $archery_event_registration_fee_per_category->save();
             }
         }
