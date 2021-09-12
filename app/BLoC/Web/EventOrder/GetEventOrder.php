@@ -2,11 +2,10 @@
 
 namespace App\BLoC\Web\EventOrder;
 
-use App\Models\ArcheryEvent;
-use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
+use DAI\Utils\Abstracts\Retrieval;
 
-class GetEventOrder extends Transactional
+class GetEventOrder extends Retrieval
 {
     public function getDescription()
     {
@@ -16,8 +15,8 @@ class GetEventOrder extends Transactional
     protected function process($parameters)
     {
         $payment = PaymentGateWay::setTransactionDetail(80000)
-                                    ->setCustomerDetails("bahdrul","suryadarmasaqti19@gmail.com","082284559567")
-                                    ->CreateSnap();
+            ->setCustomerDetails("bahdrul", "suryadarmasaqti19@gmail.com", "082284559567")
+            ->createSnap();
         return $payment;
     }
 
