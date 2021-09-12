@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\BLoC\App\ArcheryEventParticipant\FindParticipantDetail;
-use App\BLoC\App\ArcheryEventParticipant\AddScore;
+use App\BLoC\App\ArcheryEventParticipant\AddParticipantScore;
 use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
 use App\BLoC\App\ArcheryEventParticipant\GetEnd;
 use App\BLoC\App\ArcheryEventParticipant\GetEndDetail;
@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getUserProfile", GetUserProfile::class);
         $this->registerService("userLogout", UserLogout::class);
         $this->registerService("findParticipantDetail", FindParticipantDetail::class);
-        $this->registerService("addScore", AddScore::class);
+        $this->registerService("addParticipantScore", AddParticipantScore::class);
         $this->registerService("editParticipantProfile", EditParticipantProfile::class);
         $this->registerService("getEnd", GetEnd::class);
         $this->registerService("getEndDetail", GetEndDetail::class);

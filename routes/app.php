@@ -19,7 +19,7 @@ $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], func
             $router->post('/edit-participant-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:gditParticipantProfile']);
             $router->get('/ends', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEnd']);
             $router->get('/end-details', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEndDetail']);
-            $router->post('/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addScore']);
+            $router->post('/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantScore']);
             $router->get('/score-summary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScoreSummary']);
         });
     });
