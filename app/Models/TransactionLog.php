@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionLog extends Model
 {
     protected $status = [
-        0 => "menunggu Pembayaran",
+        0 => "Menunggu Pembayaran",
         1 => "Selesai",
         2 => "Kadarluarsa",
-        3 => "gagal",
+        3 => "Gagal",
     ];
 
-    protected function getStatus($status){
-        return isset($this->status[$status]) ? $this->status[$status] : "none"; 
+    public static function getStatus($status){
+        return isset(self::$status[$status]) ? self::$status[$status] : "none"; 
     }
 }
