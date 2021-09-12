@@ -148,6 +148,21 @@ class AddArcheryEvent extends Transactional
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            "event_type" => "required",
+            "event_name" => "required",
+            "registration_start_datetime" => "required",
+            "registration_end_datetime" => "required",
+            "event_start_datetime" => "required",
+            "event_end_datetime" => "required",
+            "location" => "required",
+            "location_type" => "required",
+            "is_flat_registration_fee" => "required",
+            "registration_fees" => "required",
+            "targets" => "required",
+            "team_categories" => "required",
+            "event_categories" => "required",
+            "qualification_days" => "required_if:event_type,marathon"
+        ];
     }
 }
