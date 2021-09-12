@@ -132,6 +132,7 @@ class PaymentGateWay
         return (object)[
             "order_id" => $transaction_log->order_id,
             "total" => $transaction_log->amount,
+            "status" => $transaction_log->status,
             "status" => TransactionLog::getStatus($transaction_log->status),
             "transaction_log_id" => $transaction_log->id,
             "snap_token" => $transaction_log->token,
