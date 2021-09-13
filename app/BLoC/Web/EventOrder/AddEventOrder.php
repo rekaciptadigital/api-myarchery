@@ -21,7 +21,7 @@ class AddEventOrder extends Transactional
 
     protected function process($parameters)
     {
-        $user = Auth::user();
+        $user = Auth::guard('app-api')->user();
         $event = ArcheryEvent::find($parameters->event_id);
         $total_price = 0;
 
@@ -42,7 +42,7 @@ class AddEventOrder extends Transactional
             "event_id" => $parameters->event_id,
             "team_category_id" => $event_category['team_category_id']
         ]);
-        
+
         $archery_event_price_normal = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'normal');
         $archery_event_price_early_bird = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'early_bird');
 
@@ -92,17 +92,20 @@ class AddEventOrder extends Transactional
         $member = array();
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         foreach ($parameters->participant_members as $key => $value) {
-            $birth_date = explode("-", $value["birthdate"]);
-            //get age from date or birthdate
-            $age = (date("md", date("U", mktime(0, 0, 0, $birth_date[2], $birth_date[1], $birth_date[0]))) > date("md")
-                ? ((date("Y") - $birth_date[0]) - 1)
-                : (date("Y") - $birth_date[0]));
+            $age = null;
+            if (!is_null($value["birthdate"]) && $value["birthdate"] != '') {
+                $birth_date = explode("-", $value["birthdate"]);
+                //get age from date or birthdate
+                $age = (date("md", date("U", mktime(0, 0, 0, $birth_date[2], $birth_date[1], $birth_date[0]))) > date("md")
+                    ? ((date("Y") - $birth_date[0]) - 1)
+                    : (date("Y") - $birth_date[0]));
+            }
 
             $member[] = [
                 "archery_event_participant_id" => $participant->id,
                 "name" => $value["name"],
-                "gender" => $value["gender"],
-                "birthdate" => $value["birthdate"],
+                "gender" => $value["gender"] != '' ? $value["gender"] : null,
+                "birthdate" => $value["birthdate"] == '' ? null : $value["birthdate"],
                 "age" => $age,
                 "team_category_id" => $event_category['team_category_id']
             ];
@@ -126,7 +129,7 @@ class AddEventOrder extends Transactional
         return [
             "type" => "in:team,individual",
             "category_event" => "required",
-            "event_id" => "exists:archery_events,id"
+            "event_id" => "required|exists:archery_events,id"
         ];
     }
 }
