@@ -36,8 +36,8 @@ class AddArcheryEvent extends Transactional
 
         $archery_event = new ArcheryEvent();
         $archery_event->event_type = $parameters->get('event_type');
-        $archery_event->poster = !is_null($poster) && array_key_exists('base64', $poster) ? $this->saveBase64($poster['base64'], 'poster', $event_slug) : null;
-        $archery_event->handbook = !is_null($handbook) && array_key_exists('base64', $handbook) ? $this->saveBase64($handbook['base64'], 'handbook', $event_slug) : null;
+        $archery_event->poster = !is_null($poster) && $poster != '' && array_key_exists('base64', $poster) ? $this->saveBase64($poster['base64'], 'poster', $event_slug) : null;
+        $archery_event->handbook = !is_null($handbook) && $handbook != '' && array_key_exists('base64', $handbook) ? $this->saveBase64($handbook['base64'], 'handbook', $event_slug) : null;
         $archery_event->event_name = $parameters->get('event_name');
         $archery_event->event_slug = $event_slug;
         $archery_event->registration_start_datetime = $parameters->get('registration_start_datetime');

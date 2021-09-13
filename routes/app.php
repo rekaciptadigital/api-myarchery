@@ -13,6 +13,13 @@ $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], func
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUserProfile']);
         });
+        $router->group(['prefix' => 'archery'], function () use ($router) {
+            $router->group(['prefix' => 'event-order', 'middleware' => 'auth.user'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrder']);
+                $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
+            });
+        });
 
         $router->group(['prefix' => 'scorer'], function () use ($router) {
             $router->get('/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantDetail']);
