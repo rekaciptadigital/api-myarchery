@@ -63,7 +63,7 @@ class ArcheryEvent extends Model
 
     public function getEventUrlAttribute()
     {
-        return env('WEB_DOMAIN', 'https://my-archery.id') . '/' . Str::slug($this->admin->name) . '/' . $this->event_slug;
+        return env('WEB_DOMAIN', 'https://my-archery.id') . '/event/' . Str::slug($this->admin->name) . '/' . $this->event_slug;
     }
 
     public function getFlatCategoriesAttribute()
