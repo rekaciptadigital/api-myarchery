@@ -18,7 +18,7 @@ class GetEventOrder extends Retrieval
 
     protected function process($parameters)
     {
-        $user = Auth::user();
+        $user = Auth::guard('app-api')->user();
         $output = array();
         $participants = ArcheryEventParticipant::where("user_id",$user["id"])->get();
         foreach ($participants as $key => $participant) {
