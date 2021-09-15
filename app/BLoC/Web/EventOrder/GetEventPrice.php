@@ -54,14 +54,20 @@ class GetEventPrice extends Retrieval
 
         if ($event->is_flat_registration_fee) {
             $normal_price_result = collect($archery_event_price_normal_results)->first();
-            $total_price = $normal_price_result->price;
+            if (!is_null($normal_price_result)) {
+                $total_price = $normal_price_result->price;
+            }
 
             if (count($archery_event_price_early_bird_results) > 0) {
                 $early_bird_price_result = collect($archery_event_price_early_bird_results)->first();
-                $early_bird_start_date = $early_bird_price_result->early_bird_start_date;
-                $early_bird_end_date = $early_bird_price_result->early_bird_end_date;
-                if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
-                    $total_price = $early_bird_price_result->price;
+                if (!is_null($early_bird_price_result)) {
+                    $early_bird_start_date = $early_bird_price_result->early_bird_start_date;
+                    $early_bird_end_date = $early_bird_price_result->early_bird_end_date;
+                    if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
+                        if (!is_null($early_bird_price_result)) {
+                            $total_price = $early_bird_price_result->price;
+                        }
+                    }
                 }
             }
         } else {
@@ -69,16 +75,22 @@ class GetEventPrice extends Retrieval
 
             $normal_price_result = collect($archery_event_price_normal_results)->first();
             $normal_price_for_category = ArcheryEventRegistrationFeePerCategory::where('event_registration_fee_id', $normal_price_result->id)->where('team_category_id', $team_category_id)->first();
-            $total_price = $normal_price_for_category->price;
+            if (!is_null($normal_price_for_category)) {
+                $total_price = $normal_price_for_category->price;
+            }
 
             if (count($archery_event_price_early_bird_results) > 0) {
                 $early_bird_price_result = collect($archery_event_price_early_bird_results)->first();
-                $early_bird_price_for_category = ArcheryEventRegistrationFeePerCategory::where('event_registration_fee_id', $early_bird_price_result->id)->where('team_category_id', $team_category_id)->first();
+                if (!is_null($early_bird_price_result)) {
+                    $early_bird_price_for_category = ArcheryEventRegistrationFeePerCategory::where('event_registration_fee_id', $early_bird_price_result->id)->where('team_category_id', $team_category_id)->first();
 
-                $early_bird_start_date = $early_bird_price_result->early_bird_start_date;
-                $early_bird_end_date = $early_bird_price_result->early_bird_end_date;
-                if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
-                    $total_price = $early_bird_price_for_category->price;
+                    $early_bird_start_date = $early_bird_price_result->early_bird_start_date;
+                    $early_bird_end_date = $early_bird_price_result->early_bird_end_date;
+                    if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
+                        if (!is_null($early_bird_price_for_category)) {
+                            $total_price = $early_bird_price_for_category->price;
+                        }
+                    }
                 }
             }
         }
