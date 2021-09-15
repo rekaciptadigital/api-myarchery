@@ -49,8 +49,8 @@ class AddArcheryEvent extends Transactional
         $archery_event->description = $parameters->get('description');
         $archery_event->is_flat_registration_fee = $parameters->get('is_flat_registration_fee');
         $archery_event->published_datetime = $parameters->get('published_datetime');
-        $archery_event->quatification_start_datetime = $parameters->get('quatification_start_datetime');
-        $archery_event->quatification_end_datetime = $parameters->get('quatification_end_datetime');
+        $archery_event->qualification_start_datetime = $parameters->get('qualification_start_datetime');
+        $archery_event->qualification_end_datetime = $parameters->get('qualification_end_datetime');
         $archery_event->qualification_weekdays_only = $parameters->get('qualification_weekdays_only');
         $archery_event->qualification_session_length = $parameters->get('qualification_session_length') ? json_encode($parameters->get('qualification_session_length')) : null;
         $archery_event->admin_id = $admin['id'];
