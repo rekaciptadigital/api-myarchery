@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Helpers\BLoC;
 
 class FindArcheryEventBySlug extends Retrieval
 {
@@ -30,8 +31,20 @@ class FindArcheryEventBySlug extends Retrieval
         foreach ($archery_event_registration_fees as $archery_event_registration_fee) {
             $archery_event_registration_fee->archeryEventRegistrationFeePerCategory;
         }
-        $archery_event_targets = $archery_event->archeryEventTargets;
+        $archery_event->archeryEventTargets;
 
+        $flat_categories = $archery_event->flat_categories;
+
+        $archery_event = collect($archery_event)->all();
+        $new_flat_categories = [];
+        foreach ($flat_categories as $flat_category) {
+            $flat_category->price = BLoC::call('getEventPrice', [
+                'event_id' => $archery_event['id'],
+                'category_event' => $flat_category
+            ]);
+            $new_flat_categories[] = $flat_category;
+        }
+        $archery_event['flat_categories'] = $new_flat_categories;
         return $archery_event;
     }
 
