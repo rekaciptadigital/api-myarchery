@@ -35,15 +35,15 @@ class FindArcheryEventBySlug extends Retrieval
 
         $flat_categories = $archery_event->flat_categories;
 
-        $archery_event = collect($archery_event)->all();
         $new_flat_categories = [];
         foreach ($flat_categories as $flat_category) {
             $flat_category->price = BLoC::call('getEventPrice', [
                 'event_id' => $archery_event['id'],
-                'category_event' => $flat_category
+                'category_event' => collect($flat_category)->all()
             ]);
             $new_flat_categories[] = $flat_category;
         }
+        $archery_event = collect($archery_event)->all();
         $archery_event['flat_categories'] = $new_flat_categories;
         return $archery_event;
     }
