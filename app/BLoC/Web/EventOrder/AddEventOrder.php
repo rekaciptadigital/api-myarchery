@@ -7,6 +7,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
+use App\Models\ArcheryEventRegistrationFeePerCategory;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,49 +28,10 @@ class AddEventOrder extends Transactional
 
         $event_category = $parameters->get('category_event');
 
-        $archery_event_price_query = "
-            SELECT A.*, C.*, B.price as flat_price,
-                B.start_date as early_bird_start_date,
-                B.end_date as early_bird_end_date,
-                B.registration_type_id
-            FROM archery_events A
-            JOIN archery_event_registration_fees B ON A.id = B.event_id
-            JOIN archery_event_registration_fees_per_category C ON B.id = C.event_registration_fee_id
-            WHERE A.id = :event_id
-            AND C.team_category_id = :team_category_id
-        ";
-        $archery_event_price_results = DB::SELECT($archery_event_price_query, [
-            "event_id" => $parameters->event_id,
-            "team_category_id" => $event_category['team_category_id']
-        ]);
+        $total_price = $this->getPrice($event, $parameters);
 
-        $archery_event_price_normal = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'normal');
-        $archery_event_price_early_bird = collect($archery_event_price_results)->firstWhere('registration_type_id', '=', 'early_bird');
-
-        if (is_null($archery_event_price_normal) && is_null($archery_event_price_early_bird)) {
-            throw new BLoCException("Price Not Found");
-        }
-
-        $normal_price = $archery_event_price_normal->price;
-        $normal_flat_price = $archery_event_price_normal->flat_price;
-
-        $total_price = $normal_price;
-
-        if ($archery_event_price_normal->is_flat_registration_fee) {
-            $total_price = $normal_flat_price;
-        }
-
-        if (!is_null($archery_event_price_early_bird)) {
-            $date_now = date("Y-m-d");
-            $early_bird_start_date = $archery_event_price_early_bird->early_bird_start_date;
-            $early_bird_end_date = $archery_event_price_early_bird->early_bird_end_date;
-            if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
-                $total_price = $archery_event_price_early_bird->price;
-
-                if ($archery_event_price_normal->is_flat_registration_fee) {
-                    $total_price = $archery_event_price_early_bird->flat_price;
-                }
-            }
+        if ($total_price == 0) {
+            throw new BLoCException("Price not found");
         }
 
         $participant = new ArcheryEventParticipant;
@@ -122,6 +84,72 @@ class AddEventOrder extends Transactional
         $participant->save();
 
         return ["archery_event_participant_id" => $participant->id];
+    }
+
+    private function getPrice($event, $parameters)
+    {
+        $event_category = $parameters->get('category_event');
+
+        $archery_event_price__normal_query = "
+            SELECT A.*, B.price,
+                B.start_date as early_bird_start_date,
+                B.end_date as early_bird_end_date,
+                B.registration_type_id
+            FROM archery_events A
+            JOIN archery_event_registration_fees B ON A.id = B.event_id
+            WHERE A.id = :event_id
+            AND B.registration_type_id = 'normal'
+        ";
+        $archery_event_price_normal_results = DB::SELECT($archery_event_price__normal_query, [
+            "event_id" => $parameters->event_id
+        ]);
+
+        $archery_event_price__early_bird_query = "
+            SELECT A.*, B.price,
+                B.start_date as early_bird_start_date,
+                B.end_date as early_bird_end_date,
+                B.registration_type_id
+            FROM archery_events A
+            JOIN archery_event_registration_fees B ON A.id = B.event_id
+            WHERE A.id = :event_id
+            AND B.registration_type_id = 'early_bird'
+        ";
+
+        $archery_event_price_early_bird_results = DB::SELECT($archery_event_price__early_bird_query, [
+            "event_id" => $parameters->event_id
+        ]);
+
+        $total_price = 0;
+
+        if ($event->is_flat_registration_fee) {
+            if (count($archery_event_price_early_bird_results) > 0) {
+                $early_bird_price_result = collect($archery_event_price_early_bird_results)->first();
+                $total_price = $early_bird_price_result->price;
+            } else {
+                $normal_price_result = collect($archery_event_price_normal_results)->first();
+                $total_price = $normal_price_result->price;
+            }
+        } else {
+            $team_category_id = $event_category['team_category_id'];
+
+            $normal_price_result = collect($archery_event_price_normal_results)->first();
+            $normal_price_for_category = ArcheryEventRegistrationFeePerCategory::where('event_registration_fee_id', $normal_price_result->id)->where('team_category_id', $team_category_id)->first();
+            $total_price = $normal_price_for_category->price;
+
+            if (count($archery_event_price_early_bird_results) > 0) {
+                $early_bird_price_result = collect($archery_event_price_early_bird_results)->first();
+                $early_bird_price_for_category = ArcheryEventRegistrationFeePerCategory::where('event_registration_fee_id', $early_bird_price_result->id)->where('team_category_id', $team_category_id)->first();
+
+                $date_now = date("Y-m-d");
+                $early_bird_start_date = $early_bird_price_for_category->early_bird_start_date;
+                $early_bird_end_date = $early_bird_price_for_category->early_bird_end_date;
+                if ($early_bird_start_date <= $date_now && $date_now <= $early_bird_end_date) {
+                    $total_price = $early_bird_price_for_category->price;
+                }
+            }
+        }
+
+        return $total_price;
     }
 
     protected function validation($parameters)
