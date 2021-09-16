@@ -6,6 +6,8 @@ use App\Models\ArcheryEventEndScore;
 use App\Models\ArcheryEventEndShootScore;
 use App\Models\ArcheryEventScore;
 use DAI\Utils\Abstracts\Transactional;
+use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\DB;
 
 class AddParticipantScore extends Transactional
 {
@@ -22,6 +24,37 @@ class AddParticipantScore extends Transactional
         $scorer_name = $parameters->get('scorer_name');
         $end = $parameters->get('end');
 
+        $particant_event_query = "
+            SELECT A.id
+            FROM archery_event_participants A
+            JOIN archery_event_participant_members B ON A.id = B.archery_event_participant_id
+            WHERE A.event_id = :event_id
+            AND B.id = :archery_event_participant_member_id
+        ";
+        $participant_event_results = DB::select($particant_event_query, [
+            'event_id' => $event_id,
+            'archery_event_participant_member_id' => $archery_event_participant_member_id
+        ]);
+        if (count($participant_event_results) == 0) {
+            throw new BLoCException("Invalid member event");
+        }
+
+        $event_scoring_system_category_query = "
+            SELECT A.id
+            FROM archery_events A
+            JOIN archery_event_scoring_system_categories B ON A.id = B.event_id
+            WHERE A.id = :event_id
+            AND B.id = :archery_event_scoring_system_category_id
+        ";
+        $event_scoring_system_category_query_results = DB::select($event_scoring_system_category_query, [
+            'event_id' => $event_id,
+            'archery_event_scoring_system_category_id' => $archery_event_scoring_system_category_id
+        ]);
+        if (count($event_scoring_system_category_query_results) == 0) {
+            throw new BLoCException("Invalid event scoring system category");
+        }
+
+
         $archery_event_score = ArcheryEventScore::where('event_id', $event_id)
             ->where('archery_event_participant_member_id', $archery_event_participant_member_id)
             ->where('archery_event_scoring_system_category_id', $archery_event_scoring_system_category_id)
@@ -36,7 +69,7 @@ class AddParticipantScore extends Transactional
             $archery_event_score->save();
         }
 
-        $archery_event_end_score = ArcheryEventEndScore::where('archery_event_score_id')
+        $archery_event_end_score = ArcheryEventEndScore::where('archery_event_score_id', $archery_event_score->id)
             ->where('end', $end)
             ->first();
 
@@ -65,5 +98,14 @@ class AddParticipantScore extends Transactional
         $archery_event_end_score->save();
 
         return $archery_event_score;
+    }
+
+    protected function validation($parameters)
+    {
+        return [
+            'event_id' => 'required|exists:archery_events,id',
+            'archery_event_participant_member_id' => 'required|exists:archery_event_participant_members,id',
+            'archery_event_scoring_system_category_id' => 'required|exists:archery_event_scoring_system_categories,id',
+        ];
     }
 }
