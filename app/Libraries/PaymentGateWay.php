@@ -143,7 +143,7 @@ class PaymentGateWay
 
     public static function notificationCallbackPaymnet()
     {
-        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isProduction = env("MIDTRANS_IS_PROD");
         \Midtrans\Config::$serverKey = env("MIDTRANS_SERVER_KEY");
 
         $notif = new \Midtrans\Notification();
