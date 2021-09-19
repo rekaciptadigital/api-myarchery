@@ -61,14 +61,17 @@ class ArcheryQualificationSchedules extends Model
                 $tmp_schedule = $schedule[$day];
                 $tmp_schedule["day_id"] = $day;
                 $tmp_schedule["date"] = $date;
+                $tmp_schedule["date_label"] = date_format(date_create($date),"d M Y");
                 // $posts->map(function ($post) {
                 for ($i=0; $i < count($tmp_schedule["session"]); $i++) { 
                     if(isset($my_schedule[$date][$tmp_schedule["session"][$i]["id"]])){
                         foreach ($my_schedule[$date][$tmp_schedule["session"][$i]["id"]] as $msKey => $ms) {
                             $my_schedule_session[] = array("date"=>$date,
+                                                        "date_label"=>date_format(date_create($date),"d M Y"),
                                                         "my_schedule_id" => $ms["my_schedule_id"],
                                                         "session" => $tmp_schedule["session"][$i],
-                                                        "day" => $day
+                                                        "day_id" => $day,
+                                                        "day_label" => $schedule[$day]["day_label"],
                                                     );
                         }
                     }

@@ -31,7 +31,7 @@ class GetEventQualificationSchedule extends Retrieval
             "my_schedule" => $schedule["my_schedule"],
             "participant" => $participant
         );
-        return $schedule;
+        return $output;
     }
 
     protected function validation($parameters)
