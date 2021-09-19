@@ -8,7 +8,7 @@ class TransactionLog extends Model
 {
     protected $status = [
         4 => "Menunggu Pembayaran",
-        1 => "Selesai",
+        1 => "Telah Dibayar",
         2 => "Kadarluarsa",
         3 => "Gagal",
     ];
