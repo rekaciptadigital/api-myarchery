@@ -22,6 +22,8 @@ class DetailEventOrder extends Retrieval
         $transaction_info = PaymentGateWay::transactionLogPaymentInfo($participant->transaction_log_id);
         $participant_members = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->get();
         $participant["members"] = $participant_members;
+        $participant["category_label"] = $participant->team_category_id."-".$participant->age_category_id."-".$participant->competition_category_id."-".$participant->distance_id."m";
+        
         $output = [
             "archery_event" => $archery_event,
             "participant" => $participant,
