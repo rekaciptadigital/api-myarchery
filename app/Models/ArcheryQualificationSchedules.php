@@ -64,6 +64,7 @@ class ArcheryQualificationSchedules extends Model
                 $tmp_schedule["date_label"] = date_format(date_create($date),"d M Y");
                 // $posts->map(function ($post) {
                 for ($i=0; $i < count($tmp_schedule["session"]); $i++) { 
+                    $my_session = 0;
                     if(isset($my_schedule[$date][$tmp_schedule["session"][$i]["id"]])){
                         foreach ($my_schedule[$date][$tmp_schedule["session"][$i]["id"]] as $msKey => $ms) {
                             $my_schedule_session[] = array("date"=>$date,
@@ -73,19 +74,21 @@ class ArcheryQualificationSchedules extends Model
                                                         "day_id" => $day,
                                                         "day_label" => $schedule[$day]["day_label"],
                                                     );
+                            $my_session = 1;
                         }
                     }
                     $total_schedule_booking = ArcheryQualificationSchedules::where("qualification_detail_id",$tmp_schedule["session"][$i]["id"])
                                     ->where("date",$date)
                                     ->count();
                     $tmp_schedule["session"][$i]["total_booking"] = $total_schedule_booking;    
+                    $tmp_schedule["session"][$i]["my_session"] = $my_session;    
                 }
                 // $tmp_schedule["session"]["total_booking"] = $total_schedule_booking;
                 $schedule_on_periode[] = $tmp_schedule;
             }
         }
 
-        $output = array("list"=>$schedule_on_periode);
+        $output = array("list"=>$schedule_on_periode,"event"=>$event);
         if($participant_member_id){
             $output["my_schedule"] = $my_schedule_session;
         }

@@ -23,6 +23,11 @@ class SetEventQualificationSchedule extends Transactional
 
     protected function process($parameters)
     {
+        $user_session = ArcheryQualificationSchedules::where("date",$parameters->date)
+        ->where("qualification_detail_id",$parameters->session_id)
+        ->where("participant_member_id",$parameters->participant_member_id)
+        ->first();
+        if($user_session)throw new BLoCException("sesi sudah pernah dipilih, silahkan pilih sesi lain");
         $date1=date_create($parameters->date);
         $date2=date_create(date("Y-m-d H:i"));
         $day = \strtolower($date1->format("l"));
@@ -38,7 +43,7 @@ class SetEventQualificationSchedule extends Transactional
         $total_schedule_booking = ArcheryQualificationSchedules::where("qualification_detail_id",$parameters->session_id)
                                     ->where("date",$parameters->date)
                                     ->count();
-        if($total_schedule_booking >= $session->quota)throw new BLoCException("sesi sudah penuh");
+        if($total_schedule_booking >= $session->quota)throw new BLoCException("sesi sudah penuh, silahkan pilih sesi lain");
         $qualification = ArcheryEventQualification::find($session->event_qualification_id);
         if($day != $qualification->day_id)throw new BLoCException("sesi tidak sesuai");
 
