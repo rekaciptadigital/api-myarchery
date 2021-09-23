@@ -37,6 +37,11 @@ class FindArcheryEventBySlug extends Retrieval
 
         $new_flat_categories = [];
         foreach ($flat_categories as $flat_category) {
+            if($flat_category->for_age > 0){
+                $curYear = date('Y'); 
+                $flat_category->minBirthDay =  ($curYear - $flat_category->for_age)."-01-01";        
+                $flat_category->maxBirthDay =  ($curYear - $flat_category->for_age)."-12-31";   
+            }
             $flat_category->price = BLoC::call('getEventPrice', [
                 'event_id' => $archery_event['id'],
                 'category_event' => collect($flat_category)->all()

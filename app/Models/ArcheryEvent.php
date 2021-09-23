@@ -74,7 +74,7 @@ class ArcheryEvent extends Model
     {
         $query = "
             SELECT A.id as archery_event_id,
-                B.age_category_id, B1.label as age_category_label,
+                B.age_category_id, B.for_age, B1.label as age_category_label,
                 C.competition_category_id, C1.label as competition_category_label,
                 D.team_category_id, D1.label as team_category_label,
                 E.distance_id, E1.label as distance_label,
