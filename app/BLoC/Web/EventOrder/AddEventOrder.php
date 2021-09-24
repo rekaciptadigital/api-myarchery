@@ -50,7 +50,7 @@ class AddEventOrder extends Transactional
                                 where("event_id",$parameters->event_id)->count();
         
         if($participant_count >= $category_competition_team->quota){
-            $msg = "quota kategori ini sudah penuh, silahkan cek beberapa saat lagi";
+            $msg = "quota kategori ini sudah penuh";
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")->
                                 where("competition_category_id",$event_category['competition_category_id'])->
                                 where("competition_category_id",$event_category['competition_category_id'])->
@@ -58,7 +58,9 @@ class AddEventOrder extends Transactional
                                 where("transaction_logs.status", 4)->
                                 where("event_id",$parameters->event_id)->count();
             if($participant_count_pending > 0){
-                $msg = "untuk sementara  ".$msg;
+                $msg = "untuk sementara  ".$msg.", silahkan coba beberapa saat lagi";
+            }else{
+                $msg = $msg.", silahkan daftar di kategori lain";
             }
             throw new BLoCException($msg);
         }
