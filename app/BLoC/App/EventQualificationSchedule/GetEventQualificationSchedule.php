@@ -29,6 +29,7 @@ class GetEventQualificationSchedule extends Retrieval
         $output = array(
             "schedules" => $schedule["list"],
             "my_schedule" => $schedule["my_schedule"],
+            "event" => $schedule["event"],
             "participant" => $participant
         );
         return $output;

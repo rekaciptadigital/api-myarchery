@@ -11,6 +11,9 @@ use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\ArcheryEventCategory;
+use App\Models\ArcheryEventCategoryCompetitionTeam;
+use App\Models\ArcheryEventCategoryCompetition;
 
 class AddEventOrder extends Transactional
 {
@@ -32,6 +35,45 @@ class AddEventOrder extends Transactional
         if ($total_price == 0) {
             throw new BLoCException("Price not found");
         }
+        $category = ArcheryEventCategory::where("age_category_id",$event_category['age_category_id'])->where("event_id",$parameters->event_id)->first();
+        $category_competition = ArcheryEventCategoryCompetition::where("competition_category_id",$event_category['competition_category_id'])->where("event_category_id",$category->id)->first();
+        $category_competition_team = ArcheryEventCategoryCompetitionTeam::where("team_category_id",$event_category['team_category_id'])->where("event_category_competition_id",$category_competition->id)->first();
+
+        $participant_count = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")->
+                                where("competition_category_id",$event_category['competition_category_id'])->
+                                where("competition_category_id",$event_category['competition_category_id'])->
+                                where("team_category_id",$event_category['team_category_id'])->
+                                where(function ($query){
+                                        $query->where("transaction_logs.status", 1);
+                                        $query->orWhere("transaction_logs.status", 4);
+                                })->
+                                where("event_id",$parameters->event_id)->count();
+        
+        if($participant_count >= $category_competition_team->quota){
+            $msg = "quota kategori ini sudah penuh, silahkan cek beberapa saat lagi";
+            $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")->
+                                where("competition_category_id",$event_category['competition_category_id'])->
+                                where("competition_category_id",$event_category['competition_category_id'])->
+                                where("team_category_id",$event_category['team_category_id'])->
+                                where("transaction_logs.status", 4)->
+                                where("event_id",$parameters->event_id)->count();
+            if($participant_count_pending > 0){
+                $msg = "untuk sementara  ".$msg;
+            }
+            throw new BLoCException($msg);
+        }
+        
+        if($category->for_age != 0){
+            foreach ($parameters->participant_members as $key => $value) {
+                if (is_null($value["birthdate"]) && $value["birthdate"] = '') {
+                    throw new BLoCException("tgl lahir belum di set");
+                }
+                $cy = date("Y") - $category->for_age;
+                $y = explode("-", $value["birthdate"])[0];
+                if($y < $cy)
+                    throw new BLoCException("belum memenuhi syarat umur");
+            }
+        }
 
         $participant = new ArcheryEventParticipant;
         $participant->event_id = $event->id;
@@ -50,9 +92,11 @@ class AddEventOrder extends Transactional
         $participant->unique_id = Str::uuid();
         $participant->save();
 
+        
         $member = array();
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         foreach ($parameters->participant_members as $key => $value) {
+            
             $age = null;
             if (!is_null($value["birthdate"]) && $value["birthdate"] != '') {
                 $birth_date = explode("-", $value["birthdate"]);
