@@ -30,7 +30,8 @@ class GetEventQualificationSchedule extends Retrieval
             "schedules" => $schedule["list"],
             "my_schedule" => $schedule["my_schedule"],
             "event" => $schedule["event"],
-            "participant" => $participant
+            "participant" => $participant,
+            "disable_date" => $schedule["disable_date"]
         );
         return $output;
     }

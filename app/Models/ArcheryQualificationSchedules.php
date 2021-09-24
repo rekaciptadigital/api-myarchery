@@ -53,6 +53,7 @@ class ArcheryQualificationSchedules extends Model
         $interval = DateInterval::createFromDateString('1 day');
         $period = new DatePeriod($start_time, $interval, $end_time);
         $schedule_on_periode = [];
+        $disable_date = [];
         foreach ($period as $dt) {
             $day = \strtolower($dt->format("l"));
             $date = $dt->format("Y-m-d");
@@ -63,6 +64,7 @@ class ArcheryQualificationSchedules extends Model
                 $tmp_schedule["date"] = $date;
                 $tmp_schedule["date_label"] = date_format(date_create($date),"d M Y");
                 // $posts->map(function ($post) {
+                $full = 1;
                 for ($i=0; $i < count($tmp_schedule["session"]); $i++) { 
                     $my_session = 0;
                     if(isset($my_schedule[$date][$tmp_schedule["session"][$i]["id"]])){
@@ -80,8 +82,14 @@ class ArcheryQualificationSchedules extends Model
                     $total_schedule_booking = ArcheryQualificationSchedules::where("qualification_detail_id",$tmp_schedule["session"][$i]["id"])
                                     ->where("date",$date)
                                     ->count();
+                    if($total_schedule_booking < $tmp_schedule["session"][$i]){
+                        $full = 0;
+                    }
                     $tmp_schedule["session"][$i]["total_booking"] = $total_schedule_booking;    
                     $tmp_schedule["session"][$i]["my_session"] = $my_session;    
+                }
+                if($full == 1){
+                    $disable_date[] = $date;
                 }
                 // $tmp_schedule["session"]["total_booking"] = $total_schedule_booking;
                 $schedule_on_periode[] = $tmp_schedule;
@@ -89,6 +97,7 @@ class ArcheryQualificationSchedules extends Model
         }
 
         $output = array("list"=>$schedule_on_periode,"event"=>$event);
+        $output["disable_date"] = $disable_date;
         if($participant_member_id){
             $output["my_schedule"] = $my_schedule_session;
         }
