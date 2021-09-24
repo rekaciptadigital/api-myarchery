@@ -44,11 +44,6 @@ class ArcheryEvent extends Model
         return $value ? route('api_display', ['file_path' => $value]) : $value;
     }
 
-    public function getThbFileAttribute($value)
-    {
-        return $value ? route('api_display', ['file_path' => $value]) : $value;
-    }
-
     public function getHandbookAttribute($value)
     {
 
