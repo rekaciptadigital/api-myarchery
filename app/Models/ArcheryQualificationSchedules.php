@@ -51,7 +51,7 @@ class ArcheryQualificationSchedules extends Model
         }
 
         $interval = DateInterval::createFromDateString('1 day');
-        $period = new DatePeriod($start_time, $interval, $end_time);
+        $period = new DatePeriod($start_time, $interval, $end_time->modify('+1 day'));
         $schedule_on_periode = [];
         $disable_date = [];
         foreach ($period as $dt) {
@@ -65,7 +65,7 @@ class ArcheryQualificationSchedules extends Model
                 $tmp_schedule["date_label"] = date_format(date_create($date),"d M Y");
                 // $posts->map(function ($post) {
                 $full = 1;
-                for ($i=0; $i <= count($tmp_schedule["session"]); $i++) { 
+                for ($i=0; $i < count($tmp_schedule["session"]); $i++) { 
                     $my_session = 0;
                     if(isset($my_schedule[$date][$tmp_schedule["session"][$i]["id"]])){
                         foreach ($my_schedule[$date][$tmp_schedule["session"][$i]["id"]] as $msKey => $ms) {
