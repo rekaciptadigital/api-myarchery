@@ -70,7 +70,7 @@ class AddEventOrder extends Transactional
                 }
                 $cy = date("Y") - $category->for_age;
                 $y = explode("-", $value["birthdate"])[0];
-                if($cy != $y)
+                if($y < $cy)
                     throw new BLoCException("belum memenuhi syarat umur");
             }
         }
