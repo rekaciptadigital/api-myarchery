@@ -46,7 +46,7 @@ class AddEventOrder extends Transactional
                                 where("team_category_id",$event_category['team_category_id'])->
                                 where(function ($query) use ($time_now){
                                         $query->where("transaction_logs.status", 1);
-                                        $query->orWhere(function ($q){
+                                        $query->orWhere(function ($q) use ($time_now){
                                             $q->where("transaction_logs.status", 4);
                                             $q->where("transaction_logs.expired_time",">", $time_now);
                                         });
