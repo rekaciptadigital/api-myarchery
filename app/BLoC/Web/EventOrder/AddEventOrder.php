@@ -62,7 +62,8 @@ class AddEventOrder extends Transactional
                                 where("transaction_logs.status", 4)->
                                 where("transaction_logs.expired_time",">", $time_now)->
                                 where("event_id",$parameters->event_id)->count();
-            if($participant_count_pending > 0){
+            echo $participant_count_pending;
+                                if($participant_count_pending > 0){
                 $msg = "untuk sementara  ".$msg.", silahkan coba beberapa saat lagi";
             }else{
                 $msg = $msg.", silahkan daftar di kategori lain";
