@@ -20,7 +20,7 @@ class GetEventOrder extends Retrieval
     {
         $user = Auth::guard('app-api')->user();
         $output = array();
-        $participants = ArcheryEventParticipant::where("user_id",$user["id"])->get();
+        $participants = ArcheryEventParticipant::where("user_id",$user["id"])->orderBy("id","DESC")->get();
         foreach ($participants as $key => $participant) {
             $archery_event = ArcheryEvent::find($participant->event_id);
             $transaction_info = PaymentGateWay::transactionLogPaymentInfo($participant->transaction_log_id);
