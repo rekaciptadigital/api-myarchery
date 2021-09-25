@@ -39,13 +39,17 @@ class AddEventOrder extends Transactional
         $category_competition = ArcheryEventCategoryCompetition::where("competition_category_id",$event_category['competition_category_id'])->where("event_category_id",$category->id)->first();
         $category_competition_team = ArcheryEventCategoryCompetitionTeam::where("team_category_id",$event_category['team_category_id'])->where("event_category_competition_id",$category_competition->id)->first();
 
+        $time_now = time();
         $participant_count = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")->
                                 where("competition_category_id",$event_category['competition_category_id'])->
                                 where("competition_category_id",$event_category['competition_category_id'])->
                                 where("team_category_id",$event_category['team_category_id'])->
                                 where(function ($query){
                                         $query->where("transaction_logs.status", 1);
-                                        $query->orWhere("transaction_logs.status", 4);
+                                        $query->orWhere(function ($q){
+                                            $q->where("transaction_logs.status", 4);
+                                            $q->where("transaction_logs.expired_time",">", $time_now);
+                                        });
                                 })->
                                 where("event_id",$parameters->event_id)->count();
         
@@ -56,6 +60,7 @@ class AddEventOrder extends Transactional
                                 where("competition_category_id",$event_category['competition_category_id'])->
                                 where("team_category_id",$event_category['team_category_id'])->
                                 where("transaction_logs.status", 4)->
+                                where("transaction_logs.expired_time",">", $time_now)->
                                 where("event_id",$parameters->event_id)->count();
             if($participant_count_pending > 0){
                 $msg = "untuk sementara  ".$msg.", silahkan coba beberapa saat lagi";

@@ -96,6 +96,7 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
+        $expired_time = strtotime("+".env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE",30)." minutes", time());
         $params = array(
             "expiry" => array(
                 "unit" => "minutes",
@@ -115,6 +116,7 @@ class PaymentGateWay
             $transaction_log->transaction_log_activity = json_encode($activity);
             $transaction_log->amount = $transaction_details["gross_amount"];
             $transaction_log->status = 4;
+            $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
             $transaction_log->save();
         }
@@ -133,11 +135,14 @@ class PaymentGateWay
     {
         $transaction_log = TransactionLog::find($transaction_log_id);
         if (!$transaction_log) return false;
+        
+        $time_now = time();
+        $status = $transaction_log->status == 4 && $transaction_log->expired_time <= $time_now ? 2 : $transaction_log->status;
         return (object)[
             "order_id" => $transaction_log->order_id,
             "total" => $transaction_log->amount,
-            "status_id" => $transaction_log->status,
-            "status" => TransactionLog::getStatus($transaction_log->status),
+            "status_id" => $status,
+            "status" => TransactionLog::getStatus($status),
             "transaction_log_id" => $transaction_log->id,
             "snap_token" => $transaction_log->token,
             "client_key" => env("MIDTRANS_CLIENT_KEY"),
