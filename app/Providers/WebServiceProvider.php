@@ -36,7 +36,9 @@ use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
 use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategory;
 use App\BLoC\Web\ArcheryEventParticipant\EditArcheryEventParticipantScore;
+use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMemberProfile;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipant;
+use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMember;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantScore;
 use App\BLoC\Web\ArcheryEventScoringSystem\AddArcheryEventScoringSystem;
 use App\BLoC\Web\ArcheryEventScoringSystem\EditArcheryEventScoringSystemDetail;
@@ -46,6 +48,8 @@ use App\BLoC\Web\EventOrder\DetailEventOrder;
 use App\BLoC\Web\EventOrder\GetEventOrder;
 use App\BLoC\Web\EventOrder\GetEventPrice;
 use App\BLoC\Web\Transaction\CallbackMidtrans;
+use App\BLoC\Web\EventQualificationScheduleByEo\GetEventQualificationScheduleByEo;
+use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationScheduleByEo;
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
@@ -104,6 +108,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventQualificationSchedule", GetEventQualificationSchedule::class);
         $this->registerService("setEventQualificationSchedule", SetEventQualificationSchedule::class);
         $this->registerService("unsetEventQualificationSchedule", UnsetEventQualificationSchedule::class);
+        $this->registerService("getEventQualificationScheduleByEo", GetEventQualificationScheduleByEo::class);
+        $this->registerService("getEventMemberQualificationScheduleByEo", GetEventMemberQualificationScheduleByEo::class);
+        $this->registerService("getArcheryEventParticipantMemberProfile", GetArcheryEventParticipantMemberProfile::class);
+        $this->registerService("getArcheryEventParticipantMember", GetArcheryEventParticipantMember::class);
     }
 
     private function registerService($serviceName, $className)

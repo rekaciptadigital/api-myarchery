@@ -90,7 +90,7 @@ class AddEventOrder extends Transactional
         $participant->club = $parameters->club_name;
         $participant->email = $parameters->email;
         $participant->type = $parameters->type;
-        $participant->phone_number = $parameters->phone_number;
+        $participant->phone_number = $parameters->phone;
         $participant->team_name = $parameters->team_name;
         $participant->competition_category_id = $event_category['competition_category_id'];
         $participant->team_category_id = $event_category['team_category_id'];
@@ -127,7 +127,7 @@ class AddEventOrder extends Transactional
 
         $payment = PaymentGateWay::setTransactionDetail($total_price, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
-            ->setCustomerDetails($parameters->participant_members[0]["name"], $parameters->email, $parameters->phone_number)
+            ->setCustomerDetails($parameters->participant_members[0]["name"], $parameters->email, $parameters->phone)
             ->addItemDetail($event->id, $total_price, $event->event_name)
             ->createSnap();
 
@@ -142,6 +142,7 @@ class AddEventOrder extends Transactional
         return [
             "type" => "in:team,individual",
             "category_event" => "required",
+            "phone" => "required",
             "event_id" => "required|exists:archery_events,id"
         ];
     }
