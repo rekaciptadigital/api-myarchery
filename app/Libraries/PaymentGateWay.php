@@ -97,8 +97,10 @@ class PaymentGateWay
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
         $params = array(
-            "unit" => "minutes",
-            "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE",30),
+            "expiry" => array(
+                "unit" => "minutes",
+                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE",30)
+            ),
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
             'item_details' => self::$item_details,
