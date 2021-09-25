@@ -103,4 +103,21 @@ class ArcheryQualificationSchedules extends Model
         }
         return $output;
     }
+
+    protected function memberDetail($participant_member_id){
+        $my_schedule = [];
+        $my_schedule_booking = ArcheryQualificationSchedules::where("participant_member_id",$participant_member_id)->get();
+        if($my_schedule_booking && count($my_schedule_booking) > 0){
+            foreach ($my_schedule_booking as $key => $msb) {
+                $session = ArcheryEventQualificationDetail::find($msb->qualification_detail_id);
+                $qualification = ArcheryEventQualification::find($session->event_qualification_id);
+                $session->day = $qualification->day_label;
+                $date = date_create($msb->date);
+                $msb->session = $session;
+                $msb->date_label = \date_format($date,"d M Y");
+                $my_schedule[] = $msb;
+            }
+        }
+        return $my_schedule;
+    }
 }
