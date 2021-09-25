@@ -21,16 +21,26 @@ class GetArcheryEventParticipantMember extends Retrieval
         $age_category_id = $parameters->get('age_category_id');
         $status = $parameters->get('status');
 
-        $archery_event_participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.status")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.status","transaction_logs.expired_time")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
         ->where('archery_event_participants.event_id', $parameters->get('id'))
         ->where('archery_event_participants.team_category_id', $team_category_id)
         ->where('archery_event_participants.competition_category_id', $competition_category_id)
-        ->where('archery_event_participants.competition_category_id', $competition_category_id);
-        if (!is_null($status) && $status != 0) {
-            $archery_event_participant->where('transaction_logs.status', $status);
-        }
-
-        $participant = $archery_event_participant->orderBy('archery_event_participants.created_at', 'DESC')->get();
+        ->where('archery_event_participants.competition_category_id', $competition_category_id)
+        ->where(function ($query) use ($status){
+            if (!is_null($status) && $status != 0) {
+                $query->where('transaction_logs.status', $status);
+                if($status == 2){
+                    $query->orWhere(function ($query) use ($status){
+                       $query->where("transaction_logs.status",4);
+                       $query->where("transaction_logs.expired_time","<=",time());
+                    });
+                }
+                if($status == 4){
+                    $query->where("transaction_logs.expired_time",">=",time());
+                }
+            }
+        })
+        ->orderBy('archery_event_participants.created_at', 'DESC')->get();
         $participant_ids = [];
         $participants = [];
         foreach ($participant as $key => $value) {
@@ -49,6 +59,9 @@ class GetArcheryEventParticipantMember extends Retrieval
             }
             $p = $participants[$v->archery_event_participant_id];
             $p->member = $v;
+            if($p->expired_time <= time() && $p->status == 4){
+                $p->status = 2;
+            }
             $p->status_label = TransactionLog::getStatus($p->status); 
             $list [] = $p;
         }
