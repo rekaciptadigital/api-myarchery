@@ -36,7 +36,7 @@ class UnsetEventQualificationSchedule extends Transactional
         
         if(date_create($parameters->date." ".$session->start_time) < date_create(date("Y-m-d H:i")))throw new BLoCException("jadwal sudah lewat");
 
-        if($date2 < $date1){
+        if($date2 <= $date1){
             $diff=date_diff($date1,$date2);
             if($diff->format("%a") <= 2)throw new BLoCException("jadwal tidak bisa dibatalkan, pembatalan paling lambat sebelum 2 hari penjadwalan");
         }
