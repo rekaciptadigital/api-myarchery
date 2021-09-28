@@ -33,13 +33,13 @@ class UnsetEventQualificationSchedule extends Transactional
         if(!$user_session)throw new BLoCException("schedule tidak ditemukan");
         $date1=date_create($user_session->date);
         $session = ArcheryEventQualificationDetail::find($user_session->qualification_detail_id);
-        
-        if(date_create($parameters->date." ".$session->start_time) < date_create(date("Y-m-d H:i")))throw new BLoCException("jadwal sudah lewat");
 
         if($date2 <= $date1){
             $diff=date_diff($date1,$date2);
             if($diff->format("%a") <= 2)throw new BLoCException("jadwal tidak bisa dibatalkan, pembatalan paling lambat sebelum 2 hari penjadwalan");
         }
+        if(date_create($user_session->date." ".$session->start_time) < date_create(date("Y-m-d H:i")))throw new BLoCException("jadwal sudah lewat");
+
 
         $member = ArcheryEventParticipantMember::find($user_session->participant_member_id);
         if(!$member)throw new BLoCException("member tidak ditemukan");
