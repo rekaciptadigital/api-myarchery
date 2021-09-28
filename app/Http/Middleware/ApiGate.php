@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use DAI\Utils\Helpers\CaseConvert;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response as IlluminateResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ApiGate
 {
@@ -38,8 +40,16 @@ class ApiGate
         $request->merge($converted_request_data);
         $response = $next($request);
 
-        foreach ($headers as $key => $value) {
-            $response->header($key, $value);
+        if ($response instanceof IlluminateResponse) {
+            foreach ($headers as $key => $value) {
+                $response->header($key, $value);
+            }
+        }
+
+        if ($response instanceof SymfonyResponse) {
+            foreach ($headers as $key => $value) {
+                $response->headers->set($key, $value);
+            }
         }
 
         if ($response instanceof JsonResponse) {
