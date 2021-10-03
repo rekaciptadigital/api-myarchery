@@ -31,10 +31,6 @@ class FindArcheryEvent extends Retrieval
             $archery_event_registration_fee->archeryEventRegistrationFeePerCategory;
         }
         $archery_event_targets = $archery_event->archeryEventTargets;
-        $scoring_system_categories = $archery_event->archeryEventScoringSystemCategories;
-        foreach ($scoring_system_categories as $scoring_system_category) {
-            $scoring_system_category->archeryEventScoringSystemDetails;
-        }
 
         return $archery_event;
     }
