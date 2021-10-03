@@ -25,6 +25,8 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     $router->get('download', [
         'as' => 'api_download', 'uses' => 'Controller@download'
     ]);
+    
     $router->group(['prefix' => 'v1'], function () use ($router) {
+        $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
     });
 });

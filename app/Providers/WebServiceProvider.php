@@ -53,6 +53,8 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -112,6 +114,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventMemberQualificationScheduleByEo", GetEventMemberQualificationScheduleByEo::class);
         $this->registerService("getArcheryEventParticipantMemberProfile", GetArcheryEventParticipantMemberProfile::class);
         $this->registerService("getArcheryEventParticipantMember", GetArcheryEventParticipantMember::class);
+        $this->registerService("addParticipantMemberScore", AddParticipantMemberScore::class);
+        $this->registerService("getParticipantScore", GetParticipantScore::class);
     }
 
     private function registerService($serviceName, $className)
