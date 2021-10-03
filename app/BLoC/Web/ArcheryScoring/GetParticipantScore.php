@@ -22,10 +22,13 @@ class GetParticipantScore extends Retrieval
         $team_category_id = $parameters->get('team_category_id');
         $competition_category_id = $parameters->get('competition_category_id');
         $age_category_id = $parameters->get('age_category_id');
+        $gender = $parameters->get('gender');
 
         $archery_event_participant = ArcheryEventParticipantMember::select(
                                         "archery_event_participant_members.id",
-                                        "archery_event_participant_members.name"
+                                        "archery_event_participant_members.name",
+                                        "archery_event_participant_members.gender",
+                                        "archery_event_participants.club"
                                     )->
                                     join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
                                     join("transaction_logs","archery_event_participants.transaction_log_id","=","transaction_logs.id")->
@@ -33,6 +36,9 @@ class GetParticipantScore extends Retrieval
                                     where('archery_event_participants.event_id', $parameters->get('event_id'));
         if (!is_null($team_category_id)) {
             $archery_event_participant->where('archery_event_participants.team_category_id', $team_category_id);
+        }
+        if (!is_null($gender) && !empty($gender)) {
+            $archery_event_participant->where('archery_event_participant_members.gender', $gender);
         }
         if (!is_null($competition_category_id)) {
             $archery_event_participant->where('archery_event_participants.competition_category_id', $competition_category_id);
