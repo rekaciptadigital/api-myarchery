@@ -18,6 +18,7 @@ class ArcheryScoring extends Model
         "9" => 9,
         "10" => 10,
         "x" => 10,
+        "m" => 0,
     ];
 
     protected $score_type = array(
@@ -54,6 +55,7 @@ class ArcheryScoring extends Model
                 "9" => 0,
                 "10" => 0,
                 "x" => 0,
+                "m" => 0,
         ];
         $member_scors = $this->where("participant_member_id",$participant_member_id)
                                         ->whereIn("scoring_session",$filter_session)
