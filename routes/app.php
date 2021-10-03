@@ -25,12 +25,5 @@ $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], func
                 $router->post('/unset', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:unsetEventQualificationSchedule']);
             });
         });
-
-        $router->group(['prefix' => 'scorer'], function () use ($router) {
-            $router->get('/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantDetail']);
-            $router->post('/edit-participant-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:gditParticipantProfile']);
-            $router->post('/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantScore']);
-            $router->get('/participant-score-summary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreSummary']);
-        });
     });
 });

@@ -3,9 +3,7 @@
 namespace App\Providers;
 
 use App\BLoC\App\ArcheryEventParticipant\FindParticipantDetail;
-use App\BLoC\App\ArcheryEventParticipant\AddParticipantScore;
 use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
-use App\BLoC\App\ArcheryEventParticipant\GetParticipantScoreSummary;
 use Illuminate\Support\ServiceProvider;
 
 use App\BLoC\App\UserAuth\UserForgotPassword;

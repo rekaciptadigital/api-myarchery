@@ -69,6 +69,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/participant/member/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMemberProfile']);
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
             });
+
+            $router->group(['prefix' => 'scorer'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
+                $router->get('/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
+            });
         });
 
         $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.admin'], function () use ($router) {
