@@ -30,10 +30,6 @@ class ArcheryEvent extends Model
         return $this->hasMany(ArcheryEventTarget::class, 'event_id', 'id');
     }
 
-    public function archeryEventScoringSystemCategories() {
-        return $this->hasMany(ArcheryEventScoringSystemCategory::class, 'event_id', 'id');
-    }
-
     public function getQualificationSessionLengthAttribute($value)
     {
         return json_decode($value);
