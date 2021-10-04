@@ -7,6 +7,7 @@ use App\Models\ArcheryQualificationSchedules;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AddParticipantMemberScore extends Transactional
 {
