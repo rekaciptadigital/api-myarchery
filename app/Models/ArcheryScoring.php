@@ -31,12 +31,14 @@ class ArcheryScoring extends Model
         $total = 0;
         foreach ($scoring as $key => $value) {
             $arrows = [];
-            foreach ($value as $k => $arrow) {
-                $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0; 
-                $total = $total + $a;
-                $arrows[] = [ "id" => $arrow, "value" => $a];
+            if(!empty($value)){
+                foreach ($value as $k => $arrow) {
+                    $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0; 
+                    $total = $total + $a;
+                    $arrows[] = [ "id" => $arrow, "value" => $a];
+                }
+                $scors[$key] = $arrows;    
             }
-            $scors[$key] = $arrows;
         }
        
         return (object)["total" => $total, "scors" => $scors];
@@ -90,6 +92,7 @@ class ArcheryScoring extends Model
                 $sessions[$score->scoring_session]["total_tmp"] = $this->getTotalTmp($sessions[$score->scoring_session]["total_per_point"], $total_per_session); 
                 $sessions[$score->scoring_session]["score"] = $score_rambahan; 
                 $sessions[$score->scoring_session]["total"] = $total_per_session; 
+                $sessions[$score->scoring_session]["scoring_id"] = $score->id; 
         }
        
         $output = [
