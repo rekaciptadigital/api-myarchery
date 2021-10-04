@@ -45,7 +45,7 @@ class AddParticipantMemberScore extends Transactional
         $schedule_member->is_scoring = 1;
         $schedule_member->save();
 
-        $archery_event_score = ArcheryScoring::generateScoreBySession($schedule_member->participant_member_id,$parameters->type,[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33]);
+        $archery_event_score = ArcheryScoring::generateScoreBySession($schedule_member->participant_member_id,$parameters->type,[1,2,3]);
         $tmpScoring = $archery_event_score["sessions"];
         usort($tmpScoring, function($a, $b) {return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;});
         foreach ($tmpScoring as $k => $aes) {
