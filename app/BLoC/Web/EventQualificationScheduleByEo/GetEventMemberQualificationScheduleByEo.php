@@ -31,14 +31,15 @@ class GetEventMemberQualificationScheduleByEo extends Retrieval
             $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
             $participant->member = $member;
             $participant->schedule_id = $value->id;
+            $participant->is_scoring = $value->is_scoring;
             $category_label = $participant->team_category_id."-".$participant->age_category_id."-".$participant->competition_category_id."-".$participant->distance_id."m";
-            foreach ($event->flatCategories as $key => $value) {
-                if($value->age_category_id == $participant->age_category_id
-                && $value->competition_category_id == $participant->competition_category_id
-                && $value->team_category_id == $participant->team_category_id
-                && $value->distance_id == $participant->distance_id
+            foreach ($event->flatCategories as $key => $v) {
+                if($v->age_category_id == $participant->age_category_id
+                && $v->competition_category_id == $participant->competition_category_id
+                && $v->team_category_id == $participant->team_category_id
+                && $v->distance_id == $participant->distance_id
                 ){
-                    $category_label = $value->archery_event_category_label;
+                    $category_label = $v->archery_event_category_label;
                 }
             }
             
