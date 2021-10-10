@@ -104,7 +104,7 @@ class ArcheryQualificationSchedules extends Model
         return $output;
     }
 
-    protected function memberDetail($participant_member_id){
+    protected function memberScheduleDetail($participant_member_id){
         $my_schedule = [];
         $my_schedule_booking = ArcheryQualificationSchedules::where("participant_member_id",$participant_member_id)->get();
         if($my_schedule_booking && count($my_schedule_booking) > 0){

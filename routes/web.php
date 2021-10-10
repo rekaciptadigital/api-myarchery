@@ -59,10 +59,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
                 $router->get('/{id}/categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategory']);
 
-                $router->get('/{id}/scoring-system', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventScoringSytem']);
-                $router->post('/{id}/scoring-system', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventScoringSystem']);
-                $router->put('/{id}/scoring-system/details/{scoring_system_detail_id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventScoringSystemDetail']);
-
                 $router->get('/{id}/participants', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipant']);
                 $router->get('/participant/members', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMember']);
                 $router->get('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantScore']);
@@ -72,7 +68,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
-                $router->get('/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
+                $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
             });
         });
 

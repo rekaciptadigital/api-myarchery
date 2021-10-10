@@ -38,9 +38,9 @@ class RolesSeeder extends Seeder
                     'description' => 'Event Organizer',
                 ],
                 4 => [
-                    'name' => 'judges',
-                    'display_name' => 'Judges',
-                    'description' => 'Judges',
+                    'name' => 'scorer',
+                    'display_name' => 'Scorer',
+                    'description' => 'scorer',
                 ],
             ];
 
