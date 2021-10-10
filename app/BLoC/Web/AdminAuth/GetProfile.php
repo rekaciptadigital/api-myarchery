@@ -4,6 +4,7 @@ namespace App\BLoC\Web\AdminAuth;
 
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Admin;
 
 class GetProfile extends Retrieval
 {
@@ -14,7 +15,7 @@ class GetProfile extends Retrieval
 
     protected function process($parameters)
     {
-        return Auth::user();
+        return Admin::getProfile();
     }
 
     protected function validation($parameters)

@@ -26,7 +26,44 @@ class ArcheryScoring extends Model
         array("id" => 2, "value" => "eliminasi")
     );
 
+    protected function makeScoringFormat(object $scoring){
+        $scores = [];
+        if(empty((array)$scoring)){
+            $scores = [
+                "1" => ["m","m","m","m","m","m"],
+                "2" => ["m","m","m","m","m","m"],
+                "3" => ["m","m","m","m","m","m"],
+                "4" => ["m","m","m","m","m","m"],
+                "5" => ["m","m","m","m","m","m"],
+                "6" => ["m","m","m","m","m","m"],
+            ];
+            return $scores;
+        }
+        foreach ($scoring as $key => $value) {
+            $score = [];
+            foreach ($value as $k => $v) {
+                $score[] = (string)$v->id;
+            }
+            $scores[$key] = $score;
+        }
+        return $scores;
+    }
     protected function makeScoring(array $scoring){
+        $total_per_points = [
+            "1" => 0,
+            "2" => 0,
+            "3" => 0,
+            "4" => 0,
+            "5" => 0,
+            "6" => 0,
+            "7" => 0,
+            "8" => 0,
+            "9" => 0,
+            "10" => 0,
+            "x" => 0,
+            "m" => 0,
+        ];
+
         $scors = []; // data rambahan / keseluruhan arrow
         $total = 0;
         foreach ($scoring as $key => $value) {
@@ -35,13 +72,15 @@ class ArcheryScoring extends Model
                 foreach ($value as $k => $arrow) {
                     $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0; 
                     $total = $total + $a;
+                    $total_per_points[$arrow] = $total_per_points[$arrow] + 1;
                     $arrows[] = [ "id" => $arrow, "value" => $a];
                 }
                 $scors[$key] = $arrows;    
             }
         }
        
-        return (object)["total" => $total, "scors" => $scors];
+        $total_tmp = $this->getTotalTmp($total_per_points, $total);
+        return (object)["total_tmp" => $total_tmp,"total" => $total, "scors" => $scors];
     }
 
     protected function generateScoreBySession(int $participant_member_id, int $type, array $filter_session = [1,2]){

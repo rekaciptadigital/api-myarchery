@@ -40,9 +40,7 @@ use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMemberProfile
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMember;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantScore;
-use App\BLoC\Web\ArcheryEventScoringSystem\AddArcheryEventScoringSystem;
-use App\BLoC\Web\ArcheryEventScoringSystem\EditArcheryEventScoringSystemDetail;
-use App\BLoC\Web\ArcheryEventScoringSystem\GetArcheryEventScoringSytem;
+use App\BLoC\Web\ArcheryScoring\FindParticipantScoreBySchedule;
 use App\BLoC\Web\EventOrder\AddEventOrder;
 use App\BLoC\Web\EventOrder\DetailEventOrder;
 use App\BLoC\Web\EventOrder\GetEventOrder;
@@ -99,8 +97,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("editArcheryEventParticipantScore", EditArcheryEventParticipantScore::class);
         $this->registerService("getArcheryEventParticipant", GetArcheryEventParticipant::class);
         $this->registerService("getArcheryEventParticipantScore", GetArcheryEventParticipantScore::class);
-        $this->registerService("addArcheryEventScoringSystem", AddArcheryEventScoringSystem::class);
-        $this->registerService("editArcheryEventScoringSystemDetail", EditArcheryEventScoringSystemDetail::class);
+        $this->registerService("findParticipantScoreBySchedule", FindParticipantScoreBySchedule::class);
         $this->registerService("getArcheryEventScoringSytem", GetArcheryEventScoringSytem::class);
         $this->registerService("addEventOrder", AddEventOrder::class);
         $this->registerService("detailEventOrder", DetailEventOrder::class);

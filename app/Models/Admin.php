@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
+use App\Models\ArcheryEventOrganizer;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Auth;
 
 class Admin extends Model implements JWTSubject, AuthenticatableContract
 {
@@ -48,5 +51,15 @@ class Admin extends Model implements JWTSubject, AuthenticatableContract
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    protected function getProfile(){
+        $admin = Auth::user();
+        $admin_role = AdminRole::where("admin_id",$admin->id)->first();
+        $admin->role = (object)array(
+            "role" => Role::find($admin_role->role_id),
+            "event_organizers" => ArcheryEventOrganizer::find($admin->eo_id)
+        );
+        return $admin;
     }
 }

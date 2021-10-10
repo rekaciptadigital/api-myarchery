@@ -5,6 +5,7 @@ namespace App\BLoC\Web\AdminAuth;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Admin;
 
 class Login extends Transactional
 {
@@ -19,10 +20,13 @@ class Login extends Transactional
         if (!$token) {
             throw new BLoCException(__('response.invalid_credential'));
         }
+        $admin = Auth::user();
+
         return [
+            'profile' => $admin,
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => Auth::factory()->getTTL()
+            'expires_in' => Admin::getProfile()
         ];
     }
 

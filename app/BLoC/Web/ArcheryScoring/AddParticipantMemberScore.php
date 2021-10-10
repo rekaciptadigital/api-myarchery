@@ -24,16 +24,48 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("scoring sudah pernah ditambahkan pada jadwal ini");
 
         $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
-        $check_scoring_count = ArcheryScoring::where("participant_member_id",$schedule_member->participant_member_id)->count();
+        $user_scores = ArcheryScoring::where("participant_member_id",$schedule_member->participant_member_id)->get();
+        $check_scoring_count = 0;
+        $event_score_id = 0;
         $scoring_session = 1;
+        foreach ($user_scores as $key => $value) {
+            $log = \json_decode($value->scoring_log); 
+            if($log->archery_qualification_schedules->id == $parameters->schedule_id){
+                $event_score_id = $value->id;
+                $scoring_session = $value->scoring_session;
+            }else{
+                $check_scoring_count = $check_scoring_count + 1;
+            }
+        }
+
         if($check_scoring_count > 0){
             if($check_scoring_count >= 3)
                 throw new BLoCException("peserta sudah melakukan 3x scoring");
 
-            $scoring_session = $check_scoring_count + 1;
+            if($event_score_id == 0)
+                $scoring_session = $check_scoring_count + 1;
+
+            if($check_scoring_count == 2){
+                $archery_event_score = ArcheryScoring::generateScoreBySession($schedule_member->participant_member_id,$parameters->type,[1,2]);
+                $tmpScoring = $archery_event_score["sessions"];
+                usort($tmpScoring, function($a, $b) {return $b["total_tmp"] < $a["total_tmp"] ? 1 : -1;});
+                if(isset($tmpScoring[0]["scoring_id"])){
+                    if($tmpScoring[0]["scoring_id"] < $score->total_tmp ){
+                        $user_score = ArcheryScoring::find($tmpScoring[0]["scoring_id"]);
+                        $tmp_session = $user_score->scoring_session;
+                        $user_score->scoring_session = $scoring_session;
+                        $user_score->save();
+                        $scoring_session = $tmp_session;
+                    }
+                }                
+            }
         }
-        
-        $scoring = new ArcheryScoring;
+        if($event_score_id){
+            $scoring = ArcheryScoring::find($event_score_id);
+        }else{
+            $scoring = new ArcheryScoring;
+        }
+
         $scoring->participant_member_id = $schedule_member->participant_member_id;
         $scoring->total = $score->total;
         $scoring->scoring_session = $scoring_session;
@@ -43,18 +75,12 @@ class AddParticipantMemberScore extends Transactional
                                             "target_no" => $parameters->target_no]);
         $scoring->scoring_detail = \json_encode($score->scors);
         $scoring->save();
-        $schedule_member->is_scoring = 1;
-        $schedule_member->save();
 
-        $archery_event_score = ArcheryScoring::generateScoreBySession($schedule_member->participant_member_id,$parameters->type,[1,2,3]);
-        $tmpScoring = $archery_event_score["sessions"];
-        usort($tmpScoring, function($a, $b) {return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;});
-        foreach ($tmpScoring as $k => $aes) {
-            if(isset($aes["scoring_id"]))
-            {$user_score = ArcheryScoring::find($aes["scoring_id"]);
-            $user_score->scoring_session = $k+1;
-            $user_score->save();}
+        if($parameters->save_permanent){
+            $schedule_member->is_scoring = 1;
+            $schedule_member->save();
         }
+
         return $scoring;
     }
 
