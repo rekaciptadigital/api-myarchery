@@ -35,6 +35,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         $output->participant = ArcheryEventParticipantMember::memberDetail($schedule_member->participant_member_id);
         $output->score = $s;
         $output->session = $session;
+        $output->is_updated = $schedule_member->is_scoring == 1 ? 0 : 1;
         return $output;
     }
 

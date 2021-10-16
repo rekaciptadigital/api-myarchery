@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ArcheryScoring extends Model
 {
     protected $score_value = [
+        "" => 0,
         "1" => 1,
         "2" => 2,
         "3" => 3,
@@ -30,12 +31,12 @@ class ArcheryScoring extends Model
         $scores = [];
         if(empty((array)$scoring)){
             $scores = [
-                "1" => ["m","m","m","m","m","m"],
-                "2" => ["m","m","m","m","m","m"],
-                "3" => ["m","m","m","m","m","m"],
-                "4" => ["m","m","m","m","m","m"],
-                "5" => ["m","m","m","m","m","m"],
-                "6" => ["m","m","m","m","m","m"],
+                "1" => ["","","","","",""],
+                "2" => ["","","","","",""],
+                "3" => ["","","","","",""],
+                "4" => ["","","","","",""],
+                "5" => ["","","","","",""],
+                "6" => ["","","","","",""],
             ];
             return $scores;
         }
@@ -50,6 +51,7 @@ class ArcheryScoring extends Model
     }
     protected function makeScoring(array $scoring){
         $total_per_points = [
+            "" => 0,
             "1" => 0,
             "2" => 0,
             "3" => 0,
@@ -85,6 +87,7 @@ class ArcheryScoring extends Model
 
     protected function generateScoreBySession(int $participant_member_id, int $type, array $filter_session = [1,2]){
         $total_per_points = [
+                "" => 0,
                 "1" => 0,
                 "2" => 0,
                 "3" => 0,
@@ -133,7 +136,6 @@ class ArcheryScoring extends Model
                 $sessions[$score->scoring_session]["total"] = $total_per_session; 
                 $sessions[$score->scoring_session]["scoring_id"] = $score->id; 
         }
-       
         $output = [
             "sessions" => $sessions,
             "total" => $total,
