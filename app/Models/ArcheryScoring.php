@@ -87,6 +87,7 @@ class ArcheryScoring extends Model
 
     protected function generateScoreBySession(int $participant_member_id, int $type, array $filter_session = [1,2]){
         $total_per_points = [
+                "" => 0,
                 "1" => 0,
                 "2" => 0,
                 "3" => 0,
@@ -135,7 +136,6 @@ class ArcheryScoring extends Model
                 $sessions[$score->scoring_session]["total"] = $total_per_session; 
                 $sessions[$score->scoring_session]["scoring_id"] = $score->id; 
         }
-       
         $output = [
             "sessions" => $sessions,
             "total" => $total,
