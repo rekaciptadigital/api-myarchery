@@ -50,7 +50,7 @@ class AddParticipantMemberScore extends Transactional
                 $tmpScoring = $archery_event_score["sessions"];
                 usort($tmpScoring, function($a, $b) {return $b["total_tmp"] < $a["total_tmp"] ? 1 : -1;});
                 if(isset($tmpScoring[0]["scoring_id"])){
-                    if($tmpScoring[0]["scoring_id"] < $score->total_tmp ){
+                    if($tmpScoring[0]["total_tmp"] < $score->total_tmp ){
                         $user_score = ArcheryScoring::find($tmpScoring[0]["scoring_id"]);
                         $tmp_session = $user_score->scoring_session;
                         $user_score->scoring_session = $scoring_session;
