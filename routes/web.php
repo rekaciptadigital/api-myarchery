@@ -13,6 +13,7 @@
 
 $router->group(['prefix' => 'web'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
+
         $router->group(['prefix' => 'auth'], function () use ($router) {
             $router->post('/login', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:login']);
             $router->post('/register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:register']);
@@ -80,5 +81,14 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->get('/event-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEventBySlug']);
         });
+
+        //$router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {
+        $router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCertificateTemplates']);
+                    
+        });
+
     });
 });

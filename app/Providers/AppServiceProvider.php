@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Providers;
+use Illuminate\Support\Facades\Schema;
 
 use App\BLoC\App\ArcheryEventParticipant\FindParticipantDetail;
 use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
@@ -12,6 +13,9 @@ use App\BLoC\App\UserAuth\UserRegister;
 use App\BLoC\App\UserAuth\UserResetPassword;
 use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UserLogout;
+use App\BLoC\App\Certificate\GetDownload;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
+
+
+
+
     public function register()
     {
         $this->registerService("userForgotPassword", UserForgotPassword::class);
@@ -32,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("addParticipantScore", AddParticipantScore::class);
         $this->registerService("editParticipantProfile", EditParticipantProfile::class);
         $this->registerService("getParticipantScoreSummary", GetParticipantScoreSummary::class);
+        $this->registerService("getDownload", GetDownload::class);
     }
 
     private function registerService($serviceName, $className)
@@ -40,4 +49,5 @@ class AppServiceProvider extends ServiceProvider
             return new $className;
         });
     }
+
 }

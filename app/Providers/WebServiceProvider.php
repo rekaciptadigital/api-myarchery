@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 use App\BLoC\Web\AdminAuth\ForgotPassword;
 use App\BLoC\Web\AdminAuth\Login;
@@ -53,6 +54,10 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\EditArcheryEventCertificateTemplate;
+
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -61,6 +66,8 @@ class WebServiceProvider extends ServiceProvider
      *
      * @return void
      */
+
+
     public function register()
     {
         $this->registerService("forgotPassword", ForgotPassword::class);
@@ -113,6 +120,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventParticipantMember", GetArcheryEventParticipantMember::class);
         $this->registerService("addParticipantMemberScore", AddParticipantMemberScore::class);
         $this->registerService("getParticipantScore", GetParticipantScore::class);
+        $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
+        $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
+        $this->registerService("editArcheryEventCertificateTemplates", EditArcheryEventCertificateTemplate::class);
+
     }
 
     private function registerService($serviceName, $className)
