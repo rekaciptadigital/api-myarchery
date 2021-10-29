@@ -8,33 +8,30 @@ use Illuminate\Support\Facades\DB;
 
 class EditArcheryEventCertificateTemplate extends Transactional
 {
-    public function getDescription()
-    {
-        return "";
-    }
+  public function getDescription()
+  {
+    return "";
+  }
 
-    protected function process($parameters)
-    {
-      $event_id=$parameters->get("event_id");
-      $type_certificate=$parameters->get("type_certificate");
+  protected function process($parameters)
+  {
 
-      $archery_event_certificate_templates = DB::table('archery_event_certificate_templates')->where('event_id', $event_id)->where('type_certificate', $type_certificate)->first();
-      $archery_event_certificate_templates->event_id = $parameters->get('event_id');
-      $archery_event_certificate_templates->html_template = $parameters->get('html_template');
-      $archery_event_certificate_templates->editor_data = $parameters->get('editor_data');
-      $archery_event_certificate_templates->background_url = $parameters->get('background_url');
-      $archery_event_certificate_templates->background_url = $parameters->get('type_certificate');
+      $event_id = $parameters->get('event_id');
+      $html_template = $parameters->get('html_template');
+      $background_url = $parameters->get('background_url');
+      $editor_data = $parameters->get('editor_data');
+      $type_certificate = $parameters->get('type_certificate');
 
-      $archery_event_certificate_templates->save();
+      $query = ArcheryEventCertificateTemplates::updateCertificateByEventAndType($event_id, $html_template,$background_url,$editor_data,$type_certificate);
 
-      return $archery_event_certificate_templates;
-    }
+  }
 
-    protected function validation($parameters)
-    {
-      return [
-          'event_id' => 'required',
-          'type_certificate' => 'required',
-      ];
-    }
+  protected function validation($parameters)
+  {
+    return [
+      'html_template' => 'required',
+      'background_url' => 'required',
+      'editor_data' => 'required',
+    ];
+  }
 }
