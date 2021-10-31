@@ -53,6 +53,12 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
+use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
+use App\BLoC\Web\EventElimination\GetEventElimination;
+use App\BLoC\Web\EventElimination\SetEventElimination;
+use App\BLoC\Web\EventElimination\SetEventEliminationSchedule;
+use App\BLoC\Web\EventElimination\RemoveEventEliminationSchedule;
+use App\BLoC\Web\EventElimination\GetEventEliminationSchedule;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -113,6 +119,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventParticipantMember", GetArcheryEventParticipantMember::class);
         $this->registerService("addParticipantMemberScore", AddParticipantMemberScore::class);
         $this->registerService("getParticipantScore", GetParticipantScore::class);
+        $this->registerService("getEventElimination", GetEventElimination::class);
+        $this->registerService("setEventElimination", SetEventElimination::class);
+        $this->registerService("setEventEliminationSchedule", SetEventEliminationSchedule::class);
+        $this->registerService("removeEventEliminationSchedule", RemoveEventEliminationSchedule::class);
+        $this->registerService("getEventEliminationTemplate", GetEventEliminationTemplate::class);
+        $this->registerService("getEventEliminationSchedule", GetEventEliminationSchedule::class);
     }
 
     private function registerService($serviceName, $className)

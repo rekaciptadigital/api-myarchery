@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\ArcheryEventCategoryDetail;
 
 class ArcheryEvent extends Model
 {
@@ -59,6 +60,25 @@ class ArcheryEvent extends Model
     public function admin()
     {
         return $this->belongsTo(Admin::class, 'admin_id', 'id');
+    }
+
+    protected function getCategories($id)
+    {
+        $categories = ArcheryEventCategoryDetail::select(
+                            "archery_event_category_details.id",
+                            "archery_event_category_details.id AS key",
+                            DB::raw("CONCAT(archery_master_team_categories.label,'-',
+                                            archery_master_age_categories.label,'-',
+                                            archery_master_competition_categories.label,'-',
+                                            archery_master_distances.label) AS label"))
+                    ->join("archery_master_age_categories","archery_event_category_details.age_category_id","archery_master_age_categories.id") 
+                    ->join("archery_master_competition_categories","archery_event_category_details.competition_category_id","archery_master_competition_categories.id")
+                    ->join("archery_master_distances","archery_event_category_details.distance_id","archery_master_distances.id")
+                    ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
+                    ->where("archery_event_category_details.event_id",$id)
+                    ->get(); 
+                     
+        return $categories;
     }
 
     public function getEventUrlAttribute()
