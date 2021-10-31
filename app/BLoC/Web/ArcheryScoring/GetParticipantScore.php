@@ -23,6 +23,8 @@ class GetParticipantScore extends Retrieval
         $competition_category_id = $parameters->get('competition_category_id');
         $age_category_id = $parameters->get('age_category_id');
         $gender = $parameters->get('gender');
+        $score_type = $parameters->get('type');
+        $event_id = $parameters->get('event_id');
 
         $archery_event_participant = ArcheryEventParticipantMember::select(
                                         "archery_event_participant_members.id",
@@ -33,7 +35,7 @@ class GetParticipantScore extends Retrieval
                                     join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
                                     join("transaction_logs","archery_event_participants.transaction_log_id","=","transaction_logs.id")->
                                     where('transaction_logs.status', 1)->
-                                    where('archery_event_participants.event_id', $parameters->get('event_id'));
+                                    where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
             $archery_event_participant->where('archery_event_participants.team_category_id', $team_category_id);
         }
@@ -51,7 +53,7 @@ class GetParticipantScore extends Retrieval
         
         $archery_event_score = [];
         foreach ($participants as $key => $value) {
-            $score = ArcheryScoring::generateScoreBySession($value->id,$parameters->get('type'));
+            $score = ArcheryScoring::generateScoreBySession($value->id,$score_type);
             $score["member"] = $value;
             $archery_event_score[] = $score;
         }
