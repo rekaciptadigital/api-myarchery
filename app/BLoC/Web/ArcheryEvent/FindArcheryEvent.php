@@ -32,6 +32,9 @@ class FindArcheryEvent extends Retrieval
         }
         $archery_event_targets = $archery_event->archeryEventTargets;
 
+        $categories = ArcheryEvent::getCategories($parameters->get('id'));
+
+        $archery_event->categories = $categories;
         return $archery_event;
     }
 

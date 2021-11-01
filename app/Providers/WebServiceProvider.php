@@ -47,6 +47,9 @@ use App\BLoC\Web\EventOrder\DetailEventOrder;
 use App\BLoC\Web\EventOrder\GetEventOrder;
 use App\BLoC\Web\EventOrder\GetEventPrice;
 use App\BLoC\Web\Transaction\CallbackMidtrans;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\EditArcheryEventCertificateTemplate;
 use App\BLoC\Web\EventQualificationScheduleByEo\GetEventQualificationScheduleByEo;
 use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationScheduleByEo;
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
@@ -54,10 +57,12 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\EditArcheryEventCertificateTemplate;
-
+use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
+use App\BLoC\Web\EventElimination\GetEventElimination;
+use App\BLoC\Web\EventElimination\SetEventElimination;
+use App\BLoC\Web\EventElimination\SetEventEliminationSchedule;
+use App\BLoC\Web\EventElimination\RemoveEventEliminationSchedule;
+use App\BLoC\Web\EventElimination\GetEventEliminationSchedule;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -111,6 +116,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventOrder", GetEventOrder::class);
         $this->registerService("callbackMidtrans", CallbackMidtrans::class);
         $this->registerService("getEventPrice", GetEventPrice::class);
+        $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
+        $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
+        $this->registerService("editArcheryEventCertificateTemplates", EditArcheryEventCertificateTemplate::class);
         $this->registerService("getEventQualificationSchedule", GetEventQualificationSchedule::class);
         $this->registerService("setEventQualificationSchedule", SetEventQualificationSchedule::class);
         $this->registerService("unsetEventQualificationSchedule", UnsetEventQualificationSchedule::class);
@@ -120,10 +128,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventParticipantMember", GetArcheryEventParticipantMember::class);
         $this->registerService("addParticipantMemberScore", AddParticipantMemberScore::class);
         $this->registerService("getParticipantScore", GetParticipantScore::class);
-        $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
-        $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
-        $this->registerService("editArcheryEventCertificateTemplates", EditArcheryEventCertificateTemplate::class);
-
+        $this->registerService("getEventElimination", GetEventElimination::class);
+        $this->registerService("setEventElimination", SetEventElimination::class);
+        $this->registerService("setEventEliminationSchedule", SetEventEliminationSchedule::class);
+        $this->registerService("removeEventEliminationSchedule", RemoveEventEliminationSchedule::class);
+        $this->registerService("getEventEliminationTemplate", GetEventEliminationTemplate::class);
+        $this->registerService("getEventEliminationSchedule", GetEventEliminationSchedule::class);
     }
 
     private function registerService($serviceName, $className)
