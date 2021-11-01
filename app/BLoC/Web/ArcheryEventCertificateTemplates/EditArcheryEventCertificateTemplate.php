@@ -23,15 +23,18 @@ class EditArcheryEventCertificateTemplate extends Transactional
       $type_certificate = $parameters->get('type_certificate');
 
       $query = ArcheryEventCertificateTemplates::updateCertificateByEventAndType($event_id, $html_template,$background_url,$editor_data,$type_certificate);
+      return $query;
 
   }
 
   protected function validation($parameters)
   {
     return [
+      'event_id' => 'required',
       'html_template' => 'required',
-      'background_url' => 'required',
       'editor_data' => 'required',
+      'type_certificate' => 'required',
+      'background_url' => 'required',
     ];
   }
 }

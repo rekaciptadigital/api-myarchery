@@ -14,6 +14,7 @@ use App\BLoC\App\UserAuth\UserResetPassword;
 use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetDownload;
+use App\BLoC\App\Certificate\GetListDownloadCertificate;
 
 
 
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("editParticipantProfile", EditParticipantProfile::class);
         $this->registerService("getParticipantScoreSummary", GetParticipantScoreSummary::class);
         $this->registerService("getDownload", GetDownload::class);
+        $this->registerService("getListDownloadCertificate", GetListDownloadCertificate::class);
     }
 
     private function registerService($serviceName, $className)

@@ -16,7 +16,7 @@ class CreateArcheryEventCertificateTemplates extends Migration
         Schema::create('archery_event_certificate_templates', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('event_id')->index();
-            $table->text('html_template');
+            $table->longText('html_template');
             $table->text('background_url');
             $table->text('editor_data');
             $table->string("type_certificate",30);
