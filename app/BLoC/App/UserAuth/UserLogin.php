@@ -5,7 +5,6 @@ namespace App\BLoC\App\UserAuth;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
-use Validator;
 
 class UserLogin extends Transactional
 {
@@ -17,7 +16,6 @@ class UserLogin extends Transactional
     protected function process($parameters)
     {
         $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt($parameters->all());
-
         if (!$token) {
             throw new BLoCException(__('response.invalid_credential'));
         }
@@ -30,9 +28,8 @@ class UserLogin extends Transactional
 
     protected function validation($parameters)
     {
-
         return [
-            'email' => 'required|exists:users',
+            'email' => 'required',
             'password' => 'required',
         ];
     }
