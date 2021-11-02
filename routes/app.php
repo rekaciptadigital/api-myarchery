@@ -25,5 +25,11 @@ $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], func
                 $router->post('/unset', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:unsetEventQualificationSchedule']);
             });
         });
+        $router->group(['prefix' => 'certificate', 'middleware' => 'auth.user'], function () use ($router) {
+        //$router->group(['prefix' => 'certificate'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownload']);
+            $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListDownloadCertificate']);
+        });
+
     });
 });
