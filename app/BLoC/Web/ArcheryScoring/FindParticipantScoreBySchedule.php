@@ -3,6 +3,8 @@
 namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
@@ -19,6 +21,17 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     protected function process($parameters)
     {
+        $type = $parameters->type ? $parameters->type : 1;
+        if($type == 1){
+            return $this->qualification($parameters);
+        }
+
+        if($type == 2){
+            return $this->elimination($parameters);
+        }
+    }
+
+    private function qualification($parameters){
         $schedule_member = ArcheryQualificationSchedules::find($parameters->schedule_id);
         $user_scores = ArcheryScoring::where("participant_member_id",$schedule_member->participant_member_id)->get();
         $session = count($user_scores) + 1;
@@ -39,10 +52,43 @@ class FindParticipantScoreBySchedule extends Retrieval
         return $output;
     }
 
+    private function elimination($parameters){
+        $elimination_id = $parameters->elimination_id;
+        $match = $parameters->match;
+        $round = $parameters->round;
+        $scores = [];
+        
+        $elimination = ArcheryEventElimination::find($elimination_id);
+        $members = ArcheryEventEliminationMatch::select(
+            "archery_event_participant_members.*"
+        )
+        ->join("archery_event_elimination_members","archery_event_elimination_matches.elimination_member_id","=","archery_event_elimination_members.id")
+        ->join("archery_event_participant_members","archery_event_elimination_members.member_id","=","archery_event_participant_members.id")
+        ->where("archery_event_elimination_matches.match",$match)
+        ->where("archery_event_elimination_matches.round",$round)
+        ->where("archery_event_elimination_matches.event_elimination_id",$elimination_id)->get();
+
+        foreach ($members as $key => $value) {
+            $output = (object)array();
+            $score = (object)array();
+            $s = isset($score->scoring_detail) ? ArcheryScoring::makeEliminationScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeEliminationScoringFormat((object) array());
+            $output->participant = ArcheryEventParticipantMember::memberDetail($value->id);
+            $output->score = $s;
+            $output->session = $round;
+            $output->is_updated = 1;
+            $scores [] = $output;
+        }
+        
+        return $scores;
+    }
+
     protected function validation($parameters)
     {
+        if(!$parameters->type || $parameters->type == 1)
         return [
             'schedule_id' => 'required|exists:archery_qualification_schedules,id',
         ];
+
+        return [];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\EventElimination;
 
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventEliminationSchedule;
 use DAI\Utils\Abstracts\Transactional;
@@ -24,11 +25,13 @@ class SetEventElimination extends Transactional
 
     protected function process($parameters)
     {
-        $check = ArcheryEventEliminationMatch::where("gender",$parameters->gender)->where("event_category_id",$parameters->event_category_id)->first();
-        if($check)
+        $event_category_id = $parameters->event_category_id;
+
+        $elimination = ArcheryEventElimination::where("gender",$parameters->gender)->where("event_category_id",$event_category_id)->first();
+        if($elimination)
             throw new BLoCException("match sudah di setting");
     
-        $category = ArcheryEventCategoryDetail::find($parameters->event_category_id);
+        $category = ArcheryEventCategoryDetail::find($event_category_id);
         $team_category_id = $category->team_category_id;
         $competition_category_id = $category->competition_category_id;
         $distance_id = $category->distance_id;
@@ -37,9 +40,19 @@ class SetEventElimination extends Transactional
         $score_type = 1; // 1 for type qualification
         $event_id = $category->event_id;
         $match_type = $parameters->match_type;
+        $scoring_type = $parameters->scoring_type; // 1 for point, 2 for acumalition score
         $elimination_member_count = $parameters->elimination_member_count;
         $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
-        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count, $match_type, $parameters->event_category_id, $gender,[]);
+        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender,[]);
+        
+        $elimination = new ArcheryEventElimination;
+        $elimination->event_category_id = $event_category_id;
+        $elimination->count_participant = $elimination_member_count;
+        $elimination->elimination_type = $match_type;
+        $elimination->elimination_scoring_type = $scoring_type;
+        $elimination->gender = $gender;
+        $elimination->save();
+
         foreach ($template as $key => $value) {
             foreach ($value["seeds"] as $k => $v) {
                 foreach ($v["teams"] as $i => $team){
@@ -61,7 +74,7 @@ class SetEventElimination extends Transactional
                         $elimination_member_id = $elimination_member->id;
                     }
                     $match = new ArcheryEventEliminationMatch;
-                    $match->event_category_id = $parameters->event_category_id;
+                    $match->event_elimination_id = $elimination->id;
                     $match->elimination_member_id = $elimination_member_id;
                     $match->elimination_schedule_id = 0;
                     $match->round = $key+1;
@@ -77,6 +90,10 @@ class SetEventElimination extends Transactional
     protected function validation($parameters)
     {
         return [
+            'elimination_member_count' => 'required',
+            'gender' => 'required',
+            'match_type' => 'required',
+            'scoring_type' => 'required',
             'event_category_id' => 'required|exists:archery_event_category_details,id',
         ];
     }

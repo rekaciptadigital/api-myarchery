@@ -23,6 +23,12 @@ class ArcheryEventEliminationSchedule extends Model
             [10,7],
             [15,2],
         ],
+        "8" => [
+            [8,1],
+            [5,4],
+            [6,3],
+            [7,2]
+        ],
     ];
 
     protected function makeTemplate($members = [], $elimination_member_count = 16, $match_type = 3, $event_category_id, $gender, $fix_members){
