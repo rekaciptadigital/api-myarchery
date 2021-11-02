@@ -2,7 +2,6 @@
 
 $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
-
         $router->group(['prefix' => 'auth'], function () use ($router) {
             $router->post('/login', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogin']);
             $router->post('/register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userRegister']);

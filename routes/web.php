@@ -13,7 +13,6 @@
 
 $router->group(['prefix' => 'web'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
-
         $router->group(['prefix' => 'auth'], function () use ($router) {
             $router->post('/login', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:login']);
             $router->post('/register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:register']);
@@ -67,7 +66,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
             });
 
-            $router->group(['prefix' => 'scorer', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
             });
@@ -87,7 +86,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->delete('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:removeEventEliminationSchedule']);
         });
 
-        $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+        $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->get('/event-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEventBySlug']);
         });
 

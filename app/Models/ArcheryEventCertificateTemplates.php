@@ -143,7 +143,7 @@ class ArcheryEventCertificateTemplates extends Model
       $nama=$details->name;
       $peringkat=$details->peringkat;
     }
-    
+
 
     if($type_certificate=2){
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$nama, $kategori_name,$peringkat],$html_template);
