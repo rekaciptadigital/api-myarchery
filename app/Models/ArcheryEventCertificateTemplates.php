@@ -32,35 +32,8 @@ class ArcheryEventCertificateTemplates extends Model
   {
     $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')->where('event_id', $event_id)->where('type_certificate', $type_certificate)->get();
 
-    if($type_certificate==3){
-      $certificate="Eliminasi";
-    }else if($type_certificate==2){
-      $certificate="Juara";
-    }else{
-      $certificate="Peserta";
-    }
-    foreach($archery_event_certificate_templates as $details){
-      $event_id=$details->event_id;
-      $html_template=$details->html_template;
-      $background_url=$details->background_url;
-      $editor_data=$details->editor_data;
-    }
+    return  $archery_event_certificate_templates;
 
-    $response=array("type"=>$certificate,"details"=>array("event_id"=>$event_id,"html_template"=>$html_template,"background_url"=>$background_url,"editor_data"=>$editor_data) );
-    return  $response;
-  }
-  public static function  addCertificate($event_id, $html_template,$background_url,$editor_data,$type_certificate)
-  {
-    $archery_event_certificate_templates = new ArcheryEventCertificateTemplates();
-
-    $archery_event_certificate_templates->event_id = $event_id;
-    $archery_event_certificate_templates->html_template = $html_template;
-    $archery_event_certificate_templates->background_url =$background_url;
-    $archery_event_certificate_templates->editor_data = $editor_data;
-    $archery_event_certificate_templates->type_certificate =$type_certificate;
-    $archery_event_certificate_templates->save();
-
-    return $archery_event_certificate_templates;
   }
   public static function  getParticipantByUserAndEvent($event_id, $user_id)
   {
@@ -133,9 +106,7 @@ class ArcheryEventCertificateTemplates extends Model
     $background_url=$data['background_url'];
     $editor_data=$data['editor_data'];
 
-    $options = new Options();
-    $options->set('isRemoteEnabled', true);
-    $dompdf = new Dompdf($options);
+
 
     $kategori_name=self::getCategoryLabel($event_id,$user_id);
     $peringkatDanNama=self::getUserDetail($event_id,$user_id);
@@ -151,13 +122,17 @@ class ArcheryEventCertificateTemplates extends Model
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$nama, $kategori_name],$html_template);
     }
 
-    $dompdf->loadHtml($final_doc);
-
-    $dompdf->setPaper('A4', 'landscape');
-    // Render the HTML as PDF
-    $dompdf->render();
-    // Output the generated PDF to Browser
-    $dompdf->stream();
+    $mpdf = new \Mpdf\Mpdf([
+    'margin_left' => 0,
+    'margin_right' => 0,
+    'mode' => 'utf-8',
+    'format' => 'A3-L',
+    'orientation' => 'L',
+    'bleedMargin' => 0,
+]);
+$mpdf->SetDisplayPreferences('FullScreen');
+    $mpdf->WriteHTML($final_doc);
+    $mpdf->Output();
 
 
   }
