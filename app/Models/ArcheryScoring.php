@@ -50,6 +50,37 @@ class ArcheryScoring extends Model
         }
         return $scores;
     }
+
+    protected function makeEliminationScoringFormat(object $scoring){
+        $scores = [
+            "shot" =>[["","","","","",""],
+                        ["","","","","",""],
+                        ["","","","","",""],
+                        ["","","","","",""],
+                        ["","","","","",""]],
+            "extra_shot" => [
+                    ["distance_from_x" => "", "score" => ""],
+                    ["distance_from_x" => "", "score" => ""],
+                    ["distance_from_x" => "", "score" => ""],
+                    ["distance_from_x" => "", "score" => ""],
+                    ["distance_from_x" => "", "score" => ""]
+                ],
+        ];
+
+        if(!empty((array)$scoring)){
+            foreach ($scoring as $key => $value) {
+                if($value->shot){
+                    $score = [];
+                    foreach ($value as $k => $v) {
+                        $score[] = (string)$v->id;
+                    }
+                    $scores[$key] = $score;
+                }
+            }
+        }
+        return $scores;
+    }
+
     protected function makeScoring(array $scoring){
         $total_per_points = [
             "" => 0,

@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
 
 use App\BLoC\Web\AdminAuth\ForgotPassword;
 use App\BLoC\Web\AdminAuth\Login;
@@ -47,9 +46,6 @@ use App\BLoC\Web\EventOrder\DetailEventOrder;
 use App\BLoC\Web\EventOrder\GetEventOrder;
 use App\BLoC\Web\EventOrder\GetEventPrice;
 use App\BLoC\Web\Transaction\CallbackMidtrans;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
-use App\BLoC\Web\ArcheryEventCertificateTemplates\EditArcheryEventCertificateTemplate;
 use App\BLoC\Web\EventQualificationScheduleByEo\GetEventQualificationScheduleByEo;
 use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationScheduleByEo;
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
@@ -71,8 +67,6 @@ class WebServiceProvider extends ServiceProvider
      *
      * @return void
      */
-
-
     public function register()
     {
         $this->registerService("forgotPassword", ForgotPassword::class);
@@ -116,9 +110,6 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventOrder", GetEventOrder::class);
         $this->registerService("callbackMidtrans", CallbackMidtrans::class);
         $this->registerService("getEventPrice", GetEventPrice::class);
-        $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
-        $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
-        $this->registerService("editArcheryEventCertificateTemplates", EditArcheryEventCertificateTemplate::class);
         $this->registerService("getEventQualificationSchedule", GetEventQualificationSchedule::class);
         $this->registerService("setEventQualificationSchedule", SetEventQualificationSchedule::class);
         $this->registerService("unsetEventQualificationSchedule", UnsetEventQualificationSchedule::class);

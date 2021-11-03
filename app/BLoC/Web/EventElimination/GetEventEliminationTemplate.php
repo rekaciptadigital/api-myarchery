@@ -11,6 +11,7 @@ use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryEventElimination;
 
 class GetEventEliminationTemplate extends Retrieval
 {
@@ -21,17 +22,29 @@ class GetEventEliminationTemplate extends Retrieval
 
     protected function process($parameters)
     {
+        
+        $event_id = $parameters->get('event_id');
+        $match_type = $parameters->get('match_type');
+        $elimination_member_count = $parameters->get('elimination_member_count');
         $event_category_id = $parameters->get("event_category_id");
+        $gender = $parameters->get('gender');
+
+        $elimination = ArcheryEventElimination::where("event_category_id",$event_category_id)->where("gender",$gender)->first();
+        $elimination_id = 0;
+        if($elimination){
+            $match_type = $elimination->elimination_type;
+            $elimination_member_count = $elimination->count_participant;
+            $gender = $elimination->gender;
+            $elimination_id = $elimination->id;
+        }
+
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         $team_category_id = $category["team_category_id"];
         $competition_category_id = $category["competition_category_id"];
         $distance_id = $category["distance_id"];
         $age_category_id = $category["age_category_id"];
-        $gender = $parameters->get('gender');
         $score_type = 1; // 1 for type qualification
-        $event_id = $parameters->get('event_id');
-        $match_type = $parameters->get('match_type');
-        $elimination_member_count = $parameters->get('elimination_member_count');
+        
 
         $fix_members = ArcheryEventEliminationMatch::select(
                             "archery_event_elimination_members.position_qualification",
@@ -50,7 +63,7 @@ class GetEventEliminationTemplate extends Retrieval
                         ->leftJoin("archery_event_elimination_members","archery_event_elimination_matches.elimination_member_id","=","archery_event_elimination_members.id")
                         ->leftJoin("archery_event_participant_members","archery_event_elimination_members.member_id","=","archery_event_participant_members.id")
                         ->leftJoin("archery_event_elimination_schedules","archery_event_elimination_matches.elimination_schedule_id","=","archery_event_elimination_schedules.id")
-                        ->where("archery_event_elimination_matches.gender",$gender)->where("archery_event_elimination_matches.event_category_id",$event_category_id)->get();
+                        ->where("archery_event_elimination_matches.gender",$gender)->where("archery_event_elimination_matches.event_elimination_id",$elimination_id)->get();
         $qualification_rank = [];
         $updated = true;
         if(count($fix_members) > 0){

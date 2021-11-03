@@ -50,6 +50,11 @@ class FindArcheryEventBySlug extends Retrieval
         }
         $archery_event = collect($archery_event)->all();
         $archery_event['flat_categories'] = $new_flat_categories;
+
+        $categories = ArcheryEvent::getCategories($archery_event["id"]);
+
+        $archery_event["categories"] = $categories;
+
         return $archery_event;
     }
 

@@ -26,6 +26,10 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         'as' => 'api_download', 'uses' => 'Controller@download'
     ]);
     
+    $router->group(['prefix' => 'event-elimination'], function () use ($router) {
+        $router->get('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
+    });
+
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
     });

@@ -33,7 +33,7 @@ class Login extends Transactional
     protected function validation($parameters)
     {
         return [
-            'email' => 'required|exists:users',
+            'email' => 'required',
             'password' => 'required',
         ];
     }
