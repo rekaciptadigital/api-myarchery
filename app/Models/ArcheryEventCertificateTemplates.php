@@ -31,9 +31,11 @@ class ArcheryEventCertificateTemplates extends Model
   public static function  getCertificateByEventAndType($event_id, $type_certificate)
   {
     $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')->where('event_id', $event_id)->where('type_certificate', $type_certificate)->get();
-
-    return  $archery_event_certificate_templates;
-
+    if(!$archery_event){
+      return false;
+    }else{
+      return $archery_event_certificate_templates;
+    }
   }
   public static function  getParticipantByUserAndEvent($event_id, $user_id)
   {
