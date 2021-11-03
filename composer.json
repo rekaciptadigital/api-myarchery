@@ -10,9 +10,11 @@
         "laravel/lumen-framework": "5.7.*",
         "league/flysystem": "^1.0",
         "midtrans/midtrans-php": "^2.5",
+        "mpdf/mpdf": "^8.0",
         "ramsey/collection": "1.1.4",
         "ramsey/uuid": "^4.2",
         "sulfanoaf/api-util": "^1.0@alpha",
+        "tibonilab/pdf-lumen-bundle": "~2.0.0",
         "tymon/jwt-auth": "^1.0",
         "vlucas/phpdotenv": "~2.2"
     },
