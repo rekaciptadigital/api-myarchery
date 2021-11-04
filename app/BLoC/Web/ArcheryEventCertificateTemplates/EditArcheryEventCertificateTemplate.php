@@ -21,22 +21,19 @@ class EditArcheryEventCertificateTemplate extends Transactional
   {
     $admin = Auth::user();
     $event_id=$parameters->get('event_id');
+    $type_certificate=$parameters->get('type_certificate');
     $checkAdmin=ArcheryEvent::isOwnEvent($admin['id'],$event_id);
     if(!$checkAdmin)throw new BLoCException("event tidak ditemukan");
 
-    $event_id = $parameters->get('event_id');
-    $html_template = $parameters->get('html_template');
-    $background_url = $parameters->get('background_url');
-    $editor_data = $parameters->get('editor_data');
-    $type_certificate = $parameters->get('type_certificate');
+    $archery_event_certificate_templates = ArcheryEventCertificateTemplates::where('event_id', $event_id)->where('type_certificate', $type_certificate)->firstOrFail();
+    $archery_event_certificate_templates->html_template = $parameters->get('html_template');
+    $archery_event_certificate_templates->event_id = $parameters->get('event_id');
+    $archery_event_certificate_templates->background_url = $parameters->get('background_url');
+    $archery_event_certificate_templates->editor_data = $parameters->get('editor_data');
+    $archery_event_certificate_templates->type_certificate = $type_certificate;
+    $archery_event_certificate_templates->save();
 
-    $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')
-    ->where('event_id', $event_id)
-    ->where('type_certificate', $type_certificate)
-    ->update( [ 'event_id' => $event_id, 'html_template' => $html_template, 'background_url' => $background_url, 'editor_data' => $editor_data,'type_certificate' => $type_certificate ]);
-
-    return  $archery_event_certificate_templates;
-
+    return $archery_event_certificate_templates;
   }
 
   protected function validation($parameters)
