@@ -20,14 +20,7 @@ class ArcheryEventCertificateTemplates extends Model
     'editor_data',
     'type_certificate',
   ];
-  public static function  updateCertificateByEventAndType($event_id, $html_template,$background_url,$editor_data,$type_certificate)
-  {
-    $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')->where('event_id', $event_id)
-    ->where('type_certificate', $type_certificate)
-    ->update( [ 'event_id' => $event_id, 'html_template' => $html_template, 'background_url' => $background_url, 'editor_data' => $editor_data,'type_certificate' => $type_certificate ]);
-
-    return  $archery_event_certificate_templates;
-  }
+  
   public static function  getCertificateByEventAndType($event_id, $type_certificate)
   {
     $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')->where('event_id', $event_id)->where('type_certificate', $type_certificate)->first();
