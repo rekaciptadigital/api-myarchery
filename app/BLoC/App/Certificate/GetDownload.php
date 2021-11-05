@@ -56,11 +56,12 @@ class GetDownload extends Retrieval
       'margin_left' => 0,
       'margin_right' => 0,
       'mode' => 'utf-8',
-      'format' => 'A3-L',
+      'format' => 'A4-L',
       'orientation' => 'L',
       'bleedMargin' => 0,
+      'dpi'        => 110,
     ]);
-
+    
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
     $mpdf->Output();
