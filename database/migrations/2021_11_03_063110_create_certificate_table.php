@@ -31,6 +31,6 @@ class CreateCertificateTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('certificate');
+        Schema::dropIfExists('archery_event_certificate_templates');
     }
 }

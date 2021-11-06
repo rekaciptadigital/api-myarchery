@@ -18,6 +18,11 @@ class AddParticipantMemberScore extends Transactional
 
     protected function process($parameters)
     {
+        if($parameters->type == 1)
+            return $this->addScoringQualification($parameters);
+    }
+
+    private function addScoringQualification($parameters){
         $admin = Auth::user();
         $schedule_member = ArcheryQualificationSchedules::find($parameters->schedule_id);
         if($schedule_member->is_scoring == 1)
@@ -92,10 +97,13 @@ class AddParticipantMemberScore extends Transactional
 
     protected function validation($parameters)
     {
+        if($parameters->type == 1)
         return [
             'schedule_id' => 'required|exists:archery_qualification_schedules,id',
             'shoot_scores' => 'required',
             'target_no' => 'required'
         ];
+
+        return [];
     }
 }
