@@ -28,7 +28,7 @@ class GetListDownloadCertificate extends Retrieval
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)throw new BLoCException("anda tidak mengikuti event ini");
-    $detail_info->member_name=$checkUser->name;
+    $detail_info->member_name=$user['name'];
     $detail_info->member_id=$member_id;
 
     $kategori=ArcheryEventCertificateTemplates::getCategoryLabel($event_id,$user['id']);

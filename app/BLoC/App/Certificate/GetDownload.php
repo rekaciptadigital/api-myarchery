@@ -27,7 +27,7 @@ class GetDownload extends Retrieval
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)throw new BLoCException("anda tidak mengikuti event ini");
-    $member_name=$checkUser->name;
+    $member_name=$user['name'];
 
     $type_certificate = $parameters->get('type_certificate');
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
