@@ -40,13 +40,13 @@ class GetDownload extends Retrieval
 
     $kategori_name=$kategori->label_team_categories." - ".$kategori->label_age_categories." - ".$kategori->label_competition_categories." - ".$kategori->label_distance."m";
 
-    $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-    if(!$get_peringkat)throw new BLoCException("data eliminasi tidak ditemukan");
-
-    $peringkat_name=$get_peringkat->position_qualification;
     $list = ArcheryEventCertificateTemplates::getTypeCertificate();
 
     if($type_certificate==$list['juara']){
+      $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
+      if(!$get_peringkat)throw new BLoCException("data eliminasi tidak ditemukan");
+      $peringkat_name=$get_peringkat->position_qualification;
+
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$member_name, $kategori_name,$peringkat_name],$html_template);
     }else{
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
@@ -61,7 +61,7 @@ class GetDownload extends Retrieval
       'bleedMargin' => 0,
       'dpi'        => 110,
     ]);
-    
+
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
     $mpdf->Output();
