@@ -27,7 +27,7 @@ class GetDownload extends Retrieval
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)throw new BLoCException("anda tidak mengikuti event ini");
-    $member_name=$checkUser->name;
+    $member_name=$user['name'];
 
     $type_certificate = $parameters->get('type_certificate');
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
@@ -40,13 +40,13 @@ class GetDownload extends Retrieval
 
     $kategori_name=$kategori->label_team_categories." - ".$kategori->label_age_categories." - ".$kategori->label_competition_categories." - ".$kategori->label_distance."m";
 
-    $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-    if(!$get_peringkat)throw new BLoCException("data eliminasi tidak ditemukan");
-
-    $peringkat_name=$get_peringkat->position_qualification;
     $list = ArcheryEventCertificateTemplates::getTypeCertificate();
 
     if($type_certificate==$list['juara']){
+      $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
+      if(!$get_peringkat)throw new BLoCException("data eliminasi tidak ditemukan");
+      $peringkat_name=$get_peringkat->position_qualification;
+
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$member_name, $kategori_name,$peringkat_name],$html_template);
     }else{
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
@@ -61,7 +61,7 @@ class GetDownload extends Retrieval
       'bleedMargin' => 0,
       'dpi'        => 110,
     ]);
-    
+
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
     $mpdf->Output();

@@ -28,7 +28,7 @@ class GetListDownloadCertificate extends Retrieval
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)throw new BLoCException("anda tidak mengikuti event ini");
-    $detail_info->member_name=$checkUser->name;
+    $detail_info->member_name=$user['name'];
     $detail_info->member_id=$member_id;
 
     $kategori=ArcheryEventCertificateTemplates::getCategoryLabel($event_id,$user['id']);
@@ -44,24 +44,25 @@ class GetListDownloadCertificate extends Retrieval
     $certificate[]=["type" => "participant", "data" => (object)array_merge((array)$participant_certificate, (array)$detail_info)];
 
     $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-    if(!$get_peringkat)throw new BLoCException("data eliminasi tidak ditemukan");
-    $detail_info->peringkat_name=$get_peringkat->position_qualification;
 
-    $check_elimination=ArcheryEventCertificateTemplates::checkElimination($member_id);
-    if(!$check_elimination)throw new BLoCException("member_id tidak ditemukan");
+    if($get_peringkat){
+        $detail_info->peringkat_name=$get_peringkat->position_qualification;
+        $elimination=$get_peringkat->position_qualification;
 
-    $elimination=$check_elimination->position_qualification;
+        if($elimination >= 4 && $elimination <= 16){
+          $elimination_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['eliminasi']);
+          if($elimination_certificate){
+              unset($elimination_certificate->html_template);
+              $certificate[]=["type" => "eliminasi", "data" =>  (object)array_merge((array)$elimination_certificate, (array)$detail_info)];
+          }
+        }else if($elimination >= 1 && $elimination <= 3){
+          $ranking_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['juara']);
 
-    if($elimination!=0 && $elimination>3){
-      $elimination_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['eliminasi']);
-      if(!$elimination_certificate)throw new BLoCException("event dan/ atau tipe sertifikat tidak ditemukan");
-      unset($elimination_certificate->html_template);
-      $certificate[]=["type" => "eliminasi", "data" =>  (object)array_merge((array)$elimination_certificate, (array)$detail_info)];
-    }else if($elimination!=0 && $elimination<3){
-      $ranking_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['juara']);
-      unset($ranking_certificate->html_template);
-      if(!$ranking_certificate)throw new BLoCException("event dan/ atau tipe sertifikat tidak ditemukan");
-      $certificate[]=["type" => "juara", "data" => (object)array_merge((array)$ranking_certificate, (array)$detail_info)];
+          if($ranking_certificate){
+              unset($ranking_certificate->html_template);
+              $certificate[]=["type" => "juara", "data" => (object)array_merge((array)$ranking_certificate, (array)$detail_info)];
+          }
+        }
     }
 
     return $certificate;
