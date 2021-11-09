@@ -32,9 +32,6 @@ class AddEventOrder extends Transactional
 
         $total_price = BLoC::call('getEventPrice', $parameters->all());
 
-        if ($total_price == 0) {
-            throw new BLoCException("Price not found");
-        }
         $category = ArcheryEventCategory::where("age_category_id",$event_category['age_category_id'])->where("event_id",$parameters->event_id)->first();
         $category_competition = ArcheryEventCategoryCompetition::where("competition_category_id",$event_category['competition_category_id'])->where("event_category_id",$category->id)->first();
         $category_competition_team = ArcheryEventCategoryCompetitionTeam::where("team_category_id",$event_category['team_category_id'])->where("event_category_competition_id",$category_competition->id)->first();
@@ -97,9 +94,14 @@ class AddEventOrder extends Transactional
         $participant->age_category_id = $event_category['age_category_id'];
         $participant->distance_id = $event_category['distance_id'];
         $participant->transaction_log_id = 0;
+        $participant->status = 0;
         $participant->unique_id = Str::uuid();
+        if($total_price < 1){
+            $participant->status = 1;
+            $participant->save();
+            return ["archery_event_participant_id" => $participant->id];
+        }
         $participant->save();
-
         
         $member = array();
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;

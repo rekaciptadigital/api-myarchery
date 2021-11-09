@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\EliminationFormat;
 use Illuminate\Database\Eloquent\Model;
 
 class ArcheryEventEliminationSchedule extends Model
@@ -31,7 +32,14 @@ class ArcheryEventEliminationSchedule extends Model
         ],
     ];
 
-    protected function makeTemplate($members = [], $elimination_member_count = 16, $match_type = 3, $event_category_id, $gender, $fix_members){
+
+    protected function makeTemplate($members = [], $elimination_member_count = 16){
+        if($elimination_member_count == 16){
+            return EliminationFormat::Template16($members);
+        }
+    }
+
+    protected function makeTemplate2($members = [], $elimination_member_count = 16, $match_type = 3, $event_category_id, $gender, $fix_members){
         $team_per_seed =  2;
         // if(count($members) < $elimination_member_count)
         //     $elimination_member_count = count($members);
@@ -39,7 +47,6 @@ class ArcheryEventEliminationSchedule extends Model
         for ($i=0; $i < $elimination_member_count; $i++) { 
             if(isset($members[$i]["member"]) && count($fix_members) < 1){
                 $members[$i]["member"]["postition"] = $i + 1;
-                $members[$i]["member"]["win"] = 0;
                 $members[$i] = $members[$i]["member"];
             }else
                 $members[$i] = [];

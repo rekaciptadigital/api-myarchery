@@ -70,14 +70,20 @@ class GetEventEliminationTemplate extends Retrieval
             $members = [];
             foreach ($fix_members as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date." ".$value->start_time." - ".$value->end_time; 
-                $members[$value->round][$value->match]["members"][] = $value->name != null ? array(
-                    "id" => $value->member_id,
-                    "name" => $value->name,
-                    "gender" => $value->gender,
-                    "club" => $value->club,
-                    "potition" => $value->position_qualification,
-                    "win" => $value->win,
-                ) : [];    
+                if($value->name != null){
+                    $members[$value->round][$value->match]["teams"][] = array(
+                        "id" => $value->member_id,
+                        "name" => $value->name,
+                        "gender" => $value->gender,
+                        "club" => $value->club,
+                        "potition" => $value->position_qualification,
+                        "win" => $value->win,
+                        "status" => $value->win == 1 ? "win" : "wait"
+                    );    
+                }
+                else{
+                    $members[$value->round][$value->match]["teams"][] = ["status"=>"bye"];
+                }
             }
 
             $fix_members = $members;
@@ -85,7 +91,9 @@ class GetEventEliminationTemplate extends Retrieval
         }else{
             $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
         }
-        $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender, $fix_members);
+        $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
+        // $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate2($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender, $fix_members);
+        $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, 16,[] );
         $template["updated"] = $updated;
         return $template;
     }
