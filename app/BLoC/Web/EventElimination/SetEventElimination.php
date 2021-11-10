@@ -43,8 +43,7 @@ class SetEventElimination extends Transactional
         $scoring_type = $parameters->scoring_type; // 1 for point, 2 for acumalition score
         $elimination_member_count = $parameters->elimination_member_count;
         $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
-        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender,[]);
-        
+        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $event_category_id;
         $elimination->count_participant = $elimination_member_count;
@@ -57,9 +56,9 @@ class SetEventElimination extends Transactional
             foreach ($value["seeds"] as $k => $v) {
                 foreach ($v["teams"] as $i => $team){
                     $elimination_member_id = 0;
-                    $member_id = isset($team->id) ? $team->id : 0;
+                    $member_id = isset($team["id"]) ? $team["id"] : 0;
                     $thread = $k;
-                    $position_qualification = isset($team->postition) ? $team->postition : 0;
+                    $position_qualification = isset($team["postition"]) ? $team["postition"] : 0;
                     if($member_id != 0){
                         $em = ArcheryEventEliminationMember::where("member_id",$member_id)->first();
                         if($em){
@@ -79,6 +78,9 @@ class SetEventElimination extends Transactional
                     $match->elimination_schedule_id = 0;
                     $match->round = $key+1;
                     $match->match = $k+1;
+                    $match->index = $i;
+                    if(isset($team["win"]))
+                        $match->win = $team["win"];
                     $match->gender = $parameters->gender;
                     $match->save();
                 }

@@ -88,12 +88,12 @@ class GetEventEliminationTemplate extends Retrieval
 
             $fix_members = $members;
             $updated = false;
+            $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members, $elimination_member_count);
         }else{
             $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
+            $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         }
-        $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
         // $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate2($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender, $fix_members);
-        $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, 16,[] );
         $template["updated"] = $updated;
         return $template;
     }

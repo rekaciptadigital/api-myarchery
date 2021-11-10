@@ -488,7 +488,7 @@ class ArcheryScoring extends Model
         if (!is_null($age_category_id)) {
             $archery_event_participant->where('archery_event_participants.age_category_id', $age_category_id);
         }
-
+        
         $participants = $archery_event_participant->get();
 
         $archery_event_score = [];

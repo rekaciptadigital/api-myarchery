@@ -10,6 +10,7 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Libraries\EliminationFormat;
 
 class AddParticipantMemberScore extends Transactional
 {
@@ -68,7 +69,6 @@ class AddParticipantMemberScore extends Transactional
         {
             $participant_member_id = $value->member_id;
             $scoring = $calculate[$participant_member_id]["scores"];
-            error_log(\json_encode($scoring["total"]));
             $total = $scoring["total"];
             $win = $scoring["win"];
             $session = 1;
@@ -86,8 +86,19 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->item = $item_id;
             $participant_scoring->scoring_log = \json_encode($value);
             $participant_scoring->scoring_detail = \json_encode($scoring);
-            if($win == 1)
-                ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
+            if($save_permanent == 1){
+                if($win == 1){
+                    ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
+                }
+                $next = EliminationFormat::NextMatch($get_elimination->count_participant, $round, $match, $win);
+                if(count($next) > 0){
+                    ArcheryEventEliminationMatch::where("round",$next["round"])
+                                                    ->where("match",$next["match"])
+                                                    ->where("index",$next["index"])
+                                                    ->where("event_elimination_id",$elimination_id)
+                                                    ->update(["elimination_member_id"=>$value->elimination_member_id]);
+                }
+            }
         }
         return true;
     }
