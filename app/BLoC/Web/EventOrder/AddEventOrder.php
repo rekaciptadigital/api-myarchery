@@ -96,11 +96,6 @@ class AddEventOrder extends Transactional
         $participant->transaction_log_id = 0;
         $participant->status = 0;
         $participant->unique_id = Str::uuid();
-        if($total_price < 1){
-            $participant->status = 1;
-            $participant->save();
-            return ["archery_event_participant_id" => $participant->id];
-        }
         $participant->save();
         
         $member = array();
@@ -127,6 +122,12 @@ class AddEventOrder extends Transactional
         }
         ArcheryEventParticipantMember::insert($member);
 
+        if($total_price < 1){
+            $participant->status = 1;
+            $participant->save();
+            return ["archery_event_participant_id" => $participant->id];
+        }
+        
         $payment = PaymentGateWay::setTransactionDetail($total_price, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($parameters->participant_members[0]["name"], $parameters->email, $parameters->phone)
