@@ -64,7 +64,8 @@ class GetDownload extends Retrieval
 
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
-    $mpdf->Output();
+
+    return $mpdf->Output();
   }
 
 }
