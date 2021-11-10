@@ -5,6 +5,7 @@ namespace App\Libraries;
 use App\Models\TransactionLog;
 
 use Illuminate\Support\Facades\Storage;
+use App\Models\ArcheryEventParticipant;
 
 class PaymentGateWay
 {
@@ -175,6 +176,9 @@ class PaymentGateWay
         } else if ($transaction == 'expire') {
             $status = 2;
         }
+        
+        ArcheryEventParticipant::where("transaction_log_id",$transaction_log->id)->update(["status" => $status]);
+
         $transaction_log->status = $status;
         $activity = \json_decode($transaction_log->transaction_log_activity, true);
         $activity["notification_callback_" . $status] = \json_encode($notif->getResponse());

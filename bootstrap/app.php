@@ -30,7 +30,7 @@ $app->withEloquent();
 $app->configure('auth');
 
 class_alias('Illuminate\Support\Facades\App', 'App');
-
+class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -89,6 +89,7 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\GeneralServiceProvider::class);
 $app->register(App\Providers\WebServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register('tibonilab\Pdf\PdfServiceProvider');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 

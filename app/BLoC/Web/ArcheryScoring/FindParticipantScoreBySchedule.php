@@ -71,9 +71,10 @@ class FindParticipantScoreBySchedule extends Retrieval
         foreach ($members as $key => $value) {
             $output = (object)array();
             $score = (object)array();
-            $s = isset($score->scoring_detail) ? ArcheryScoring::makeEliminationScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeEliminationScoringFormat((object) array());
+
+            $s = ArcheryScoring::makeEliminationScoringTypePointFormat((object) array());
             $output->participant = ArcheryEventParticipantMember::memberDetail($value->id);
-            $output->score = $s;
+            $output->scores = $s;
             $output->session = $round;
             $output->is_updated = 1;
             $scores [] = $output;

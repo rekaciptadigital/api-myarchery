@@ -59,6 +59,9 @@ use App\BLoC\Web\EventElimination\SetEventElimination;
 use App\BLoC\Web\EventElimination\SetEventEliminationSchedule;
 use App\BLoC\Web\EventElimination\RemoveEventEliminationSchedule;
 use App\BLoC\Web\EventElimination\GetEventEliminationSchedule;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryEventCertificateTemplates\EditArcheryEventCertificateTemplate;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -125,6 +128,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("removeEventEliminationSchedule", RemoveEventEliminationSchedule::class);
         $this->registerService("getEventEliminationTemplate", GetEventEliminationTemplate::class);
         $this->registerService("getEventEliminationSchedule", GetEventEliminationSchedule::class);
+        $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
+        $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
+        $this->registerService("editArcheryEventCertificateTemplates", EditArcheryEventCertificateTemplate::class);
+
     }
 
     private function registerService($serviceName, $className)

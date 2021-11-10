@@ -71,13 +71,13 @@ class ArcheryEvent extends Model
                                             archery_master_age_categories.label,'-',
                                             archery_master_competition_categories.label,'-',
                                             archery_master_distances.label) AS label"))
-                    ->join("archery_master_age_categories","archery_event_category_details.age_category_id","archery_master_age_categories.id") 
+                    ->join("archery_master_age_categories","archery_event_category_details.age_category_id","archery_master_age_categories.id")
                     ->join("archery_master_competition_categories","archery_event_category_details.competition_category_id","archery_master_competition_categories.id")
                     ->join("archery_master_distances","archery_event_category_details.distance_id","archery_master_distances.id")
                     ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
                     ->where("archery_event_category_details.event_id",$id)
-                    ->get(); 
-                     
+                    ->get();
+
         return $categories;
     }
 
@@ -111,5 +111,14 @@ class ArcheryEvent extends Model
         $results = DB::select($query, ['event_id' => $this->id]);
 
         return $results;
+    }
+    public static function isOwnEvent($admin_id,$event_id)
+    {
+      $archery_event =DB::table('archery_events')->where('admin_id', $admin_id)->where('id', $event_id)->first();
+      if(!$archery_event){
+        return false;
+      }else{
+        return true;
+      }
     }
 }
