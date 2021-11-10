@@ -461,7 +461,6 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    // TODO gunakan nanti di GetParticipantScore
     protected function getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id){
         $archery_event_participant = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -470,8 +469,7 @@ class ArcheryScoring extends Model
             "archery_event_participants.club"
         )->
         join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
-        join("transaction_logs","archery_event_participants.transaction_log_id","=","transaction_logs.id")->
-        where('transaction_logs.status', 1)->
+        where('archery_event_participants.status', 1)->
         where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
             $archery_event_participant->where('archery_event_participants.team_category_id', $team_category_id);

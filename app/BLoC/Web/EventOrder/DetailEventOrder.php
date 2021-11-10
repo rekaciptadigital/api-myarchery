@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\EventOrder;
 
 use App\Models\ArcheryEvent;
+use App\Models\TransactionLog;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Libraries\PaymentGateWay;
@@ -23,6 +24,7 @@ class DetailEventOrder extends Retrieval
         $participant_members = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->get();
         $participant["members"] = $participant_members;
         $participant["category_label"] = $participant->team_category_id."-".$participant->age_category_id."-".$participant->competition_category_id."-".$participant->distance_id."m";
+        $participant["status_label"] = TransactionLog::getStatus($participant->status);
         
         $output = [
             "archery_event" => $archery_event,

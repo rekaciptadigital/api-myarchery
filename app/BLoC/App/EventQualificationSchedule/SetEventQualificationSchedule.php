@@ -51,8 +51,9 @@ class SetEventQualificationSchedule extends Transactional
         
         if($user_id != $participant->user_id)throw new BLoCException("anda tidak dapat set sesi member ini");
         
+
         $transaction_info = PaymentGateWay::transactionLogPaymentInfo($participant->transaction_log_id);
-        if($transaction_info->status_id != 1)throw new BLoCException("pembayaran belum selesai");
+        if($participant->status != 1)throw new BLoCException("pembayaran belum selesai");
         
         if($qualification->event_id != $participant->event_id)throw new BLoCException("pastikan event udah di ikuti");
 
