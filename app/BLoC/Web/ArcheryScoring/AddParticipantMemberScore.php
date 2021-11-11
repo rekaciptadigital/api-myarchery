@@ -26,6 +26,7 @@ class AddParticipantMemberScore extends Transactional
         if($parameters->type == 2)
             return $this->addScoringElimination($parameters);
     }
+
     private function addScoringElimination($parameters){
         $elimination_id = $parameters->elimination_id;
         $round = $parameters->round;
@@ -83,9 +84,10 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->scoring_session = $session;
             $participant_scoring->type = $type;
             $participant_scoring->item_value = $item_value;
-            $participant_scoring->item = $item_id;
+            $participant_scoring->item_id = $item_id;
             $participant_scoring->scoring_log = \json_encode($value);
             $participant_scoring->scoring_detail = \json_encode($scoring);
+            $participant_scoring->save();
             if($save_permanent == 1){
                 if($win == 1){
                     ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
