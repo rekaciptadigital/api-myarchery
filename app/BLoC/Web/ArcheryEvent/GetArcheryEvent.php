@@ -21,8 +21,7 @@ class GetArcheryEvent extends Retrieval
 
         $output = [];
         foreach ($archery_event as $key => $value) {
-            $total_participant = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                                ->where("event_id",$value->id)->where("transaction_logs.status",1)->count();
+            $total_participant = ArcheryEventParticipant::where("event_id",$value->id)->where("status",1)->count();
             $output[] = array(
                             "event" => $value,
                             "total_participant" => $total_participant
