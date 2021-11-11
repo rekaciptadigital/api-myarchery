@@ -60,10 +60,10 @@ class FindParticipantScoreBySchedule extends Retrieval
         
         $elimination = ArcheryEventElimination::find($elimination_id);
         $members = ArcheryEventEliminationMatch::select(
-            "archery_event_participant_members.*"
+            "archery_event_elimination_members.member_id",
+            "archery_event_elimination_matches.*"
         )
         ->join("archery_event_elimination_members","archery_event_elimination_matches.elimination_member_id","=","archery_event_elimination_members.id")
-        ->join("archery_event_participant_members","archery_event_elimination_members.member_id","=","archery_event_participant_members.id")
         ->where("archery_event_elimination_matches.match",$match)
         ->where("archery_event_elimination_matches.round",$round)
         ->where("archery_event_elimination_matches.event_elimination_id",$elimination_id)->get();
@@ -71,9 +71,19 @@ class FindParticipantScoreBySchedule extends Retrieval
         foreach ($members as $key => $value) {
             $output = (object)array();
             $score = (object)array();
-
-            $s = ArcheryScoring::makeEliminationScoringTypePointFormat((object) array());
-            $output->participant = ArcheryEventParticipantMember::memberDetail($value->id);
+            $member_score = ArcheryScoring::where("item_value","archery_event_elimination_matches")
+                                            ->where("item_id",$value->id)
+                                            ->where("participant_member_id",$value->member_id)
+                                            ->first();
+            if(!$member_score){
+                if($elimination->elimination_scoring_type == 1)
+                    $s = ArcheryScoring::makeEliminationScoringTypePointFormat();
+                if($elimination->elimination_scoring_type == 2)
+                    $s = ArcheryScoring::makeEliminationScoringTypeTotalFormat();
+            }else{
+                $s = \json_decode($member_score->scoring_detail);
+            }
+            $output->participant = ArcheryEventParticipantMember::memberDetail($value->member_id);
             $output->scores = $s;
             $output->session = $round;
             $output->is_updated = 1;

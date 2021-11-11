@@ -26,11 +26,11 @@ class ArcheryScoring extends Model
     protected $elimination_scores_format_by_type = [
         "1" => [
             "shot" =>[
-                ["score"=>["","","","","",""],"total"=>0,"status"=>"empty","point" => 0], // status = ["empty","win","draw","lose"]
-                ["score"=>["","","","","",""],"total"=>0,"status"=>"empty","point" => 0],
-                ["score"=>["","","","","",""],"total"=>0,"status"=>"empty","point" => 0],
-                ["score"=>["","","","","",""],"total"=>0,"status"=>"empty","point" => 0],
-                ["score"=>["","","","","",""],"total"=>0,"status"=>"empty","point" => 0]
+                ["score"=>["","",""],"total"=>0,"status"=>"empty","point" => 0], // status = ["empty","win","draw","lose"]
+                ["score"=>["","",""],"total"=>0,"status"=>"empty","point" => 0],
+                ["score"=>["","",""],"total"=>0,"status"=>"empty","point" => 0],
+                ["score"=>["","",""],"total"=>0,"status"=>"empty","point" => 0],
+                ["score"=>["","",""],"total"=>0,"status"=>"empty","point" => 0]
             ],
             "extra_shot" => [
                     ["distance_from_x" => 0, "score" => "", "status" => "empty"],
@@ -45,11 +45,11 @@ class ArcheryScoring extends Model
         ],
 
         "2" => ["shot" =>[
-                    ["score"=>["","","","","",""],"total"=>0],
-                    ["score"=>["","","","","",""],"total"=>0],
-                    ["score"=>["","","","","",""],"total"=>0],
-                    ["score"=>["","","","","",""],"total"=>0],
-                    ["score"=>["","","","","",""],"total"=>0]
+                    ["score"=>["","","",],"total"=>0],
+                    ["score"=>["","","",],"total"=>0],
+                    ["score"=>["","","",],"total"=>0],
+                    ["score"=>["","","",],"total"=>0],
+                    ["score"=>["","","",],"total"=>0]
                 ],
         "extra_shot" => [
                 ["distance_from_x" => 0, "score" => "", "status" => "empty"],
@@ -91,17 +91,15 @@ class ArcheryScoring extends Model
         return $scores;
     }
 
-    protected function makeEliminationScoringTypePointFormat(object $scoring){
+    protected function makeEliminationScoringTypePointFormat(){
         $scores = $this->elimination_scores_format_by_type[1];
-        if(!empty((array)$scoring)){
-            foreach ($scoring as $key => $value) {
-                if($value->shot){
-                    $score = [];
-                    foreach ($value as $k => $v) {
-                        $score[] = (string)$v->id;
-                    }
-                    $scores[$key] = $score;
+        foreach ($scoring as $key => $value) {
+            if($value->shot){
+                $score = [];
+                foreach ($value as $k => $v) {
+                    $score[] = (string)$v->id;
                 }
+                $scores[$key] = $score;
             }
         }
         return $scores;
@@ -311,18 +309,15 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function makeEliminationScoringTypeTotalFormat(object $scoring){
+    protected function makeEliminationScoringTypeTotalFormat(){
         $scores = $this->elimination_scores_format_by_type[2];
-
-        if(!empty((array)$scoring)){
-            foreach ($scoring as $key => $value) {
-                if($value->shot){
-                    $score = [];
-                    foreach ($value as $k => $v) {
-                        $score[] = (string)$v->id;
-                    }
-                    $scores[$key] = $score;
+        foreach ($scoring as $key => $value) {
+            if($value->shot){
+                $score = [];
+                foreach ($value as $k => $v) {
+                    $score[] = (string)$v->id;
                 }
+            $scores[$key] = $score;
             }
         }
         return $scores;

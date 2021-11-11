@@ -21,7 +21,8 @@ class GetArcheryEventParticipantMember extends Retrieval
         $age_category_id = $parameters->get('age_category_id');
         $status = $parameters->get('status');
 
-        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "transaction_logs.status","transaction_logs.expired_time")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
+        ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
         ->where('archery_event_participants.event_id', $parameters->get('id'))
         ->where('archery_event_participants.team_category_id', $team_category_id)
         ->where('archery_event_participants.competition_category_id', $competition_category_id)
@@ -33,6 +34,11 @@ class GetArcheryEventParticipantMember extends Retrieval
                     $query->orWhere(function ($query) use ($status){
                        $query->where("transaction_logs.status",4);
                        $query->where("transaction_logs.expired_time","<=",time());
+                    });
+                }
+                if($status == 1){
+                    $query->orWhere(function ($query) use ($status){
+                       $query->where("archery_event_participants.status",1);
                     });
                 }
                 if($status == 4){
