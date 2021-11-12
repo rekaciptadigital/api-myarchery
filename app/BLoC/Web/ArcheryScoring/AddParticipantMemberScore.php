@@ -63,9 +63,9 @@ class AddParticipantMemberScore extends Transactional
         if(!$valid)
             throw new BLoCException("member tidak valid");
         if($get_elimination->elimination_scoring_type == 1)
-            $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0],$members[1], $save_permanent);
-        if($get_elimination->elimination_scoring_type == 2)
             $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0],$members[1], $save_permanent);
+        if($get_elimination->elimination_scoring_type == 2)
+            $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0],$members[1], $save_permanent);
         foreach ($get_member_match as $key => $value) //check valid members 
         {
             $participant_member_id = $value->member_id;
