@@ -172,8 +172,8 @@ class ArcheryScoring extends Model
 
         if($total_point_1 !=0 && $total_point_2 !=0 && $total_point_1 == $total_point_2){
             foreach ($scores["extra_shot"] as $es => $extra_shot) {
-                $es_score_1 = $scoring_1["scores"]["extra_shot"][$es]["score"];
-                $es_score_2 = $scoring_2["scores"]["extra_shot"][$es]["score"];
+                $es_score_1 = $this->score_value[$scoring_1["scores"]["extra_shot"][$es]["score"]];
+                $es_score_2 = $this->score_value[$scoring_2["scores"]["extra_shot"][$es]["score"]];
                 $es_distance_1 = $scoring_1["scores"]["extra_shot"][$es]["distance_from_x"];
                 $es_distance_2 = $scoring_2["scores"]["extra_shot"][$es]["distance_from_x"];
                 $es_status_2 = "draw";
@@ -258,8 +258,8 @@ class ArcheryScoring extends Model
 
         if($total_score_1 !=0 && $total_score_2 !=0 && $total_score_1 == $total_score_2){
             foreach ($scores["extra_shot"] as $es => $extra_shot) {
-                $es_score_1 = $scoring_1["scores"]["extra_shot"][$es]["score"];
-                $es_score_2 = $scoring_2["scores"]["extra_shot"][$es]["score"];
+                $es_score_1 = $this->score_value[$scoring_1["scores"]["extra_shot"][$es]["score"]];
+                $es_score_2 = $this->score_value[$scoring_2["scores"]["extra_shot"][$es]["score"]];
                 $es_distance_1 = $scoring_1["scores"]["extra_shot"][$es]["distance_from_x"];
                 $es_distance_2 = $scoring_2["scores"]["extra_shot"][$es]["distance_from_x"];
                 $es_status_2 = "draw";
