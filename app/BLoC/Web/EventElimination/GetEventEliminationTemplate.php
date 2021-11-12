@@ -95,6 +95,7 @@ class GetEventEliminationTemplate extends Retrieval
         }
         // $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate2($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender, $fix_members);
         $template["updated"] = $updated;
+        $template["elimination_id"] = $elimination_id;
         return $template;
     }
 
