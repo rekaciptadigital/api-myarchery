@@ -187,19 +187,31 @@ class ArcheryScoring extends Model
                     if($es_distance_1 < $es_distance_2){
                         $es_status_2 = "lose";
                         $es_status_1 = "win";
+                        $win_1 = 1;
+                        $win_2 = 0;
+                        break;
                     }
                     if($es_distance_2 < $es_distance_1){
                         $es_status_2 = "win";
                         $es_status_1 = "lose";
+                        $win_1 = 0;
+                        $win_2 = 1;
+                        break;
                     }
                 }
                 if($es_score_2 > $es_score_1){
                     $es_status_2 = "win";
                     $es_status_1 = "lose";
+                    $win_1 = 0;
+                    $win_2 = 1;
+                    break;
                 }
                 if($es_score_1 > $es_score_2){
                     $es_status_2 = "lose";
                     $es_status_1 = "win";
+                    $win_1 = 1;
+                    $win_2 = 0;
+                    break;
                 }
                 $scoring_1["scores"]["extra_shot"][$es]["status"] = $es_status_1;
                 $scoring_2["scores"]["extra_shot"][$es]["status"] = $es_status_2;
@@ -256,7 +268,7 @@ class ArcheryScoring extends Model
             $win_1 = 1;
         }
 
-        if($total_score_1 !=0 && $total_score_2 !=0 && $total_score_1 == $total_score_2){
+        if($total_point_1 !=0 && $total_point_2 !=0 && $total_point_1 == $total_point_2){
             foreach ($scores["extra_shot"] as $es => $extra_shot) {
                 $es_score_1 = $this->score_value[$scoring_1["scores"]["extra_shot"][$es]["score"]];
                 $es_score_2 = $this->score_value[$scoring_2["scores"]["extra_shot"][$es]["score"]];
@@ -266,26 +278,38 @@ class ArcheryScoring extends Model
                 $es_status_1 = "draw";
                 if($es_score_1 == 0 && $es_score_2 == 0)
                     break;
-    
+
                 $total_score_1 = $total_score_1+$es_score_1;
                 $total_score_2 = $total_score_2+$es_score_2;
                 if($es_score_2 == $es_score_1){
                     if($es_distance_1 < $es_distance_2){
                         $es_status_2 = "lose";
                         $es_status_1 = "win";
+                        $win_1 = 1;
+                        $win_2 = 0;
+                        break;
                     }
                     if($es_distance_2 < $es_distance_1){
                         $es_status_2 = "win";
                         $es_status_1 = "lose";
+                        $win_1 = 0;
+                        $win_2 = 1;
+                        break;
                     }
                 }
                 if($es_score_2 > $es_score_1){
                     $es_status_2 = "win";
                     $es_status_1 = "lose";
+                    $win_1 = 0;
+                    $win_2 = 1;
+                    break;
                 }
                 if($es_score_1 > $es_score_2){
                     $es_status_2 = "lose";
                     $es_status_1 = "win";
+                    $win_1 = 1;
+                    $win_2 = 0;
+                    break;
                 }
                 $scoring_1["scores"]["extra_shot"][$es]["status"] = $es_status_1;
                 $scoring_2["scores"]["extra_shot"][$es]["status"] = $es_status_2;
