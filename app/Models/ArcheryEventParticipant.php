@@ -13,7 +13,7 @@ class ArcheryEventParticipant extends Model
     }
     public static function isParticipate($user_id,$event_id)
     {
-      $archery_participant =DB::table('archery_event_participants')->select('name')->where('user_id', $user_id)->where('event_id', $event_id)->first();
+      $archery_participant =DB::table('archery_event_participants')->where('user_id', $user_id)->where('event_id', $event_id)->first();
       if(!$archery_participant){
         return false;
       }else{

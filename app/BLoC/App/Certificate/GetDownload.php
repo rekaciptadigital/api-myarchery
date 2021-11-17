@@ -25,13 +25,13 @@ class GetDownload extends Retrieval
     $event_id = $parameters->get('event_id');
     $user = Auth::guard('app-api')->user();
     $member_id = $parameters->get('member_id');
+    $type_certificate = $parameters->get('type_certificate');
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)
        throw new BLoCException("anda tidak mengikuti event ini");
     $member_name=$user['name'];
 
-    $type_certificate = $parameters->get('type_certificate');
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
     if(!$certificate)
        throw new BLoCException("event dan/atau tipe sertifikat tidak ditemukan");
@@ -65,8 +65,11 @@ class GetDownload extends Retrieval
       'orientation' => 'L',
       'bleedMargin' => 0,
       'dpi'        => 110,
+      'tempDir' => public_path().'/tmp/pdf'
     ]);
-    $mpdf->SetWatermarkText('EXAMPLE');
+
+    if(env("APP_ENV") != "production")
+      $mpdf->SetWatermarkText('EXAMPLE');
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
     $mpdf->Output('certificate.pdf', Destination::DOWNLOAD);

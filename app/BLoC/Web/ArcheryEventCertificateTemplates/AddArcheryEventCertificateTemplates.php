@@ -19,17 +19,22 @@ class AddArcheryEventCertificateTemplates extends Transactional
     protected function process($parameters)
     {
       $admin = Auth::user();
-      $event_id=$parameters->get('event_id');
-      $checkAdmin=ArcheryEvent::isOwnEvent($admin['id'],$event_id);
-      if(!$checkAdmin)throw new BLoCException("event tidak ditemukan");
+      $event_id = $parameters->get('event_id');
+      $type_certificate = $parameters->get('type_certificate');
+      // TODO check is own
+      // $checkAdmin=ArcheryEvent::isOwnEvent($admin['id'],$event_id);
+      // if(!$checkAdmin)throw new BLoCException("event tidak ditemukan");
 
-      $archery_event_certificate_templates = new ArcheryEventCertificateTemplates();
+      $archery_event_certificate_templates = ArcheryEventCertificateTemplates::where("event_id",$event_id)->where("type_certificate",$type_certificate)->first();
+
+      if(!$archery_event_certificate_templates)
+        $archery_event_certificate_templates = new ArcheryEventCertificateTemplates();
 
       $archery_event_certificate_templates->event_id = $event_id;
       $archery_event_certificate_templates->html_template =  $parameters->get('html_template');
       $archery_event_certificate_templates->background_url = $parameters->get('background_url');
       $archery_event_certificate_templates->editor_data = $parameters->get('editor_data');
-      $archery_event_certificate_templates->type_certificate =$parameters->get('type_certificate');
+      $archery_event_certificate_templates->type_certificate = $type_certificate;
       $archery_event_certificate_templates->save();
 
       return $archery_event_certificate_templates;

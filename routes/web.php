@@ -94,8 +94,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         //$router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
-            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCertificateTemplates']);
-
         });
 
     });

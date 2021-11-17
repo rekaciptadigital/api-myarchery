@@ -11,6 +11,7 @@
         "league/flysystem": "^1.0",
         "midtrans/midtrans-php": "^2.5",
         "mpdf/mpdf": "^8.0",
+        "mpdf/qrcode": "^1.1",
         "ramsey/collection": "1.1.4",
         "ramsey/uuid": "^4.2",
         "sulfanoaf/api-util": "^1.0@alpha",
