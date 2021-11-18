@@ -77,6 +77,19 @@ class EliminationFormat
         return $matches;
     }
 
+    public static function Template8($members = []){
+        $matches = [];
+        foreach ($members as $key => $value) {
+            $m = [];
+            foreach ($value as $key => $value) {
+                $m[] = $value;
+            }
+            $matches[] = ["round"=>"","seeds"=>$m];
+        }
+
+        return $matches;
+    }
+
     public static function NextMatch($count_member_match, $round, $match, $win){
         if(!isset(self::$next_match_potition[$count_member_match][$round][$match."-".$win]))
             return [];
@@ -376,7 +389,6 @@ class EliminationFormat
                 $arr["postition"] = $i + 1;
                 $arr["win"] = 0;
                 $members_coll[$i] = $arr;
-                error_log(\json_encode($members_coll[$i]));
             }else
                 $members_coll[$i] = [];
         }

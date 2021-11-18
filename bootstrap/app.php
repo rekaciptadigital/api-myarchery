@@ -92,7 +92,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register('tibonilab\Pdf\PdfServiceProvider');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-
+$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -103,6 +103,7 @@ $app->register('tibonilab\Pdf\PdfServiceProvider');
 | can respond to, as well as the controllers that may handle them.
 |
 */
+$app->configure('dompdf');
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',

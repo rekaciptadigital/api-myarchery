@@ -8,10 +8,9 @@ use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use PDF;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
-use Mpdf\Output\Destination;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class GetDownload extends Retrieval
 {
@@ -25,13 +24,13 @@ class GetDownload extends Retrieval
     $event_id = $parameters->get('event_id');
     $user = Auth::guard('app-api')->user();
     $member_id = $parameters->get('member_id');
+    $type_certificate = $parameters->get('type_certificate');
 
     $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
     if(!$checkUser)
        throw new BLoCException("anda tidak mengikuti event ini");
     $member_name=$user['name'];
 
-    $type_certificate = $parameters->get('type_certificate');
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
     if(!$certificate)
        throw new BLoCException("event dan/atau tipe sertifikat tidak ditemukan");
@@ -57,27 +56,30 @@ class GetDownload extends Retrieval
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
     }
 
-    $mpdf = new \Mpdf\Mpdf([
-      'margin_left' => 0,
-      'margin_right' => 0,
-      'mode' => 'utf-8',
-      'format' => 'A4-L',
-      'orientation' => 'L',
-      'bleedMargin' => 0,
-      'dpi'        => 110,
-    ]);
-    $mpdf->SetWatermarkText('EXAMPLE');
-    $mpdf->SetDisplayPreferences('FullScreen');
-    $mpdf->WriteHTML($final_doc);
-    $mpdf->Output('certificate.pdf', Destination::DOWNLOAD);
+    // $mpdf = new \Mpdf\Mpdf([
+    //   'margin_left' => 0,
+    //   'margin_right' => 0,
+    //   'mode' => 'utf-8',
+    //   'format' => 'A4-L',
+    //   'orientation' => 'L',
+    //   'bleedMargin' => 0,
+    //   'dpi'        => 110,
+    //   'tempDir' => public_path().'/tmp/pdf'
+    // ]);
 
-    return response($mpdf)
-      ->header('Access-Control-Allow-Origin','*')
-      ->header('Access-Control-Allow-Methods','*')
-      ->header('Access-Control-Allow-Headers','*')
-      ->header('Content-type', 'application/octet-stream')
-      ->header('Content-Transfer-Encoding', 'binary')
-      ->header('Accept-Ranges', 'bytes');
+    // if(env("APP_ENV") != "production")
+    // $mpdf->SetWatermarkText('EXAMPLE');
+    // $mpdf->SetDisplayPreferences('FullScreen');
+    // $mpdf->WriteHTML($final_doc);
+    $pdf = PDF::loadHTML('<h1>Test</h1>');
+    return $pdf->stream();
+    var_dump($mpdf);
+    // return $mpdf->Output('certificate.pdf', "I");
+    // var_dump($mpdf);  
+    // // \error_log("ss".$mpdf);
+    // $b64_pdf = chunk_split(base64_encode(file_get_contents($mpdf)));
+    
+    // return ["b64_pdf" => "$b64_pdf"];
   }
 
 }

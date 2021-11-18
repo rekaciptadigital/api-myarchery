@@ -28,9 +28,10 @@ class ArcheryEventCertificateTemplates extends Model
 
   ];
   public static function getTypeCertificate()
-    {
-        return self::$type_certificates;
-    }
+  {
+      return self::$type_certificates;
+  }
+  
   public static function  getCertificateByEventAndType($event_id, $type_certificate)
   {
     $archery_event_certificate_templates =DB::table('archery_event_certificate_templates')

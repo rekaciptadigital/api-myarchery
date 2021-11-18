@@ -38,24 +38,21 @@ class GetListDownloadCertificate extends Retrieval
     $certificate=[];
     $list = ArcheryEventCertificateTemplates::getTypeCertificate();
     $participant_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['partisipan']);
-    if(!$participant_certificate)throw new BLoCException("event dan/ atau tipe sertifikat tidak ditemukan");
-
-    unset($participant_certificate->html_template);
-    $certificate[]=["type" => "participant", "data" => (object)array_merge((array)$participant_certificate, (array)$detail_info)];
-
+    if($participant_certificate){
+      unset($participant_certificate->html_template);
+      $certificate[]=["type" => "participant", "data" => (object)array_merge((array)$participant_certificate, (array)$detail_info)];
+    }
     $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-
     if($get_peringkat){
         $detail_info->peringkat_name=$get_peringkat->position_qualification;
-        $elimination=$get_peringkat->position_qualification;
+        $ranked=$get_peringkat->elimination_ranked;
 
-        if($elimination >= 4 && $elimination <= 16){
-          $elimination_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['eliminasi']);
-          if($elimination_certificate){
-              unset($elimination_certificate->html_template);
-              $certificate[]=["type" => "eliminasi", "data" =>  (object)array_merge((array)$elimination_certificate, (array)$detail_info)];
-          }
-        }else if($elimination >= 1 && $elimination <= 3){
+        $elimination_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['eliminasi']);
+        if($elimination_certificate){
+            unset($elimination_certificate->html_template);
+            $certificate[]=["type" => "eliminasi", "data" =>  (object)array_merge((array)$elimination_certificate, (array)$detail_info)];
+        }
+        if($ranked != 0){
           $ranking_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['juara']);
 
           if($ranking_certificate){
