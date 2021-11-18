@@ -8,10 +8,9 @@ use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use PDF;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
-use Mpdf\Output\Destination;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class GetDownload extends Retrieval
 {
@@ -57,30 +56,30 @@ class GetDownload extends Retrieval
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
     }
 
-    $mpdf = new \Mpdf\Mpdf([
-      'margin_left' => 0,
-      'margin_right' => 0,
-      'mode' => 'utf-8',
-      'format' => 'A4-L',
-      'orientation' => 'L',
-      'bleedMargin' => 0,
-      'dpi'        => 110,
-      'tempDir' => public_path().'/tmp/pdf'
-    ]);
+    // $mpdf = new \Mpdf\Mpdf([
+    //   'margin_left' => 0,
+    //   'margin_right' => 0,
+    //   'mode' => 'utf-8',
+    //   'format' => 'A4-L',
+    //   'orientation' => 'L',
+    //   'bleedMargin' => 0,
+    //   'dpi'        => 110,
+    //   'tempDir' => public_path().'/tmp/pdf'
+    // ]);
 
-    if(env("APP_ENV") != "production")
-      $mpdf->SetWatermarkText('EXAMPLE');
-    $mpdf->SetDisplayPreferences('FullScreen');
-    $mpdf->WriteHTML($final_doc);
-    $mpdf->Output('certificate.pdf', Destination::DOWNLOAD);
-
-    return response($mpdf)
-      ->header('Access-Control-Allow-Origin','*')
-      ->header('Access-Control-Allow-Methods','*')
-      ->header('Access-Control-Allow-Headers','*')
-      ->header('Content-type', 'application/octet-stream')
-      ->header('Content-Transfer-Encoding', 'binary')
-      ->header('Accept-Ranges', 'bytes');
+    // if(env("APP_ENV") != "production")
+    // $mpdf->SetWatermarkText('EXAMPLE');
+    // $mpdf->SetDisplayPreferences('FullScreen');
+    // $mpdf->WriteHTML($final_doc);
+    $pdf = PDF::loadHTML('<h1>Test</h1>');
+    return $pdf->stream();
+    var_dump($mpdf);
+    // return $mpdf->Output('certificate.pdf', "I");
+    // var_dump($mpdf);  
+    // // \error_log("ss".$mpdf);
+    // $b64_pdf = chunk_split(base64_encode(file_get_contents($mpdf)));
+    
+    // return ["b64_pdf" => "$b64_pdf"];
   }
 
 }

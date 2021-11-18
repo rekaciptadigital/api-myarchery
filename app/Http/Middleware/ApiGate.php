@@ -57,7 +57,6 @@ class ApiGate
             $current_data = CaseConvert::camel($current_data);
             $response->setData($current_data);
         }
-
         return $response;
     }
 }
