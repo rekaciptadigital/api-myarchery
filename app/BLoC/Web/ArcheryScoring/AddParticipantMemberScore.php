@@ -6,6 +6,7 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryQualificationSchedules;
+use App\Models\ArcheryEventEliminationMember;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\DB;
@@ -89,6 +90,10 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->scoring_detail = \json_encode($scoring);
             $participant_scoring->save();
             if($save_permanent == 1){
+                $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant,$round,$match,$win);
+                if($champion != 0){
+                    ArcheryEventEliminationMember::where("id",$value->elimination_member_id)->update(["elimination_ranked"=>$champion]);
+                }
                 if($win == 1){
                     ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
                 }

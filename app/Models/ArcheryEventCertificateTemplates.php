@@ -25,11 +25,21 @@ class ArcheryEventCertificateTemplates extends Model
     "partisipan" => "1",
     "juara" => "2",
     "eliminasi" => "3",
-
   ];
+
   public static function getTypeCertificate()
   {
       return self::$type_certificates;
+  }
+
+  public static function getCertificateLabel($id)
+  {
+      foreach (self::$type_certificates as $key => $value) {
+        if($value == $id)
+        return $key;
+      };
+
+      return "";
   }
   
   public static function  getCertificateByEventAndType($event_id, $type_certificate)
@@ -45,7 +55,6 @@ class ArcheryEventCertificateTemplates extends Model
   public static function  checkElimination($member_id)
   {
     $check_elimination=DB::table('archery_event_elimination_members')
-    ->select('position_qualification')
     ->where('member_id', $member_id)
     ->first();
 

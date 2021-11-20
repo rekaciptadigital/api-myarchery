@@ -10,7 +10,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
+use Mpdf\Output\Destination;
 use Barryvdh\DomPDF\Facade as PDF;
+use App;
 
 class GetDownload extends Retrieval
 {
@@ -47,39 +49,40 @@ class GetDownload extends Retrieval
 
     if($type_certificate==$list['juara']){
       $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-      if(!$get_peringkat)
+      if(!$get_peringkat || $get_peringkat->elimination_ranked == 0)
         throw new BLoCException("data eliminasi tidak ditemukan");
-      $peringkat_name=$get_peringkat->position_qualification;
+      $peringkat_name=$get_peringkat->elimination_ranked;
 
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$member_name, $kategori_name,$peringkat_name],$html_template);
     }else{
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
     }
 
-    // $mpdf = new \Mpdf\Mpdf([
-    //   'margin_left' => 0,
-    //   'margin_right' => 0,
-    //   'mode' => 'utf-8',
-    //   'format' => 'A4-L',
-    //   'orientation' => 'L',
-    //   'bleedMargin' => 0,
-    //   'dpi'        => 110,
-    //   'tempDir' => public_path().'/tmp/pdf'
-    // ]);
+    $file_name = str_replace(" ","-",$member_name)."_certificate_".ArcheryEventCertificateTemplates::getCertificateLabel($type_certificate).".pdf";
+    $mpdf = new \Mpdf\Mpdf([
+      'margin_left' => 0,
+      'margin_right' => 0,
+      'mode' => 'utf-8',
+      'format' => 'A4-L',
+      'orientation' => 'L',
+      'bleedMargin' => 0,
+      'dpi'        => 110,
+      'tempDir' => public_path().'/tmp/pdf'
+    ]);
 
-    // if(env("APP_ENV") != "production")
-    // $mpdf->SetWatermarkText('EXAMPLE');
-    // $mpdf->SetDisplayPreferences('FullScreen');
-    // $mpdf->WriteHTML($final_doc);
-    $pdf = PDF::loadHTML('<h1>Test</h1>');
-    return $pdf->stream();
-    var_dump($mpdf);
-    // return $mpdf->Output('certificate.pdf', "I");
-    // var_dump($mpdf);  
-    // // \error_log("ss".$mpdf);
-    // $b64_pdf = chunk_split(base64_encode(file_get_contents($mpdf)));
+    if(env("APP_ENV") != "production")
+    $mpdf->SetWatermarkText('EXAMPLE');
     
-    // return ["b64_pdf" => "$b64_pdf"];
+    $mpdf->SetDisplayPreferences('FullScreen');
+    $mpdf->WriteHTML($final_doc);
+    $test = $mpdf->Output($file_name, Destination::STRING_RETURN);
+    
+    $b64_pdf = "data:application/pdf;base64,".base64_encode($test);
+
+    return [
+      "file_name" => $file_name,
+      "file_base_64" => $b64_pdf,
+    ];
   }
 
 }
