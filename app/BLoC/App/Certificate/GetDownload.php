@@ -58,6 +58,7 @@ class GetDownload extends Retrieval
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
     }
 
+    $file_name = str_replace(" ","-",$member_name)."_certificate_".ArcheryEventCertificateTemplates::getCertificateLabel($type_certificate).".pdf";
     $mpdf = new \Mpdf\Mpdf([
       'margin_left' => 0,
       'margin_right' => 0,
@@ -74,7 +75,7 @@ class GetDownload extends Retrieval
     
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
-    $test = $mpdf->Output('certificate.pdf', Destination::STRING_RETURN);
+    $test = $mpdf->Output($file_name, Destination::STRING_RETURN);
     
     // var_dump($test);  
     // // \error_log("ss".$mpdf);
@@ -83,7 +84,10 @@ class GetDownload extends Retrieval
     // $pdf->stream();
     $b64_pdf = "data:application/pdf;base64,".base64_encode($test);
 
-    return ["b64_pdf" => $b64_pdf];
+    return [
+      "file_name" => $file_name,
+      "file_base_64" => $b64_pdf,
+    ];
   }
 
 }
