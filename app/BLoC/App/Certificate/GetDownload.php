@@ -49,9 +49,9 @@ class GetDownload extends Retrieval
 
     if($type_certificate==$list['juara']){
       $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-      if(!$get_peringkat)
+      if(!$get_peringkat || $get_peringkat->elimination_ranked == 0)
         throw new BLoCException("data eliminasi tidak ditemukan");
-      $peringkat_name=$get_peringkat->position_qualification;
+      $peringkat_name=$get_peringkat->elimination_ranked;
 
       $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$member_name, $kategori_name,$peringkat_name],$html_template);
     }else{
@@ -77,11 +77,6 @@ class GetDownload extends Retrieval
     $mpdf->WriteHTML($final_doc);
     $test = $mpdf->Output($file_name, Destination::STRING_RETURN);
     
-    // var_dump($test);  
-    // // \error_log("ss".$mpdf);
-    // $pdf = App::make('dompdf.wrapper');
-    // $pdf->loadHTML('<h1>Test</h1>');
-    // $pdf->stream();
     $b64_pdf = "data:application/pdf;base64,".base64_encode($test);
 
     return [

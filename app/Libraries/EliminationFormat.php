@@ -55,14 +55,25 @@ class EliminationFormat
             "2" =>[
                     "1-1" => [3,1,0],// round, match, index
                     "2-1" => [3,1,1],// round, match, index
-                ],
-            "3" =>[
-                    "1-1" => [4,1,0],// round, match, index
-                    "2-1" => [4,1,1],// round, match, index
-                    "1-0" => [5,1,0],// round, match, index
-                    "2-0" => [5,1,1],// round, match, index
-                ]],
+                    "1-0" => [4,1,0],// round, match, index
+                    "2-0" => [4,1,1],// round, match, index
+                ]
+        ]
     ];
+
+    static $elimination_champion = [
+        "16" => [
+            "4-1-1" => 1,
+            "4-1-0" => 2,
+            "5-1-1" => 3,
+        ],
+        "8" => [
+            "3-1-1" => 1,
+            "3-1-0" => 2,
+            "4-1-1" => 3,
+        ],
+    ];
+
 
     public static function Template16($members = []){
         $matches = [];
@@ -88,6 +99,10 @@ class EliminationFormat
         }
 
         return $matches;
+    }
+
+    public static function EliminationChampion($round, $match, $win){
+        return isset(self::$elimination_champion[$round."-".$match."-".$win]) ? self::$elimination_champion[$round."-".$match."-".$win] : 0;
     }
 
     public static function NextMatch($count_member_match, $round, $match, $win){

@@ -55,7 +55,6 @@ class ArcheryEventCertificateTemplates extends Model
   public static function  checkElimination($member_id)
   {
     $check_elimination=DB::table('archery_event_elimination_members')
-    ->select('position_qualification')
     ->where('member_id', $member_id)
     ->first();
 
