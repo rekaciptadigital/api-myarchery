@@ -101,8 +101,8 @@ class EliminationFormat
         return $matches;
     }
 
-    public static function EliminationChampion($round, $match, $win){
-        return isset(self::$elimination_champion[$round."-".$match."-".$win]) ? self::$elimination_champion[$round."-".$match."-".$win] : 0;
+    public static function EliminationChampion($count_member_match,$round, $match, $win){
+        return isset(self::$elimination_champion[$count_member_match][$round."-".$match."-".$win]) ? self::$elimination_champion[$count_member_match][$round."-".$match."-".$win] : 0;
     }
 
     public static function NextMatch($count_member_match, $round, $match, $win){
