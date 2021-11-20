@@ -91,7 +91,7 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->save();
             if($save_permanent == 1){
                 if($win == 1){
-                    $champion = EliminationFormat::EliminationChampion($round,$match,$win);
+                    $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant,$round,$match,$win);
                     if($champion != 0){
                         ArcheryEventEliminationMember::where("id",$value->elimination_member_id)->update(["elimination_ranked"=>$champion]);
                     }
