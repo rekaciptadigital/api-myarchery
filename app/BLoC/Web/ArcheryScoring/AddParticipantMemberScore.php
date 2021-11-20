@@ -90,11 +90,11 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->scoring_detail = \json_encode($scoring);
             $participant_scoring->save();
             if($save_permanent == 1){
+                $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant,$round,$match,$win);
+                if($champion != 0){
+                    ArcheryEventEliminationMember::where("id",$value->elimination_member_id)->update(["elimination_ranked"=>$champion]);
+                }
                 if($win == 1){
-                    $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant,$round,$match,$win);
-                    if($champion != 0){
-                        ArcheryEventEliminationMember::where("id",$value->elimination_member_id)->update(["elimination_ranked"=>$champion]);
-                    }
                     ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
                 }
                 $next = EliminationFormat::NextMatch($get_elimination->count_participant, $round, $match, $win);
