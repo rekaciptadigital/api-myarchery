@@ -3,6 +3,7 @@
 namespace App\BLoC\App\Certificate;
 
 use App\Models\ArcheryEventCertificateTemplates;
+use App\Models\ArcheryMemberCertificate;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
@@ -70,14 +71,21 @@ class GetDownload extends Retrieval
       'tempDir' => public_path().'/tmp/pdf'
     ]);
 
+    $member_certificate = ArcheryMemberCertificate::firstOrNew(array(
+                                                        'id' => $member_id."-".$certificate->id,
+                                                        'member_id' => $member_id,
+                                                        'certificate_template_id' => $certificate->id,
+                                                      ));
+    $member_certificate->save();
+
     if(env("APP_ENV") != "production")
     $mpdf->SetWatermarkText('EXAMPLE');
     
     $mpdf->SetDisplayPreferences('FullScreen');
     $mpdf->WriteHTML($final_doc);
-    $test = $mpdf->Output($file_name, Destination::STRING_RETURN);
+    $pdf = $mpdf->Output($file_name, Destination::STRING_RETURN);
     
-    $b64_pdf = "data:application/pdf;base64,".base64_encode($test);
+    $b64_pdf = "data:application/pdf;base64,".base64_encode($pdf);
 
     return [
       "file_name" => $file_name,
