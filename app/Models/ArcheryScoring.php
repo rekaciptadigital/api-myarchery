@@ -217,6 +217,9 @@ class ArcheryScoring extends Model
         $scoring_1["scores"]["total"] = $total_score_1;
         $scoring_2["scores"]["total"] = $total_score_2;
 
+        $scoring_1["scores"]["result"] = $total_point_1;
+        $scoring_2["scores"]["result"] = $total_point_2;
+
         $scoring_1["scores"]["eliminationt_score_type"] = 1;
         $scoring_2["scores"]["eliminationt_score_type"] = 1;
 
@@ -314,6 +317,9 @@ class ArcheryScoring extends Model
 
         $scoring_1["scores"]["total"] = $total_score_1;
         $scoring_2["scores"]["total"] = $total_score_2;
+
+        $scoring_1["scores"]["result"] = $total_score_1;
+        $scoring_2["scores"]["result"] = $total_score_2;
 
         $scoring_1["scores"]["eliminationt_score_type"] = 2;
         $scoring_2["scores"]["eliminationt_score_type"] = 2;

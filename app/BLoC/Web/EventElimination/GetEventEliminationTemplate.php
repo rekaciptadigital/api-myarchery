@@ -53,6 +53,7 @@ class GetEventEliminationTemplate extends Retrieval
                             "archery_event_participant_members.club",
                             "archery_event_participant_members.gender",
                             "archery_event_elimination_matches.id",
+                            "archery_event_elimination_matches.result",
                             "archery_event_elimination_matches.round",
                             "archery_event_elimination_matches.match",
                             "archery_event_elimination_matches.win",
@@ -78,6 +79,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "club" => $value->club,
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
+                        "result" => $value->result,
                         "status" => $value->win == 1 ? "win" : "wait"
                     );    
                 }
