@@ -73,6 +73,7 @@ class AddParticipantMemberScore extends Transactional
             $scoring = $calculate[$participant_member_id]["scores"];
             $total = $scoring["total"];
             $win = $scoring["win"];
+            $result = $scoring["result"];
             $session = 1;
             $type = 2;
             $item_value = "archery_event_elimination_matches";
@@ -89,13 +90,15 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->scoring_log = \json_encode($value);
             $participant_scoring->scoring_detail = \json_encode($scoring);
             $participant_scoring->save();
+            $match = ArcheryEventEliminationMatch::where("id",$value->id)->first();
+            $match->result = $result;
             if($save_permanent == 1){
                 $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant,$round,$match,$win);
                 if($champion != 0){
-                    ArcheryEventEliminationMember::where("id",$value->elimination_member_id)->update(["elimination_ranked"=>$champion]);
+                    $match->elimination_ranked = $champion;
                 }
                 if($win == 1){
-                    ArcheryEventEliminationMatch::where("id",$value->id)->update(["win"=>$win]);
+                    $match->win = $win;
                 }
                 $next = EliminationFormat::NextMatch($get_elimination->count_participant, $round, $match, $win);
                 if(count($next) > 0){
@@ -106,6 +109,7 @@ class AddParticipantMemberScore extends Transactional
                                                     ->update(["elimination_member_id"=>$value->elimination_member_id]);
                 }
             }
+            $match->save();
         }
         return true;
     }

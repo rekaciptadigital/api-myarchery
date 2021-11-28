@@ -48,16 +48,20 @@ class GetDownload extends Retrieval
 
     $list = ArcheryEventCertificateTemplates::getTypeCertificate();
 
+    $final_doc = str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
+    
     if($type_certificate==$list['juara']){
       $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
       if(!$get_peringkat || $get_peringkat->elimination_ranked == 0)
         throw new BLoCException("data eliminasi tidak ditemukan");
       $peringkat_name=$get_peringkat->elimination_ranked;
 
-      $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}','{%peringkat_name%}'], [$member_name, $kategori_name,$peringkat_name],$html_template);
-    }else{
-      $final_doc=$template=str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
+      $final_doc = str_replace(['{%peringkat_name%}'], [$peringkat_name],$final_doc);
     }
+
+    $member_certificate_id = $member_id."-".$certificate->id;
+    $validate_link = env("WEB_URL")."/certificate/validate/".$member_certificate_id;
+    $final_doc=str_replace(['{%sertif_verif_url%}'], [$validate_link],$final_doc);
 
     $file_name = str_replace(" ","-",$member_name)."_certificate_".ArcheryEventCertificateTemplates::getCertificateLabel($type_certificate).".pdf";
     $mpdf = new \Mpdf\Mpdf([
@@ -72,7 +76,7 @@ class GetDownload extends Retrieval
     ]);
 
     $member_certificate = ArcheryMemberCertificate::firstOrNew(array(
-                                                        'id' => $member_id."-".$certificate->id,
+                                                        'id' => $member_certificate_id,
                                                         'member_id' => $member_id,
                                                         'certificate_template_id' => $certificate->id,
                                                       ));
