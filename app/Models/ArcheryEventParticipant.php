@@ -11,13 +11,14 @@ class ArcheryEventParticipant extends Model
     {
         return $this->hasMany(ArcheryEventParticipantMember::class, 'archery_event_participant_id', 'id');
     }
-    public static function isParticipate($user_id,$event_id)
+    public static function getMemberByUserId($user_id,$participant_id)
     {
-      $archery_participant =DB::table('archery_event_participants')->where('user_id', $user_id)->where('event_id', $event_id)->first();
-      if(!$archery_participant){
-        return false;
-      }else{
-        return $archery_participant;
-      }
+      $archery_participant =DB::select('archery_event_participant_members.*','archery_event_participants.event_id')->table('archery_event_participants')
+                            ->join('archery_event_participant_members','archery_event_participants.id','=','archery_event_participant_members.archery_event_participant_id')
+                            ->where('archery_event_participant_members.user_id', $user_id)
+                            ->where('archery_event_participants.id', $participant_id)
+                            ->where('archery_event_participants.status', 1)
+                            ->first();
+      return $archery_participant;
     }
 }

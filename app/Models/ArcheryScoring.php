@@ -65,7 +65,7 @@ class ArcheryScoring extends Model
 
     protected $score_type = array(
         array("id" => 1, "value" => "qualification"),
-        array("id" => 2, "value" => "eliminasi")
+        array("id" => 2, "value" => "elimination")
     );
 
     protected function makeScoringFormat(object $scoring){
