@@ -24,14 +24,15 @@ class GetDownload extends Retrieval
 
   protected function process($parameters)
   {
-    $event_id = $parameters->get('event_id');
+    $participant_id = $parameters->get('participant_id');
     $user = Auth::guard('app-api')->user();
-    $member_id = $parameters->get('member_id');
     $type_certificate = $parameters->get('type_certificate');
 
-    $checkUser=ArcheryEventParticipant::isParticipate($user['id'],$event_id);
-    if(!$checkUser)
-       throw new BLoCException("anda tidak mengikuti event ini");
+    $member=ArcheryEventParticipant::getMemberByUserId($user['id'],$participant_id);
+    if(!$member)throw new BLoCException("anda tidak mengikuti event ini");
+
+    $member_id = $member->id;
+    $event_id = $member->event_id;
     $member_name=$user['name'];
 
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
@@ -40,28 +41,28 @@ class GetDownload extends Retrieval
 
     $html_template=base64_decode($certificate->html_template);
 
-    $kategori=ArcheryEventCertificateTemplates::getCategoryLabel($event_id,$user['id']);
-    if(!$kategori)
+    $category=ArcheryEventCertificateTemplates::getCategoryLabel($participant_id,$user['id']);
+    if($category == "")
       throw new BLoCException("kategori tidak ditemukan");
 
-    $kategori_name=$kategori->label_team_categories." - ".$kategori->label_age_categories." - ".$kategori->label_competition_categories." - ".$kategori->label_distance."m";
+    $category_name=$category;
 
     $list = ArcheryEventCertificateTemplates::getTypeCertificate();
 
-    $final_doc = str_replace(['{%member_name%}', '{%kategori_name%}'], [$member_name, $kategori_name],$html_template);
+    $final_doc = str_replace(['{%member_name%}', '{%category_name%}'], [$member_name, $category_name],$html_template);
     
-    if($type_certificate==$list['juara']){
+    if($type_certificate==$list['winner']){
       $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
       if(!$get_peringkat || $get_peringkat->elimination_ranked == 0)
-        throw new BLoCException("data eliminasi tidak ditemukan");
-      $peringkat_name=$get_peringkat->elimination_ranked;
+        throw new BLoCException("data elimination tidak ditemukan");
+      $ranked=$get_peringkat->elimination_ranked;
 
-      $final_doc = str_replace(['{%peringkat_name%}'], [$peringkat_name],$final_doc);
+      $final_doc = str_replace(['{%ranked%}'], [$ranked],$final_doc);
     }
 
     $member_certificate_id = $member_id."-".$certificate->id;
     $validate_link = env("WEB_URL")."/certificate/validate/".$member_certificate_id;
-    $final_doc=str_replace(['{%sertif_verif_url%}'], [$validate_link],$final_doc);
+    $final_doc=str_replace(['{%certificate_verify_url%}'], [$validate_link],$final_doc);
 
     $file_name = str_replace(" ","-",$member_name)."_certificate_".ArcheryEventCertificateTemplates::getCertificateLabel($type_certificate).".pdf";
     $mpdf = new \Mpdf\Mpdf([
