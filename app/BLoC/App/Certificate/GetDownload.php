@@ -33,7 +33,7 @@ class GetDownload extends Retrieval
 
     $member_id = $member->id;
     $event_id = $member->event_id;
-    $member_name=$user['name'];
+    $member_name=$member->name;
 
     $certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
     if(!$certificate)

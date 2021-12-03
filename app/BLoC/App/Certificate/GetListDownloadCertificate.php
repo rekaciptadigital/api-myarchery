@@ -31,7 +31,7 @@ class GetListDownloadCertificate extends Retrieval
     $event_id = $member->event_id;
     $member_id = $member->id;
 
-    $detail_info->member_name=$user['name'];
+    $detail_info->member_name=$member->name;
     $detail_info->member_id=$member_id;
 
     $category=ArcheryEventCertificateTemplates::getCategoryLabel($participant_id,$user['id']);
