@@ -47,8 +47,8 @@ class GetListDownloadCertificate extends Retrieval
     }
     $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
     if($get_peringkat){
-        $detail_info->peringkat_name=$get_peringkat->position_qualification;
-        $ranked=$get_peringkat->elimination_ranked;
+      $ranked=$get_peringkat->elimination_ranked;
+      $detail_info->ranked=$ranked;
 
         $elimination_certificate=ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$list['elimination']);
         if($elimination_certificate){
