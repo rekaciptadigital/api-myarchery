@@ -14,12 +14,15 @@ class CreateClubsTable extends Migration
     public function up()
     {
         try {
-            Schema::create('clubs', function (Blueprint $table) {
+            Schema::dropIfExists('archery_clubs');
+
+            Schema::create('archery_clubs', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name')->unique();
-                $table->string('manager');
-                $table->string('profile_picture')->nullable();
-                $table->string('phone_number');
+                $table->string('logo')->nullable();
+                $table->string('place_name');
+                $table->string('province');
+                $table->string('city');
                 $table->text('address');
                 $table->text('description')->nullable();
                 $table->timestamps();
@@ -37,6 +40,6 @@ class CreateClubsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('clubs');
+        Schema::dropIfExists('archery_clubs');
     }
 }

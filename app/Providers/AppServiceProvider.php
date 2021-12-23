@@ -14,6 +14,7 @@ use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetListDownloadCertificate;
 use App\BLoC\App\Certificate\GetDownload;
+use App\BLoC\App\ArcheryClub\CreateArcheryClub;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getParticipantScoreSummary", GetParticipantScoreSummary::class);
         $this->registerService("getListDownloadCertificate", GetListDownloadCertificate::class);
         $this->registerService("getDownload", GetDownload::class);
+        $this->registerService('createArcheryClub', CreateArcheryClub::class);
     }
 
     private function registerService($serviceName, $className)
