@@ -5,9 +5,10 @@ namespace App\BLoC\App\ArcheryClub;
 use App\Models\ArcheryClub;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class JoinClub extends Retrieval
+class LeftArcheryClub extends Retrieval
 {
     public function getDescription()
     {
@@ -18,24 +19,16 @@ class JoinClub extends Retrieval
     {
         $club_member = ClubMember::find($parameters->get('id'));
         if(!$club_member){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'data not found'
-            ], 404);
+            throw new BLoCException("data not found");
         }
 
         $club_member->delete();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'data deleted'
-        ]);
     }
 
     protected function validation($parameters)
     {
         return [
-            'user_id' => 'required|integer',
-            'club_id' => 'required|integer'
+        
         ];
     }
 }

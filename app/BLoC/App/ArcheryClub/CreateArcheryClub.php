@@ -2,6 +2,7 @@
 
 namespace App\BLoC\App\ArcheryClub;
 
+use App\Libraries\Upload;
 use App\Models\ArcheryClub;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
@@ -25,27 +26,14 @@ class CreateArcheryClub extends Retrieval
         $archery_club->city = $parameters->get('city');
         $archery_club->address = $parameters->get('address');
         $archery_club->description = $parameters->get('description');
-        if ($parameters->get('logo')) {
-            $folderPath = "logo/";
-
-            $image_parts = explode(";base64,", $parameters->get('logo'));
-            $image_type_aux = explode("image/", $image_parts[0]);
-            $image_type = $image_type_aux[1];
-            $image_base64 = base64_decode($image_parts[1]);
-            $file = $folderPath . time() . '.'.$image_type;
-    
-            file_put_contents($file, $image_base64);
-            $archery_club->logo = $file;
-        }
         $archery_club->save();
+        if ($parameters->get('logo')) {
+            $file = Upload::setPath("asset/logo/")->setFileName("logo_".$archery_club->id)->setBase64($parameters->get('logo'))->save();
+            $archery_club->logo = $file;
+            $archery_club->save();
+        };
 
-        $club_member = new ClubMember();
-        $club_member->user_id = $user->id;
-        $club_member->club_id = $archery_club->id;
-        $club_member->status = 1;
-        $club_member->role = 1;
-        $club_member->save();
-
+        ClubMember::addNewMember($archery_club->id, $user->id, 1, 1);
 
         return $archery_club;
     }
