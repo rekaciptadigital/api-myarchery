@@ -17,30 +17,28 @@ class KickMember extends Retrieval
 
     protected function process($parameters)
     {
-        $club_id = $parameters->get('club_id');
-        $club = ArcheryClub::find($club_id);
-        if (!$club) {
-            throw new BLoCException("club not found");
+        $user_login = Auth::guard('app-api')->user();
+        $owner = ClubMember::where('user_id', $user_login->id)->first();
+
+        if ($owner->role != 1) {
+            throw new BLoCException("you are not owner this club");
         }
 
-        $user =  $user = Auth::guard('app-api')->user();
+        $club_member = ClubMember::find($parameters->get('id'));
 
-        $isExist = ClubMember::where('club_id', $club_id)
-        ->where('user_id', $user->id)->get();
-
-        if ($isExist->count() > 0) {
-            throw new BLoCException("user already join this club");
+        if (!$club_member) {
+            throw new BLoCException("member not found");
         }
 
-        $member = ClubMember::addNewMember($club_id, $user->id, 1, 2);
+        if ($owner->club_id != $club_member->club_id) {
+            throw new BLoCException("you are not owner this club");
+        }
 
-        return $member;
+        $club_member->delete();
     }
 
     protected function validation($parameters)
     {
-        return [
-         
-        ];
+        return [];
     }
 }

@@ -20,6 +20,7 @@ class CreateClubsTable extends Migration
                 $table->increments('id');
                 $table->string('name')->unique();
                 $table->string('logo')->nullable();
+                $table->string('banner')->nullable();
                 $table->string('place_name');
                 $table->string('province');
                 $table->string('city');

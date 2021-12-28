@@ -6,9 +6,10 @@ use App\Libraries\Upload;
 use App\Models\ArcheryClub;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class CreateArcheryClub extends Retrieval
+class UpdateArcheryClub extends Retrieval
 {
     public function getDescription()
     {
@@ -18,7 +19,12 @@ class CreateArcheryClub extends Retrieval
     protected function process($parameters)
     {
         $user = Auth::guard('app-api')->user();
-        $archery_club = new ArcheryClub();
+
+        $archery_club = ArcheryClub::find($parameters->get('id'));
+        if (!$archery_club) {
+            throw new BLoCException("data not found");
+        }
+    
         $archery_club->name = $parameters->get('name');
         $archery_club->place_name = $parameters->get('place_name');
         $archery_club->province = $parameters->get('province');
@@ -27,18 +33,10 @@ class CreateArcheryClub extends Retrieval
         $archery_club->description = $parameters->get('description');
         $archery_club->save();
         if ($parameters->get('logo')) {
-            $logo = Upload::setPath("asset/logo/")->setFileName("logo_".$archery_club->id)->setBase64($parameters->get('logo'))->save();
-            $archery_club->logo = $logo;
+            $file = Upload::setPath("asset/logo/")->setFileName("logo_".$archery_club->id)->setBase64($parameters->get('logo'))->save();
+            $archery_club->logo = $file;
             $archery_club->save();
         };
-
-        if ($parameters->get('banner')) {
-            $banner = Upload::setPath("asset/banner/")->setFileName("banner_".$archery_club->id)->setBase64($parameters->get('banner'))->save();
-            $archery_club->banner = $banner;
-            $archery_club->save();
-        };
-
-        ClubMember::addNewMember($archery_club->id, $user->id, 1, 1);
 
         return $archery_club;
     }
@@ -46,13 +44,12 @@ class CreateArcheryClub extends Retrieval
     protected function validation($parameters)
     {
         return [
-            'name' => 'required|string|unique:archery_clubs',
-            'place_name' => 'required|string',
-            'province' => "required|string",
-            'city' => 'required|string',
+            'name' => 'string|unique:archery_clubs',
+            'place_name' => 'string',
+            'province' => "string",
+            'city' => 'string',
             'logo' => 'string',
-            'banner' => 'string',
-            'address' => 'required|string',
+            'address' => 'string',
             'description' => 'string'
         ];
     }
