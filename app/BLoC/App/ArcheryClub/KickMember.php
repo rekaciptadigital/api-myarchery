@@ -17,11 +17,11 @@ class KickMember extends Retrieval
 
     protected function process($parameters)
     {
+        return $parameters->get('id');
         $user_login = Auth::guard('app-api')->user();
         $owner = ClubMember::where('user_id', $user_login->id)->first();
-
-        if ($owner->role != 1) {
-            throw new BLoCException("you are not owner this club");
+        if(!$owner){
+            throw new BLoCException("owner not found");
         }
 
         $club_member = ClubMember::find($parameters->get('id'));
@@ -30,8 +30,16 @@ class KickMember extends Retrieval
             throw new BLoCException("member not found");
         }
 
-        if ($owner->club_id != $club_member->club_id) {
+        if ($owner->role != 1) {
             throw new BLoCException("you are not owner this club");
+        }
+
+        if ($club_member->id == $owner->id) {
+            throw new BLoCException("cannot kick you are owner this club");
+        }
+
+        if ($owner->club_id != $club_member->club_id) {
+            throw new BLoCException("this user not member your club");
         }
 
         $club_member->delete();
