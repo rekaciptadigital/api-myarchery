@@ -32,8 +32,15 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->group(['prefix' => 'archery-club', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClubs']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryClub']);
+                $router->put('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryClub']);
                 $router->post('/join', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:joinArcheryClub']);
                 $router->delete('/left', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:leftArcheryClub']);
+                $router->delete('/kick', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:kickMember']);
+                $router->get('/my-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMyClub']);
+            });
+
+            $router->group(['prefix' => 'archery-club'], function () use ($router) {
+                $router->get('/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getprofileClub']);
             });
         });
     });

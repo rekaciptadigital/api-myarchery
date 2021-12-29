@@ -18,10 +18,18 @@ class LeftArcheryClub extends Retrieval
     protected function process($parameters)
     {
         $user_login = Auth::guard('app-api')->user();
-        $club_member = ClubMember::where('user_id', $user_login->id)->first();
-        
+
+        $club_id = $parameters->get('club_id');
+        $club = ArcheryClub::find($club_id);
+        if(!$club){
+            throw new BLoCException("club not found");
+        }
+
+        $club_member = ClubMember::where('club_id', $club_id)
+        ->where('user_id', $user_login->id)->first();
+
         if (!$club_member) {
-            throw new BLoCException("user not found");
+            throw new BLoCException("user not member this club");
         }
 
         if ($club_member->role == 1) {

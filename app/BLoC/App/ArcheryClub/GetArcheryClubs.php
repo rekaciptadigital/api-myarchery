@@ -16,6 +16,7 @@ class GetArcheryClubs extends Retrieval
 
     protected function process($parameters)
     {
+        // return ArcheryClub::withCount('user')->get();
         $archery_clubs = ArcheryClub::query();
         $name = $parameters->get('name');
 
@@ -23,7 +24,7 @@ class GetArcheryClubs extends Retrieval
             return $query->whereRaw("name LIKE '%" . strtolower($name) . "%'");
         });
 
-        return $archery_clubs->limit(25)->get();
+        return  $archery_clubs->limit(25)->with('user')->withCount('user')->get();
     }
 
     protected function validation($parameters)

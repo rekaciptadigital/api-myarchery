@@ -7,7 +7,6 @@ use App\Models\ArcheryClub;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class CreateArcheryClub extends Retrieval
 {
@@ -28,8 +27,14 @@ class CreateArcheryClub extends Retrieval
         $archery_club->description = $parameters->get('description');
         $archery_club->save();
         if ($parameters->get('logo')) {
-            $file = Upload::setPath("asset/logo/")->setFileName("logo_".$archery_club->id)->setBase64($parameters->get('logo'))->save();
-            $archery_club->logo = $file;
+            $logo = Upload::setPath("asset/logo/")->setFileName("logo_".$archery_club->id)->setBase64($parameters->get('logo'))->save();
+            $archery_club->logo = $logo;
+            $archery_club->save();
+        };
+
+        if ($parameters->get('banner')) {
+            $banner = Upload::setPath("asset/banner/")->setFileName("banner_".$archery_club->id)->setBase64($parameters->get('banner'))->save();
+            $archery_club->banner = $banner;
             $archery_club->save();
         };
 
@@ -45,7 +50,8 @@ class CreateArcheryClub extends Retrieval
             'place_name' => 'required|string',
             'province' => "required|string",
             'city' => 'required|string',
-            'logo' => 'required|string',
+            'logo' => 'string',
+            'banner' => 'string',
             'address' => 'required|string',
             'description' => 'string'
         ];
