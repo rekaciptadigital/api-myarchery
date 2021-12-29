@@ -53,4 +53,9 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     public function userArcheryInfo() {
         return $this->hasOne(UserArcheryInfo::class);
     }
+
+    public function archeryClub()
+    {
+        return $this->belongsToMany('App\Models\ArcheryClub', 'club_members', 'user_id', 'club_id');
+    }
 }
