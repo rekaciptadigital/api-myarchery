@@ -28,9 +28,9 @@ class JoinArcheryClub extends Retrieval
         $isExist = ClubMember::where('club_id', $club_id)
         ->where('user_id', $user->id)->get();
 
-        // if ($isExist->count() > 0) {
-        //     throw new BLoCException("user already join this club");
-        // }
+        if ($isExist->count() > 0) {
+            throw new BLoCException("user already join this club");
+        }
 
         $member = ClubMember::addNewMember($club_id, $user->id, 1, 2);
 
