@@ -19,8 +19,13 @@ class GetMyClub extends Retrieval
     protected function process($parameters)
     {
         $user =  $user = Auth::guard('app-api')->user();
-        $archery_club = User::find($user->id)->archeryClub;
-        return $archery_club;
+        $club_member = ClubMember::where('user_id', $user->id);
+        $data = [];
+        foreach($club_member->get() as $key){
+            $club = ArcheryClub::find($key->club_id);
+            array_push($data, $club);
+        }
+        return $data;
     }
 
     protected function validation($parameters)

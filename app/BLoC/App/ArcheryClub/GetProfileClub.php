@@ -4,6 +4,7 @@ namespace App\BLoC\App\ArcheryClub;
 
 use App\Models\ArcheryClub;
 use App\Models\ClubMember;
+use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -21,18 +22,17 @@ class GetprofileClub extends Retrieval
             throw new BLoCException("club not found");
         }
 
-        $member = ClubMember::where('club_id', $archery_club->id)->get()->toArray();
-
-        $data = $archery_club;
-        $data['total_member'] = count($member);
-
+        $club_member = ClubMember::where('club_id', $archery_club->id)->get();
+        $data = [];
+        foreach ($club_member as $key) {
+            $user = User::find($key->user_id);
+            array_push($data, $user);
+        }
         return $data;
     }
 
     protected function validation($parameters)
     {
-       return [
-
-       ];
+        return [];
     }
 }
