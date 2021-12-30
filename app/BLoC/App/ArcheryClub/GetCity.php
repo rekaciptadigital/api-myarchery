@@ -17,7 +17,7 @@ class GetCity extends Retrieval
 
     protected function process($parameters)
     {
-        return City::where('province_id', $parameters->get('province_id'))->get()->sortBy("name");
+        return City::where('province_id', $parameters->get('province_id'))->orderBy('name')->get();
     }
 
     protected function validation($parameters)
