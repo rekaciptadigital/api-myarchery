@@ -48,8 +48,8 @@ class CreateArcheryClub extends Retrieval
         return [
             'name' => 'required|string|unique:archery_clubs',
             'place_name' => 'required|string',
-            'province' => "required|string",
-            'city' => 'required|string',
+            'province' => "required|integer",
+            'city' => 'required|integer',
             'logo' => 'string',
             'banner' => 'string',
             'address' => 'required|string',

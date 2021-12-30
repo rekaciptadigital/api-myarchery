@@ -61,8 +61,8 @@ class UpdateArcheryClub extends Retrieval
                 Rule::unique('archery_clubs')->ignore($parameters->get('id'))
             ],
             'place_name' => 'string',
-            'province' => "string",
-            'city' => 'string',
+            'province' => "integer",
+            'city' => 'integer',
             'logo' => 'string',
             'address' => 'string',
             'description' => 'string',

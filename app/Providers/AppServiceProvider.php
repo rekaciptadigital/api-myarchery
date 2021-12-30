@@ -22,6 +22,8 @@ use App\BLoC\App\ArcheryClub\GetArcheryClubs;
 use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
 use App\BLoC\App\ArcheryClub\GetprofileClub;
 use App\BLoC\App\ArcheryClub\GetMyClub;
+use App\BLoC\App\ArcheryClub\GetProvince;
+use App\BLoC\App\ArcheryClub\GetCity;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService('updateArcheryClub', UpdateArcheryClub::class);
         $this->registerService('getprofileClub', GetProfileClub::class);
         $this->registerService('getMyClub', GetMyClub::class);
+        $this->registerService('getProvince', GetProvince::class);
+        $this->registerService('getCity', GetCity::class);
     }
 
     private function registerService($serviceName, $className)

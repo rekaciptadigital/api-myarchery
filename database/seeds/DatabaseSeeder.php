@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
         $this->call(MenuItemsSeeder::class);
         $this->call(MenuItemPermissionsSeeder::class);
         $this->call(ArcheryMasterDataSeeder::class);
+        $this->call(ProvincesSeeder::class);
+        $this->call(CitiesSeeder::class);
+        $this->call(DistrictsSeeder::class);
+        $this->call(VillagesSeeder::class);
     }
 }

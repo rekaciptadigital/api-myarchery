@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35eb8d9fac6100baaf52585d4c3b2228",
+    "content-hash": "8699b6162c4b4d6e9a797bebc970cb07",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -2059,83 +2059,6 @@
                 "source": "https://github.com/laravel/lumen-framework"
             },
             "time": "2019-03-05T10:00:20+00:00"
-        },
-        {
-            "name": "laravolt/indonesia",
-            "version": "v0.17",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravolt/indonesia.git",
-                "reference": "d27a4b50bf72304cbbd8dc9872b275b9902390b7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravolt/indonesia/zipball/d27a4b50bf72304cbbd8dc9872b275b9902390b7",
-                "reference": "d27a4b50bf72304cbbd8dc9872b275b9902390b7",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "5.7.*|5.8.*|6.*",
-                "php": ">=7.1.3"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^3.8",
-                "phpunit/phpunit": "^7.5||^8.0"
-            },
-            "suggest": {
-                "laravolt/suitable": "Required if you want to access editor panel",
-                "laravolt/ui": "Required if you want to access editor panel"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "Laravolt\\Indonesia\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "Indonesia": "Laravolt\\Indonesia\\Facade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravolt\\Indonesia\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Akbar Adhatama",
-                    "email": "am.adhatama@gmail.com"
-                },
-                {
-                    "name": "Deri Ramdani",
-                    "email": "deri.ramdani1@gmail.com"
-                }
-            ],
-            "description": "Package Laravel yang berisi data Provinsi, Kabupaten/Kota, Kecamatan, dan Keluarahan/Desa di seluruh Indonesia.",
-            "keywords": [
-                "desa",
-                "indonesia",
-                "kabupaten",
-                "kecamatan",
-                "kelurahan",
-                "kota",
-                "laravel",
-                "laravolt",
-                "provinsi"
-            ],
-            "support": {
-                "issues": "https://github.com/laravolt/indonesia/issues",
-                "source": "https://github.com/laravolt/indonesia/tree/v0.17"
-            },
-            "time": "2019-09-30T09:26:57+00:00"
         },
         {
             "name": "lcobucci/jwt",
