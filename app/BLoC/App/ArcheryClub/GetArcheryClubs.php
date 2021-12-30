@@ -23,7 +23,7 @@ class GetArcheryClubs extends Retrieval
         $archery_clubs = ArcheryClub::query();
 
 
-        if (Auth::guard('app-api')) {
+        if (Auth::guard('app-api')->user() != null) {
             $user = Auth::guard('app-api')->user();
         }
 

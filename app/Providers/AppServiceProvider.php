@@ -20,7 +20,7 @@ use App\BLoC\App\ArcheryClub\LeftArcheryClub;
 use App\BLoC\App\ArcheryClub\KickMember;
 use App\BLoC\App\ArcheryClub\GetArcheryClubs;
 use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
-use App\BLoC\App\ArcheryClub\GetprofileClub;
+use App\BLoC\App\ArcheryClub\GetProfileClub;
 use App\BLoC\App\ArcheryClub\GetMyClub;
 use App\BLoC\App\ArcheryClub\GetProvince;
 use App\BLoC\App\ArcheryClub\GetCity;
@@ -52,7 +52,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService('kickMember', KickMember::class);
         $this->registerService('getArcheryClubs', GetArcheryClubs::class);
         $this->registerService('updateArcheryClub', UpdateArcheryClub::class);
-        $this->registerService('getprofileClub', GetProfileClub::class);
+        $this->registerService('getProfileClub', GetProfileClub::class);
         $this->registerService('getMyClub', GetMyClub::class);
         $this->registerService('getProvince', GetProvince::class);
         $this->registerService('getCity', GetCity::class);

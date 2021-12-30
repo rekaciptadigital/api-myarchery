@@ -7,8 +7,9 @@ use App\Models\ClubMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Auth;
 
-class GetprofileClub extends Retrieval
+class GetProfileClub extends Retrieval
 {
     public function getDescription()
     {
@@ -24,9 +25,14 @@ class GetprofileClub extends Retrieval
 
         $club_member = ClubMember::where('club_id', $archery_club->id)->get();
         $data = [];
-        foreach ($club_member as $key) {
-            $user = User::find($key->user_id);
-            array_push($data, $user);
+        $data['detail'] = $archery_club;
+
+        if (Auth::guard('app-api')->user() != null) {
+            $data['member'] = [];
+            foreach ($club_member as $key) {
+                $user = User::find($key->user_id);
+                array_push($data['member'], $user);
+            }
         }
         return $data;
     }
