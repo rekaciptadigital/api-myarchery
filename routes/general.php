@@ -11,6 +11,9 @@
 |
 */
 
+use App\Models\City;
+use App\Models\Provinces;
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
@@ -32,5 +35,18 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
 
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
+    });
+
+    $router->group(['prefix' => 'general'], function () use ($router) {
+        $router->get('/get-province', function(){
+            return Provinces::all();
+        });
+        $router->get('/get-city', function($parameters){
+            return $parameters;
+            if($parameters->get('province_id')){
+                return City::where('province_id', $parameters->get('province_id'))->get();
+            }
+            return City::all();
+        });
     });
 });

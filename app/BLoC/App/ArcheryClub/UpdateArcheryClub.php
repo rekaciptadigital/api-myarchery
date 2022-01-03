@@ -46,7 +46,7 @@ class UpdateArcheryClub extends Retrieval
             $data['banner'] = $banner;
         };
 
-        unset($data['id']);
+        // unset($data['id']);
         $archery_club->fill($data);
         $archery_club->save();
 
