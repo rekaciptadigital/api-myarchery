@@ -2,7 +2,6 @@
 
 namespace App\BLoC\App\ArcheryClub;
 
-use App\Models\ArcheryClub;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -17,14 +16,13 @@ class KickMember extends Retrieval
 
     protected function process($parameters)
     {
-        return $parameters->get('id');
         $user_login = Auth::guard('app-api')->user();
         $owner = ClubMember::where('user_id', $user_login->id)->first();
         if(!$owner){
             throw new BLoCException("owner not found");
         }
 
-        $club_member = ClubMember::find($parameters->get('id'));
+        $club_member = ClubMember::find($parameters->get('member_id'));
 
         if (!$club_member) {
             throw new BLoCException("member not found");

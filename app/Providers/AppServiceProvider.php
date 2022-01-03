@@ -22,10 +22,9 @@ use App\BLoC\App\ArcheryClub\GetArcheryClubs;
 use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
 use App\BLoC\App\ArcheryClub\GetProfileClub;
 use App\BLoC\App\ArcheryClub\GetMyClub;
-use App\BLoC\App\ArcheryClub\GetProvince;
-use App\BLoC\App\ArcheryClub\GetCity;
 use App\BLoC\App\ArcheryClub\GetAllMemberByClubId;
-
+use App\BLoC\General\GetProvince;
+use App\BLoC\General\GetCity;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\BLoC\App\ArcheryClub;
+namespace App\BLoC\General;
 
-use App\Models\Provinces;
+use App\Models\City;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
-class GetProvince extends Retrieval
+class GetCity extends Retrieval
 {
     public function getDescription()
     {
@@ -19,14 +18,15 @@ class GetProvince extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        return Provinces::orderBy("name")->limit($limit)->offset($offset)->get();
+        $city = $parameters->get('province_id') ? City::where('province_id', $parameters->get('province_id'))->orderBy('name')->get() : City::orderBy('name')->limit($limit)->offset($offset)->get();
+        if(!$city){
+            throw new BLoCException('data not found');
+        }
+        return $city;
     }
 
     protected function validation($parameters)
     {
-        return [
-            'page' => 'min:1',
-            'limit' => 'min:1'
-        ];
+        return [];
     }
 }

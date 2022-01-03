@@ -4,7 +4,9 @@ namespace App\BLoC\App\ArcheryClub;
 
 use App\Libraries\Upload;
 use App\Models\ArcheryClub;
+use App\Models\City;
 use App\Models\ClubMember;
+use App\Models\Provinces;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -36,19 +38,33 @@ class UpdateArcheryClub extends Retrieval
             throw new BLoCException("forbiden 403");
         }
 
+        if ($parameters->get('province')) {
+            $province = Provinces::find($parameters->get('province'));
+            if (!$province) {
+                throw new BLoCException("province not found");
+            }
+        }
+
+        if ($parameters->get('city')) {
+            $city = City::where('province_id', $parameters->get('province'))->where('id', $parameters->get('city'))->first();
+            if(!$city){
+                throw new BLoCException("this city not match with the province");
+            }
+        }
+
         if ($parameters->get('logo')) {
             $logo = Upload::setPath("asset/logo/")->setFileName("logo_" . $archery_club->id)->setBase64($parameters->get('logo'))->save();
             $data['logo'] = $logo;
         };
 
+
         if ($parameters->get('banner')) {
-            $banner = Upload::setPath("asset/banner/")->setFileName("banner_" . $archery_club->id)->setBase64($parameters->get('logo'))->save();
+            $banner = Upload::setPath("asset/banner/")->setFileName("banner_" . $archery_club->id)->setBase64($parameters->get('banner'))->save();
             $data['banner'] = $banner;
         };
 
-        unset($data['id']);
-        $archery_club->fill($data);
-        $archery_club->save();
+
+        $archery_club->update($data);
 
         return $archery_club;
     }
