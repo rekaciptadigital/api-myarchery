@@ -13,6 +13,7 @@
 
 use App\Models\City;
 use App\Models\Provinces;
+use Illuminate\Http\Request;
 
 $router->get('/', function () use ($router) {
     return $router->app->version();
@@ -38,15 +39,17 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
-        $router->get('/get-province', function(){
-            return Provinces::all();
-        });
-        $router->get('/get-city', function($parameters){
-            return $parameters;
-            if($parameters->get('province_id')){
-                return City::where('province_id', $parameters->get('province_id'))->get();
-            }
-            return City::all();
-        });
+        // $router->get('/get-province', function(){
+        //     return Provinces::all();
+        // });
+        // $router->get('/get-city', function(Request $request){
+        //     if($request->province_id){
+        //         return City::where('province_id', $request->province_id)->get();
+        //     }
+        //     return City::all();
+        // });
+
+        $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
+        $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
     });
 });

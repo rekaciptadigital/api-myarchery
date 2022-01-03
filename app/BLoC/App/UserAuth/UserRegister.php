@@ -23,7 +23,7 @@ class UserRegister extends Transactional
             'email' => $parameters->get('email'),
             'password' => Hash::make($parameters->get('password')),
             'date_of_birth' => $parameters->get('date_of_birth'),
-            'place_of_birth' => $parameters->get('place_of_birth'),
+            'gender' => $parameters->get('gender'),
             'phone_number' => $parameters->get('phone_number'),
         ]);
 
