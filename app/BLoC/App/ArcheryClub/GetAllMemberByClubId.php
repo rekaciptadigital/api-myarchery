@@ -56,6 +56,7 @@ class GetAllMemberByClubId extends Retrieval
     protected function validation($parameters)
     {
         return [
+            'club_id' => 'required|integer',
             'page' => 'min:1',
             'limit' => 'min:1'
         ];

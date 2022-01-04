@@ -72,6 +72,7 @@ class UpdateArcheryClub extends Retrieval
     protected function validation($parameters)
     {
         return [
+            'id' => 'required|integer',
             'name' => [
                 'string',
                 Rule::unique('archery_clubs')->ignore($parameters->get('id'))
