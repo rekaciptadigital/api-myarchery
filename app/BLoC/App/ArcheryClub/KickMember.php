@@ -49,6 +49,9 @@ class KickMember extends Retrieval
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            'club_id' => 'required|integer',
+            'member_id' => 'required|integer'
+        ];
     }
 }

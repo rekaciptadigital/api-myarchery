@@ -41,6 +41,8 @@ class LeftArcheryClub extends Retrieval
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            'club_id' => 'required|integer'
+        ];
     }
 }
