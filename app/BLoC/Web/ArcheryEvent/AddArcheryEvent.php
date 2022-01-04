@@ -9,6 +9,7 @@ use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
+use App\Libraries\Upload;
 
 class AddArcheryEvent extends Transactional
 {
@@ -32,7 +33,8 @@ class AddArcheryEvent extends Transactional
 
             $public_informations = $parameters->get('public_information');
             
-            $archery_event->poster =  $public_informations['event_banner'];
+            $poster = Upload::setPath("asset/poster/")->setFileName("poster_".$public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
+            $archery_event->poster = $poster;
             $archery_event->event_name = $public_informations['event_name'];
             $archery_event->description = $public_informations['event_description'];
             $archery_event->location = $public_informations['event_location']; 
