@@ -42,6 +42,11 @@ class GetAllMemberByClubId extends Retrieval
         $data = [];
         foreach ($club_member->get() as $key) {
             $user = User::find($key->user_id);
+            if($key->role == 1){
+                $user['is_admin'] = 1;
+            }else{
+                $user['is_admin'] = 0;
+            }
             array_push($data, $user);
         }
 
