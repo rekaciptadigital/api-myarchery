@@ -18,7 +18,7 @@ class GetProfileClub extends Retrieval
 
     protected function process($parameters)
     {
-        $archery_club = ArcheryClub::find($parameters->get('id'));
+        $archery_club = ArcheryClub::find($parameters->get('club_id'));
         if (!$archery_club) {
             throw new BLoCException("club not found");
         }

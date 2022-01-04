@@ -40,6 +40,7 @@ class CreateArcheryClub extends Retrieval
             }
         }
         $archery_club->city = $parameters->get('city');
+        
         $archery_club->address = $parameters->get('address');
         $archery_club->description = $parameters->get('description');
         $archery_club->save();
