@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Schema;
+
 use App\BLoC\App\ArcheryEventParticipant\FindParticipantDetail;
 use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
 use Illuminate\Support\ServiceProvider;
@@ -65,5 +67,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton($serviceName, function () use ($className) {
             return new $className;
         });
+    }
+    public function boot()
+    {
+        Schema::defaultStringLength(191);
     }
 }
