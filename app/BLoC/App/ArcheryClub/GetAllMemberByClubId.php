@@ -7,6 +7,7 @@ use App\Models\ClubMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\DB;
 
 class GetAllMemberByClubId extends Retrieval
 {
@@ -28,7 +29,7 @@ class GetAllMemberByClubId extends Retrieval
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
 
-        $club_member = ClubMember::where('club_id', $archery_club->id);
+        $club_member = ClubMember::where('club_id', $archery_club->id)->join('users', 'users.id', '=', 'archery_club_members.user_id');
 
         $club_member->when($name, function ($query) use ($name) {
             return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
