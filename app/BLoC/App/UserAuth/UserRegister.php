@@ -23,7 +23,7 @@ class UserRegister extends Transactional
             'email' => $parameters->get('email'),
             'password' => Hash::make($parameters->get('password')),
             'date_of_birth' => $parameters->get('date_of_birth'),
-            'place_of_birth' => $parameters->get('place_of_birth'),
+            'gender' => $parameters->get('gender'),
             'phone_number' => $parameters->get('phone_number'),
         ]);
 
@@ -63,6 +63,8 @@ class UserRegister extends Transactional
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|in:male,female'
         ];
     }
 }
