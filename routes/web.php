@@ -98,3 +98,15 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
     });
 });
+
+$router->group(['prefix' => 'eo'], function () use ($router) {
+    $router->group(['prefix' => 'v1'], function () use ($router) {
+        $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+
+            $router->group(['prefix' => 'scoring'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+            });
+
+        });
+    });
+});
