@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventMoreInformation;
 
 class ArcheryEvent extends Model
 {
@@ -120,5 +121,53 @@ class ArcheryEvent extends Model
       }else{
         return true;
       }
+    }
+
+    protected function detailEventById($id)
+    {
+        $data = ArcheryEvent::find($id);
+        $detail = [];
+        $detail['event_type'] = $data->event_type;
+        $detail['event_competition'] = $data->event_competition;
+        $detail['public_information'] = [
+            'event_name' => $data->event_name,
+            'event_banner' => $data->poster,
+            'event_description' => $data->description,
+            'event_location' => $data->location,
+            'event_city' => $data->city_id,
+            'event_location_type' => $data->location_type,
+            'event_start_register' => $data->registration_start_datetime,
+            'event_end_register' => $data->registration_end_datetime,
+            'event_start' => $data->event_start_datetime,
+            'event_end' => $data->event_end_datetime,
+        ];
+
+        $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
+        if ($more_informations) {
+            foreach ($more_informations as $key => $value) {
+                $detail['more_information'][] = [
+                    'event_id' => $value->event_id,
+                    'title' => $value->title,
+                    'description' => $value->description,
+                ];
+            }
+        }
+
+        $event_categories = ArcheryEventCategoryDetail::where('event_id', $id)->get();
+        if ($event_categories) {
+            foreach ($event_categories as $key => $value) {
+                $detail['event_categories'][] = [
+                    'event_id' => $value->event_id,
+                    'age_category_id' => $value->age_category_id,
+                    'competition_category_id' => $value->competition_category_id,
+                    'distance_id' => $value->distance_id,
+                    'team_category_id' => $value->team_category_id,
+                    'quota' => $value->quota,
+                    'fee' => $value->fee,
+                ];
+            }
+        }
+
+        return $detail;
     }
 }

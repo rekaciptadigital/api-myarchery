@@ -28,6 +28,8 @@ use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
+use App\BloC\Web\ArcheryEvent\UpdateArcheryEventStatus;
+use App\BloC\Web\ArcheryEvent\GetArcheryEventDetailById;
 use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategory;
 use App\BLoC\Web\ArcheryEventParticipant\EditArcheryEventParticipantScore;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMemberProfile;
@@ -117,6 +119,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventEliminationSchedule", GetEventEliminationSchedule::class);
         $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
         $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
+        $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
+        $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
     }
 
     private function registerService($serviceName, $className)
