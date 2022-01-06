@@ -18,9 +18,6 @@ class UpdateUserAvatar extends Retrieval
     protected function process($parameters)
     {
         $user_login = Auth::guard('app-api')->user();
-        if (!$user_login) {
-            throw new BLoCException("user not login");
-        }
 
         $user_id = $parameters->get('user_id');
         $user = User::find($user_id);
