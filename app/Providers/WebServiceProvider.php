@@ -47,6 +47,7 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
+use App\BLoC\Web\ArcheryScoring\GetArcheryScoring;
 use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
 use App\BLoC\Web\EventElimination\GetEventElimination;
 use App\BLoC\Web\EventElimination\SetEventElimination;
@@ -127,6 +128,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryCategoryDetail", AddArcheryCategoryDetail::class);
         $this->registerService("deleteArcheryCategoryDetail", DeleteArcheryCategoryDetail::class);
         $this->registerService("editArcheryCategoryDetail", EditArcheryCategoryDetail::class);
+        $this->registerService("getArcheryScoring", GetArcheryScoring::class);
     }
 
     private function registerService($serviceName, $className)
