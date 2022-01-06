@@ -59,6 +59,7 @@ use App\BLoC\Web\ArcheryCategoryDetail\GetArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryEventQualificationTime\AddArcheryEventQualificationTime;
 use App\BLoC\Web\ArcheryCategoryDetail\AddArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -125,6 +126,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEventQualificationTime", AddArcheryEventQualificationTime::class);
         $this->registerService("addArcheryCategoryDetail", AddArcheryCategoryDetail::class);
         $this->registerService("deleteArcheryCategoryDetail", DeleteArcheryCategoryDetail::class);
+        $this->registerService("editArcheryCategoryDetail", EditArcheryCategoryDetail::class);
     }
 
     private function registerService($serviceName, $className)
