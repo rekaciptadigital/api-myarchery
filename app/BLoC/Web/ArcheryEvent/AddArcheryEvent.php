@@ -30,6 +30,7 @@ class AddArcheryEvent extends Transactional
 
             $archery_event->event_type = $event_type;
             $archery_event->event_competition = $parameters->get('event_competition'); 
+            $archery_event->status = $parameters->get('status'); 
 
             $public_informations = $parameters->get('public_information');
             
@@ -82,6 +83,7 @@ class AddArcheryEvent extends Transactional
         return [
             "event_type" => "required",
             "event_competition" => "required",
+            "status" => "required",
             "public_information" => "required|array|min:1",
             "public_information.event_banner" => "required",
             "public_information.event_name" => "required",
