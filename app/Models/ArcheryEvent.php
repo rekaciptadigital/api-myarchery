@@ -79,13 +79,10 @@ class ArcheryEvent extends Model
                     ->join("archery_master_age_categories","archery_event_category_details.age_category_id","archery_master_age_categories.id")
                     ->join("archery_master_competition_categories","archery_event_category_details.competition_category_id","archery_master_competition_categories.id")
                     ->join("archery_master_distances","archery_event_category_details.distance_id","archery_master_distances.id")
-                    ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id");
-        
-                    if($id != 'null'){
-                        $categories=$categories->where("archery_event_category_details.event_id",$id);
-                    };
+                    ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
+                    ->where("archery_event_category_details.event_id",$id)
+                    ->get();
 
-                    $categories=$categories->get();
 
         return $categories;
     }
