@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements JWTSubject, AuthenticatableContract
@@ -18,7 +19,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'place_of_birth', 'date_of_birth', 'phone_number'
+        'name', 'email', 'password', 'date_of_birth', 'phone_number', 'gender'
     ];
 
     /**
@@ -52,5 +53,13 @@ class User extends Model implements JWTSubject, AuthenticatableContract
 
     public function userArcheryInfo() {
         return $this->hasOne(UserArcheryInfo::class);
+    }
+
+    protected $appends = ['age'];
+
+    public function getAgeAttribute()
+    {
+        $today = Carbon::today();
+        return $this->attributes['age'] = $today->diffInYears($this->date_of_birth);                  
     }
 }

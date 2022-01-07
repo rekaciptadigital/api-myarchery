@@ -14,6 +14,17 @@ use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetListDownloadCertificate;
 use App\BLoC\App\Certificate\GetDownload;
+use App\BLoC\App\ArcheryClub\CreateArcheryClub;
+use App\BLoC\App\ArcheryClub\JoinArcheryClub;
+use App\BLoC\App\ArcheryClub\LeftArcheryClub;
+use App\BLoC\App\ArcheryClub\KickMember;
+use App\BLoC\App\ArcheryClub\GetArcheryClubs;
+use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
+use App\BLoC\App\ArcheryClub\GetProfileClub;
+use App\BLoC\App\ArcheryClub\GetMyClub;
+use App\BLoC\App\ArcheryClub\GetAllMemberByClubId;
+use App\BLoC\General\GetProvince;
+use App\BLoC\General\GetCity;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +47,17 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getParticipantScoreSummary", GetParticipantScoreSummary::class);
         $this->registerService("getListDownloadCertificate", GetListDownloadCertificate::class);
         $this->registerService("getDownload", GetDownload::class);
+        $this->registerService('createArcheryClub', CreateArcheryClub::class);
+        $this->registerService('joinArcheryClub', JoinArcheryClub::class);
+        $this->registerService('leftArcheryClub', LeftArcheryClub::class);
+        $this->registerService('kickMember', KickMember::class);
+        $this->registerService('getArcheryClubs', GetArcheryClubs::class);
+        $this->registerService('updateArcheryClub', UpdateArcheryClub::class);
+        $this->registerService('getProfileClub', GetProfileClub::class);
+        $this->registerService('getMyClub', GetMyClub::class);
+        $this->registerService('getProvince', GetProvince::class);
+        $this->registerService('getCity', GetCity::class);
+        $this->registerService('getAllMemberByClubId', GetAllMemberByClubId::class);
     }
 
     private function registerService($serviceName, $className)

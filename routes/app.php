@@ -1,6 +1,6 @@
 <?php
 
-$router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], function () use ($router) {
+$router->group(['prefix' => 'app'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->group(['prefix' => 'auth'], function () use ($router) {
             $router->post('/login', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogin']);
@@ -28,6 +28,24 @@ $router->group(['prefix' => 'app', 'namespace' => '\App\Http\Controllers'], func
                 //$router->group(['prefix' => 'certificate'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownload']);
                 $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListDownloadCertificate']);
+            });
+            $router->group(['prefix' => 'archery-club', 'middleware' => 'auth.user'], function () use ($router) {
+                // $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClubs']);
+                // $router->get('/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfileClub']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryClub']);
+                $router->put('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryClub']);
+                $router->post('/join', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:joinArcheryClub']);
+                $router->delete('/left', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:leftArcheryClub']);
+                $router->delete('/kick', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:kickMember']);
+                $router->get('/my-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMyClub']);
+            });
+
+            $router->group(['prefix' => 'archery-club'], function () use ($router) {
+                $router->get('/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfileClub']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClubs']);
+                $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
+                $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
+                $router->get('/get-club-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllMemberByClubId']);
             });
         });
     });

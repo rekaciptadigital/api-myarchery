@@ -22,9 +22,9 @@ class ArcheryEventCertificateTemplates extends Model
   ];
 
   protected static $type_certificates = [
-    "partisipan" => "1",
-    "juara" => "2",
-    "eliminasi" => "3",
+    "participant" => "1",
+    "winner" => "2",
+    "elimination" => "3",
   ];
 
   public static function getTypeCertificate()
@@ -60,9 +60,11 @@ class ArcheryEventCertificateTemplates extends Model
 
     return $check_elimination;
   }
-  public static function  getCategoryLabel($event_id,$user_id)
+
+  // TODO update cara pengambilan category
+  public static function  getCategoryLabel($participant_id,$user_id)
   {
-    $label=DB::table('archery_event_participants')
+    $category=DB::table('archery_event_participants')
     ->leftjoin('archery_master_team_categories', 'archery_master_team_categories.id', '=', 'archery_event_participants.team_category_id')
     ->leftjoin('archery_master_age_categories', 'archery_master_age_categories.id', '=', 'archery_event_participants.age_category_id')
     ->leftjoin('archery_master_competition_categories', 'archery_master_competition_categories.id', '=', 'archery_event_participants.competition_category_id')
@@ -71,14 +73,14 @@ class ArcheryEventCertificateTemplates extends Model
     "archery_master_age_categories.label as label_age_categories",
     "archery_master_competition_categories.label as label_competition_categories",
     "archery_master_distances.label as label_distance")
-    ->where('archery_event_participants.event_id', $event_id)
+    ->where('archery_event_participants.id', $participant_id)
     ->where('archery_event_participants.user_id', $user_id)
     ->first();
 
-    if(!$label){
-      return false;
+    if(!$category){
+      return "";
     }else{
-      return $label;
+      return $category->label_team_categories." - ".$category->label_age_categories." - ".$category->label_competition_categories." - ".$category->label_distance;
     }
   }
 }
