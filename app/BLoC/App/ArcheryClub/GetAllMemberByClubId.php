@@ -7,6 +7,7 @@ use App\Models\ClubMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\DB;
 
 class GetAllMemberByClubId extends Retrieval
 {
@@ -42,6 +43,7 @@ class GetAllMemberByClubId extends Retrieval
         $data = [];
         foreach ($club_member->get() as $key) {
             $user = User::find($key->user_id);
+            $user['member_id'] = $key->id;
             if($key->role == 1){
                 $user['is_admin'] = 1;
             }else{
@@ -56,6 +58,7 @@ class GetAllMemberByClubId extends Retrieval
     protected function validation($parameters)
     {
         return [
+            'club_id' => 'required|integer',
             'page' => 'min:1',
             'limit' => 'min:1'
         ];

@@ -26,15 +26,17 @@ class KickMember extends Retrieval
             throw new BLoCException("club not found");
         }
 
-        $member = ClubMember::find($member_id);
+        $member = ClubMember::where('user_id', $member_id)->where('club_id', $club_id)->first();
         if(!$member){
             throw new BLoCException("member not found");
         }
+
 
         $owner = ClubMember::where('user_id', $user_login->id)->where('club_id', $club_id)->where('role', 1)->first();
         if(!$owner){
             throw new BLoCException("you are not owner this club");
         }
+
 
         if($member->role == 1){
             throw new BLoCException("this user owner this club");
@@ -49,6 +51,9 @@ class KickMember extends Retrieval
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            'club_id' => 'required|integer',
+            'member_id' => 'required|integer'
+        ];
     }
 }

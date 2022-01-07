@@ -27,7 +27,7 @@ class ArcheryClub extends Model
         $user = Auth::guard('app-api')->user();
         if($user){
             $member = ClubMember::where('user_id', $user->id)->where('club_id', $this->id)->first();
-            if($member->role == 1){
+            if($member && $member->role == 1){
                 return 1;
             }else{
                 return 0;

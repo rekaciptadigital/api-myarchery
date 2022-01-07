@@ -22,7 +22,6 @@ class GetArcheryClubs extends Retrieval
         $offset = ($page - 1) * $limit;
         $archery_clubs = ArcheryClub::query();
 
-
         if (Auth::guard('app-api')->user() != null) {
             $user = Auth::guard('app-api')->user();
         }
@@ -51,7 +50,7 @@ class GetArcheryClubs extends Retrieval
         foreach ($archery_clubs->get() as $key) {
             $club['detail'] = $key;
             $club['total_member'] = ClubMember::where('club_id', $key->id)->count();
-            $club['is_join'] = ($user != null) ? ClubMember::getStatus($key->id, $user->id) : 0;
+            $club['is_join'] = !empty($user) ? ClubMember::getStatus($key->id, $user->id) : 0;
             array_push($data, $club);
         }
 

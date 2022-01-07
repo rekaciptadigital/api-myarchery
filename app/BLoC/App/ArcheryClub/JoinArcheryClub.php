@@ -40,7 +40,7 @@ class JoinArcheryClub extends Retrieval
     protected function validation($parameters)
     {
         return [
-         
+            'club_id' => 'required|integer'
         ];
     }
 }
