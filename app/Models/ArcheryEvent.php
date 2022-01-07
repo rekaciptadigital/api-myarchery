@@ -67,6 +67,11 @@ class ArcheryEvent extends Model
         $categories = ArcheryEventCategoryDetail::select(
                             "archery_event_category_details.id",
                             "archery_event_category_details.id AS key",
+                            "archery_master_age_categories.label as label_age",
+                            "archery_master_competition_categories.label as label_competition_categories",
+                            "archery_master_distances.label as label_distances",
+                            "archery_master_team_categories.label as label_team_categories",
+                            "archery_master_team_categories.type as type",
                             DB::raw("CONCAT(archery_master_team_categories.label,'-',
                                             archery_master_age_categories.label,'-',
                                             archery_master_competition_categories.label,'-',
@@ -77,6 +82,7 @@ class ArcheryEvent extends Model
                     ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
                     ->where("archery_event_category_details.event_id",$id)
                     ->get();
+
 
         return $categories;
     }
