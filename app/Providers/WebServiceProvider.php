@@ -131,6 +131,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteArcheryCategoryDetail", DeleteArcheryCategoryDetail::class);
         $this->registerService("editArcheryCategoryDetail", EditArcheryCategoryDetail::class);
         $this->registerService("getArcheryScoring", GetArcheryScoring::class);
+        $this->registerService("getArcheryEventGlobal", GetArcheryEventGlobal::class);
+        $this->registerService("getArcheryEventMasterTeamCategory", GetArcheryEventMasterTeamCategory::class);
     }
 
     private function registerService($serviceName, $className)
