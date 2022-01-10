@@ -62,6 +62,7 @@ use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
 use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
+use App\BLoC\Web\BudRest\SetBudRest;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -131,6 +132,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("editArcheryCategoryDetail", EditArcheryCategoryDetail::class);
         $this->registerService("getArcheryEventGlobal", GetArcheryEventGlobal::class);
         $this->registerService("getArcheryEventMasterTeamCategory", GetArcheryEventMasterTeamCategory::class);
+        $this->registerService("setBudRest", SetBudRest::class);
     }
 
     private function registerService($serviceName, $className)
