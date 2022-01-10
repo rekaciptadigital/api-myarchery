@@ -61,6 +61,8 @@ use App\BLoC\Web\ArcheryEventQualificationTime\AddArcheryEventQualificationTime;
 use App\BLoC\Web\ArcheryCategoryDetail\AddArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
+use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
 
 class WebServiceProvider extends ServiceProvider
 {
