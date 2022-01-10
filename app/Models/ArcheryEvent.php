@@ -62,7 +62,7 @@ class ArcheryEvent extends Model
         return $this->belongsTo(Admin::class, 'admin_id', 'id');
     }
 
-    protected function getCategories($id)
+    protected function getCategories($id,$type="")
     {
         $categories = ArcheryEventCategoryDetail::select(
                             "archery_event_category_details.id",
@@ -81,6 +81,11 @@ class ArcheryEvent extends Model
                     ->join("archery_master_distances","archery_event_category_details.distance_id","archery_master_distances.id")
                     ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
                     ->where("archery_event_category_details.event_id",$id)
+                    ->where(function ($query) use ($type){
+                        if(!empty($type)){
+                            $query->where("archery_master_team_categories.type",$type);
+                        }
+                     })
                     ->get();
 
 

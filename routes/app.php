@@ -11,6 +11,8 @@ $router->group(['prefix' => 'app'], function () use ($router) {
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);
+            $router->put('/update-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateProfile']);
+            $router->put('/update-avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUserProfile']);
         });
         $router->group(['prefix' => 'archery'], function () use ($router) {
