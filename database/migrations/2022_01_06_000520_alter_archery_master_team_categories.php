@@ -15,6 +15,7 @@ class AlterArcheryMasterTeamCategories extends Migration
     {
         Schema::table('archery_master_team_categories', function (Blueprint $table) {
             $table->enum('type', ['Individual', 'Team'])->index();
+            $table->tinyInteger('is_hide')->default(0)->comment("0 untuk hide dan 1 untuk show");
         });
     }
 
