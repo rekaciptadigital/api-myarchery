@@ -42,13 +42,16 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryCategory']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategory']);
             });
-           
+
             $router->group(['prefix' => 'category-details'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetail']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryCategoryDetail']);
                 $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryCategoryDetail']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryCategoryDetail']);
-                 
+            });
+
+            $router->group(['prefix' => 'bud-rest'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRest']);
             });
 
             $router->group(['prefix' => 'qualification-time'], function () use ($router) {
@@ -115,11 +118,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
 
         $router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {
-        //$router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
+            //$router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
         });
-
     });
 });
 
