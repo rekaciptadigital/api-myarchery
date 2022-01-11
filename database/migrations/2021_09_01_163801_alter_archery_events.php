@@ -17,7 +17,7 @@ class AlterArcheryEvents extends Migration
             $table->dateTime('quatification_start_datetime')->nullable();
             $table->dateTime('quatification_end_datetime')->nullable();
             $table->boolean('qualification_weekdays_only')->nullable()->default(false);
-            $table->longText('qualification_session_length')->nullable();
+            $table->json('qualification_session_length')->nullable();
         });
     }
 
