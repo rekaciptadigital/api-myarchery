@@ -37,12 +37,6 @@ class ArcheryEvent extends Model
         return json_decode($value);
     }
 
-    public function getHandbookAttribute($value)
-    {
-
-        return $value ? route('api_download', ['file_path' => $value]) : $value;
-    }
-
     public function getIsFlatRegistrationFeeAttribute($value)
     {
         return $value == 1 || $value == '1';
