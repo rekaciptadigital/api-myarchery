@@ -58,6 +58,22 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventQualificationTime']);
             });
 
+            $router->group(['prefix' => 'team-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterTeamCategory']);
+            });
+
+            $router->group(['prefix' => 'distance-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterDistanceCategory']);
+            });
+            
+            $router->group(['prefix' => 'competition-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
+            });
+
+            $router->group(['prefix' => 'age-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
+            });
+
             $router->group(['prefix' => 'events'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEvent']);
                 $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEvent']);
@@ -72,6 +88,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantScore']);
                 $router->get('/participant/member/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMemberProfile']);
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
+
+                $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
+                $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
@@ -102,6 +121,18 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             //$router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
+        });
+    });
+});
+
+$router->group(['prefix' => 'eo'], function () use ($router) {
+    $router->group(['prefix' => 'v1'], function () use ($router) {
+        $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+
+            $router->group(['prefix' => 'scoring'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+            });
+
         });
     });
 });
