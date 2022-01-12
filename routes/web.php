@@ -51,7 +51,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
 
             $router->group(['prefix' => 'bud-rest'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRest']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRest']); 
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRest']);
             });
 
             $router->group(['prefix' => 'qualification-time'], function () use ($router) {

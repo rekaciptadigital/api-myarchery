@@ -7,6 +7,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Auth;
 
 class SetBudRest extends Transactional
 {
@@ -17,9 +18,14 @@ class SetBudRest extends Transactional
 
     protected function process($parameters)
     {
+        $admin = Auth::user();
         $event = ArcheryEvent::find($parameters->get('event_id'));
         if (!$event) {
             throw new BLoCException('event not found');
+        }
+
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException('you are not owner this event');
         }
 
         $data = $parameters->all();
