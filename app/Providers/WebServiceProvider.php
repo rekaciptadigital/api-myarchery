@@ -65,10 +65,12 @@ use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
 use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
-use App\BLoC\Web\BudRest\SetBudRest;
+use App\BLoC\Web\BudRest\SetBudRest; 
+use App\BLoC\Web\BudRest\GetBudRest;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
+use App\BLoC\Web\ArcheryEventQualificationTime\GetArcheryEventQualificationTime;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -139,12 +141,14 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryScoring", GetArcheryScoring::class);
         $this->registerService("getArcheryEventGlobal", GetArcheryEventGlobal::class);
         $this->registerService("getArcheryEventMasterTeamCategory", GetArcheryEventMasterTeamCategory::class);
-        $this->registerService("setBudRest", SetBudRest::class);
+        $this->registerService("setBudRest", SetBudRest::class); 
+        $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
+        $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
     }
 
     private function registerService($serviceName, $className)
