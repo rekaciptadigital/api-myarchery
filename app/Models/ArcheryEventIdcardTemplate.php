@@ -48,13 +48,7 @@ class ArcheryEventIdcardTemplate extends Model
         if(!$prefix){
             return "";
         }else{
-            return "MA-".$prefix->year_format."-".$this->formatTwoDigit($prefix->eo_id)."-".$this->formatTwoDigit($prefix->event_category_id)."-".$prefix->gender_format;
+            return "MA-".$prefix->year_format."-".$prefix->eo_id."-".$prefix->event_category_id."-".$prefix->gender_format;
         }
-    }
-
-    private function formatTwoDigit($number)
-    {
-        $number = $number <= 9 ? "0".$number : "".$number;
-        return $number;
     }
 }
