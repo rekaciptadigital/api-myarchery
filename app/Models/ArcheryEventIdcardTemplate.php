@@ -31,24 +31,22 @@ class ArcheryEventIdcardTemplate extends Model
         }
     }
 
-    protected function setPrefix($participant_id, $event_id, $event_category_id)
+    protected function setPrefix($participant_id, $event_id)
     {
         $prefix = DB::table('archery_event_participants')
                     ->join('archery_events', 'archery_events.id', '=', 'archery_event_participants.event_id')
-                    ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
                     ->join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-                    ->select("archery_events.admin_id as eo_id", "archery_event_category_details.id as event_category_id",
+                    ->select("archery_events.admin_id as eo_id", "archery_events.id as event_id",
                     DB::raw("DATE_FORMAT(archery_event_participants.created_at, '%y') as year_format"),
                     DB::raw("(CASE WHEN (archery_event_participant_members.gender = 'male') THEN '1' ELSE '2' END) as gender_format"))
                     ->where('archery_event_participants.id', $participant_id)
                     ->where('archery_event_participants.event_id', $event_id)
-                    ->where('archery_event_participants.event_category_id', $event_category_id)
                     ->first();
 
         if(!$prefix){
             return "";
         }else{
-            return "MA-".$prefix->year_format."-".$prefix->eo_id."-".$prefix->event_category_id."-".$prefix->gender_format;
+            return "MA-".$prefix->year_format."-".$prefix->eo_id."-".$prefix->event_id."-".$prefix->gender_format;
         }
     }
 }

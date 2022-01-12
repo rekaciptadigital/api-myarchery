@@ -21,4 +21,21 @@ class ArcheryEventParticipantMemberNumber extends Model
             'participant_member_id' => $participant_member_id,
         ))->save();
     }
+
+    public static function setMemberNumber($prefix, $sequence)
+    {
+        return $prefix .'-'. $this->sequenceFormatNumber($sequence);
+    }
+
+    private function sequenceFormatNumber($number)
+    {
+        if ($number <= 9){
+            $number = "00".$number;
+        } else if ($number <= 99 && $number > 9 ){
+            $number = "0".$number;
+        } else {
+            $number = "".$number;
+        }
+        return $number;
+    }  
 }

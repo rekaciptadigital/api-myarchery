@@ -39,12 +39,12 @@ class GetDownloadCard extends Retrieval
         $idcard_category = ArcheryEventIdcardTemplate::getCategoryLabel($participant_id, $user['id']);
         if($idcard_category == "") throw new BLoCException("Kategori tidak ditemukan");
 
-        $prefix = ArcheryEventIdcardTemplate::setPrefix($participant_id, $archery_event->id, $detail_member->event_category_id);
+        $prefix = ArcheryEventIdcardTemplate::setPrefix($participant_id, $archery_event->id);
         if($prefix == "") throw new BLoCException("Prefix gagal digenerate");
 
         $member_number = ArcheryEventParticipantMemberNumber::saveMemberNumber($prefix, $participant_member_id);
         $archery_event_participant_member_number = ArcheryEventParticipantMemberNumber::getMemberNumber($prefix, $participant_member_id);
-        $member_id = $archery_event_participant_member_number->prefix .'-'. $this->sequenceFormatNumber($archery_event_participant_member_number->sequence);
+        $member_id = ArcheryEventParticipantMemberNumber::setMemberNumber($archery_event_participant_member_number->prefix, $archery_event_participant_member_number->sequence);
 
         $html_template = base64_decode($idcard_event->html_template);
         $final_doc = str_replace(
@@ -60,16 +60,4 @@ class GetDownloadCard extends Retrieval
             "file_base_64" => $generate_idcard,
         ];
     }
-
-    private function sequenceFormatNumber($number)
-    {
-        if ($number <= 9){
-            $number = "00".$number;
-        } else if ($number <= 99 && $number > 9 ){
-            $number = "0".$number;
-        } else {
-            $number = "".$number;
-        }
-        return $number;
-    }  
 }
