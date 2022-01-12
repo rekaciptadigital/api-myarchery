@@ -140,6 +140,7 @@ class ArcheryEvent extends Model
             'event_end_register' => $data->registration_end_datetime,
             'event_start' => $data->event_start_datetime,
             'event_end' => $data->event_end_datetime,
+            'event_status' => $data->status
         ];
 
         $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
