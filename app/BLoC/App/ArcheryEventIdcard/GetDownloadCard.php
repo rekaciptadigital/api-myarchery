@@ -39,20 +39,12 @@ class GetDownloadCard extends Retrieval
         $idcard_category = ArcheryEventIdcardTemplate::getCategoryLabel($participant_id, $user['id']);
         if($idcard_category == "") throw new BLoCException("Kategori tidak ditemukan");
 
-        $prefix = $this->generatePrefix($archery_event->admin_id, $archery_event->id);
+        $prefix = ArcheryEventIdcardTemplate::setPrefix($participant_id, $archery_event->id, $detail_member->event_category_id);
+        if($prefix == "") throw new BLoCException("Prefix gagal digenerate");
 
-        $archery_event_participant_member_number = ArcheryEventParticipantMemberNumber::where('prefix', $prefix)->where('participant_member_id', $participant_member_id)->first();
-        $member_idcard  = ArcheryEventParticipantMemberNumber::firstOrNew(array(
-                            'prefix' => $prefix,
-                            'participant_member_id' => $participant_member_id,
-                          ));
-        $member_idcard->save();
-
-        if(!$archery_event_participant_member_number) {
-            $member_id = $member_idcard->prefix .''. $this->prefixFormatNumber($member_idcard->id);
-        } else {
-            $member_id = $archery_event_participant_member_number->prefix .''. $this->prefixFormatNumber($archery_event_participant_member_number->sequence);
-        }
+        $member_number = ArcheryEventParticipantMemberNumber::saveMemberNumber($prefix, $participant_member_id);
+        $archery_event_participant_member_number = ArcheryEventParticipantMemberNumber::getMemberNumber($prefix, $participant_member_id);
+        $member_id = $archery_event_participant_member_number->prefix .'-'. $this->sequenceFormatNumber($archery_event_participant_member_number->sequence);
 
         $html_template = base64_decode($idcard_event->html_template);
         $final_doc = str_replace(
@@ -69,13 +61,7 @@ class GetDownloadCard extends Retrieval
         ];
     }
 
-    private function generatePrefix($eo_id, $event_id)
-    {
-        $prefix = $this->prefixFormatNumber($eo_id) .''. $this->prefixFormatNumber($event_id);
-        return $prefix;
-    }
-
-    private function prefixFormatNumber($number)
+    private function sequenceFormatNumber($number)
     {
         if ($number <= 9){
             $number = "00".$number;

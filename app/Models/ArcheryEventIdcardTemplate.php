@@ -9,7 +9,7 @@ class ArcheryEventIdcardTemplate extends Model
 {
     protected $table = 'archery_event_idcard_templates';
 
-    public static function getCategoryLabel($participant_id, $user_id)
+    protected function getCategoryLabel($participant_id, $user_id)
     {
         $category = DB::table('archery_event_participants')
                     ->join('archery_master_team_categories', 'archery_master_team_categories.id', '=', 'archery_event_participants.team_category_id')
@@ -29,5 +29,32 @@ class ArcheryEventIdcardTemplate extends Model
         }else{
             return $category->label_team_categories." - ".$category->label_age_categories." - ".$category->label_competition_categories." - ".$category->label_distance;
         }
+    }
+
+    protected function setPrefix($participant_id, $event_id, $event_category_id)
+    {
+        $prefix = DB::table('archery_event_participants')
+                    ->join('archery_events', 'archery_events.id', '=', 'archery_event_participants.event_id')
+                    ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
+                    ->join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+                    ->select("archery_events.admin_id as eo_id", "archery_event_category_details.id as event_category_id",
+                    DB::raw("DATE_FORMAT(archery_event_participants.created_at, '%y') as year_format"),
+                    DB::raw("(CASE WHEN (archery_event_participant_members.gender = 'male') THEN '1' ELSE '2' END) as gender_format"))
+                    ->where('archery_event_participants.id', $participant_id)
+                    ->where('archery_event_participants.event_id', $event_id)
+                    ->where('archery_event_participants.event_category_id', $event_category_id)
+                    ->first();
+
+        if(!$prefix){
+            return "";
+        }else{
+            return "MA-".$prefix->year_format."-".$this->formatTwoDigit($prefix->eo_id)."-".$this->formatTwoDigit($prefix->event_category_id)."-".$prefix->gender_format;
+        }
+    }
+
+    private function formatTwoDigit($number)
+    {
+        $number = $number <= 9 ? "0".$number : "".$number;
+        return $number;
     }
 }
