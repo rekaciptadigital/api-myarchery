@@ -29,6 +29,7 @@ use App\BLoC\App\UserAuth\UpdateUserProfile;
 use App\BLoC\App\UserAuth\UpdateUserAvatar;
 use App\BLoC\General\GetProvince;
 use App\BLoC\General\GetCity;
+use App\BLoC\App\ArcheryEventIdCard\GetDownloadCard;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -65,6 +66,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerService('userUpdateProfile', UpdateUserProfile::class);
         $this->registerService('userUpdateAvatar', UpdateUserAvatar::class);
+        $this->registerService("getDownloadCard", GetDownloadCard::class);
     }
 
     private function registerService($serviceName, $className)

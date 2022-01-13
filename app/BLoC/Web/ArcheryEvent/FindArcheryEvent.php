@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
+use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Abstracts\Retrieval;
 
 class FindArcheryEvent extends Retrieval
@@ -14,28 +15,24 @@ class FindArcheryEvent extends Retrieval
 
     protected function process($parameters)
     {
-        $archery_event = ArcheryEvent::find($parameters->get('id'));
-        $archery_event_categories = $archery_event->archeryEventCategories;
-        foreach ($archery_event_categories as $archery_event_category) {
-            $archery_event_category_competitions = $archery_event_category->archeryEventCategoryCompetitions;
-            foreach ($archery_event_category_competitions as $archery_event_category_competition) {
-                $archery_event_category_competition->archeryEventCategoryCompetitionTeams;
-            }
+        
+        $admin = Auth::user();
+        $archery_events= ArcheryEvent::getCategories($parameters->get('id'));
+        $output= [];
+       
+        foreach ($archery_events as $key => $value ){
+            $output[]=[
+                'event_category_details_id' => $value['key'],
+                'age_category' => $value['label_age'],
+                'competition_category' => $value['label_competition_categories'],
+                'distances_category' => $value['label_distances'],
+                'team_category' => $value['label_team_categories'],
+                'type' => $value['type'],
+            ];
         }
-        $archery_event_qualifications = $archery_event->archeryEventQualifications;
-        foreach ($archery_event_qualifications as $archery_event_qualification) {
-            $archery_event_qualification->archeryEventQualificationDetails;
-        }
-        $archery_event_registration_fees = $archery_event->archeryEventRegistrationFees;
-        foreach ($archery_event_registration_fees as $archery_event_registration_fee) {
-            $archery_event_registration_fee->archeryEventRegistrationFeePerCategory;
-        }
-        $archery_event_targets = $archery_event->archeryEventTargets;
-
-        $categories = ArcheryEvent::getCategories($parameters->get('id'));
-
-        $archery_event->categories = $categories;
-        return $archery_event;
+        
+        return $output;
+       
     }
 
     protected function validation($archery_event)

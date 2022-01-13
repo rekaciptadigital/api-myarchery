@@ -30,7 +30,9 @@ use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventStatus;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEventDetailById;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEventDetailBySlug;
 use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategory;
+use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategoryRegister;
 use App\BLoC\Web\ArcheryEventParticipant\EditArcheryEventParticipantScore;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMemberProfile;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipant;
@@ -70,6 +72,8 @@ use App\BLoC\Web\BudRest\GetBudRest;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
+use App\BLoC\Web\ArcheryEventQualificationTime\GetArcheryEventQualificationTime;
+use App\BLoC\Web\ArcheryEventMoreInformation\EditArcheryEventMoreInformation;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -147,6 +151,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
+        $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
+        $this->registerService("editArcheryEventMoreInformation", EditArcheryEventMoreInformation::class);
+        $this->registerService("getArcheryEventDetailBySlug", GetArcheryEventDetailBySlug::class);
+        $this->registerService("getArcheryEventCategoryRegister", GetArcheryEventCategoryRegister::class);
     }
 
     private function registerService($serviceName, $className)

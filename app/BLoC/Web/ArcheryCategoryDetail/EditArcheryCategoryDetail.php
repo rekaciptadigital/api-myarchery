@@ -18,7 +18,7 @@ class EditArcheryCategoryDetail extends Transactional
     protected function process($parameters)
     {
         
-        
+        $admin = Auth::user();
         $datas = $parameters->get('data', []);
         foreach ($datas as $data) {
             
