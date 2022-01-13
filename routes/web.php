@@ -93,6 +93,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
                 $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
+                $router->get('/detail-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailBySlug']);
+                $router->get('/register/list-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategoryRegister']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
