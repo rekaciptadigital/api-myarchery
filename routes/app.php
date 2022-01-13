@@ -49,6 +49,10 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
                 $router->get('/get-club-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllMemberByClubId']);
             });
+
+            $router->group(['prefix' => 'idcard'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadCard']);
+            });
         });
     });
 });

@@ -14,7 +14,7 @@ class ArcheryEventParticipant extends Model
     public static function getMemberByUserId($user_id,$participant_id)
     {
       $archery_participant =DB::table('archery_event_participants')
-                            ->select('archery_event_participant_members.*','archery_event_participants.event_id')
+                            ->select('archery_event_participant_members.*','archery_event_participants.event_id','archery_event_participants.event_category_id')
                             ->join('archery_event_participant_members','archery_event_participants.id','=','archery_event_participant_members.archery_event_participant_id')
                             ->where('archery_event_participant_members.user_id', $user_id)
                             ->where('archery_event_participants.id', $participant_id)
