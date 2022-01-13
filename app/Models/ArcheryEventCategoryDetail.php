@@ -9,6 +9,7 @@ class ArcheryEventCategoryDetail extends Model
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
     protected $appends = ['category_team'];
+    const INDIVIDUAL_TYPE = "Individual";
 
     public function getCategoryTeamAttribute()
     {
