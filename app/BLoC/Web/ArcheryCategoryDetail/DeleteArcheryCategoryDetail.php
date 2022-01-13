@@ -17,7 +17,7 @@ class DeleteArcheryCategoryDetail extends Transactional
 
     protected function process($parameters)
     {
-
+        $admin = Auth::user();
         $find=ArcheryEventCategoryDetail::find($parameters->get('id'));
         if($find){
             $check = ArcheryEventParticipant::where('event_category_id', $find->id)->first();
