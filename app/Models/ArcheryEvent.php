@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMoreInformation;
+use App\Models\City;
 
 class ArcheryEvent extends Model
 {
@@ -125,23 +126,40 @@ class ArcheryEvent extends Model
 
     protected function detailEventById($id)
     {
-        $data = ArcheryEvent::find($id);
-        $detail = [];
-        $detail['event_type'] = $data->event_type;
-        $detail['event_competition'] = $data->event_competition;
-        $detail['public_information'] = [
-            'event_name' => $data->event_name,
-            'event_banner' => $data->poster,
-            'event_description' => $data->description,
-            'event_location' => $data->location,
-            'event_city' => $data->city_id,
-            'event_location_type' => $data->location_type,
-            'event_start_register' => $data->registration_start_datetime,
-            'event_end_register' => $data->registration_end_datetime,
-            'event_start' => $data->event_start_datetime,
-            'event_end' => $data->event_end_datetime,
-            'event_status' => $data->status
-        ];
+        $datas = ArcheryEvent::select('*','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name')
+        ->leftJoin("cities","cities.id","=","archery_events.city_id")
+        ->leftJoin("provinces","provinces.id","=","cities.province_id")
+        ->where('archery_events.id',$id)->get();
+
+
+
+        if ($datas) {
+            foreach ($datas as $key => $data) {
+                $detail['event_type'] = $data->event_type;
+                $detail['event_competition'] = $data->event_competition;
+                $detail['public_information'] = [
+                    'event_name' => $data->event_name,
+                    'event_banner' => $data->poster,
+                    'event_description' => $data->description,
+                    'event_location' => $data->location,
+                    'event_city' => ['city_id' => $data->cities_id,
+                                    'name_city' => $data->cities_name,
+                                    'province_id' => $data->province_id,
+                                    'province_city' => $data->provinces_name
+                                    ],
+                    'event_location_type' => $data->location_type,
+                    'event_start_register' => $data->registration_start_datetime,
+                    'event_end_register' => $data->registration_end_datetime,
+                    'event_start' => $data->event_start_datetime,
+                    'event_end' => $data->event_end_datetime,
+                    'event_status' => $data->status
+                ];
+
+            }
+        }
+        
+        
+        
 
         $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
         if ($more_informations) {
