@@ -145,7 +145,7 @@ class ArcheryEvent extends Model
                     'event_city' => ['city_id' => $data->cities_id,
                                     'name_city' => $data->cities_name,
                                     'province_id' => $data->province_id,
-                                    'province_city' => $data->provinces_name
+                                    'province_name' => $data->provinces_name
                                     ],
                     'event_location_type' => $data->location_type,
                     'event_start_register' => $data->registration_start_datetime,
