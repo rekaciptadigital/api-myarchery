@@ -72,6 +72,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
             });
 
+            $router->group(['prefix' => 'more-information'], function () use ($router) {
+                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventMoreInformation']);
+            });
+
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
             });

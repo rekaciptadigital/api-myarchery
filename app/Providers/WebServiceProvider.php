@@ -73,6 +73,7 @@ use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanc
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
 use App\BLoC\Web\ArcheryEventQualificationTime\GetArcheryEventQualificationTime;
+use App\BLoC\Web\ArcheryEventMoreInformation\EditArcheryEventMoreInformation;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -151,6 +152,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
         $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
+        $this->registerService("editArcheryEventMoreInformation", EditArcheryEventMoreInformation::class);
         $this->registerService("getArcheryEventDetailBySlug", GetArcheryEventDetailBySlug::class);
         $this->registerService("getArcheryEventCategoryRegister", GetArcheryEventCategoryRegister::class);
     }
