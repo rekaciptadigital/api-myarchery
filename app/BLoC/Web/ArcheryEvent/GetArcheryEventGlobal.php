@@ -21,14 +21,22 @@ class GetArcheryEventGlobal extends Retrieval
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
 
-        $archery_event = ArcheryEvent::select('*',
-                        DB::raw("if(now()>event_end_datetime,'selesai',if(now()<event_start_datetime,'akan berlangsung',if(now()> event_start_datetime && now()< event_end_datetime,'sedang berlangsung','false'))) as acara "))
-                        ->orderBy('event_end_datetime', 'desc')
-                        ->limit($limit)
-                        ->offset($offset)
-                        ->get();
+        $archery_event = ArcheryEvent::select('*', DB::raw("if(now()>event_end_datetime,'selesai',if(now()<event_start_datetime,'akan berlangsung',if(now()> event_start_datetime && now()< event_end_datetime,'sedang berlangsung','false'))) as acara "))
+                         ->orderBy('event_end_datetime', 'desc');
 
-        return $archery_event;
+        $total_page = ceil($archery_event->count() / $limit);
+        $data = $archery_event->limit($limit)->offset($offset)->get();
+
+        if(!empty($page)){
+            $results = array(
+                'data' => $data,
+                'total_page' => $total_page,
+            );
+        } else {
+            $results = $data;
+        }
+
+        return $results;
     }
 
     protected function validation($parameters)
