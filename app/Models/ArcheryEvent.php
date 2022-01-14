@@ -57,11 +57,17 @@ class ArcheryEvent extends Model
     {
         $categories = ArcheryEventCategoryDetail::select(
                             "archery_event_category_details.id",
+                            "archery_event_category_details.quota",
+                            "archery_event_category_details.fee",
                             "archery_event_category_details.id AS key",
                             "archery_master_age_categories.label as label_age",
+                            "archery_master_age_categories.id as id_age",
                             "archery_master_competition_categories.label as label_competition_categories",
+                            "archery_master_competition_categories.id as id_competition_categories",
                             "archery_master_distances.label as label_distances",
+                            "archery_master_distances.id as id_distances",
                             "archery_master_team_categories.label as label_team_categories",
+                            "archery_master_team_categories.id as id_team_categories",
                             "archery_master_team_categories.type as type",
                             DB::raw("CONCAT(archery_master_team_categories.label,'-',
                                             archery_master_age_categories.label,'-',
@@ -72,6 +78,7 @@ class ArcheryEvent extends Model
                     ->join("archery_master_distances","archery_event_category_details.distance_id","archery_master_distances.id")
                     ->join("archery_master_team_categories","archery_event_category_details.team_category_id","archery_master_team_categories.id")
                     ->where("archery_event_category_details.event_id",$id)
+                    ->orderBy("archery_event_category_details.created_at", "ASC")
                     ->where(function ($query) use ($type){
                         if(!empty($type)){
                             $query->where("archery_master_team_categories.type",$type);
@@ -158,8 +165,6 @@ class ArcheryEvent extends Model
             }
         }
         
-        
-        
 
         $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
         if ($more_informations) {
@@ -172,15 +177,19 @@ class ArcheryEvent extends Model
             }
         }
 
-        $event_categories = ArcheryEventCategoryDetail::where('event_id', $id)->get();
+        $event_categories = $this->getCategories($id);
         if ($event_categories) {
             foreach ($event_categories as $key => $value) {
                 $detail['event_categories'][] = [
-                    'event_id' => $value->event_id,
-                    'age_category_id' => $value->age_category_id,
-                    'competition_category_id' => $value->competition_category_id,
-                    'distance_id' => $value->distance_id,
-                    'team_category_id' => $value->team_category_id,
+                    'category_details_id' => $value->key,
+                    'age_category_id' => ['id' => $value->id_age,
+                                        'label' => $value->label_age],
+                    'competition_category_id' => ['id' => $value->id_competition_categories,
+                                        'label' => $value->label_competition_categories],
+                    'distance_id' => ['id' => $value->id_distances,
+                                        'label' => $value->label_distances],
+                    'team_category_id' => ['id' => $value->id_team_categories,
+                                        'label' => $value->label_team_categories],
                     'quota' => $value->quota,
                     'fee' => $value->fee,
                 ];
