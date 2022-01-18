@@ -144,9 +144,7 @@ class ArcheryEvent extends Model
             }
          })
         ->get();
-
         
-
         $output = [];
         foreach ($datas as $key => $data) {
             $admins = Admin::where('id', $data->admin_id)->get();
@@ -181,8 +179,7 @@ class ArcheryEvent extends Model
                                             'label' => $value->label_team_categories],
                         'quota' => $value->quota,
                         'fee' => $value->fee,
-                    ];
-    
+                    ];  
                 }
             }
            
@@ -216,5 +213,67 @@ class ArcheryEvent extends Model
         }
          
         return $output;
+    }
+
+    protected function detailEventBySlug($id)
+    {
+        $data = ArcheryEvent::select('*','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name')
+                    ->leftJoin("cities","cities.id","=","archery_events.city_id")
+                    ->leftJoin("provinces","provinces.id","=","cities.province_id")
+                    ->where('archery_events.id',$id)->first();
+
+        if ($data) {
+            $detail['event_type'] = $data->event_type;
+            $detail['event_competition'] = $data->event_competition;
+            $detail['public_information'] = [
+                'event_name' => $data->event_name,
+                'event_banner' => $data->poster,
+                'event_description' => $data->description,
+                'event_location' => $data->location,
+                'event_city' => ['city_id' => $data->cities_id,
+                                'name_city' => $data->cities_name,
+                                'province_id' => $data->province_id,
+                                'province_name' => $data->provinces_name
+                                ],
+                'event_location_type' => $data->location_type,
+                'event_start_register' => $data->registration_start_datetime,
+                'event_end_register' => $data->registration_end_datetime,
+                'event_start' => $data->event_start_datetime,
+                'event_end' => $data->event_end_datetime,
+                'event_status' => $data->status
+            ];
+        }
+        
+        $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
+        if ($more_informations) {
+            foreach ($more_informations as $key => $value) {
+                $detail['more_information'][] = [
+                    'event_id' => $value->event_id,
+                    'title' => $value->title,
+                    'description' => $value->description,
+                ];
+            }
+        }
+
+        $event_categories = $this->getCategories($id);
+        if ($event_categories) {
+            foreach ($event_categories as $key => $value) {
+                $detail['event_categories'][] = [
+                    'category_details_id' => $value->key,
+                    'age_category_id' => ['id' => $value->id_age,
+                                        'label' => $value->label_age],
+                    'competition_category_id' => ['id' => $value->id_competition_categories,
+                                        'label' => $value->label_competition_categories],
+                    'distance_id' => ['id' => $value->id_distances,
+                                        'label' => $value->label_distances],
+                    'team_category_id' => ['id' => $value->id_team_categories,
+                                        'label' => $value->label_team_categories],
+                    'quota' => $value->quota,
+                    'fee' => $value->fee,
+                ];
+            }
+        }
+
+        return $detail;
     }
 }
