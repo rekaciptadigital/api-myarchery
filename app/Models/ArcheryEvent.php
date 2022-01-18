@@ -131,8 +131,9 @@ class ArcheryEvent extends Model
       }
     }
 
-    protected function detailEventById($id="")
+    protected function detailEventById($id="",$limit="",$offset="")
     {
+        
         $datas = ArcheryEvent::select('*','archery_events.id as id_event','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name','admins.name as admin_name',
                 'admins.email as admin_email','admin_id')
         ->leftJoin("cities","cities.id","=","archery_events.city_id")
@@ -144,8 +145,7 @@ class ArcheryEvent extends Model
             }
          })
         ->get();
-
-        
+          
 
         $output = [];
         foreach ($datas as $key => $data) {
@@ -214,7 +214,10 @@ class ArcheryEvent extends Model
             unset($moreinformations_data);   
             unset($eventcategories_data);     
         }
-         
+        
+        if(count($output)==1){
+            $output = array_shift($output);
+        }
         return $output;
     }
 }
