@@ -46,36 +46,40 @@ class ForgetPassword
         return Queue::push(new ForgotPasswordEmailJob($data));
     }
 
-    public static function getCode($key,$admin,$value_id)
+    public static function getCode($keyForADay,$keyForTenMinutes,$admin)
     {
-        $isKeyExist =  Redis::lrange($key, 0, -1);
-        $isKeyExp = Redis::ttl($key);
+        $isKeyExistTenMinutes =  Redis::lrange($keyForTenMinutes, -1, 0);
+        $isKeyExistADay =  Redis::lrange($keyForADay, 0, -1);
+        $ExpKeyExistTenMinutes = Redis::ttl($keyForTenMinutes);
+        $ExpKeyExistADay = Redis::ttl($keyForADay);
+        $countMax=count($isKeyExistADay);
 
-        if($isKeyExist) {
-            $maxCount= count($isKeyExist);
-            //max try per day 3 times
-            if($maxCount>=3){
-                //minus means expired
-                if($isKeyExp<=0){
-                    Redis::del($key);
-                }
-                throw new BLoCException("Anda sudah mencoba forgot password 3x hari ini, coba lagi di jam berikutnya");
+        if($isKeyExistADay) {
+            if($ExpKeyExistTenMinutes>=0){
+                throw new BLoCException("Key sudah dikirim ke alamat email anda, mohon cek email anda");
             }else{
-                $code=self::pushKey($admin,$key,$value_id);
+                if($countMax>=3){
+                    throw new BLoCException("Anda sudah mencapai maksimal percobaan forgot password, coba lagi esok hari");
+                }else{
+                    Redis::del($keyForTenMinutes);
+                    $code=self::pushKey($admin,$keyForADay,$keyForTenMinutes);
+                }
             }
         } else {
-            $code=self::pushKey($admin,$key,$value_id);
+            $code=self::pushKey($admin,$keyForADay,$keyForTenMinutes);
         }
 
         return $code;
     }
 
-    public static function pushKey($admin,$key,$value_id)
+    public static function pushKey($admin,$keyForADay,$keyForTenMinutes)
     {
             $code = substr(str_shuffle('1234567890'),0,5);
-            $value = [$value_id => $admin->id, "code" => $code];
-            $set = Redis::rpush($key, json_encode($value));
-            $set = Redis::expire($key, 3600);
+            $set = Redis::rpush($keyForADay, $code);
+            $set = Redis::rpush($keyForTenMinutes, $code);
+            $set = Redis::expire($keyForADay, env("EXPIRE_TIME_FORGOT_PASSWORD_FOR_A_DAY"));
+            $set = Redis::expire($keyForTenMinutes, env("EXPIRE_TIME_FORGOT_PASSWORD_FOR_TEN_MINUTES"));
+
 
             return $code;
     }
