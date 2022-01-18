@@ -6,7 +6,6 @@ use Queue;
 use Illuminate\Support\Facades\Redis;
 use DAI\Utils\Exceptions\BLoCException;
 
-
 class ForgetPassword
 {
     static $email = "";
@@ -84,4 +83,19 @@ class ForgetPassword
             return $code;
     }
 
+    public static function checkValidation($keyForTenMinutes, $code)
+    {
+        $checkKey = Redis::lrange($keyForTenMinutes, 0, -1);
+        $ExpKey = Redis::ttl($keyForTenMinutes);
+
+        if($ExpKey >= 0){
+            if($checkKey[0] != $code){
+                throw new BLoCException("Kode tidak sesuai");
+            } else {
+                return true;
+            }
+        } else {
+            throw new BLoCException("Kode sudah expire");
+        }
+    }
 }

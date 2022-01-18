@@ -22,14 +22,13 @@ class UserForgotPassword extends Retrieval
         $user = User::where('email', $parameters->get('email'))->first();
         if(!$user) throw new BLoCException("Email tidak ditemukan");
 
-        $key = "email:verify:code:" . $user->email;
-        $isKeyExist = Redis::lrange($key, 0, -1);
-        $isKeyExp = Redis::ttl($key);
+        $keyForADay = "email:verify:code:day:" . $user->email;
+        $keyForTenMinutes = "email:verify:code:10minutes:" . $user->email;
 
-        $code = ForgetPassword::getCode($key,$user,'user_id');  
+        $code = ForgetPassword::getCode($keyForADay,$keyForTenMinutes,$user);  
         $send_email = ForgetPassword::setEmail($user->email)->setName($user->name)->setCode($code)->sendMail();
 
-        return ["code" => 1, "msg" => "Kode sudah dikirim ke alamat email anda"];
+        return ["code" => 1, "msg" => "Kode berhasil dikirim ke alamat email anda"];
     }
 
     protected function validation($parameters)
