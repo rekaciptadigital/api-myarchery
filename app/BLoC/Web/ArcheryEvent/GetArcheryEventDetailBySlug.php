@@ -22,7 +22,7 @@ class GetArcheryEventDetailBySlug extends Retrieval
             throw new BLoCException("Data not found");
         }
 
-        $archery_event_detail = ArcheryEvent::detailEventBySlug($archery_event->id);
+        $archery_event_detail = ArcheryEvent::detailEventById($archery_event->id);
         return $archery_event_detail;
     }
 
