@@ -43,9 +43,11 @@ class EditArcheryEventSeparated extends Transactional
 
         $archery_event->event_type = $parameters->get('event_type'); 
         $archery_event->event_competition = $parameters->get('event_competition'); 
-        $archery_event->status = $parameters->get('status'); 
-        $poster = Upload::setPath("asset/poster/")->setFileName("poster_".$parameters->get('event_name'))->setBase64($parameters->get('event_banner'))->save();
-        $archery_event->poster = $poster;
+        $archery_event->status = $parameters->get('status');
+        if(!empty($parameters->get('event_banner'))){
+            $poster = Upload::setPath("asset/poster/")->setFileName("poster_".$parameters->get('event_name'))->setBase64($parameters->get('event_banner'))->save();
+            $archery_event->poster = $poster;
+        } 
         $archery_event->event_name = $parameters->get('event_name'); 
         $archery_event->description = $parameters->get('event_description'); 
         $archery_event->location = $parameters->get('event_location'); 
