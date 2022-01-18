@@ -26,22 +26,7 @@ class ForgotPassword extends Retrieval
         $isKeyExist =  Redis::lrange($key, 0, -1);
         $isKeyExp = Redis::ttl($key);
 
-        if($isKeyExist) {
-            $maxCount= count($isKeyExist);
-            //max try per day 3 times
-            if($maxCount>=3){
-                //minus means expired
-                if($isKeyExp<=0){
-                    Redis::del($key);
-                }
-                throw new BLoCException("Anda sudah mencoba forgot password 3x hari ini, coba lagi di jam berikutnya");
-            }else{
-                $code=$this->pushKey($admin,$key);
-            }
-        } else {
-            $code=$this->pushKey($admin,$key);
-        }
-        
+        $code = ForgetPassword::getCode($key,$admin,'admin_id');
         $send_email = ForgetPassword::setEmail($admin->email)->setName($admin->name)->setCode($code)->sendMail();
         return ["code" => 1, "msg" => "Kode sudah dikirim ke alamat email anda"];
     }

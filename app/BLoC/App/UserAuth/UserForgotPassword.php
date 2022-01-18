@@ -20,21 +20,16 @@ class UserForgotPassword extends Retrieval
     protected function process($parameters)
     {
         $user = User::where('email', $parameters->get('email'))->first();
-        if(!$user) throw new BLoCException("Email not found");
+        if(!$user) throw new BLoCException("Email tidak ditemukan");
 
         $key = "email:verify:code:" . $user->email;
-        $isKeyExist = Redis::get($key);
-        if($isKeyExist) {
-            $value = json_decode($isKeyExist, true);
-            $code = $value['code'];
-        } else {
-            $code = substr(str_shuffle('1234567890'),0,5);
-            $value = ["user_id" => $user->id, "code" => $code];
-            $set = Redis::set($key, json_encode($value), 'EX', 3600);
-        }
-        
+        $isKeyExist = Redis::lrange($key, 0, -1);
+        $isKeyExp = Redis::ttl($key);
+
+        $code = ForgetPassword::getCode($key,$user,'user_id');  
         $send_email = ForgetPassword::setEmail($user->email)->setName($user->name)->setCode($code)->sendMail();
-        return true;
+
+        return ["code" => 1, "msg" => "Kode sudah dikirim ke alamat email anda"];
     }
 
     protected function validation($parameters)

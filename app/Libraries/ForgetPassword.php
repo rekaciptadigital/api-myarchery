@@ -46,7 +46,7 @@ class ForgetPassword
         return Queue::push(new ForgotPasswordEmailJob($data));
     }
 
-    public static function getCode($key,$admin)
+    public static function getCode($key,$admin,$value_id)
     {
         $isKeyExist =  Redis::lrange($key, 0, -1);
         $isKeyExp = Redis::ttl($key);
@@ -61,19 +61,19 @@ class ForgetPassword
                 }
                 throw new BLoCException("Anda sudah mencoba forgot password 3x hari ini, coba lagi di jam berikutnya");
             }else{
-                $code=self::pushKey($admin,$key);
+                $code=self::pushKey($admin,$key,$value_id);
             }
         } else {
-            $code=self::pushKey($admin,$key);
+            $code=self::pushKey($admin,$key,$value_id);
         }
 
         return $code;
     }
 
-    public static function pushKey($admin,$key)
+    public static function pushKey($admin,$key,$value_id)
     {
             $code = substr(str_shuffle('1234567890'),0,5);
-            $value = ["admin_id" => $admin->id, "code" => $code];
+            $value = [$value_id => $admin->id, "code" => $code];
             $set = Redis::rpush($key, json_encode($value));
             $set = Redis::expire($key, 3600);
 
