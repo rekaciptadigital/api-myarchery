@@ -107,7 +107,6 @@ $app->register(Illuminate\Mail\MailServiceProvider::class);
 */
 $app->configure('dompdf');
 $app->configure('mail');
-$app->configure('logging');
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',

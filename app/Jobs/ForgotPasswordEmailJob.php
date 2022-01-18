@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPasswordEmail;
-use Log;
+use App\Libraries\Logging;
 
 class ForgotPasswordEmailJob extends Job
 {
@@ -32,12 +32,20 @@ class ForgotPasswordEmailJob extends Job
     public function handle()
     {
         Mail::to($this->data['email'])->send(new ForgotPasswordEmail($this->data));
-        Log::channel('forget-password')->info("Email sent to " . $this->data['email']);
+        $this->log("success", "Email sent to ".$this->data['email']);
     }
 
     public function failed($exception)
     {
-        $exception->getMessage();
-        Log::channel('forget-password')->error($exception->getMessage());
+        $this->log("error", $exception->getMessage());
+    }
+
+    private function log($status, $message)
+    {
+        Logging::setFileName("email-forgot-password-". date("Y-m-d"))->setLogPath("email-log")->add([
+            "status" => $status,
+            "message" => $message,
+            "email" => $this->data['email'],
+        ]);
     }
 }
