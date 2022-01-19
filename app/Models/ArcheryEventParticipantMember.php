@@ -11,6 +11,7 @@ use DAI\Utils\Abstracts\Retrieval;
 
 class ArcheryEventParticipantMember extends Model
 {
+    protected $guarded = ['id'];
     protected function memberDetail($participant_member_id){
         $member = $this->find($participant_member_id);
         $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);

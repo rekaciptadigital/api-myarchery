@@ -2,10 +2,14 @@
 
 namespace App\Libraries;
 
+use App\Models\ArcheryEventCategoryDetail;
 use App\Models\TransactionLog;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ClubMember;
+use App\Models\ParticipantMemberTeam;
+use DAI\Utils\Exceptions\BLoCException;
 
 class PaymentGateWay
 {
@@ -97,11 +101,11 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
-        $expired_time = strtotime("+".env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE",30)." minutes", time());
+        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
         $params = array(
             "expiry" => array(
                 "unit" => "minutes",
-                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE",30)
+                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30)
             ),
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
@@ -136,7 +140,7 @@ class PaymentGateWay
     {
         $transaction_log = TransactionLog::find($transaction_log_id);
         if (!$transaction_log) return false;
-        
+
         $time_now = time();
         $status = $transaction_log->status == 4 && $transaction_log->expired_time <= $time_now ? 2 : $transaction_log->status;
         return (object)[
@@ -157,15 +161,19 @@ class PaymentGateWay
         \Midtrans\Config::$serverKey = env("MIDTRANS_SERVER_KEY");
 
         $notif = new \Midtrans\Notification();
+        // return $notif->order_id;
 
         $transaction = $notif->transaction_status;
         $type = $notif->payment_type;
-        $order_id = $notif->order_id;
+        $order_id = explode('-', $notif->order_id);
+        $order_id_fix = $order_id[0] . "-" . $order_id[1];
+        // return $order_id_fix;
         $fraud = $notif->fraud_status;
 
         $status = 3;
 
-        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
+        $transaction_log = TransactionLog::where("order_id", $order_id_fix)->first();
+        // return $transaction_log;
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
@@ -176,8 +184,8 @@ class PaymentGateWay
         } else if ($transaction == 'expire') {
             $status = 2;
         }
-        
-        ArcheryEventParticipant::where("transaction_log_id",$transaction_log->id)->update(["status" => $status]);
+
+        ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
 
         $transaction_log->status = $status;
         $activity = \json_decode($transaction_log->transaction_log_activity, true);
