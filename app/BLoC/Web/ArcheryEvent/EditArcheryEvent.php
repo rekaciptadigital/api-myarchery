@@ -32,7 +32,9 @@ class EditArcheryEvent extends Transactional
 
         $archery_event = ArcheryEvent::find($parameters->get('id'));
         $archery_event->event_type = $parameters->get('event_type');
-        $archery_event->poster = $parameters->get('poster') ? $this->saveFile($parameters->get('poster'), 'poster', $event_slug, $time) : null;
+        if(!empty($parameters->get('poster'))){
+            $archery_event->poster = $parameters->get('poster') ? $this->saveFile($parameters->get('poster'), 'poster', $event_slug, $time) : null ;
+        }
         $archery_event->handbook = $parameters->get('handbook') ? $this->saveFile($parameters->get('handbook'), 'handbook', $event_slug, $time) : null;
         $archery_event->event_name = $parameters->get('event_name');
         $archery_event->event_slug = $event_slug;

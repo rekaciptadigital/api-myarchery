@@ -34,7 +34,7 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = self::where('archery_event_category_details.event_id', $event_id)->get()->groupBy('team_category_id');
+        $datas = DB::table('archery_event_category_details')->where('archery_event_category_details.event_id', $event_id)->get()->groupBy('team_category_id');
         foreach ($datas as $key => $team_categories){
             foreach ($team_categories as $key => $category) {
                 $count_participant = ArcheryEventParticipant::where('event_id', $category->event_id)->where('event_category_id', $category->id)->count();
