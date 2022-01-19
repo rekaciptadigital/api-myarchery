@@ -7,6 +7,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->post('/register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userRegister']);
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userResetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userForgotPassword']);
+            $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userValidateCodePassword']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
