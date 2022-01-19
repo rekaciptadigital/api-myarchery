@@ -18,6 +18,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:register']);
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:forgotPassword']);
+            $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
