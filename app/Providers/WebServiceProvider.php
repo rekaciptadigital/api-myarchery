@@ -80,6 +80,7 @@ use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryEventCategoryDetailFee;
 use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
+use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -167,6 +168,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteArcheryEventMoreInformation", DeleteArcheryEventMoreInformation::class);
         $this->registerService("addArcheryEventMoreInformation", AddArcheryEventMoreInformation::class);
         $this->registerService("getListArcheryEventDetail", GetListArcheryEventDetail::class);
+        $this->registerService("validateCodePassword", ValidateCodePassword::class);
     }
     
 

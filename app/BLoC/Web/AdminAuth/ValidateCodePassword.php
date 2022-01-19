@@ -1,17 +1,15 @@
 <?php
 namespace App\BLoC\Web\AdminAuth;
 
-use DAI\Utils\Abstracts\Transactional;
-use App\Models\Admin;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 use App\Libraries\ForgetPassword;
+use App\Models\Admin;
 
-
-class ResetPassword extends Transactional
+class ValidateCodePassword extends Retrieval
 {
     public function getDescription()
     {
@@ -22,21 +20,18 @@ class ResetPassword extends Transactional
     {
         $admin = Admin::where('email', $parameters->get('email'))->first();
         if(!$admin) throw new BLoCException("Email tidak ditemukan");
-        if($parameters->get('password') != $parameters->get('confirm_password')) throw new BLoCException("Konfirmasi kata sandi tidak sama, silahkan coba lagi");
 
-        $admin->update([
-            'password' => Hash::make($parameters->get('password'))
-        ]);
-        
-        return $admin;
+        $keyForTenMinutes = "email:verify:code:10minutes:" . $parameters->get('email');
+        $check_code = ForgetPassword::checkValidation($keyForTenMinutes, $parameters->get('code'));
+
+        return $check_code;
     }
 
     protected function validation($parameters)
     {
         return [
+            'code' => 'required',
             'email' => 'required',
-            'password' => 'required',
-            'confirm_password' => 'required',
         ];
     }
 }
