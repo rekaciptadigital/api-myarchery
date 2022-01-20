@@ -20,6 +20,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrder']);
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
+                $router->get('/check-email', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberParticipantIndividual']);
             });
             $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventQualificationSchedule']);

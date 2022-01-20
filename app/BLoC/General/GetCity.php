@@ -18,11 +18,24 @@ class GetCity extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $city = $parameters->get('province_id') ? City::where('province_id', $parameters->get('province_id'))->orderBy('name')->get() : City::orderBy('name')->limit($limit)->offset($offset)->get();
+        $province_id = $parameters->get('province_id');
+
+        $name = $parameters->get('name');
+
+        $city = City::query();
+
+        $city->when($name, function ($query) use ($name) {
+            return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
+        });
+
+        $city->when($province_id, function ($query) use ($province_id) {
+            return $query->where("province_id", $province_id);
+        });
+
         if(!$city){
             throw new BLoCException('data not found');
         }
-        return $city;
+        return $city->orderBy('name')->limit($limit)->offset($offset)->get();
     }
 
     protected function validation($parameters)

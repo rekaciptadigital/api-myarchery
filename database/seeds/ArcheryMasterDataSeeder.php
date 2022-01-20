@@ -37,22 +37,26 @@ class ArcheryMasterDataSeeder extends Seeder
                 [
                     "id" => "individu",
                     "label" => "Individu",
-                    "description" => ""
+                    "description" => "",
+                    "type" => "Individu"
                 ],
                 [
                     "id" => "mix_team",
                     "label" => "Mix Team",
-                    "description" => ""
+                    "description" => "",
+                    "type" => "Team"
                 ],
                 [
                     "id" => "male_team",
                     "label" => "Male Team",
-                    "description" => ""
+                    "description" => "",
+                    "type" => "Team"
                 ],
                 [
                     "id" => "female_team",
                     "label" => "Female Team",
-                    "description" => ""
+                    "description" => "",
+                    "type" => "Team"
                 ],
             ];
             $archery_master_competition_categories = [
