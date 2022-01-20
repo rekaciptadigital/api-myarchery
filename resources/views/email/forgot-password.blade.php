@@ -12,16 +12,15 @@
                 <table style="width: 100%;" role="presentation" width="100%" cellspacing="0" cellpadding="0">
                   <tbody>
                     <tr>
-                      <td style="width: 20%; padding-left: 30px !important; width: 15.802%;" width="10%">&nbsp;
+                      <td style="width: 20%; padding-left: 30px !important;" width="10%">&nbsp;</td>
+                      <td style="width: 23%;" width="50%">
+                        <p class="text-mobile"
+                          style="text-align: right; margin-top: 5%; margin-right: -20px; font-size: 15px;"><a
+                            style="font-size: medium;" href="https://myarchery.id" target="_blank" rel="noopener"><img
+                              class="img-sm"
+                              src="https://api-staging.myarchery.id/logo-email-archery.png" width="56" /></a></p>
                       </td>
-                      <td style="width: 25%; padding-right: 30px !important;" width="50%">
-                        <p class="text-mobile" style="text-align: right; margin-top: 5%; margin-right:-35px; font-size: 15px;"><a
-                            style="font-size: medium;" href="https://myarchery.id" target="_blank"
-                            rel="noopener"><img class="img-sm" style="max-width: 200px; height: 73px;"
-                              src="https://myarchery.id/static/media/myachery.9ed0d268.png"
-                              width="103" /></a></p>
-                      </td>
-                      <td style="width: 25%; padding-right: 30px !important;">
+                      <td style="width: 37%; padding-right: 30px !important;">
                         <p class="text-mobile" style="margin-top: 5%; font-size: 15px; text-align: left;"><span
                             style="font-size: 18pt;"><strong>MyArchery</strong></span><strong><br /></strong></p>
                       </td>
