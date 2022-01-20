@@ -22,8 +22,8 @@ class ForgotPassword extends Retrieval
         $admin = Admin::where('email', $parameters->get('email'))->first();
         if(!$admin) throw new BLoCException("Email tidak ditemukan");
 
-        $keyForADay = "email:verify:code:day:" . $admin->email;
-        $keyForTenMinutes = "email:verify:code:10minutes:" . $admin->email;
+        $keyForADay = env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:day:" . $admin->email;
+        $keyForTenMinutes = env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:10minutes:" . $admin->email;
 
         $code = ForgetPassword::getCode($keyForADay,$keyForTenMinutes,$admin);
         $send_email = ForgetPassword::setEmail($admin->email)->setName($admin->name)->setCode($code)->sendMail();
