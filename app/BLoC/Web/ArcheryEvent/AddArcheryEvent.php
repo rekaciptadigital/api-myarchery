@@ -93,8 +93,8 @@ class AddArcheryEvent extends Transactional
             "public_information.event_location_type" => "required",
             "public_information.event_start_register" => "required",
             "public_information.event_end_register" => "required",
-            "public_information.event_start" => "required",
-            "public_information.event_end" => "required",
+            "public_information.event_start" => "required|after:public_information.event_end_register",
+            "public_information.event_end" => "required|after:public_information.event_start",
             "event_categories" => "required|array|min:1",
 
         ];
