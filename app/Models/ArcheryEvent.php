@@ -213,7 +213,8 @@ class ArcheryEvent extends Model
                         'event_end_register' => $data->registration_end_datetime,
                         'event_start' => $data->event_start_datetime,
                         'event_end' => $data->event_end_datetime,
-                        'event_status' => $data->status];
+                        'event_status' => $data->status,
+                        'event_slug' => $data->event_slug];
                     $detail['more_information'] = $moreinformations_data;
                     $detail['event_categories'] = $eventcategories_data;
                     $detail['admins'] = $admins_data;
