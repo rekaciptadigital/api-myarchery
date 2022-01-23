@@ -7,6 +7,7 @@ use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryClub;
+use App\Models\ArcheryEvent;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -14,6 +15,10 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TransactionLog;
+use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Cache;
 
 class AddEventOrder extends Transactional
 {
@@ -24,7 +29,6 @@ class AddEventOrder extends Transactional
 
     protected function process($parameters)
     {
-        $email = $parameters->get('email');
         $user = Auth::guard('app-api')->user();
         $team_name = $parameters->get('team_name');
         $event_category_id = $parameters->get('event_category_id');
@@ -36,18 +40,21 @@ class AddEventOrder extends Transactional
             throw new BLoCException("category event not found");
         }
 
+        // cek waktu pendaftaran sudah berakhir atau belum
+        $event = ArcheryEvent::find($event_category_detail->event_id);
+        if ($event->registration_end_datetime < Carbon::now()) {
+            throw new BLoCException('registration has ended');
+        }
+
         // cek apakah user sudah tergabung dalam club atau belum
         $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
         if (!$club_member) {
             throw new BLoCException("member not joined this club");
         }
-        // return $event_category_detail;
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
-            // return "ok";
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name);
         } else {
-            // return "ok_team";
             return $this->registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id);
         }
     }
@@ -92,6 +99,11 @@ class AddEventOrder extends Transactional
             if ($user->age > $event_category_detail->max_age) {
                 throw new BLoCException("tidak memenuhi syarat umur");
             }
+        }
+
+        $gender_category = explode('_', $event_category_detail->team_category_id)[1];
+        if ($user->gender != $gender_category) {
+            throw new BLoCException('this category not for ' . $user->gender);
         }
 
         // cek apakah user telah pernah mendaftar di categori tersebut
@@ -163,40 +175,15 @@ class AddEventOrder extends Transactional
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
 
-        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
-
-        if ($transaction_log->status == 1) {
-            ParticipantMemberTeam::create([
-                'participant_member_id' => $participant->id,
-                'archery_club_member_id' => $club_member->id,
-                'type' => $event_category_detail->type
-            ]);
-        }
-        $res = ["archery_event_participant_id" => $participant->id];
+        $res = [
+            "archery_event_participant_id" => $participant->id,
+            'payment_info' => $payment
+        ];
         return $this->composeResponse($res);
     }
 
     private function registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id)
     {
-        $gender_category = explode('_', $event_category_detail->team_category_id)[0];
-        $category = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
-            ->where('age_category_id', $event_category_detail->age_category_id)
-            ->where('competition_category_id', $event_category_detail->competition_category_id)
-            ->where('distance_id', $event_category_detail->distance_id)->where('team_category_id', 'individu_' . $gender_category)->first();
-
-
-        if ($category) {
-            $participant = ArcheryEventParticipant::where('event_category_id', $category->id)
-                ->where('user_id', $user->id)
-                ->where('club', $club_member->club_id)->where('status', 1)->first();
-        } else {
-            throw new BLoCException("category individual not found");
-        }
-
-        if (!$participant) {
-            throw new BLoCException('you are not join the individual category');
-        }
-
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
             ->where('user_id', $user->id)->get();
 
@@ -204,6 +191,16 @@ class AddEventOrder extends Transactional
             throw new BLoCException("user already join this category event");
         }
 
+        foreach ($user_id as $u) {
+            $user_regis = User::find($u);
+            $participant_for_regsiter =  ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
+            $participant_member_for_register = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_for_regsiter->id)->where('user_id', $u)->first();
+            $participant_member_team = ParticipantMemberTeam::where('event_category_id', $event_category_detail->id)->where('participant_member_id', $participant_member_for_register->id)->first();
+
+            if ($participant_member_team) {
+                throw new BLoCException("user with email .$user_regis->email. already join this category event");
+            }
+        }
 
         $participant_new = new ArcheryEventParticipant;
         $participant_new->event_id = $event_category_detail->event_id;
@@ -253,25 +250,28 @@ class AddEventOrder extends Transactional
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee * 1000, $event_category_detail->event_name)
             ->createSnap();
 
-
-        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
-
-
-        if ($transaction_log->status == 1) {
-            foreach ($user_id as $u) {
-                $participan_old = ArcheryEventParticipant::where('event_category_id', $participant->event_category_id)->where('user_id', $u)->first();
-                $participant_member_old = ArcheryEventParticipantMember::where('user_id', $u)->where('archery_event_participant_id', $participan_old->id)->first();
-                if ($participant_member_old) {
-                    ParticipantMemberTeam::create([
-                        'participant_member_id' => $participant_member_old->id,
-                        'archery_club_member_id' => $club_member->id,
-                        'type' => $event_category_detail->category_team
-                    ]);
-                }
+        $participant_member_id = [];
+        foreach ($user_id as $u) {
+            $participan_old = ArcheryEventParticipant::where('event_category_id', $participant->event_category_id)->where('user_id', $u)->first();
+            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participan_old->id)->first();
+            if ($participant_member_old) {
+                array_push($participant_member_id, $participant_member_old->id);
             }
         }
 
-        $res = ["archery_event_participant_id" => $participant_new->id];
+        $participant_member_user_login = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+
+        array_push($participant_member_id, $participant_member_user_login->id);
+        $out_json = json_encode($participant_member_id);
+        app('redis')->set('participant_member_id', $out_json);
+        app('redis')->expire('participant_member_id', 86400);
+
+        $participant_new->transaction_log_id = $payment->transaction_log_id;
+        $participant_new->save();
+        $res = [
+            "archery_event_participant_id" => $participant_new->id,
+            "payment_info" => $payment
+        ];
         return $this->composeResponse($res);
     }
 
@@ -285,6 +285,9 @@ class AddEventOrder extends Transactional
 
     private function composeResponse(array $res)
     {
-        return ["archery_event_participant_id" => $res["archery_event_participant_id"]];
+        return [
+            "archery_event_participant_id" => $res["archery_event_participant_id"],
+            "payment_info" => $res["payment_info"]
+        ];
     }
 }

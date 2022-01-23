@@ -7,6 +7,7 @@ use App\Models\TransactionLog;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use DAI\Utils\Exceptions\BLoCException;
@@ -161,19 +162,15 @@ class PaymentGateWay
         \Midtrans\Config::$serverKey = env("MIDTRANS_SERVER_KEY");
 
         $notif = new \Midtrans\Notification();
-        // return $notif->order_id;
 
         $transaction = $notif->transaction_status;
         $type = $notif->payment_type;
-        $order_id = explode('-', $notif->order_id);
-        $order_id_fix = $order_id[0] . "-" . $order_id[1];
-        // return $order_id_fix;
+        $order_id = $notif->order_id;
         $fraud = $notif->fraud_status;
 
         $status = 3;
 
-        $transaction_log = TransactionLog::where("order_id", $order_id_fix)->first();
-        // return $transaction_log;
+        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
@@ -185,6 +182,8 @@ class PaymentGateWay
             $status = 2;
         }
 
+
+
         ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
 
         $transaction_log->status = $status;
@@ -192,6 +191,38 @@ class PaymentGateWay
         $activity["notification_callback_" . $status] = \json_encode($notif->getResponse());
         $transaction_log->transaction_log_activity = \json_encode($activity);
         $transaction_log->save();
+
+        if ($transaction_log->status == 1) {
+            $participant = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->first();
+            if (!$participant) {
+                throw new BLoCException("participant data not found");
+            }
+
+            $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
+            if (!$event_category_detail) {
+                throw new BLoCException("category not found");
+            }
+
+            $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+
+            if (app('redis')->exists('participant_member_id')) {
+                $participant_member_id = json_decode(app('redis')->get('participant_member_id'));
+                foreach ($participant_member_id as $key) {
+                    ParticipantMemberTeam::create([
+                        'participant_id' => $participant->id,
+                        'participant_member_id' => $key,
+                        'type' => $event_category_detail->category_team,
+                    ]);
+                }
+                app('redis')->del('participant_member_id');
+            } else {
+                ParticipantMemberTeam::create([
+                    'participant_member_id' => $participant_member->id,
+                    'participant_id' => $participant->id,
+                    'type' => $event_category_detail->category_team
+                ]);
+            }
+        }
 
         return true;
     }
