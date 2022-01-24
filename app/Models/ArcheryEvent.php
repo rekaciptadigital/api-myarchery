@@ -131,7 +131,7 @@ class ArcheryEvent extends Model
       }
     }
 
-    protected function detailEventById($id="",$limit="",$offset="")
+    protected function detailEventById($id)
     {
         
         $datas = ArcheryEvent::select('*','archery_events.id as id_event','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name','admins.name as admin_name',
@@ -139,16 +139,12 @@ class ArcheryEvent extends Model
         ->leftJoin("cities","cities.id","=","archery_events.city_id")
         ->leftJoin("provinces","provinces.id","=","cities.province_id")
         ->leftJoin("admins","admins.id","=","archery_events.admin_id")
-        ->where(function ($query) use ($id){
-            if(!empty($id)){
-                $query->where('archery_events.id',$id);
-            }
-         })
+        ->where('archery_events.id',$id)
         ->get();
         
         $output = [];
-        foreach ($datas as $key => $data) {
-            $admins = Admin::where('id', $data->admin_id)->get();
+        
+            $admins = Admin::where('id',$id)->get();
             $admins_data=[];
                 if ($admins) {
                     foreach ($admins as $key => $value) {
@@ -160,9 +156,10 @@ class ArcheryEvent extends Model
                         ];
                     }
                 }
+        
             
             
-            $more_informations = ArcheryEventMoreInformation::where('event_id', $data->id_event)->get();
+            $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
             $moreinformations_data=[];
                 if ($more_informations) {
                     foreach ($more_informations as $key => $value) {
@@ -175,8 +172,8 @@ class ArcheryEvent extends Model
                     }
                 }
 
-            $event_categories = $this->getCategories($data->id_event);
-            //dd($event_categories);
+            $event_categories = $this->getCategories($id);
+           
             $eventcategories_data=[];
             if ($event_categories) {
                 foreach ($event_categories as $key => $value) {
@@ -195,42 +192,138 @@ class ArcheryEvent extends Model
                     ];  
                 }
             }
-           
-            $output[] = array(
-                             "id"=> $data->id_event,
-                            "event_type"=> $data->event_type,
-                            "event_competition"=> $data->event_competition,
-                            "public_information"=>['event_name' => $data->event_name,
-                            'event_banner' => $data->poster,
-                            'event_description' => $data->description,
-                            'event_location' => $data->location,
-                            'event_city' => ['city_id' => $data->cities_id,
-                                            'name_city' => $data->cities_name,
-                                            'province_id' => $data->province_id,
-                                            'province_name' => $data->provinces_name
-                                            ],
-                            'event_location_type' => $data->location_type,
-                            'event_start_register' => $data->registration_start_datetime,
-                            'event_end_register' => $data->registration_end_datetime,
-                            'event_start' => $data->event_start_datetime,
-                            'event_end' => $data->event_end_datetime,
-                            'event_status' => $data->status],
-                            'more_information' => $moreinformations_data,
-                            'event_categories' => $eventcategories_data,
-                            'admins' => $admins_data
-                            
-                        );
+
+            if ($datas) {
+                foreach ($datas as $key => $data) {
+                    $detail['id'] = $data->id_event;
+                    $detail['event_type'] = $data->event_type;
+                    $detail['event_competition'] = $data->event_competition;
+                    $detail['public_information'] = [
+                        'event_name' => $data->event_name,
+                        'event_banner' => $data->poster,
+                        'event_description' => $data->description,
+                        'event_location' => $data->location,
+                        'event_city' => ['city_id' => $data->cities_id,
+                                        'name_city' => $data->cities_name,
+                                        'province_id' => $data->province_id,
+                                        'province_name' => $data->provinces_name
+                                        ],
+                        'event_location_type' => $data->location_type,
+                        'event_start_register' => $data->registration_start_datetime,
+                        'event_end_register' => $data->registration_end_datetime,
+                        'event_start' => $data->event_start_datetime,
+                        'event_end' => $data->event_end_datetime,
+                        'event_status' => $data->status,
+                        'event_slug' => $data->event_slug];
+                    $detail['more_information'] = $moreinformations_data;
+                    $detail['event_categories'] = $eventcategories_data;
+                    $detail['admins'] = $admins_data;
+                    ;
+    
+                }
+            }    
+        
+        return $detail;
+    }
+    protected function detailEventAll($limit, $offset)
+    {
+        
+        $datas = ArcheryEvent::select('*','archery_events.id as id_event','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name','admins.name as admin_name',
+                'admins.email as admin_email','admin_id')
+        ->leftJoin("cities","cities.id","=","archery_events.city_id")
+        ->leftJoin("provinces","provinces.id","=","cities.province_id")
+        ->leftJoin("admins","admins.id","=","archery_events.admin_id")
+        ->limit($limit)->offset($offset)
+        ->get();
+        
+        $output = [];
+        foreach ($datas as $key => $data) {
+            $admins = Admin::where('id',$data->admin_id)->get();
+            $admins_data=[];
+                if ($admins) {
+                    foreach ($admins as $key => $value) {
+                        $admins_data = [
+                            'id' => $value->id,
+                            'name' => $value->name,
+                            'email' => $value->email,
+                            'avatar' => $value->avatar,
+                        ];
+                    }
+                }
+        
             
-            unset($moreinformations_data);   
-            unset($eventcategories_data);     
+            
+            $more_informations = ArcheryEventMoreInformation::where('event_id', $data->id_event)->get();
+            $moreinformations_data=[];
+                if ($more_informations) {
+                    foreach ($more_informations as $key => $value) {
+                        $moreinformations_data[] = [
+                            'id' => $value->id,
+                            'event_id' => $value->event_id,
+                            'title' => $value->title,
+                            'description' => $value->description,
+                        ];
+                    }
+                }
+
+            $event_categories = $this->getCategories($data->id_event);
+           
+            $eventcategories_data=[];
+            if ($event_categories) {
+                foreach ($event_categories as $key => $value) {
+                    $eventcategories_data[] = [
+                        'category_details_id' => $value->key,
+                        'age_category_id' => ['id' => $value->id_age,
+                                            'label' => $value->label_age],
+                        'competition_category_id' => ['id' => $value->id_competition_categories,
+                                            'label' => $value->label_competition_categories],
+                        'distance_id' => ['id' => $value->id_distances,
+                                            'label' => $value->label_distances],
+                        'team_category_id' => ['id' => $value->id_team_categories,
+                                            'label' => $value->label_team_categories],
+                        'quota' => $value->quota,
+                        'fee' => $value->fee,
+                    ];  
+                }
+            }
+
+            $output[] = array(
+                "id"=> $data->id_event,
+               "event_type"=> $data->event_type,
+               "event_competition"=> $data->event_competition,
+               "public_information"=> [
+                    'event_name' => $data->event_name,
+                    'event_banner' => $data->poster,
+                    'event_description' => $data->description,
+                    'event_location' => $data->location,
+                    'event_city' => ['city_id' => $data->cities_id,
+                                    'name_city' => $data->cities_name,
+                                    'province_id' => $data->province_id,
+                                    'province_name' => $data->provinces_name
+                                    ],
+                    'event_location_type' => $data->location_type,
+                    'event_start_register' => $data->registration_start_datetime,
+                    'event_end_register' => $data->registration_end_datetime,
+                    'event_start' => $data->event_start_datetime,
+                    'event_end' => $data->event_end_datetime,
+                    'event_status' => $data->status,
+                    'event_slug' => $data->event_slug
+                ],
+               'more_information' => $moreinformations_data,
+               'event_categories' => $eventcategories_data,
+               'admins' => $admins_data
+               
+           );
+
+        unset($moreinformations_data);   
+        unset($eventcategories_data); 
+    
         }
         
-        if(count($output)==1){
-            $output = array_shift($output);
-        }
         return $output;
     }
 
+    
     protected function detailEventBySlug($id)
     {
         $data = ArcheryEvent::select('*','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name')

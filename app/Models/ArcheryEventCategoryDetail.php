@@ -41,7 +41,7 @@ class ArcheryEventCategoryDetail extends Model
                 $qualification_schedule = DB::table('archery_event_qualification_time')
                                             ->where('category_detail_id', $category->id)->first();
                 $category->is_open = !$qualification_schedule ? false : true;
-                $category->total_participant = $count_participant .'/'. $category->quota;
+                $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
             }     
         }

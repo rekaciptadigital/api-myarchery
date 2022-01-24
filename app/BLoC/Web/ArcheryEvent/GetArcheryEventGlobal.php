@@ -22,7 +22,8 @@ class GetArcheryEventGlobal extends Retrieval
         $offset = ($page - 1) * $limit;
 
         $archery_event = ArcheryEvent::select('*', DB::raw("if(now()>event_end_datetime,'selesai',if(now()<event_start_datetime,'akan berlangsung',if(now()> event_start_datetime && now()< event_end_datetime,'sedang berlangsung','false'))) as acara "))
-                         ->orderBy('event_end_datetime', 'desc');
+                         ->orderBy('event_end_datetime', 'desc')
+                         ->where('status',1);
 
         $total_page = ceil($archery_event->count() / $limit);
         $data = $archery_event->limit($limit)->offset($offset)->get();
