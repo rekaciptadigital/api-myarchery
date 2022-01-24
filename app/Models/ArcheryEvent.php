@@ -144,20 +144,7 @@ class ArcheryEvent extends Model
         
         $output = [];
         
-            $admins = Admin::where('id',$id)->get();
-            $admins_data=[];
-                if ($admins) {
-                    foreach ($admins as $key => $value) {
-                        $admins_data = [
-                            'id' => $value->id,
-                            'name' => $value->name,
-                            'email' => $value->email,
-                            'avatar' => $value->avatar,
-                        ];
-                    }
-                }
-        
-            
+           
             
             $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
             $moreinformations_data=[];
@@ -195,6 +182,22 @@ class ArcheryEvent extends Model
 
             if ($datas) {
                 foreach ($datas as $key => $data) {
+
+                    $admins = Admin::where('id',$data->admin_id)->get();
+                    $admins_data=[];
+                        if ($admins) {
+                            foreach ($admins as $key => $value) {
+                                $admins_data = [
+                                    'id' => $value->id,
+                                    'name' => $value->name,
+                                    'email' => $value->email,
+                                    'avatar' => $value->avatar,
+                                ];
+                            }
+                        }
+                
+            
+                        
                     $detail['id'] = $data->id_event;
                     $detail['event_type'] = $data->event_type;
                     $detail['event_competition'] = $data->event_competition;
