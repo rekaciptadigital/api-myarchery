@@ -43,6 +43,12 @@ class ArcheryEventCategoryDetail extends Model
                 $category->is_open = !$qualification_schedule ? false : true;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
+
+                $category_team_detail = DB::table('archery_master_team_categories')->where('id', $category->team_category_id)->first();
+                $category->team_category_detail = [
+                    'id' => $category_team_detail->id,
+                    'label' => $category_team_detail->label,
+                ];
             }     
         }
         return $datas;
