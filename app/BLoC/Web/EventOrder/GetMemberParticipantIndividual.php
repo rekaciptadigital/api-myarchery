@@ -2,18 +2,14 @@
 
 namespace App\BLoC\Web\EventOrder;
 
-use App\Libraries\PaymentGateWay;
-use App\Models\ArcheryClub;
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\TransactionLog;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ClubMember;
+use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class GetMemberParticipantIndividual extends Retrieval
 {
@@ -58,15 +54,26 @@ class GetMemberParticipantIndividual extends Retrieval
             // mengambil participant yang satu grup yang sama dan join di category individual
             $participant = ArcheryEventParticipant::where('event_category_id', $category->id)
                 ->where('user_id', $user->id)
-                ->where('club', $club_member->club_id)->where('status', 1)->first();
+                ->where('club_id', $club_member->club_id)->where('status', 1)->first();
         } else {
             throw new BLoCException("category individual not found");
         }
 
         // cek apakah terdapat participant
         if (!$participant) {
-            throw new BLoCException('this user not join the individual category');
+            throw new BLoCException('this user not join the individual category with this club');
         }
+
+        // cek apakah user telah bergabung di category ini sebelumnya
+        $participant_member =  ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+        if (!$participant_member) {
+            throw new BLoCException(" user not join this member for this category");
+        }
+        $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member->id)->where('event_category_id', $event_category_team->id)->first();
+        if ($participant_member_team) {
+            throw new BLoCException("this user already join this category");
+        }
+
 
         return $user;
     }
