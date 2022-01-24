@@ -142,6 +142,8 @@ class ArcheryEvent extends Model
         ->where('archery_events.id',$id)
         ->get();
         
+        
+
         $output = [];
         
             $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
@@ -180,6 +182,7 @@ class ArcheryEvent extends Model
 
             if ($datas) {
                 foreach ($datas as $key => $data) {
+                    $event_url = env('WEB_DOMAIN', 'https://my-archery.id') . '/event/' . Str::slug($data->admin_name) . '/' . $data->event_slug;
 
                     $admins = Admin::where('id',$data->admin_id)->get();
                     $admins_data=[];
@@ -215,7 +218,8 @@ class ArcheryEvent extends Model
                         'event_start' => $data->event_start_datetime,
                         'event_end' => $data->event_end_datetime,
                         'event_status' => $data->status,
-                        'event_slug' => $data->event_slug];
+                        'event_slug' => $data->event_slug,
+                        'event_url' => $event_url];
                     $detail['more_information'] = $moreinformations_data;
                     $detail['event_categories'] = $eventcategories_data;
                     $detail['admins'] = $admins_data;
@@ -239,6 +243,9 @@ class ArcheryEvent extends Model
         
         $output = [];
         foreach ($datas as $key => $data) {
+
+            $event_url = env('WEB_DOMAIN', 'https://my-archery.id') . '/event/' . Str::slug($data->admin_name) . '/' . $data->event_slug;
+
             $admins = Admin::where('id',$data->admin_id)->get();
             $admins_data=[];
                 if ($admins) {
@@ -308,7 +315,8 @@ class ArcheryEvent extends Model
                     'event_start' => $data->event_start_datetime,
                     'event_end' => $data->event_end_datetime,
                     'event_status' => $data->status,
-                    'event_slug' => $data->event_slug
+                    'event_slug' => $data->event_slug,
+                    'event_url' => $event_url
                 ],
                'more_information' => $moreinformations_data,
                'event_categories' => $eventcategories_data,
