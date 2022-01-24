@@ -24,8 +24,6 @@ $app = new Laravel\Lumen\Application(
 );
 
 $app->withFacades();
-$app->register(Illuminate\Redis\RedisServiceProvider::class);
-$app->configure('database');
 
 $app->withEloquent();
 
