@@ -144,8 +144,6 @@ class ArcheryEvent extends Model
         
         $output = [];
         
-           
-            
             $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
             $moreinformations_data=[];
                 if ($more_informations) {
