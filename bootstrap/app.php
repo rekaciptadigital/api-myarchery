@@ -24,12 +24,11 @@ $app = new Laravel\Lumen\Application(
 );
 
 $app->withFacades();
-$app->register(Illuminate\Redis\RedisServiceProvider::class);
-$app->configure('database');
 
 $app->withEloquent();
 
 $app->configure('auth');
+$app->configure('database');
 
 class_alias('Illuminate\Support\Facades\App', 'App');
 class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
@@ -95,6 +94,7 @@ $app->register('tibonilab\Pdf\PdfServiceProvider');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Barryvdh\DomPDF\ServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

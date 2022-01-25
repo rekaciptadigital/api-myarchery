@@ -20,6 +20,8 @@ class GetMemberParticipantIndividual extends Retrieval
 
     protected function process($parameters)
     {
+
+        // return User::whereRaw("name LIKE ?", ["%" . $parameters->get('email') . "%"])->get();
         $event_category_team = ArcheryEventCategoryDetail::find($parameters->get('category_id'));
         $email = $parameters->get('email');
         if (!$event_category_team) {
@@ -27,16 +29,16 @@ class GetMemberParticipantIndividual extends Retrieval
         }
 
         // get user by id
-        $user = User::where('email', $email)->first();
-        if (!$user) {
-            throw new BLoCException("user not found");
-        }
+        // $user = User::where('email', $email)->first();
+        // if (!$user) {
+        //     throw new BLoCException("user not found");
+        // }
 
         // cek jika user tergabung di club
-        $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
-        if (!$club_member) {
-            throw new BLoCException("member not joined this club");
-        }
+        // $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
+        // if (!$club_member) {
+        //     throw new BLoCException("member not joined this club");
+        // }
 
         // mengambil gender category
         $gender_category = explode('_', $event_category_team->team_category_id)[0];
@@ -46,36 +48,55 @@ class GetMemberParticipantIndividual extends Retrieval
             ->where('age_category_id', $event_category_team->age_category_id)
             ->where('competition_category_id', $event_category_team->competition_category_id)
             ->where('distance_id', $event_category_team->distance_id)
-            ->where('team_category_id', $gender_category == 'mix' ? 'individu_' . $user->gender : 'individu_' . $gender_category)
-            ->first();
+            ->where(function ($query) use ($gender_category) {
+                if ($gender_category == 'mix') {
+                    return $query->where('team_category_id', 'individu_male')->orWhere('team_category_id', 'individu_female');
+                } else {
+                    return $query->where('team_category_id', 'individu_' . $gender_category);
+                }
+            })->get();
 
+
+        $array_participant = [];
         // cek apakah terdapat category individual
-        if ($category) {
-            // mengambil participant yang satu grup yang sama dan join di category individual
-            $participant = ArcheryEventParticipant::where('event_category_id', $category->id)
-                ->where('user_id', $user->id)
-                ->where('club_id', $club_member->club_id)->where('status', 1)->first();
+        if ($category->count() > 0) {
+            foreach ($category as $c) {
+                // mengambil participant yang satu grup yang sama dan join di category individual
+                $participants = ArcheryEventParticipant::where('event_category_id', $c->id)
+                    ->whereRaw("email LIKE ?", ["%" . $email . "%"])
+                    ->where('club_id', $parameters->club_id)->where('status', 1)->get();
+                foreach ($participants as $p) {
+                    array_push($array_participant, $p);
+                }
+            }
         } else {
             throw new BLoCException("category individual not found");
         }
 
-        // cek apakah terdapat participant
-        if (!$participant) {
-            throw new BLoCException('this user not join the individual category with this club');
-        }
 
-        // cek apakah user telah bergabung di category ini sebelumnya
-        $participant_member =  ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
-        if (!$participant_member) {
-            throw new BLoCException(" user not join this member for this category");
-        }
-        $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member->id)->where('event_category_id', $event_category_team->id)->first();
-        if ($participant_member_team) {
-            throw new BLoCException("this user already join this category");
-        }
+        // foreach ($array_participant as $ap) {
+        //     // cek apakah user telah bergabung di category ini sebelumnya
+        //     $participant_member =  ArcheryEventParticipantMember::where('archery_event_participant_id', $ap->id)->first();
+        //     if (!$participant_member) {
+        //         throw new BLoCException(" user not join this member for this category");
+        //     }
+
+        //     // return $participant_member;
+
+        //     $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member->id)->where('event_category_id', $event_category_team->id)->first();
+        //     // return $participant_member_team;
+        //     if ($participant_member_team) {
+        //         if (($key = array_search($ap, $array_participant)) !== false) {
+        //             // return $array_participant[$key];
+        //             unset($array_participant[$key]);
+        //         }
+        //     }
+        // }
+
+        // return array_values($array_participant);
 
 
-        return $user;
+        return $array_participant;
     }
 
     protected function validation($parameters)

@@ -205,24 +205,24 @@ class PaymentGateWay
 
             $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
 
-            if (app('redis')->get('participant_member_id') != "individu") {
-                $participant_member_id = json_decode(app('redis')->get('participant_member_id'));
-                foreach ($participant_member_id as $key) {
-                    ParticipantMemberTeam::create([
-                        'participant_id' => $participant->id,
-                        'participant_member_id' => $key,
-                        'event_category_id' => $event_category_detail->id,
-                        'type' => $event_category_detail->category_team,
-                    ]);
+            if (app('redis')->get('participant_member_id')) {
+                if (app('redis')->get('participant_member_id') != "individu") {
+                    $participant_member_id = json_decode(app('redis')->get('participant_member_id'));
+                    foreach ($participant_member_id as $key) {
+                        ParticipantMemberTeam::create([
+                            'participant_id' => $participant->id,
+                            'participant_member_id' => $key,
+                            'event_category_id' => $event_category_detail->id,
+                            'type' => $event_category_detail->category_team,
+                        ]);
+                    }
+                    app('redis')->del('participant_member_id');
+                } else {
+                    ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
+                    app('redis')->del('participant_member_id');
                 }
-                app('redis')->del('participant_member_id');
             } else {
-                ParticipantMemberTeam::create([
-                    'participant_member_id' => $participant_member->id,
-                    'participant_id' => $participant->id,
-                    'event_category_id' => $event_category_detail->id,
-                    'type' => $event_category_detail->category_team
-                ]);
+                throw new BLoCException("payment info not valid");
             }
         }
 
