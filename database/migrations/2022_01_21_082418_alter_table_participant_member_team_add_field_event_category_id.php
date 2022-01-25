@@ -14,12 +14,7 @@ class AlterTableParticipantMemberTeamAddFieldEventCategoryId extends Migration
     public function up()
     {
         Schema::table('participant_member_teams', function (Blueprint $table) {
-            $table->dropIndex('participantId_memberId_unique');
-        });
-
-        Schema::table('participant_member_teams', function (Blueprint $table) {
-            $table->integer('event_category_id')->unsigned();
-            $table->unique(['participant_id', 'participant_member_id', 'event_category_id'], 'participantId_memberId_categoryId_unique');
+            $table->integer('event_category_id')->unsigned()->index();
         });
     }
 
