@@ -95,6 +95,7 @@ $app->register('tibonilab\Pdf\PdfServiceProvider');
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -106,6 +107,7 @@ $app->register(Illuminate\Redis\RedisServiceProvider::class);
 |
 */
 $app->configure('dompdf');
+$app->configure('mail');
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
