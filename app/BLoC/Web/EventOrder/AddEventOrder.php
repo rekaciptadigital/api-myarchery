@@ -145,7 +145,7 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee * 1000, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
-            ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee * 1000, $event_category_detail->event_name)
+            ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
 
         app('redis')->set('participant_member_id', "individu");
@@ -223,7 +223,7 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee * 1000, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
-            ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee * 1000, $event_category_detail->event_name)
+            ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
 
         $participant_member_id = [];
