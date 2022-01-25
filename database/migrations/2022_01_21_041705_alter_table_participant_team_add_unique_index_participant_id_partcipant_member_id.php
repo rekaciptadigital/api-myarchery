@@ -26,9 +26,8 @@ class AlterTableParticipantTeamAddUniqueIndexParticipantIdPartcipantMemberId ext
         }
 
         Schema::table('participant_member_teams', function (Blueprint $table) {
-            $table->integer('participant_member_id')->unsigned();
-            $table->integer('participant_id')->unsigned();
-            $table->unique(['participant_id', 'participant_member_id'], '');
+            $table->integer('participant_member_id')->unsigned()->index();
+            $table->integer('participant_id')->unsigned()->index();
         });
     }
 

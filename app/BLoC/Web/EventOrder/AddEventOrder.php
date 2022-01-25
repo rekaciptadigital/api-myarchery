@@ -2,11 +2,11 @@
 
 namespace App\BLoC\Web\EventOrder;
 
+use AlterArcheryEventParticipant;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +15,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class AddEventOrder extends Transactional
 {
@@ -51,6 +52,10 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name);
         } else {
+            Validator::make($parameters->all(), [
+                "user_id" => "required|array",
+                "team_name" => "required|string"
+            ])->validate();
             return $this->registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id);
         }
     }
@@ -109,33 +114,8 @@ class AddEventOrder extends Transactional
             throw new BLoCException("user already join this category event");
         }
 
-        // insert data ke table ArcheryParticipantMember
-        $participant = new ArcheryEventParticipant;
-        $participant->event_id = $event_category_detail->event_id;
-        $participant->user_id = $user->id;
-        $participant->name = $user->name;
-        $participant->club_id = $club_member->club_id;
-        $participant->email = $user->email;
-        $participant->type = $event_category_detail->type;
-        $participant->phone_number = $user->phone_number;
-
-        $club = ArcheryClub::find($club_member->club_id);
-        if (!$club) {
-            throw new BLoCException("club not found");
-        }
-
-        $participant->team_name = $team_name;
-        $participant->team_category_id = $event_category_detail->team_category_id;
-        $participant->age_category_id = $event_category_detail->age_category_id;
-        $participant->competition_category_id = $event_category_detail->competition_category_id;
-        $participant->distance_id = $event_category_detail->distance_id;
-        $participant->type = $event_category_detail->category_team;
-        $participant->event_category_id = $event_category_detail->id;
-        $participant->transaction_log_id = 0;
-        $participant->status = 4;
-        $participant->age = $user->age;
-        $participant->unique_id = Str::uuid();
-        $participant->save();
+        // insert data participant
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
 
@@ -153,11 +133,8 @@ class AddEventOrder extends Transactional
             $participant->status = 1;
             $participant->save();
 
-            ParticipantMemberTeam::create([
-                'participant_member_id' => $member->id,
-                'participant_id' => $participant->id,
-                'type' => $event_category_detail->category_team
-            ]);
+            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $member, $event_category_detail);
+
             $res = [
                 "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
@@ -198,31 +175,28 @@ class AddEventOrder extends Transactional
             ->first();
 
         // cek apakah terdapat category individual
-        if ($category) {
+        if (!$category) {
             throw new BLoCException("category individual not found");
         }
 
-        $participant_new = new ArcheryEventParticipant;
-        $participant_new->event_id = $event_category_detail->event_id;
-        $participant_new->user_id = $user->id;
-        $participant_new->name = $user->name;
-        $participant_new->club_id = $club_member->club_id;
-        $participant_new->email = $user->email;
-        $participant_new->type = $event_category_detail->type;
-        $participant_new->phone_number = $user->phone_number;
-        $participant_new->gender = $user->gender;
-        $participant_new->team_name = $team_name;
-        $participant_new->team_category_id = $event_category_detail->team_category_id;
-        $participant_new->age_category_id = $event_category_detail->age_category_id;
-        $participant_new->competition_category_id = $event_category_detail->competition_category_id;
-        $participant_new->distance_id = $event_category_detail->distance_id;
-        $participant_new->type = $event_category_detail->category_team;
-        $participant_new->event_category_id = $event_category_detail->id;
-        $participant_new->transaction_log_id = 0;
-        $participant_new->status = 4;
-        $participant_new->age = $user->age;
-        $participant_new->unique_id = Str::uuid();
-        $participant_new->save();
+
+
+        foreach ($user_id as $u) {
+            $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', 5)->first();
+            // return $participant_old;
+            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', 7)->first();
+            // return $participant_member_old;
+            $participant_member_team = ParticipantMemberTeam::where('participant_member_id', 7)->where('event_category_id', $event_category_detail->id)->first();
+            // return $participant_member_team;
+            if ($participant_member_team) {
+                throw new BLoCException("user with id " . $u . " already join this category");
+            }
+        }
+
+        // return "ok";
+
+
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
 
         if ($event_category_detail->fee < 1) {
             $participant_new->status = 1;
@@ -232,11 +206,7 @@ class AddEventOrder extends Transactional
                 $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
                 $participant_member_old = ArcheryEventParticipantMember::where('user_id', $u)->where('archery_event_participant_id', $participant_old->id)->first();
                 if ($participant_member_old) {
-                    ParticipantMemberTeam::create([
-                        'participant_member_id' => $participant_member_old->id,
-                        'participant_id' => $participant_old->id,
-                        'type' => $event_category_detail->category_team
-                    ]);
+                    ParticipantMemberTeam::insertParticipantMemberTeam($participant_old, $participant_member_old, $event_category_detail);
                 } else {
                     throw new BLoCException("this user not participant");
                 }
@@ -248,6 +218,7 @@ class AddEventOrder extends Transactional
             return $this->composeResponse($res);
         }
 
+
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee * 1000, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
@@ -257,8 +228,14 @@ class AddEventOrder extends Transactional
 
         $participant_member_id = [];
         foreach ($user_id as $u) {
-            $participan_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
-            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participan_old->id)->first();
+            $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
+            if (!$participant_old) {
+                throw new BLoCException("user with id " . $u . " not joined individual category");
+            }
+            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_old->id)->first();
+            if (!$participant_member_old) {
+                throw new BLoCException("user with id " . $u . " not joined individual category");
+            }
             if ($participant_member_old) {
                 array_push($participant_member_id, $participant_member_old->id);
             }
@@ -281,7 +258,6 @@ class AddEventOrder extends Transactional
         return [
             "event_category_id" => "required",
             "club_id" => "required",
-            "user_id" => 'required|array' 
         ];
     }
 
