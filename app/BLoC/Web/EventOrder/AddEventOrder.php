@@ -102,7 +102,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $gender_category = explode('_', $event_category_detail->team_category_id)[1];
+        $gender_category = explode(' ', $event_category_detail->team_category_id)[1];
         if ($user->gender != $gender_category) {
             throw new BLoCException('this category not for ' . $user->gender);
         }

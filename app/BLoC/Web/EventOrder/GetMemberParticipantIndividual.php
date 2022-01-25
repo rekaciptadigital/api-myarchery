@@ -50,9 +50,9 @@ class GetMemberParticipantIndividual extends Retrieval
             ->where('distance_id', $event_category_team->distance_id)
             ->where(function ($query) use ($gender_category) {
                 if ($gender_category == 'mix') {
-                    return $query->where('team_category_id', 'individu_male')->orWhere('team_category_id', 'individu_female');
+                    return $query->where('team_category_id', 'individu male')->orWhere('team_category_id', 'individu female');
                 } else {
-                    return $query->where('team_category_id', 'individu_' . $gender_category);
+                    return $query->where('team_category_id', 'individu ' . $gender_category);
                 }
             })->get();
 
