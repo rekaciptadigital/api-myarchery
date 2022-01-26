@@ -28,6 +28,7 @@ $app->withFacades();
 $app->withEloquent();
 
 $app->configure('auth');
+$app->configure('database');
 
 class_alias('Illuminate\Support\Facades\App', 'App');
 class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
@@ -93,6 +94,8 @@ $app->register('tibonilab\Pdf\PdfServiceProvider');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Barryvdh\DomPDF\ServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -104,6 +107,7 @@ $app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 |
 */
 $app->configure('dompdf');
+$app->configure('mail');
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
