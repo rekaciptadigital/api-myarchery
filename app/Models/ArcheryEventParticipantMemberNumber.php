@@ -24,10 +24,10 @@ class ArcheryEventParticipantMemberNumber extends Model
 
     public static function setMemberNumber($prefix, $sequence)
     {
-        return $prefix .'-'. $this->sequenceFormatNumber($sequence);
+        return $prefix .'-'. self::sequenceFormatNumber($sequence);
     }
 
-    private function sequenceFormatNumber($number)
+    private static function sequenceFormatNumber($number)
     {
         if ($number <= 9){
             $number = "00".$number;
