@@ -10,7 +10,7 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name'];
+    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category'];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "TEAM";
 
@@ -18,6 +18,19 @@ class ArcheryEventCategoryDetail extends Model
     {
         $team = ArcheryEventMasterTeamCategory::where('id', $this->team_category_id)->first();
         return $this->attributes['category_team'] = $team->type;
+    }
+
+    public function getGenderCategoryAttribute()
+    {
+        if ($this->team_category_id == 'individu male' || $this->team_category_id == 'male_team') {
+            $gender = 'male';
+        }else if($this->team_category_id == 'individu female' || $this->team_category_id == 'female_team'){
+            $gender = 'female';
+        }else{
+            $gender = 'mix';
+        }
+
+        return $gender;
     }
 
     public function getEventNameAttribute()
