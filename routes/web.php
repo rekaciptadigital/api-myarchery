@@ -103,6 +103,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
+
+                $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
             
             });
 
