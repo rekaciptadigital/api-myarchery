@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -126,7 +127,8 @@ class AddEventOrder extends Transactional
             "gender" => $user->gender,
             "birthdate" => $user->date_of_birth,
             "age" => $user->age,
-            "team_category_id" => $event_category_detail->team_category_id
+            "team_category_id" => $event_category_detail->team_category_id,
+            "user_id" => $user->id
         ]);
 
         if ($event_category_detail->fee < 1) {
@@ -142,7 +144,7 @@ class AddEventOrder extends Transactional
             return $this->composeResponse($res);
         }
 
-        $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee * 1000, $order_id)
+        $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
@@ -164,37 +166,43 @@ class AddEventOrder extends Transactional
     private function registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id)
     {
         // mengambil gender category
-        $gender_category = explode('_', $event_category_detail->team_category_id)[0];
-
-        // mengambil category individu yang satu grup dengan team berdasarkan gender
-        $category = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
-            ->where('age_category_id', $event_category_detail->age_category_id)
-            ->where('competition_category_id', $event_category_detail->competition_category_id)
-            ->where('distance_id', $event_category_detail->distance_id)
-            ->where('team_category_id', $gender_category == 'mix' ? 'individu_' . $user->gender : 'individu_' . $gender_category)
-            ->first();
-
-        // cek apakah terdapat category individual
-        if (!$category) {
-            throw new BLoCException("category individual not found");
-        }
-
-
+        $gender_category = $event_category_detail->gender_category;
+        $participant_member_id = [];
 
         foreach ($user_id as $u) {
-            $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', 5)->first();
-            // return $participant_old;
-            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', 7)->first();
-            // return $participant_member_old;
-            $participant_member_team = ParticipantMemberTeam::where('participant_member_id', 7)->where('event_category_id', $event_category_detail->id)->first();
+            $user_register = User::find($u);
+            // return $user_register;
+            // mengambil category individu yang satu grup dengan team berdasarkan gender
+            $category = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
+                ->where('age_category_id', $event_category_detail->age_category_id)
+                ->where('competition_category_id', $event_category_detail->competition_category_id)
+                ->where('distance_id', $event_category_detail->distance_id)
+                ->where('team_category_id', $gender_category == 'mix' ? 'individu ' . $user_register->gender : 'individu ' . $gender_category)
+                ->first();
+
+            // return $category;
+
+            // cek apakah terdapat category individual
+            if (!$category) {
+                throw new BLoCException("category individual not found for this category");
+            }
+
+
+            $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
+            if (!$participant_old) {
+                throw new BLoCException("participant_old not found");
+            }
+            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_old->id)->first();
+            if (!$participant_member_old) {
+                throw new BLoCException("participant_member_old not found");
+            }
+            array_push($participant_member_id, $participant_member_old->id);
+            $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member_old->id)->where('event_category_id', $event_category_detail->id)->first();
             // return $participant_member_team;
             if ($participant_member_team) {
                 throw new BLoCException("user with id " . $u . " already join this category");
             }
         }
-
-        // return "ok";
-
 
         $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
 
@@ -208,7 +216,7 @@ class AddEventOrder extends Transactional
                 if ($participant_member_old) {
                     ParticipantMemberTeam::insertParticipantMemberTeam($participant_old, $participant_member_old, $event_category_detail);
                 } else {
-                    throw new BLoCException("this user not participant");
+                    throw new BLoCException("this user not participant for category individual");
                 }
             }
             $res = [
@@ -220,26 +228,26 @@ class AddEventOrder extends Transactional
 
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
-        $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee * 1000, $order_id)
+        $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
 
-        $participant_member_id = [];
-        foreach ($user_id as $u) {
-            $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
-            if (!$participant_old) {
-                throw new BLoCException("user with id " . $u . " not joined individual category");
-            }
-            $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_old->id)->first();
-            if (!$participant_member_old) {
-                throw new BLoCException("user with id " . $u . " not joined individual category");
-            }
-            if ($participant_member_old) {
-                array_push($participant_member_id, $participant_member_old->id);
-            }
-        }
+        // $participant_member_id = [];
+        // foreach ($user_id as $u) {
+        //     $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
+        //     if (!$participant_old) {
+        //         throw new BLoCException("user with id " . $u . " not joined individual category");
+        //     }
+        //     $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_old->id)->first();
+        //     if (!$participant_member_old) {
+        //         throw new BLoCException("user with id " . $u . " not joined individual category");
+        //     }
+        //     if ($participant_member_old) {
+        //         array_push($participant_member_id, $participant_member_old->id);
+        //     }
+        // }
         $out_json = json_encode($participant_member_id);
         app('redis')->set('participant_member_id', $out_json);
         app('redis')->expire('participant_member_id', 86400);
