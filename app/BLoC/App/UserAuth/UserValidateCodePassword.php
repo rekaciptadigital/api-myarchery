@@ -21,7 +21,7 @@ class UserValidateCodePassword extends Retrieval
         $user = User::where('email', $parameters->get('email'))->first();
         if(!$user) throw new BLoCException("Email tidak ditemukan");
 
-        $keyForTenMinutes = "email:verify:code:10minutes:" . $parameters->get('email');
+        $keyForTenMinutes =env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:10minutes:" . $parameters->get('email');
         $check_code = ForgetPassword::checkValidation($keyForTenMinutes, $parameters->get('code'));
 
         return $check_code;
