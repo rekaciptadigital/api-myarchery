@@ -19,7 +19,7 @@ class GetArcheryEventMasterTeamCategory extends Retrieval
     {
         $admin = Auth::user();
        
-        $team_categories = ArcheryEventMasterTeamCategory::where('is_hide', 0)->get();
+        $team_categories = ArcheryEventMasterTeamCategory::where('is_hide', 0)->orderBy('short','asc')->get();
     
         return $team_categories;
     }
