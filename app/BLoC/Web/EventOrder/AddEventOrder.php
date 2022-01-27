@@ -103,7 +103,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $gender_category = explode(' ', $event_category_detail->team_category_id)[1];
+        $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
             throw new BLoCException('this category not for ' . $user->gender);
         }
@@ -171,8 +171,10 @@ class AddEventOrder extends Transactional
 
         foreach ($user_id as $u) {
             $user_register = User::find($u);
-            // return $user_register;
-            // mengambil category individu yang satu grup dengan team berdasarkan gender
+            if (!$user_register) {
+                throw new BLoCException("user register not found");
+            }
+
             $category = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
                 ->where('age_category_id', $event_category_detail->age_category_id)
                 ->where('competition_category_id', $event_category_detail->competition_category_id)
@@ -190,7 +192,10 @@ class AddEventOrder extends Transactional
 
             $participant_old = ArcheryEventParticipant::where('event_category_id', $category->id)->where('user_id', $u)->first();
             if (!$participant_old) {
-                throw new BLoCException("participant_old not found");
+                if ($user->id == $u) {
+                    throw new BLoCException("you are not joined individual category for this category");
+                }
+                throw new BLoCException("user with email " . $user_register->email . " not joined individual category for this category");
             }
             $participant_member_old = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant_old->id)->first();
             if (!$participant_member_old) {
