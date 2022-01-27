@@ -230,7 +230,7 @@ class ArcheryEvent extends Model
         
         return $detail;
     }
-    protected function detailEventAll($limit, $offset)
+    protected function detailEventAll($limit, $offset,$event_name="")
     {
         
         $datas = ArcheryEvent::select('*','archery_events.id as id_event','cities.id as cities_id','cities.name as cities_name','provinces.id as province_id','provinces.name as provinces_name','admins.name as admin_name',
@@ -238,6 +238,11 @@ class ArcheryEvent extends Model
         ->leftJoin("cities","cities.id","=","archery_events.city_id")
         ->leftJoin("provinces","provinces.id","=","cities.province_id")
         ->leftJoin("admins","admins.id","=","archery_events.admin_id")
+        ->where(function ($query) use ($event_name){
+            if(!empty($event_name)){
+                $query->where('archery_events.event_name', 'like', '%'.$event_name.'%');
+            }
+         })
         ->limit($limit)->offset($offset)
         ->get();
         

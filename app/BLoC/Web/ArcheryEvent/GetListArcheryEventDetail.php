@@ -20,9 +20,9 @@ class GetListArcheryEventDetail extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $id="";
+        $event_name = $parameters->get('event_name');
 
-        $archery_event_detail = ArcheryEvent::detailEventAll($limit,$offset);
+        $archery_event_detail = ArcheryEvent::detailEventAll($limit,$offset,$event_name);
         return $archery_event_detail;
     }
 
