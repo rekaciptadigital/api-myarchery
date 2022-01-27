@@ -11,7 +11,12 @@ use App\Models\City;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories'];
+    protected $appends = ['event_url', 'flat_categories', 'detail_city'];
+
+    public function getDetailCityAttribute()
+    {
+        return $this->attributes['detail_city'] = City::find($this->city_id);
+    }
 
     public function archeryEventCategories()
     {
