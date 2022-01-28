@@ -47,12 +47,19 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = DB::table('archery_event_category_details')->where('archery_event_category_details.event_id', $event_id)->get()->groupBy('team_category_id');
+        $datas = DB::table('archery_event_category_details')
+        ->select('archery_event_category_details.id','event_id','age_category_id','competition_category_id','distance_id','team_category_id','quota','archery_event_category_details.created_at','archery_event_category_details.updated_at','fee')
+        ->leftJoin('archery_master_team_categories','archery_master_team_categories.id','archery_event_category_details.team_category_id')
+        ->where('archery_event_category_details.event_id', $event_id)
+        ->orderBy('archery_master_team_categories.short','asc')->get()->groupBy('team_category_id');
+
         foreach ($datas as $key => $team_categories){
             foreach ($team_categories as $key => $category) {
                 $count_participant = ArcheryEventParticipant::where('event_id', $category->event_id)->where('event_category_id', $category->id)->count();
                 $qualification_schedule = DB::table('archery_event_qualification_time')
                                             ->where('category_detail_id', $category->id)->first();
+                                            
+                $category->id = $category->id;
                 $category->is_open = !$qualification_schedule ? false : true;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
