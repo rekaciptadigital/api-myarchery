@@ -37,7 +37,9 @@ class AddArcheryEvent extends Transactional
             $poster = Upload::setPath("asset/poster/")->setFileName("poster_".$public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
             $archery_event->poster = $poster;
             $archery_event->event_name = $public_informations['event_name'];
-            $archery_event->description = $public_informations['event_description'];
+            if(!empty($public_informations['event_description'])){
+                $archery_event->description = $public_informations['event_description'];
+            }
             $archery_event->location = $public_informations['event_location']; 
             $archery_event->city_id = $public_informations['event_city'];
             $archery_event->location_type =$public_informations['event_location_type']; 
@@ -87,7 +89,7 @@ class AddArcheryEvent extends Transactional
             "public_information" => "required|array|min:1",
             "public_information.event_banner" => "required",
             "public_information.event_name" => "required",
-            "public_information.event_description" => "required",
+            //"public_information.event_description" => "required",
             "public_information.event_location" => "required",
             "public_information.event_city" => "required",
             "public_information.event_location_type" => "required",
