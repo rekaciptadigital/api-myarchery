@@ -19,7 +19,7 @@ class GetArcheryEventMasterCompetitionCategory extends Retrieval
     {
         $admin = Auth::user();
        
-        $competition_categories = ArcheryEventMasterCompetitionCategory::all();
+        $competition_categories = ArcheryEventMasterCompetitionCategory::where("is_hide","1")->get();
     
         return $competition_categories;
     }
