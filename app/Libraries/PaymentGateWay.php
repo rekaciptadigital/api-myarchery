@@ -8,6 +8,8 @@ use App\Models\TransactionLog;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
@@ -205,7 +207,7 @@ class PaymentGateWay
                 throw new BLoCException("category not found");
             }
 
-            $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+
 
             if ($event_category_detail->category_team == 'Team') {
                 // return "ok team";
@@ -219,6 +221,17 @@ class PaymentGateWay
                     ]);
                 }
             } else {
+                $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+                $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
+                if (!$qualification_time) {
+                    throw new BLoCException('event belum bisa di daftar');
+                }
+
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $qualification_time->id,
+                    'participant_member_id' => $participant_member->id,
+                ]);
+
                 ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
             }
         }

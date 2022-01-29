@@ -11,6 +11,8 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
@@ -70,6 +72,12 @@ class AddEventOrder extends Transactional
     {
         $time_now = time();
 
+        $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
+        if (!$qualification_time) {
+            throw new BLoCException('event belum bisa di daftar');
+        }
+
+        // return "ok";
         // hitung jumlah participant pada category yang didaftarkan user
         $participant_count = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->where("event_category_id", $event_category_detail->id)
@@ -151,6 +159,10 @@ class AddEventOrder extends Transactional
             $participant->status = 1;
             $participant->save();
 
+            ArcheryEventQualificationScheduleFullDay::create([
+                'qalification_time_id' => $qualification_time->id,
+                'participant_member_id' => $member->id,
+            ]);
             ParticipantMemberTeam::insertParticipantMemberTeam($participant, $member, $event_category_detail);
 
             $res = [
