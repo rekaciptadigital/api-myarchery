@@ -7,24 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 class ArcheryEventParticipantMemberNumber extends Model
 {
     protected $table = 'archery_event_participant_member_numbers';
-    protected $fillable = ['prefix', 'participant_member_id'];
+    protected $fillable = ['prefix', 'user_id', 'event_id'];
 
-    public static function getMemberNumber($prefix, $participant_member_id)
+    public static function getMemberNumber($event_id, $user_id)
     {
-        return self::where('prefix', $prefix)->where('participant_member_id', $participant_member_id)->first();
+        $number = "";
+        $data = self::where('user_id', $user_id)->where('event_id', $event_id)->first();
+        if($data){
+            $number = $data->prefix."-".self::sequenceFormatNumber($data->sequence);
+        }
+        return $number;
     }
 
-    public static function saveMemberNumber($prefix, $participant_member_id)
+    public static function saveMemberNumber($prefix, $user_id, $event_id)
     {
         return self::firstOrNew(array(
             'prefix' => $prefix,
-            'participant_member_id' => $participant_member_id,
+            'user_id' => $user_id,
+            'event_id' => $event_id,
         ))->save();
     }
 
-    public static function setMemberNumber($prefix, $sequence)
+    public static function makePrefix($event_id, $gender)
     {
-        return $prefix .'-'. self::sequenceFormatNumber($sequence);
+        $g = $gender == "male" ? 1 : 2;
+        return "MA-".date("y")."-".$event_id."-".$g;
     }
 
     private static function sequenceFormatNumber($number)

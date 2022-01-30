@@ -8,6 +8,7 @@ use App\Models\TransactionLog;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
@@ -226,6 +227,7 @@ class PaymentGateWay
                 if (!$qualification_time) {
                     throw new BLoCException('event belum bisa di daftar');
                 }
+                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id,$user->gender), $participant_member->user_id, $event_category_detail->event_id);
 
                 ArcheryEventQualificationScheduleFullDay::create([
                     'qalification_time_id' => $qualification_time->id,

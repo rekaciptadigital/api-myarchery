@@ -42,9 +42,7 @@ class GetDownloadCard extends Retrieval
         $prefix = ArcheryEventIdcardTemplate::setPrefix($participant_id, $archery_event->id);
         if($prefix == "") throw new BLoCException("Prefix gagal digenerate");
 
-        $member_number = ArcheryEventParticipantMemberNumber::saveMemberNumber($prefix, $participant_member_id);
-        $archery_event_participant_member_number = ArcheryEventParticipantMemberNumber::getMemberNumber($prefix, $participant_member_id);
-        $member_id = ArcheryEventParticipantMemberNumber::setMemberNumber($archery_event_participant_member_number->prefix, $archery_event_participant_member_number->sequence);
+        $member_id = ArcheryEventParticipantMemberNumber::getMemberNumber($archery_event->id, $user['id']);
 
         $html_template = base64_decode($idcard_event->html_template);
         $final_doc = str_replace(
