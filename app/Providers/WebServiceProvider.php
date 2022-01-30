@@ -28,7 +28,11 @@ use App\BLoC\Web\ArcheryEvent\GetArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEvent;
 use App\BLoC\Web\ArcheryEvent\FindArcheryEventBySlug;
+use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventStatus;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEventDetailById;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEventDetailBySlug;
 use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategory;
+use App\BLoC\Web\ArcheryEventCategories\GetArcheryEventCategoryRegister;
 use App\BLoC\Web\ArcheryEventParticipant\EditArcheryEventParticipantScore;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipantMemberProfile;
 use App\BLoC\Web\ArcheryEventParticipant\GetArcheryEventParticipant;
@@ -47,6 +51,7 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
+use App\BLoC\Web\ArcheryScoring\GetArcheryScoring;
 use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
 use App\BLoC\Web\EventElimination\GetEventElimination;
 use App\BLoC\Web\EventElimination\SetEventElimination;
@@ -55,6 +60,28 @@ use App\BLoC\Web\EventElimination\RemoveEventEliminationSchedule;
 use App\BLoC\Web\EventElimination\GetEventEliminationSchedule;
 use App\BLoC\Web\ArcheryEventCertificateTemplates\AddArcheryEventCertificateTemplates;
 use App\BLoC\Web\ArcheryEventCertificateTemplates\GetArcheryEventCertificateTemplates;
+use App\BLoC\Web\ArcheryCategoryDetail\GetArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryEventQualificationTime\AddArcheryEventQualificationTime;
+use App\BLoC\Web\ArcheryCategoryDetail\AddArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
+use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
+use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
+use App\BLoC\Web\BudRest\SetBudRest; 
+use App\BLoC\Web\BudRest\GetBudRest;
+use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
+use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
+use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
+use App\BLoC\Web\ArcheryEventQualificationTime\GetArcheryEventQualificationTime;
+use App\BLoC\Web\ArcheryEventMoreInformation\EditArcheryEventMoreInformation;
+use App\BLoC\Web\EventOrder\GetMemberParticipantIndividual;
+use App\BLoC\Web\ArcheryEvent\EditArcheryEventSeparated;
+use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryEventCategoryDetailFee;
+use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
+use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
+use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
+use App\BLoC\Web\AdminAuth\ValidateCodePassword;
+use App\BLoc\Web\ArcheryEventIdcard\BulkDownloadCard;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -117,7 +144,35 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getEventEliminationSchedule", GetEventEliminationSchedule::class);
         $this->registerService("addArcheryEventCertificateTemplates", AddArcheryEventCertificateTemplates::class);
         $this->registerService("getArcheryEventCertificateTemplates", GetArcheryEventCertificateTemplates::class);
+        $this->registerService("getArcheryCategoryDetail", GetArcheryCategoryDetail::class);
+        $this->registerService("addArcheryEventQualificationTime", AddArcheryEventQualificationTime::class);
+        $this->registerService("addArcheryCategoryDetail", AddArcheryCategoryDetail::class);
+        $this->registerService("deleteArcheryCategoryDetail", DeleteArcheryCategoryDetail::class);
+        $this->registerService("editArcheryCategoryDetail", EditArcheryCategoryDetail::class);
+        $this->registerService("getArcheryScoring", GetArcheryScoring::class);
+        $this->registerService("getArcheryEventGlobal", GetArcheryEventGlobal::class);
+        $this->registerService("getArcheryEventMasterTeamCategory", GetArcheryEventMasterTeamCategory::class);
+        $this->registerService("setBudRest", SetBudRest::class); 
+        $this->registerService("getBudRest", GetBudRest::class);
+        $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
+        $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+        $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
+        $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
+        $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
+        $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
+        $this->registerService("editArcheryEventMoreInformation", EditArcheryEventMoreInformation::class);
+        $this->registerService("editArcheryEventSeparated", EditArcheryEventSeparated::class);
+        $this->registerService("editArcheryEventCategoryDetailFee", EditArcheryEventCategoryDetailFee::class);
+        $this->registerService("getArcheryEventDetailBySlug", GetArcheryEventDetailBySlug::class);
+        $this->registerService("getArcheryEventCategoryRegister", GetArcheryEventCategoryRegister::class);
+        $this->registerService("getMemberParticipantIndividual", GetMemberParticipantIndividual::class);
+        $this->registerService("deleteArcheryEventMoreInformation", DeleteArcheryEventMoreInformation::class);
+        $this->registerService("addArcheryEventMoreInformation", AddArcheryEventMoreInformation::class);
+        $this->registerService("getListArcheryEventDetail", GetListArcheryEventDetail::class);
+        $this->registerService("validateCodePassword", ValidateCodePassword::class);
+        $this->registerService("bulkDownloadCard", BulkDownloadCard::class);
     }
+    
 
     private function registerService($serviceName, $className)
     {

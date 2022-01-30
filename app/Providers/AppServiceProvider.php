@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Schema;
+
 use App\BLoC\App\ArcheryEventParticipant\FindParticipantDetail;
 use App\BLoC\App\ArcheryEventParticipant\EditParticipantProfile;
 use Illuminate\Support\ServiceProvider;
@@ -10,6 +12,7 @@ use App\BLoC\App\UserAuth\UserForgotPassword;
 use App\BLoC\App\UserAuth\UserLogin;
 use App\BLoC\App\UserAuth\UserRegister;
 use App\BLoC\App\UserAuth\UserResetPassword;
+use App\BLoC\App\UserAuth\UserValidateCodePassword;
 use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetListDownloadCertificate;
@@ -23,8 +26,11 @@ use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
 use App\BLoC\App\ArcheryClub\GetProfileClub;
 use App\BLoC\App\ArcheryClub\GetMyClub;
 use App\BLoC\App\ArcheryClub\GetAllMemberByClubId;
+use App\BLoC\App\UserAuth\UpdateUserProfile;
+use App\BLoC\App\UserAuth\UpdateUserAvatar;
 use App\BLoC\General\GetProvince;
 use App\BLoC\General\GetCity;
+use App\BLoC\App\ArcheryEventIdCard\GetDownloadCard;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("userLogin", UserLogin::class);
         $this->registerService("userRegister", UserRegister::class);
         $this->registerService("userResetPassword", UserResetPassword::class);
+        $this->registerService("userValidateCodePassword", UserValidateCodePassword::class);
         $this->registerService("getUserProfile", GetUserProfile::class);
         $this->registerService("userLogout", UserLogout::class);
         $this->registerService("findParticipantDetail", FindParticipantDetail::class);
@@ -58,6 +65,10 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService('getProvince', GetProvince::class);
         $this->registerService('getCity', GetCity::class);
         $this->registerService('getAllMemberByClubId', GetAllMemberByClubId::class);
+
+        $this->registerService('userUpdateProfile', UpdateUserProfile::class);
+        $this->registerService('userUpdateAvatar', UpdateUserAvatar::class);
+        $this->registerService("getDownloadCard", GetDownloadCard::class);
     }
 
     private function registerService($serviceName, $className)
@@ -65,5 +76,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton($serviceName, function () use ($className) {
             return new $className;
         });
+    }
+    public function boot()
+    {
+        Schema::defaultStringLength(191);
     }
 }
