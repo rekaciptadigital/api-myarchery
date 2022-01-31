@@ -8,8 +8,13 @@ use App\Models\TransactionLog;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventParticipantMemberNumber;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
+use App\Models\TemporaryParticipantMember;
+use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 
 class PaymentGateWay
@@ -171,6 +176,7 @@ class PaymentGateWay
         $status = 3;
 
         $transaction_log = TransactionLog::where("order_id", $order_id)->first();
+        // return $transaction_log;
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
@@ -203,26 +209,38 @@ class PaymentGateWay
                 throw new BLoCException("category not found");
             }
 
-            $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
 
-            if (app('redis')->get('participant_member_id')) {
-                if (app('redis')->get('participant_member_id') != "individu") {
-                    $participant_member_id = json_decode(app('redis')->get('participant_member_id'));
-                    foreach ($participant_member_id as $key) {
-                        ParticipantMemberTeam::create([
-                            'participant_id' => $participant->id,
-                            'participant_member_id' => $key,
-                            'event_category_id' => $event_category_detail->id,
-                            'type' => $event_category_detail->category_team,
-                        ]);
-                    }
-                    app('redis')->del('participant_member_id');
-                } else {
-                    ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
-                    app('redis')->del('participant_member_id');
+
+            if ($event_category_detail->category_team == 'Team') {
+                // return "ok team";
+                $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
+                foreach ($temporary_participant_member as $tmp) {
+                    ParticipantMemberTeam::create([
+                        'participant_id' => $tmp->participant_id,
+                        'participant_member_id' => $tmp->participant_member_id,
+                        'event_category_id' => $event_category_detail->id,
+                        'type' => $event_category_detail->category_team,
+                    ]);
                 }
             } else {
-                throw new BLoCException("payment info not valid");
+                $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+                $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
+                if (!$qualification_time) {
+                    throw new BLoCException('event belum bisa di daftar');
+                }
+
+                $user = User::find($participant_member->user_id);
+                if (!$user) {
+                    throw new BLoCException("user not found");
+                }
+                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
+
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $qualification_time->id,
+                    'participant_member_id' => $participant_member->id,
+                ]);
+
+                ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
             }
         }
 

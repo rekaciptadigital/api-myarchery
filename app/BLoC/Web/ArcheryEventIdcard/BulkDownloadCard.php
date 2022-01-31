@@ -42,9 +42,7 @@ class BulkDownloadCard extends Retrieval
             $prefix = ArcheryEventIdcardTemplate::setPrefix($archery_event_participant->id, $archery_event->id);
             if($prefix == "") throw new BLoCException("Prefix gagal digenerate");
     
-            $member_number = ArcheryEventParticipantMemberNumber::saveMemberNumber($prefix, $archery_event_participant_member->id);
-            $archery_event_participant_member_number = ArcheryEventParticipantMemberNumber::getMemberNumber($prefix, $archery_event_participant_member->id);
-            $member_id = ArcheryEventParticipantMemberNumber::setMemberNumber($archery_event_participant_member_number->prefix, $archery_event_participant_member_number->sequence);
+            $member_id = ArcheryEventParticipantMemberNumber::getMemberNumber($archery_event->id, $archery_event_participant->user_id);
             $final_doc = str_replace(
                             ['{%member_name%}', '{%member_id%}', '{%event_name%}', '{%event_category%}'], 
                             [$archery_event_participant_member->name, $member_id, $archery_event->event_name, $idcard_category],

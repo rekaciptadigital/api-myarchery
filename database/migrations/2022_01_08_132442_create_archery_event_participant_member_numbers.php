@@ -17,7 +17,8 @@ class CreateArcheryEventParticipantMemberNumbers extends Migration
             $table->engine = 'MyISAM';
             $table->integer('sequence')->unsigned();
             $table->string('prefix',15);
-            $table->integer('participant_member_id');
+            $table->integer('user_id')->index();
+            $table->integer('event_id')->index();
             $table->timestamps();
             $table->primary(array('prefix', 'sequence'));
         });

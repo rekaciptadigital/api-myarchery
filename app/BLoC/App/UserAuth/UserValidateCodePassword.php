@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Redis;
 use App\Libraries\ForgetPassword;
 use App\Models\User;
 
-class UserResetPassword extends Retrieval
+class UserValidateCodePassword extends Retrieval
 {
     public function getDescription()
     {
@@ -20,21 +20,18 @@ class UserResetPassword extends Retrieval
     {
         $user = User::where('email', $parameters->get('email'))->first();
         if(!$user) throw new BLoCException("Email tidak ditemukan");
-        if($parameters->get('password') != $parameters->get('confirm_password')) throw new BLoCException("Konfirmasi kata sandi tidak sama, silahkan coba lagi");
 
-        $user->update([
-            'password' => Hash::make($parameters->get('password'))
-        ]);
-        
-        return $user;
+        $keyForTenMinutes =env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:10minutes:" . $parameters->get('email');
+        $check_code = ForgetPassword::checkValidation($keyForTenMinutes, $parameters->get('code'));
+
+        return $check_code;
     }
 
     protected function validation($parameters)
     {
         return [
+            'code' => 'required',
             'email' => 'required',
-            'password' => 'required',
-            'confirm_password' => 'required',
         ];
     }
 }
