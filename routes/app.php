@@ -12,6 +12,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
 
         $router->group(['prefix' => 'archery-event', 'middleware' => 'auth.user'], function () use ($router) {
             $router->get('/my-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListEventByUserLogin']);
+            $router->get('/my-category-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByUserLogin']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
