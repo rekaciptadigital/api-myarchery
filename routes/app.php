@@ -10,6 +10,10 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userValidateCodePassword']);
         });
 
+        $router->group(['prefix' => 'archery-event', 'middleware' => 'auth.user'], function () use ($router) {
+            $router->get('/my-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListEventByUserLogin']);
+        });
+
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);
             $router->put('/update-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateProfile']);
@@ -23,7 +27,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/check-email', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberParticipantIndividual']);
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
             });
-            
+
             $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventQualificationSchedule']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventQualificationSchedule']);
