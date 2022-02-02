@@ -83,10 +83,9 @@ class UpdateParticipantMember extends Retrieval
                     throw new BLoCException("user dengan email " . $user_register->email . " telah didaftarkan pada category ini sebelumnya");
                 } elseif ($temporary->status == 2) {
                     throw new BLoCException("order has expired please order again");
-                } 
-                // elseif ($temporary->status == 1) {
-                //     throw new BLoCException("user with email " . $user_register->email . " already join this category");
-                // }
+                } elseif ($temporary->status == 1) {
+                    throw new BLoCException("user with email " . $user_register->email . " already join this category");
+                }
             }
             array_push($participant_member_id, $participant_member_old);
             $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member_old->id)->where('event_category_id', $event_category_detail->id)->first();
