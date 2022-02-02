@@ -159,7 +159,7 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->fee < 1) {
             $participant->status = 1;
             $participant->save();
-            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id,$user->gender), $user->id, $event_category_detail->event_id);
+            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $user->id, $event_category_detail->event_id);
 
             ArcheryEventQualificationScheduleFullDay::create([
                 'qalification_time_id' => $qualification_time->id,

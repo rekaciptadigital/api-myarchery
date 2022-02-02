@@ -13,6 +13,7 @@ use App\Models\ArcheryEventParticipant;
 class ArcheryEvent extends Model
 {
     protected $appends = ['event_url', 'flat_categories', 'detail_city'];
+    protected $guarded = ['id'];
 
     public function getDetailCityAttribute()
     {
