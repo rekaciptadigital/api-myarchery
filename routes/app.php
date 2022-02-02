@@ -15,13 +15,16 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->get('/my-category-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByUserLogin']);
             $router->get('/my-category-event-detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventCategoryDetail']);
             $router->get('/my-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantMemberByCategory']);
+            $router->put('/update-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantMember']);
         });
+        
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);
             $router->put('/update-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateProfile']);
             $router->put('/update-avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUserProfile']);
         });
+
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->group(['prefix' => 'event-order', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);

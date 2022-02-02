@@ -3,7 +3,6 @@
 namespace App\BLoC\App\ArcheryEvent;
 
 use App\Models\ArcheryEventParticipant;
-use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
