@@ -31,6 +31,14 @@ class UpdateParticipantMember extends Retrieval
         }
         $user_ids = $parameters->get('user_id');
 
+        if (count($user_ids) < 3) {
+            throw new BLoCException("Minimum number of participants is 3 people");
+        }
+
+        if (count($user_ids) > 5) {
+            throw new BLoCException("Maximum number of participants is 5 people");
+        }
+
         $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
         if (!$event_category_detail) {
             throw new BLoCException("event category id not found");
