@@ -32,14 +32,12 @@ class AddArcheryEventQualificationTime extends Transactional
             }else{
                 $count_participant = ArcheryEventParticipant::where('event_category_id', $qualification_time['category_detail_id'])->first();
             
-                if(!empty($count_participant)){
-                    throw new BLoCException("data tidak bisa diedit, karna sudah ada partisipan pada category ini");
+                if(empty($count_participant)){
+                    $archery_event_qualification_time->category_detail_id = $qualification_time['category_detail_id'];
+                    $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
+                    $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
+                    $archery_event_qualification_time->save();
                 }
-
-                $archery_event_qualification_time->category_detail_id = $qualification_time['category_detail_id'];
-                $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
-                $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
-                $archery_event_qualification_time->save();
             }
         }
         
