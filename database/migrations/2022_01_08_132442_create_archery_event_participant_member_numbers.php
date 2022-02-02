@@ -13,15 +13,17 @@ class CreateArcheryEventParticipantMemberNumbers extends Migration
      */
     public function up()
     {
-        Schema::create('archery_event_participant_member_numbers', function (Blueprint $table) {
-            $table->engine = 'MyISAM';
-            $table->integer('sequence')->unsigned();
-            $table->string('prefix',15);
-            $table->integer('user_id')->index();
-            $table->integer('event_id')->index();
-            $table->timestamps();
-            $table->primary(array('prefix', 'sequence'));
-        });
+        if (!Schema::hasTable('archery_event_participant_member_numbers')) {
+            Schema::create('archery_event_participant_member_numbers', function (Blueprint $table) {
+                $table->engine = 'MyISAM';
+                $table->integer('sequence')->unsigned();
+                $table->string('prefix', 15);
+                $table->integer('user_id')->index();
+                $table->integer('event_id')->index();
+                $table->timestamps();
+                $table->primary(array('prefix', 'sequence'));
+            });
+        }
         DB::statement('ALTER TABLE archery_event_participant_member_numbers MODIFY sequence INTEGER NOT NULL AUTO_INCREMENT');
     }
 
