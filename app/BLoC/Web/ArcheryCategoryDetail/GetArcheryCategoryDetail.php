@@ -27,8 +27,8 @@ class GetArcheryCategoryDetail extends Retrieval
        
         foreach ($archery_category_detail as $key => $value ){
 
-            $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($event_id,$value['key']);
-
+            $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($value['key']);
+            
             $output[$value['label_competition_categories']][]= (object) [
                 'event_category_details_id' => $value['key'],
                 'age_category' => $value['label_age'],
@@ -36,7 +36,7 @@ class GetArcheryCategoryDetail extends Retrieval
                 'distances_category' => $value['label_distances'],
                 'team_category' => $value['label_team_categories'],
                 'type' => $value['type'],
-                'total_participant ' =>  $count_participant,
+                'total_participant' =>  $count_participant,
 
             ];
         }

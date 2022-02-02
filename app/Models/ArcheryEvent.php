@@ -172,7 +172,7 @@ class ArcheryEvent extends Model
             if ($event_categories) {
                 foreach ($event_categories as $key => $value) {
 
-                    $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($id,$value->key);
+                    $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($value->key);
 
 
                     $eventcategories_data[] = [
