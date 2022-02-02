@@ -5,6 +5,8 @@ namespace App\BLoC\Web\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ArcheryEventParticipant;
+use DAI\Utils\Exceptions\BLoCException;
 
 class AddArcheryEventQualificationTime extends Transactional
 {
@@ -28,6 +30,12 @@ class AddArcheryEventQualificationTime extends Transactional
                 $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
                 $archery_event_qualification_time->save();
             }else{
+                $count_participant = ArcheryEventParticipant::where('event_category_id', $qualification_time['category_detail_id'])->first();
+            
+                if(!empty($count_participant)){
+                    throw new BLoCException("data tidak bisa diedit, karna sudah ada partisipan pada category ini");
+                }
+
                 $archery_event_qualification_time->category_detail_id = $qualification_time['category_detail_id'];
                 $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
                 $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];

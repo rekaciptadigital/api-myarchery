@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMoreInformation;
 use App\Models\City;
+use App\Models\ArcheryEventParticipant;
 
 class ArcheryEvent extends Model
 {
@@ -169,6 +170,10 @@ class ArcheryEvent extends Model
             $eventcategories_data=[];
             if ($event_categories) {
                 foreach ($event_categories as $key => $value) {
+
+                    $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($id,$value->key);
+
+
                     $eventcategories_data[] = [
                         'category_details_id' => $value->key,
                         'age_category_id' => ['id' => $value->id_age,
@@ -181,6 +186,7 @@ class ArcheryEvent extends Model
                                             'label' => $value->label_team_categories],
                         'quota' => $value->quota,
                         'fee' => $value->fee,
+                        'total_participant' => $count_participant,
                     ];  
                 }
             }

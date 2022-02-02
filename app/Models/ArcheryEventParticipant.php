@@ -28,6 +28,12 @@ class ArcheryEventParticipant extends Model
       ->first();
     return $archery_participant;
   }
+  public static function getTotalPartisipantByEventByCategory($event_id, $category_detail_id)
+  {
+    $count_participant = ArcheryEventParticipant::where('event_id', $event_id)
+                                ->where('event_category_id', $category_detail_id)->count();
+    return $count_participant;
+  }
 
   public static function insertParticipant(
     $user,
