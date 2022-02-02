@@ -31,12 +31,25 @@ class UpdateParticipantMember extends Retrieval
         }
         $user_ids = $parameters->get('user_id');
 
+        if (count($user_ids) < 3) {
+            throw new BLoCException("Minimum number of participants is 3 people");
+        }
+
+        if (count($user_ids) > 5) {
+            throw new BLoCException("Maximum number of participants is 5 people");
+        }
+
         $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
         if (!$event_category_detail) {
             throw new BLoCException("event category id not found");
         }
 
         $gender_category = $event_category_detail->gender_category;
+
+        $participant_member_team_old = ParticipantMemberTeam::where('participant_id', $participant->id)->get();
+        foreach ($participant_member_team_old as $pmto) {
+            $pmto->delete();
+        }
 
         $participant_member_id = [];
 
@@ -52,6 +65,7 @@ class UpdateParticipantMember extends Retrieval
                 ->where('distance_id', $event_category_detail->distance_id)
                 ->where('team_category_id', $gender_category == 'mix' ? 'individu ' . $user_register->gender : 'individu ' . $gender_category)
                 ->first();
+
 
             // cek apakah terdapat category individual
             if (!$category) {
@@ -83,29 +97,27 @@ class UpdateParticipantMember extends Retrieval
                     throw new BLoCException("user dengan email " . $user_register->email . " telah didaftarkan pada category ini sebelumnya");
                 } elseif ($temporary->status == 2) {
                     throw new BLoCException("order has expired please order again");
-                } elseif ($temporary->status == 1) {
-                    throw new BLoCException("user with email " . $user_register->email . " already join this category");
                 }
             }
+
             array_push($participant_member_id, $participant_member_old);
             $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member_old->id)->where('event_category_id', $event_category_detail->id)->first();
+
             if ($participant_member_team) {
                 throw new BLoCException("user with email " . $user_register->email . " already join this category");
             }
         }
 
-
-
-        $participant_member_team_old = ParticipantMemberTeam::where('participant_id', $participant->id)->get();
-        foreach ($participant_member_team_old as $pmto) {
-            foreach ($participant_member_id as $pmi) {
-                $pmto->update([
-                    "participant_member_id" => $pmi->id
-                ]);
-            }
+        foreach ($participant_member_id as $pmi) {
+            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $pmi, $event_category_detail);
         }
 
-        return "ok";
+        $participant['members'] = User::join('archery_event_participant_members', 'archery_event_participant_members.user_id', '=', 'users.id')
+            ->join('participant_member_teams', 'participant_member_teams.participant_member_id', '=', 'archery_event_participant_members.id')
+            ->where('participant_member_teams.participant_id', $participant->id)
+            ->get(['users.*']);
+
+        return $participant;
     }
 
     protected function validation($parameters)
