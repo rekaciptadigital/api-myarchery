@@ -31,20 +31,42 @@ class UpdateParticipantMember extends Retrieval
         }
         $user_ids = $parameters->get('user_id');
 
-        if (count($user_ids) < 3) {
-            throw new BLoCException("Minimum number of participants is 3 people");
-        }
-
-        if (count($user_ids) > 5) {
-            throw new BLoCException("Maximum number of participants is 5 people");
-        }
-
         $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
         if (!$event_category_detail) {
             throw new BLoCException("event category id not found");
         }
 
         $gender_category = $event_category_detail->gender_category;
+
+        if ($gender_category == 'mix') {
+            if (count($user_ids) != 2 && count($user_ids) != 4) {
+                throw new BLoCException("total participants do not meet the requirements");
+            }
+
+            $male = [];
+            $female = [];
+
+            foreach ($user_ids as $uid) {
+                $user = User::find($uid);
+                if (!$user) {
+                    throw new BLoCException('user not found');
+                }
+
+                if ($user->gender ==  'male') {
+                    array_push($male, $uid);
+                } else {
+                    array_push($female, $uid);
+                }
+            }
+
+            if (count($male) != count($female)) {
+                throw new BLoCException("the total number of male and female participants must be the same");
+            }
+        } else {
+            if (count($user_ids) < 3 || count($user_ids) > 5) {
+                throw new BLoCException("total participants do not meet the requirements");
+            }
+        }
 
         $participant_member_team_old = ParticipantMemberTeam::where('participant_id', $participant->id)->get();
         foreach ($participant_member_team_old as $pmto) {
