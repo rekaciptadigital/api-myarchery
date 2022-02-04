@@ -34,7 +34,9 @@ class GetListCategoryByUserLogin extends Retrieval
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'participant_member_teams.participant_id')
             ->where('archery_event_participant_members.user_id', $user->id)
             ->where('archery_event_category_details.event_id', $event->id)
-            ->get(['archery_event_participants.*']);
+            ->get(['archery_event_category_details.*']);
+
+            return $data;
 
         if ($data->count() > 0) {
             foreach ($data as $d) {
