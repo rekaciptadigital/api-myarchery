@@ -102,8 +102,6 @@ class GetListEventByUserLogin extends Retrieval
         }
 
         return $output;
-
-        // return $data;
     }
 
     protected function validation($parameters)
