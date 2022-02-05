@@ -159,7 +159,7 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->fee < 1) {
             $participant->status = 1;
             $participant->save();
-            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id,$user->gender), $user->id, $event_category_detail->event_id);
+            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $user->id, $event_category_detail->event_id);
 
             ArcheryEventQualificationScheduleFullDay::create([
                 'qalification_time_id' => $qualification_time->id,
@@ -194,6 +194,37 @@ class AddEventOrder extends Transactional
     {
         // mengambil gender category
         $gender_category = $event_category_detail->gender_category;
+
+        if ($gender_category == 'mix') {
+            if (count($user_id) != 2 && count($user_id) != 4) {
+                throw new BLoCException("total participants do not meet the requirements");
+            }
+
+            $male = [];
+            $female = [];
+
+            foreach ($user_id as $uid) {
+                $user = User::find($uid);
+                if (!$user) {
+                    throw new BLoCException('user not found');
+                }
+
+                if ($user->gender ==  'male') {
+                    array_push($male, $uid);
+                } else {
+                    array_push($female, $uid);
+                }
+            }
+
+            if (count($male) != count($female)) {
+                throw new BLoCException("the total number of male and female participants must be the same");
+            }
+        } else {
+            if (count($user_id) < 3 || count($user_id) > 5) {
+                throw new BLoCException("total participants do not meet the requirements");
+            }
+        }
+        
         $participant_member_id = [];
 
         if ($club_member == null) {

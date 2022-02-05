@@ -28,6 +28,18 @@ class ArcheryEventParticipant extends Model
       ->first();
     return $archery_participant;
   }
+  public static function getTotalPartisipantByEventByCategory($category_detail_id)
+  {
+    $count_participant = ArcheryEventParticipant::select(DB::raw("count(if(archery_event_participants.status=1,1,if(FROM_UNIXTIME(transaction_logs.expired_time)>=now(),1,NULL))) as total "))
+                        ->where('event_category_id', $category_detail_id)
+                        ->leftJoin('transaction_logs','transaction_logs.id','archery_event_participants.transaction_log_id')
+                        ->get();
+    foreach(array($count_participant) as $key => $count){
+      $total=$count[0]['total'];
+    }
+
+    return $total;
+  }
 
   public static function insertParticipant(
     $user,
