@@ -7,6 +7,7 @@ use App\Models\TransactionLog;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Libraries\PaymentGateWay;
+use App\Models\ArcheryClub;
 use DAI\Utils\Abstracts\Retrieval;
 
 class DetailEventOrder extends Retrieval
@@ -22,6 +23,7 @@ class DetailEventOrder extends Retrieval
         $archery_event = ArcheryEvent::find($participant->event_id);
         $transaction_info = PaymentGateWay::transactionLogPaymentInfo($participant->transaction_log_id);
         $participant_members = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->get();
+        $participant['club_detail'] = ArcheryClub::find($participant->club_id);
         $participant["members"] = $participant_members;
         $participant["category_label"] = $participant->team_category_id."-".$participant->age_category_id."-".$participant->competition_category_id."-".$participant->distance_id."m";
         $participant["status_label"] = TransactionLog::getStatus($participant->status);
