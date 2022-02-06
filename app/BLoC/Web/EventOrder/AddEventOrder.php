@@ -80,17 +80,9 @@ class AddEventOrder extends Transactional
 
         // return "ok";
         // hitung jumlah participant pada category yang didaftarkan user
-        $participant_count = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->where("event_category_id", $event_category_detail->id)
-            ->where(function ($query) use ($time_now) {
-                $query->where("transaction_logs.status", 1);
-                $query->orWhere(function ($q) use ($time_now) {
-                    $q->where("transaction_logs.status", 4);
-                    $q->where("transaction_logs.expired_time", ">", $time_now);
-                });
-            })->where('event_id', $event_category_detail->event_id)->get();
+        $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
 
-        if ($participant_count->count() >= $event_category_detail->quota) {
+        if ($participant_count >= $event_category_detail->quota) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")

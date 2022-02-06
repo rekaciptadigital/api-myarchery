@@ -29,6 +29,21 @@ class ArcheryEventParticipant extends Model
     return $archery_participant;
   }
 
+  public static function countEventUserBooking($event_category_detail_id)
+  {
+    $time_now = time();
+
+    return ArcheryEventParticipant::leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+            ->where("event_category_id", $event_category_detail_id)
+            ->where(function ($query) use ($time_now) {
+                $query->where("archery_event_participants.status", 1);
+                $query->orWhere(function ($q) use ($time_now) {
+                    $q->where("archery_event_participants.status", 4);
+                    $q->where("transaction_logs.expired_time", ">", $time_now);
+                });
+            })->count();
+  }
+
   public static function insertParticipant(
     $user,
     $unique_id,
