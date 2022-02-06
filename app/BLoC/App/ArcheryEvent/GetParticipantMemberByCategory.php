@@ -2,6 +2,7 @@
 
 namespace App\BLoC\App\ArcheryEvent;
 
+use App\Models\ArcheryClub;
 use App\Models\ArcheryEventParticipant;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
@@ -20,6 +21,8 @@ class GetParticipantMemberByCategory extends Retrieval
         if (!$participant) {
             throw new BLoCException('participant not found');
         }
+
+        $club = ArcheryClub::find($participant->club_id);
 
         $output = [];
 
@@ -46,6 +49,7 @@ class GetParticipantMemberByCategory extends Retrieval
         ];
 
         $output['member'] = $users;
+        $output['club'] = $club;
 
         return $output;
     }
