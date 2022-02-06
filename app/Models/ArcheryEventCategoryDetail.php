@@ -15,6 +15,45 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "TEAM";
 
+    public function getCategoryDetailById($category_id)
+    {
+        $category = ArcheryEventCategoryDetail::find($category_id);
+        $age_category_detail = ArcheryMasterAgeCategory::find($category->age_category_id);
+        $competition_category_detail = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
+        $distance_detail = ArcheryMasterDistanceCategory::find($category->distance_id);
+        $team_category_details = ArcheryMasterTeamCategory::find($category->team_category_id);
+        $output = [
+            "id" => $category->id,
+            "quota" => $category->quota,
+            "fee" => $category->fee,
+            "gender_category" => $category->gender_category,
+            "categoryTeam" => [
+                "id" => $team_category_details->id,
+                "label" => $team_category_details->label
+            ],
+            "age_category_detail" => [
+                "id" => $age_category_detail->id,
+                "label" => $age_category_detail->label,
+                "max_age" => $age_category_detail->max_age
+            ],
+            "competition_category_detail" => [
+                "id" => $competition_category_detail->id,
+                "label" => $competition_category_detail->label,
+            ],
+            "distance_detail" => [
+                "id" => $distance_detail->id,
+                "label" => $distance_detail->label
+            ],
+            "team_category_detail" => [
+                "id" => $team_category_details->id,
+                "label" => $team_category_details->type,
+                "type" => $team_category_details->type
+            ],
+        ];
+
+        return $output;
+    }
+
     public function getCategoryTeamAttribute()
     {
         $team = ArcheryEventMasterTeamCategory::where('id', $this->team_category_id)->first();
