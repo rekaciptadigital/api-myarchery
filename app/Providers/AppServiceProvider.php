@@ -14,6 +14,7 @@ use App\BLoC\App\UserAuth\UserRegister;
 use App\BLoC\App\UserAuth\UserResetPassword;
 use App\BLoC\App\UserAuth\UserValidateCodePassword;
 use App\BLoC\App\UserAuth\GetUserProfile;
+use App\BLoC\App\UserAuth\UpdateVerifikasiUser;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetListDownloadCertificate;
 use App\BLoC\App\Certificate\GetDownload;
@@ -82,6 +83,9 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getParticipantMemberByCategory", GetParticipantMemberByCategory::class);
         $this->registerService("updateParticipantMember", UpdateParticipantMember::class);
         $this->registerService("getDetailEventById", GetDetailEventById::class);
+
+
+        $this->registerService("updateVerifikasiUser", UpdateVerifikasiUser::class);
     }
 
     private function registerService($serviceName, $className)

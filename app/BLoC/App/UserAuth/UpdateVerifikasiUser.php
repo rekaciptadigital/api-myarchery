@@ -30,20 +30,32 @@ class UpdateVerifikasiUser extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        if ($parameters->get('avatar')) {
-            $avatar = Upload::setPath("asset/avatar/")->setFileName("avatar_" . $user->id)->setBase64($parameters->get('avatar'))->save();
-            $user->avatar = $avatar;
-            $user->save();
+        if ($parameters->get('ktp')) {
+            $ktp = Upload::setPath("asset/ktp/")->setFileName("ktp_" . $user->id)->setBase64($parameters->get('ktp'))->save();
+            $user->ktp = $ktp;
         }
 
-        return $user->avatar;
+        if ($parameters->get('kk')) {
+            $kk = Upload::setPath("asset/kk/")->setFileName("kk_" . $user->id)->setBase64($parameters->get('kk'))->save();
+            $user->kk = $kk;
+        }
+
+        $user->nik = $parameters->get('nik');
+
+        $user->verify_status = 3;
+
+        $user->save();
+
+        return $user;
     }
 
     protected function validation($parameters)
     {
         return [
             "user_id" => 'required|integer',
-            "avatar" => 'string'
+            "kk" => 'required|string',
+            "ktp" => 'required|string',
+            "nik" => 'required|string|min:16|max:16' 
         ];
     }
 }
