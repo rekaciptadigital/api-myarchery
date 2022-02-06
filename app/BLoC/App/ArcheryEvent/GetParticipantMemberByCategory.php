@@ -3,6 +3,7 @@
 namespace App\BLoC\App\ArcheryEvent;
 
 use App\Models\ArcheryClub;
+use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
@@ -33,6 +34,8 @@ class GetParticipantMemberByCategory extends Retrieval
 
         $participant['members'] = $users;
 
+        $event_category = ArcheryEventCategoryDetail::find($participant->event_category_id);
+
         $output['participant'] = [
             "participant_id" => $participant->id,
             "event_id" => $participant->event_id,
@@ -45,9 +48,8 @@ class GetParticipantMemberByCategory extends Retrieval
             "gender" => $participant->gender,
             "transaction_log_id" => $participant->transaction_log_id,
             "team_name" => $participant->team_name,
-            "event_category_id" =>  $participant->event_category_id,
         ];
-
+        $output['event_category_detail'] = $event_category ? $event_category->getCategoryDetailById($event_category->id) : null;
         $output['member'] = $users;
         $output['club'] = $club;
 
