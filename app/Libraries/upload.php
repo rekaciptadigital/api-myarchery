@@ -53,6 +53,5 @@ class Upload
     
         file_put_contents($file, $image_base64);
         return $file_name2."#".time();
-        // return $file_name2;
     }
 }

@@ -6,6 +6,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ArcheryEventParticipant;
 
 class GetArcheryCategoryDetail extends Retrieval
 {
@@ -25,6 +26,9 @@ class GetArcheryCategoryDetail extends Retrieval
         $output= [];
        
         foreach ($archery_category_detail as $key => $value ){
+
+            $count_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($value['key']);
+            
             $output[$value['label_competition_categories']][]= (object) [
                 'event_category_details_id' => $value['key'],
                 'age_category' => $value['label_age'],
@@ -32,6 +36,8 @@ class GetArcheryCategoryDetail extends Retrieval
                 'distances_category' => $value['label_distances'],
                 'team_category' => $value['label_team_categories'],
                 'type' => $value['type'],
+                'total_participant' =>  $count_participant,
+
             ];
         }
         

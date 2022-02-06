@@ -14,6 +14,7 @@ use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
+use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 
 class PaymentGateWay
@@ -227,7 +228,12 @@ class PaymentGateWay
                 if (!$qualification_time) {
                     throw new BLoCException('event belum bisa di daftar');
                 }
-                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id,$user->gender), $participant_member->user_id, $event_category_detail->event_id);
+
+                $user = User::find($participant_member->user_id);
+                if (!$user) {
+                    throw new BLoCException("user not found");
+                }
+                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
 
                 ArcheryEventQualificationScheduleFullDay::create([
                     'qalification_time_id' => $qualification_time->id,
