@@ -48,9 +48,8 @@ class GetListCategoryByUserLogin extends Retrieval
             'archery_event_participants.event_category_id',
             'archery_event_participants.team_name',
             'archery_event_participants.club_id',
-            'archery_event_participant_members.id as member_id',
-
-        )->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
+            'archery_event_participant_members.id as member_id')
+            ->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
             ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'participant_member_teams.participant_id')
             ->where('archery_event_participant_members.user_id', $user->id)
