@@ -27,7 +27,9 @@ class ArcheryEventCategoryDetail extends Model
             "quota" => $category->quota,
             "fee" => $category->fee,
             "gender_category" => $category->gender_category,
-            "categoryTeam" => [
+            "category_label" => $age_category_detail->label . "-" . $team_category_details->label . "-" . $distance_detail->label,
+            "category_type" => $category->category_team,
+            "category_team" => [
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->label
             ],
@@ -48,7 +50,7 @@ class ArcheryEventCategoryDetail extends Model
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->type,
                 "type" => $team_category_details->type
-            ],
+            ]
         ];
 
         return $output;
