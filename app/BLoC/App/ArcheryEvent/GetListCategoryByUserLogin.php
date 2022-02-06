@@ -72,14 +72,16 @@ class GetListCategoryByUserLogin extends Retrieval
                     )->join('archery_event_qualification_time', 'archery_event_qualification_time.id', '=', 'archery_event_qualification_schedule_full_day.qalification_time_id')
                         ->where('archery_event_qualification_schedule_full_day.participant_member_id', $d->member_id)
                         ->first();
-                    return $qualification_full_day;
-                    $today = (Carbon::now())->toDateTimeString();
-                    $carbon_start_date = Carbon::parse($qualification_full_day->date_start);
 
-                    if ($carbon_start_date < $today) {
-                        $history_qualification = "kualifikasi selesai";
-                    } else {
-                        $history_qualification = "menunggu kualifikasi";
+                    if ($qualification_full_day) {
+                        $today = (Carbon::now())->toDateTimeString();
+                        $carbon_start_date = Carbon::parse($qualification_full_day->date_start);
+
+                        if ($carbon_start_date < $today) {
+                            $history_qualification = "kualifikasi selesai";
+                        } else {
+                            $history_qualification = "menunggu kualifikasi";
+                        }
                     }
                 }
 
