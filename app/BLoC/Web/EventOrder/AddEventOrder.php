@@ -19,6 +19,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
+use Carbon\Carbon as CarbonCarbon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -106,6 +107,10 @@ class AddEventOrder extends Transactional
             throw new BLoCException($msg);
         }
 
+        // $date_event_start = Carbon::createFromFormat('Y-m-d H:i:s', $event_category_detail->start_event);
+        // return Carbon::create($date_event_start->toObject()->year, $date_event_start->toObject()->month, $date_event_start->toObject()->day);
+        // return;
+
         // cek jika memiliki syarat umur
         if ($event_category_detail->max_age != 0) {
             if ($user->age == null) {
@@ -113,7 +118,18 @@ class AddEventOrder extends Transactional
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user->age > $event_category_detail->max_age) {
-                throw new BLoCException("tidak memenuhi syarat umur");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae);
+            }
+        }
+
+        // cek jika memiliki syarat minimal umur
+        if ($event_category_detail->min_age != 0) {
+            if ($user->age == null) {
+                throw new BLoCException("tgl lahir anda belum di set");
+            }
+            // cek apakah usia user memenuhi syarat categori event
+            if ($user->age < $event_category_detail->min_age) {
+                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age);
             }
         }
 
@@ -224,7 +240,7 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("total participants do not meet the requirements");
             }
         }
-        
+
         $participant_member_id = [];
 
         if ($club_member == null) {
