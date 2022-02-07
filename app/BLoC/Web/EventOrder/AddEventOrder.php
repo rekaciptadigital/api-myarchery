@@ -20,6 +20,7 @@ use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
 use Carbon\Carbon as CarbonCarbon;
+use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -99,18 +100,18 @@ class AddEventOrder extends Transactional
             throw new BLoCException($msg);
         }
 
-        // $date_event_start = Carbon::createFromFormat('Y-m-d H:i:s', $event_category_detail->start_event);
-        // return Carbon::create($date_event_start->toObject()->year, $date_event_start->toObject()->month, $date_event_start->toObject()->day);
-        // return;
+        // $date_event_db = date('Y-m-d', strtotime($event_category_detail->start_event));
+        // $date_event_start = Carbon::parse($date_event_db, 'Asia/jakarta');
+        // $age_per_event = $date_event_start->diffInYears($user->date_of_birth);
 
-        // cek jika memiliki syarat umur
+        // cek jika memiliki syarat max umur
         if ($event_category_detail->max_age != 0) {
             if ($user->age == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user->age > $event_category_detail->max_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae);
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae." tahun");
             }
         }
 
@@ -121,9 +122,11 @@ class AddEventOrder extends Transactional
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user->age < $event_category_detail->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age);
+                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age." tahun");
             }
         }
+
+        return "ok";
 
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
