@@ -15,6 +15,7 @@ use App\BLoC\App\UserAuth\UserResetPassword;
 use App\BLoC\App\UserAuth\UserValidateCodePassword;
 use App\BLoC\App\UserAuth\GetUserProfile;
 use App\BLoC\App\UserAuth\UpdateVerifikasiUser;
+use App\BLoC\App\UserAuth\GetDataUserVerifikasi;
 use App\BLoC\App\UserAuth\UserLogout;
 use App\BLoC\App\Certificate\GetListDownloadCertificate;
 use App\BLoC\App\Certificate\GetDownload;
@@ -86,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
 
 
         $this->registerService("updateVerifikasiUser", UpdateVerifikasiUser::class);
+        $this->registerService("getDataUserVerifikasi", GetDataUserVerifikasi::class);
     }
 
     private function registerService($serviceName, $className)
