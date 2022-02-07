@@ -81,7 +81,11 @@ use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
-use App\BLoc\Web\ArcheryEventIdcard\BulkDownloadCard;
+use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
+use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipantLunas;
+use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipantPending;
+use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipantLunasAll;
+use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipantPendingAll;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -171,9 +175,14 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getListArcheryEventDetail", GetListArcheryEventDetail::class);
         $this->registerService("validateCodePassword", ValidateCodePassword::class);
         $this->registerService("bulkDownloadCard", BulkDownloadCard::class);
+        $this->registerService("getDownloadArcheryEventParticipantLunas", GetDownloadArcheryEventParticipantLunas::class);
+        $this->registerService("getDownloadArcheryEventParticipantPending", GetDownloadArcheryEventParticipantPending::class);
+        $this->registerService("getDownloadArcheryEventParticipantLunasAll", GetDownloadArcheryEventParticipantLunasAll::class);
+        $this->registerService("getDownloadArcheryEventParticipantPendingAll", GetDownloadArcheryEventParticipantPendingAll::class);
+
     }
     
-
+    
     private function registerService($serviceName, $className)
     {
         $this->app->singleton($serviceName, function () use ($className) {
