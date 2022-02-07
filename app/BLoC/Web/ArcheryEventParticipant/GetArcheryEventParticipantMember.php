@@ -16,20 +16,24 @@ class GetArcheryEventParticipantMember extends Retrieval
 
     protected function process($parameters)
     {
-        $team_category_id = $parameters->get('team_category_id');
-        $competition_category_id = $parameters->get('competition_category_id');
-        $age_category_id = $parameters->get('age_category_id');
+        $category_id = $parameters->get('category_id');
         $status = $parameters->get('status');
+
+        $count = [
+            "pending" => ArcheryEventParticipant::getTotalPartisipantEventByStatus($category_id,4),
+            "expired" => ArcheryEventParticipant::getTotalPartisipantEventByStatus($category_id,2),
+            "success" => ArcheryEventParticipant::getTotalPartisipantEventByStatus($category_id,1),
+            "all" => ArcheryEventParticipant::getTotalPartisipantEventByStatus($category_id,1),
+        ];
+
+
 
         $participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
         ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-        ->where('archery_event_participants.event_id', $parameters->get('id'))
-        ->where('archery_event_participants.team_category_id', $team_category_id)
-        ->where('archery_event_participants.competition_category_id', $competition_category_id)
-        ->where('archery_event_participants.competition_category_id', $competition_category_id)
+        ->where('archery_event_participants.category_id', $category_id)
         ->where(function ($query) use ($status){
             if (!is_null($status) && $status != 0) {
-                $query->where('transaction_logs.status', $status);
+                $query->where('archery_event_participants.status', $status);
                 if($status == 2){
                     $query->orWhere(function ($query) use ($status){
                        $query->where("transaction_logs.status",4);

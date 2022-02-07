@@ -28,6 +28,8 @@ class ArcheryEventParticipant extends Model
       ->first();
     return $archery_participant;
   }
+
+  
   public static function getTotalPartisipantByEventByCategory($category_detail_id)
   {
     $count_participant = ArcheryEventParticipant::select(DB::raw("count(if(archery_event_participants.status=1,1,if(FROM_UNIXTIME(transaction_logs.expired_time)>=now(),1,NULL))) as total "))
@@ -39,6 +41,33 @@ class ArcheryEventParticipant extends Model
     }
 
     return $total;
+  }
+
+  public static function getTotalPartisipantEventByStatus($category_detail_id, $status = 0)
+  {
+    ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
+        ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+        ->where('archery_event_participants.category_id', $category_detail_id)
+        ->where(function ($query) use ($status){
+            if (!is_null($status) && $status != 0) {
+                $query->where('archery_event_participants.status', $status);
+                if($status == 2){
+                    $query->orWhere(function ($query) use ($status){
+                       $query->where("transaction_logs.status",4);
+                       $query->where("transaction_logs.expired_time","<=",time());
+                    });
+                }
+                if($status == 1){
+                    $query->orWhere(function ($query) use ($status){
+                       $query->where("archery_event_participants.status",1);
+                    });
+                }
+                if($status == 4){
+                    $query->where("transaction_logs.expired_time",">=",time());
+                }
+            }
+        })
+        ->count();
   }
 
   public static function countEventUserBooking($event_category_detail_id)
