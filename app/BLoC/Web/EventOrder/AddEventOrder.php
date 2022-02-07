@@ -80,7 +80,6 @@ class AddEventOrder extends Transactional
             throw new BLoCException('event belum bisa di daftar');
         }
 
-        // return "ok";
         // hitung jumlah participant pada category yang didaftarkan user
         $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
 
@@ -99,10 +98,6 @@ class AddEventOrder extends Transactional
             }
             throw new BLoCException($msg);
         }
-
-        // $date_event_db = date('Y-m-d', strtotime($event_category_detail->start_event));
-        // $date_event_start = Carbon::parse($date_event_db, 'Asia/jakarta');
-        // $age_per_event = $date_event_start->diffInYears($user->date_of_birth);
 
         // cek jika memiliki syarat max umur
         if ($event_category_detail->max_age != 0) {
@@ -125,8 +120,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age." tahun");
             }
         }
-
-        // return "ok";
 
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
