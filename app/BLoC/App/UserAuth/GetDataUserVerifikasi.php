@@ -19,7 +19,7 @@ class GetDataUserVerifikasi extends Retrieval
         $output = [
             "user_id" => $user->id,
             "nik" => $user->nik,
-            "ktp_kk" => $user->_ktp_kk,
+            "ktp_kk" => $user->ktp_kk,
             "selfie_ktp_kk" => $user->selfie_ktp_kk
         ];
 
