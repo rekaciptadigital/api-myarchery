@@ -19,7 +19,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'date_of_birth', 'phone_number', 'gender'
+        'name', 'email', 'password', 'date_of_birth', 'phone_number', 'gender', 'verify_status'
     ];
 
     /**
@@ -55,7 +55,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         return $this->hasOne(UserArcheryInfo::class);
     }
 
-    protected $appends = ['age', 'verify_status'];
+    protected $appends = ['age', 'status_verify'];
 
     public function getAgeAttribute()
     {
@@ -63,7 +63,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         return $this->attributes['age'] = $today->diffInYears($this->date_of_birth);                  
     }
 
-    public function getVerifyStatusAttribute()
+    public function getStatusVerifyAttribute()
     {
         $verify_status = $this->verify_status;
         $status = "Belum terverifikasi";
@@ -77,6 +77,6 @@ class User extends Model implements JWTSubject, AuthenticatableContract
             $status = "Belum terverifikasi";
         }                
 
-        return $status;
+        return $this->attributes['status_verify'] = $status;
     }
 }
