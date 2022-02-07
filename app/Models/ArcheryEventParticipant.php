@@ -45,7 +45,7 @@ class ArcheryEventParticipant extends Model
 
   public static function getTotalPartisipantEventByStatus($category_detail_id, $status = 0)
   {
-    ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
+    return ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
         ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
         ->where('archery_event_participants.event_category_id', $category_detail_id)
         ->where(function ($query) use ($status){
