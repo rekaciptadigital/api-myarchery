@@ -11,7 +11,7 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category'];
+    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event'];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "TEAM";
 
@@ -27,7 +27,9 @@ class ArcheryEventCategoryDetail extends Model
             "quota" => $category->quota,
             "fee" => $category->fee,
             "gender_category" => $category->gender_category,
-            "categoryTeam" => [
+            "category_label" => $age_category_detail->label . "-" . $team_category_details->label . "-" . $distance_detail->label,
+            "category_type" => $category->category_team,
+            "category_team" => [
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->label
             ],
@@ -48,7 +50,7 @@ class ArcheryEventCategoryDetail extends Model
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->type,
                 "type" => $team_category_details->type
-            ],
+            ]
         ];
 
         return $output;
@@ -86,6 +88,22 @@ class ArcheryEventCategoryDetail extends Model
             return $this->attributes['max_age'] = 0;
         }
         return $this->attributes['max_age'] = $age->max_age;
+    }
+
+    public function getStartEventAttribute()
+    {
+        $event =  ArcheryEvent::find($this->event_id);
+
+        return $this->attributes['start_event'] = $event->event_start_datetime;
+    }
+
+    public function getMinAgeAttribute()
+    {
+        $age = ArcheryEventMasterAgeCategory::where('id', $this->age_category_id)->first();
+        if (!$age) {
+            return $this->attributes['min_age'] = 0;
+        }
+        return $this->attributes['min_age'] = $age->min_age;
     }
 
     public static function getCategoriesRegisterEvent($event_id)

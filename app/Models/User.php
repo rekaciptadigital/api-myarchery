@@ -59,7 +59,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
 
     public function getAgeAttribute()
     {
-        $today = Carbon::today();
+        $today = Carbon::today('Asia/jakarta');
         return $this->attributes['age'] = $today->diffInYears($this->date_of_birth);                  
     }
 }
