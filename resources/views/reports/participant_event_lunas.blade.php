@@ -17,7 +17,11 @@ table, th, td {
 </head>
 
 <body>
-
+<table style="width: 100%; height: 70px;" border="0">
+    <td colspan="9"
+                    style="text-align: left; font-size: 13; color: #000000; font-weight: bold; white-space: pre-line">
+                    <strong>DAFTAR PARTISIPAN SUDAH BAYAR PADA EVENT {{$event_name}}</strong></td>
+    </table>
 
 
     <table style="width:100%;border: 1px solid black;">
