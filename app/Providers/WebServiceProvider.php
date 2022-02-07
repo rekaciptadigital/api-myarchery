@@ -81,8 +81,8 @@ use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
-use App\BLoc\Web\ArcheryEventIdcard\BulkDownloadCard;
-use App\BLoc\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
+use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
+use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 
 class WebServiceProvider extends ServiceProvider
 {
