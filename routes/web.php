@@ -11,6 +11,52 @@
 |
 */
 
+use App\Models\ArcheryUserAthleteCode;
+use App\Models\City;
+use App\Models\Provinces;
+use App\Models\User;
+use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Http\Request;
+
+$router->get('index', function () {
+    $data = User::where('verify_status', 3)->get();
+
+    $data2 = User::where('verify_status', 1)->get();
+
+    foreach ($data2 as $d2) {
+        $d2['prefix'] = ArcheryUserAthleteCode::getAthleteCode($d2->id);
+        $d2['province'] = Provinces::find($d2->address_province_id);
+        $d2['city'] = City::find($d2->address_city_id);
+    }
+    return view('athlete_code/index', [
+        "data" => $data,
+        "data2" => $data2
+    ]);
+});
+
+$router->post('accept', function (Request $request) {
+    $user_id = $request->input('user_id');
+    $user = User::findOrFail($user_id);
+    $user->verify_status = 1;
+    $user->date_verified = new DateTime();
+    $user->save();
+
+    $city = City::find($user->address_city_id);
+    ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
+    return redirect('index');
+});
+
+$router->post('reject', function (Request $request) {
+    $user_id = $request->input('user_id');
+    $user = User::findOrFail($user_id);
+    $user->verify_status = 2;
+    $user->save();
+
+    // $city = City::find($user->address_city_id);
+    // ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
+    return redirect('index');
+});
+
 $router->group(['prefix' => 'web'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->group(['prefix' => 'auth'], function () use ($router) {
@@ -52,7 +98,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
 
             $router->group(['prefix' => 'bud-rest'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRest']); 
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRest']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRest']);
             });
 
@@ -68,7 +114,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'distance-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterDistanceCategory']);
             });
-            
+
             $router->group(['prefix' => 'competition-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
             });
@@ -78,7 +124,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEventMoreInformation']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
             });
-            
+
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
             });
@@ -106,11 +152,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
 
                 $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
-            
             });
 
-           
-            
+
+
             $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
@@ -155,7 +200,6 @@ $router->group(['prefix' => 'eo'], function () use ($router) {
             $router->group(['prefix' => 'scoring'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
             });
-
         });
     });
 });
