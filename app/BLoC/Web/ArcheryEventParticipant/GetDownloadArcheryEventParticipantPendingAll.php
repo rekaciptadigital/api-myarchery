@@ -25,12 +25,6 @@ class GetDownloadArcheryEventParticipantPendingAll extends Retrieval
       return $download;
     }
 
-    protected function validation($parameters)
-    {
-        return [
-            'event_id' => 'required',
-        ];
-    }
 
 }
 
