@@ -30,9 +30,10 @@ class UpdateUserProfile extends Retrieval
         }
 
         $data = $parameters->all();
+        // return $data;
 
-        $user->update($data);
-
+        $user->fill($data);
+        $user->save();
         return $user;
     }
 
@@ -43,7 +44,11 @@ class UpdateUserProfile extends Retrieval
             'name' => 'string|max:255',
             'email' => 'string|email|max:255|unique:users',
             'date_of_birth' => 'date',
-            'gender' => 'in:male,female'
+            'gender' => 'in:male,female',
+            'address' => 'string',
+            'place_of_birth' => 'string',
+            'address_province_id' => 'integer',
+            'address_city_id' => 'integer',
         ];
     }
 }
