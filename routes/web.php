@@ -50,6 +50,7 @@ $router->post('reject', function (Request $request) {
     $user_id = $request->input('user_id');
     $user = User::findOrFail($user_id);
     $user->verify_status = 2;
+    $user->reason_rejected = "data not valid";
     $user->save();
 
     // $city = City::find($user->address_city_id);
