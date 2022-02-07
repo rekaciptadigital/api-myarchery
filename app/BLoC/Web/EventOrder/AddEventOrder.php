@@ -82,17 +82,9 @@ class AddEventOrder extends Transactional
 
         // return "ok";
         // hitung jumlah participant pada category yang didaftarkan user
-        $participant_count = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->where("event_category_id", $event_category_detail->id)
-            ->where(function ($query) use ($time_now) {
-                $query->where("transaction_logs.status", 1);
-                $query->orWhere(function ($q) use ($time_now) {
-                    $q->where("transaction_logs.status", 4);
-                    $q->where("transaction_logs.expired_time", ">", $time_now);
-                });
-            })->where('event_id', $event_category_detail->event_id)->get();
+        $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
 
-        if ($participant_count->count() >= $event_category_detail->quota) {
+        if ($participant_count >= $event_category_detail->quota) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
@@ -134,27 +126,29 @@ class AddEventOrder extends Transactional
             }
         }
 
+        // return "ok";
+
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
-            throw new BLoCException('this category not for ' . $user->gender);
+            if(empty($user->gender))
+                throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+            
+            throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
         }
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
             ->where('user_id', $user->id)->first();
         if ($isExist) {
+            if ($isExist->status == 1) {
+                throw new BLoCException("event dengan kategori ini sudah di ikuti");
+            }
             $isExist_transaction_log = TransactionLog::find($isExist->transaction_log_id);
             if ($isExist_transaction_log) {
                 if ($isExist_transaction_log->status == 4 && $isExist_transaction_log->expired_time > time()) {
-                    throw new BLoCException("user already order this category event please complete payment");
-                } elseif ($isExist_transaction_log->status == 2) {
-                    throw new BLoCException("your order payment is expired please order again");
-                } elseif ($isExist_transaction_log->status == 1) {
-                    throw new BLoCException("user already join this category event");
+                    throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
                 }
-            } else {
-                throw new BLoCException("user already join this category event");
-            }
+            } 
         }
 
         // insert data participant
