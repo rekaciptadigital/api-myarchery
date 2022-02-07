@@ -19,6 +19,8 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
+use Carbon\Carbon as CarbonCarbon;
+use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -106,16 +108,33 @@ class AddEventOrder extends Transactional
             throw new BLoCException($msg);
         }
 
-        // cek jika memiliki syarat umur
+        // $date_event_db = date('Y-m-d', strtotime($event_category_detail->start_event));
+        // $date_event_start = Carbon::parse($date_event_db, 'Asia/jakarta');
+        // $age_per_event = $date_event_start->diffInYears($user->date_of_birth);
+
+        // cek jika memiliki syarat max umur
         if ($event_category_detail->max_age != 0) {
             if ($user->age == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user->age > $event_category_detail->max_age) {
-                throw new BLoCException("tidak memenuhi syarat umur");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae." tahun");
             }
         }
+
+        // cek jika memiliki syarat minimal umur
+        if ($event_category_detail->min_age != 0) {
+            if ($user->age == null) {
+                throw new BLoCException("tgl lahir anda belum di set");
+            }
+            // cek apakah usia user memenuhi syarat categori event
+            if ($user->age < $event_category_detail->min_age) {
+                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age." tahun");
+            }
+        }
+
+        return "ok";
 
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
@@ -224,7 +243,7 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("total participants do not meet the requirements");
             }
         }
-        
+
         $participant_member_id = [];
 
         if ($club_member == null) {

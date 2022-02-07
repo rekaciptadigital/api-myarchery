@@ -26,7 +26,7 @@ class GetDetailEventById extends Retrieval
         if (!$data) {
             throw new BLoCException("event not found");
         }
-        $output = [];
+        
         $event_url = env('WEB_DOMAIN', 'https://my-archery.id') . '/event/' . Str::slug($data->admin_name) . '/' . $data->event_slug;
 
         $admins = Admin::where('id', $data->admin_id)->get();

@@ -11,9 +11,50 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category'];
+    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event'];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "TEAM";
+
+    public function getCategoryDetailById($category_id)
+    {
+        $category = ArcheryEventCategoryDetail::find($category_id);
+        $age_category_detail = ArcheryMasterAgeCategory::find($category->age_category_id);
+        $competition_category_detail = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
+        $distance_detail = ArcheryMasterDistanceCategory::find($category->distance_id);
+        $team_category_details = ArcheryMasterTeamCategory::find($category->team_category_id);
+        $output = [
+            "id" => $category->id,
+            "quota" => $category->quota,
+            "fee" => $category->fee,
+            "gender_category" => $category->gender_category,
+            "category_label" => $age_category_detail->label . "-" . $team_category_details->label . "-" . $distance_detail->label,
+            "category_type" => $category->category_team,
+            "category_team" => [
+                "id" => $team_category_details->id,
+                "label" => $team_category_details->label
+            ],
+            "age_category_detail" => [
+                "id" => $age_category_detail->id,
+                "label" => $age_category_detail->label,
+                "max_age" => $age_category_detail->max_age
+            ],
+            "competition_category_detail" => [
+                "id" => $competition_category_detail->id,
+                "label" => $competition_category_detail->label,
+            ],
+            "distance_detail" => [
+                "id" => $distance_detail->id,
+                "label" => $distance_detail->label
+            ],
+            "team_category_detail" => [
+                "id" => $team_category_details->id,
+                "label" => $team_category_details->type,
+                "type" => $team_category_details->type
+            ]
+        ];
+
+        return $output;
+    }
 
     public function getCategoryTeamAttribute()
     {
@@ -47,6 +88,22 @@ class ArcheryEventCategoryDetail extends Model
             return $this->attributes['max_age'] = 0;
         }
         return $this->attributes['max_age'] = $age->max_age;
+    }
+
+    public function getStartEventAttribute()
+    {
+        $event =  ArcheryEvent::find($this->event_id);
+
+        return $this->attributes['start_event'] = $event->event_start_datetime;
+    }
+
+    public function getMinAgeAttribute()
+    {
+        $age = ArcheryEventMasterAgeCategory::where('id', $this->age_category_id)->first();
+        if (!$age) {
+            return $this->attributes['min_age'] = 0;
+        }
+        return $this->attributes['min_age'] = $age->min_age;
     }
 
     public static function getCategoriesRegisterEvent($event_id)

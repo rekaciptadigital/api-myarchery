@@ -5,13 +5,12 @@ namespace App\BLoC\App\ArcheryEvent;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryMasterAgeCategory;
-use App\Models\ArcheryMasterCompetitionCategory;
-use App\Models\ArcheryMasterDistanceCategory;
-use App\Models\ArcheryMasterTeamCategory;
+use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GetListCategoryByUserLogin extends Retrieval
 {
@@ -29,29 +28,88 @@ class GetListCategoryByUserLogin extends Retrieval
             throw new BLoCException("event not found");
         }
 
-        $data = ArcheryEventCategoryDetail::join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
+        $data = DB::table('archery_event_category_details')->select(
+            'archery_event_participants.id',
+            'archery_event_participants.user_id',
+            'archery_event_participants.user_id',
+            'archery_event_participants.email',
+            'archery_event_participants.phone_number',
+            'archery_event_participants.age',
+            'archery_event_participants.gender',
+            'archery_event_participants.status',
+            'archery_event_participants.transaction_log_id',
+            'archery_event_participants.event_category_id',
+            'archery_event_participants.team_name',
+            'archery_event_participants.club_id',
+            'archery_event_participant_members.id as member_id'
+        )
+            ->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
             ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'participant_member_teams.participant_id')
             ->where('archery_event_participant_members.user_id', $user->id)
-            ->where('archery_event_category_details.event_id', $event->id)
-            ->get(['archery_event_category_details.*']);
+            ->where('archery_event_category_details.event_id', $event->id)->get();
 
-            return $data;
+        $output = [];
+        $output_category = [];
 
         if ($data->count() > 0) {
             foreach ($data as $d) {
                 $event_category = ArcheryEventCategoryDetail::find($d->event_category_id);
                 $club = ArcheryClub::find($d->club_id);
-                $d['club_detail'] = $club;
-                $d['event_category_detail'] = $event_category;
-                $d['event_category_detail']['age_category_detail'] = ArcheryMasterAgeCategory::find($event_category->age_category_id);
-                $d['event_category_detail']['distance_category_detail'] = ArcheryMasterDistanceCategory::find($event_category->distance_id);
-                $d['event_category_detail']['competition_category_detail'] = ArcheryMasterCompetitionCategory::find($event_category->competition_category_id);
-                $d['event_category_detail']['team_category_detail'] = ArcheryMasterTeamCategory::find($event_category->team_category_id);
+                $transaction_log = TransactionLog::find($d->transaction_log_id);
+                $history_qualification = null;
+                if ($event_category->category_team == "Individual") {
+                    $qualification_full_day = DB::table('archery_event_qualification_schedule_full_day')->select(
+                        'archery_event_qualification_time.event_start_datetime as date_start',
+                        'archery_event_qualification_time.event_end_datetime as date_end'
+                    )->join('archery_event_qualification_time', 'archery_event_qualification_time.id', '=', 'archery_event_qualification_schedule_full_day.qalification_time_id')
+                        ->where('archery_event_qualification_schedule_full_day.participant_member_id', $d->member_id)
+                        ->first();
+
+                    if ($qualification_full_day) {
+                        $today = (Carbon::now())->toDateTimeString();
+                        $carbon_start_date = Carbon::parse($qualification_full_day->date_start);
+
+                        if ($carbon_start_date < $today) {
+                            $history_qualification = "kualifikasi selesai";
+                        } else {
+                            $history_qualification = "menunggu kualifikasi";
+                        }
+                    }
+                }
+
+                $event_categoriy_data = $event_category->getCategoryDetailById($event_category->id);
+                $event_categoriy_data['detail_participant'] = [
+                    "id_participant" => $d->id,
+                    "user_id" => $d->user_id,
+                    "email" => $d->email,
+                    "phone_number" => $d->phone_number,
+                    "age" => $d->age,
+                    "gender" => $d->gender,
+                    "status" => $d->status,
+                    "team_name" => $d->team_name,
+                    "order_id" => $transaction_log ? $transaction_log->order_id : null,
+                    "club_detail" => [
+                        "club_id" => $club->id,
+                        "club_name" => $club->name,
+                        "club_logo" => $club->logo,
+                        "club_banner" => $club->banner,
+                        "club_place_name" => $club->place_name,
+                        "club_address" => $club->address,
+                        "club_description" => $club->description,
+                        "detail_province" => $club->detail_province,
+                        "detail_city" => $club->detail_city
+                    ],
+                    "history_qualification" => $event_category->category_team == "Individual" ? $history_qualification : null
+                ];
+                array_push($output_category, $event_categoriy_data);
             }
         }
 
-        return $data;
+        $output['event_detail'] = $event->getDetailEventById($event->id);
+        $output['category_detail'] = $output_category;
+
+        return $output;
     }
 
     protected function validation($parameters)

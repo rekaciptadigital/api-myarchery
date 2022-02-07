@@ -24,6 +24,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->put('/update-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateProfile']);
             $router->put('/update-avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getUserProfile']);
+            $router->put('/update-verifikasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVerifikasiUser']);
         });
 
         $router->group(['prefix' => 'archery'], function () use ($router) {
