@@ -75,7 +75,8 @@ class GetArcheryEventParticipantMember extends Retrieval
             $p->status_label = TransactionLog::getStatus($p->status); 
             $list [] = $p;
         }
-        return $list;
+
+        return ["list" => $list, "count" => $count];
     }
 
     protected function validation($parameters)
