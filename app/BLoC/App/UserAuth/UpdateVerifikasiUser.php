@@ -31,14 +31,14 @@ class UpdateVerifikasiUser extends Retrieval
         }
 
         if ($user->verify_status == 4 || $user->verify_status == 3 || $user->verify_status == 2) {
-            if ($parameters->get('ktp')) {
-                $ktp = Upload::setPath("asset/ktp/")->setFileName("ktp_" . $user->id)->setBase64($parameters->get('ktp'))->save();
-                $user->ktp = $ktp;
+            if ($parameters->get('ktp_kk')) {
+                $ktp_kk = Upload::setPath("asset/ktp_kk/")->setFileName("ktp_kk_" . $user->id)->setBase64($parameters->get('ktp_kk'))->save();
+                $user->ktp_kk = $ktp_kk;
             }
 
-            if ($parameters->get('kk')) {
-                $kk = Upload::setPath("asset/kk/")->setFileName("kk_" . $user->id)->setBase64($parameters->get('kk'))->save();
-                $user->kk = $kk;
+            if ($parameters->get('selfie_ktp_kk')) {
+                $selfie_ktp_kk = Upload::setPath("asset/selfie_ktp_kk/")->setFileName("selfie_ktp_kk_" . $user->id)->setBase64($parameters->get('selfie_ktp_kk'))->save();
+                $user->selfie_ktp_kk = $selfie_ktp_kk;
             }
 
             if ($parameters->get('name')) {
@@ -61,9 +61,10 @@ class UpdateVerifikasiUser extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            "kk" => 'required|string',
-            "ktp" => 'required|string',
-            "nik" => 'required|string|min:16|max:16'
+            "selfie_ktp_kk" => 'required|string',
+            "ktp_kk" => 'required|string',
+            "nik" => 'required|string|min:16|max:16',
+            "name" => 'string'
         ];
     }
 }
