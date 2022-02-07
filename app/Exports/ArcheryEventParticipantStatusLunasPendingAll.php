@@ -18,26 +18,20 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryUserAthleteCode;
 use Illuminate\Support\Facades\Auth;
 
-class ArcheryEventParticipantStatusLunasExport implements FromView, WithColumnWidths, WithHeadings
+class ArcheryEventParticipantStatusLunasPendingAll implements FromView, WithColumnWidths, WithHeadings
 {
-    protected $event_id;
-
-    function __construct($event_id) {
-            $this->event_id = $event_id;
-    }
-
+  
     public function view(): View
     {
         $admin = Auth::user();
-        dd($admin->id);
-        $event_name= ArcheryEvent::where('id',$this->event_id)->first();
-        if (!$event_name){
-            throw new BLoCException("event id tidak ditemukan");
-        }
         
-        $data= ArcheryEventParticipant::where('status',1)->where('event_id',$this->event_id)->get();
+        
+        $data= ArcheryEventParticipant::select('archery_event_participants.created_at','email','name','phone_number','team_category_id')
+        ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+        ->where('archery_event_participants.status',4)->where('archery_events.admin_id',$admin->id)->get();
+
         if ($data->isEmpty()){
-            throw new BLoCException("tidak ada partisipan pada event tersebut");
+            throw new BLoCException("data untuk event tersebut tidak ditemukan untuk status pembayaran lunas");
         }
       
 
@@ -60,7 +54,6 @@ class ArcheryEventParticipantStatusLunasExport implements FromView, WithColumnWi
                 'date_of_birth' => $user['date_of_birth']? $user['date_of_birth'] : '-',
                 'age' => $user['age'] ? $user['age'] : '-',
                 'phone_number' => $value->phone_number,
-                'gender' => $value->gender,
                 'provinsi_domisili' => '-',
                 'kota_domisili' => '-',
                 'nik' => $user['nik']? $user['nik'] : '-',
@@ -77,9 +70,9 @@ class ArcheryEventParticipantStatusLunasExport implements FromView, WithColumnWi
         
         
                 
-        return view('reports.participant_event_lunas', [
+        return view('reports.participant_event_pending_all', [
             'datas' => $export_data,
-            'event_name'=> strtoupper($event_name['event_name'])
+            'event_name'=> '-'
 
         ]);
     }
