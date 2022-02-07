@@ -134,8 +134,6 @@ class AddEventOrder extends Transactional
             }
         }
 
-        return "ok";
-
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
             throw new BLoCException('this category not for ' . $user->gender);
