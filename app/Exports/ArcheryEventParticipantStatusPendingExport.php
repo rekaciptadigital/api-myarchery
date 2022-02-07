@@ -37,7 +37,7 @@ class ArcheryEventParticipantStatusPendingExport implements FromView, WithColumn
             throw new BLoCException("tidak ada partisipan pada event tersebut");
         }
         
-      dd($data);
+      
 
         $export_data = [];
         
