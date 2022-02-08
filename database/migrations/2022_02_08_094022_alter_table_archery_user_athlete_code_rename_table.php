@@ -13,7 +13,7 @@ class AlterTableArcheryUserAthleteCodeRenameTable extends Migration
      */
     public function up()
     {
-        Schema::rename('table_archery_user_athlete_code', 'archery_user_athlete_codes');
+        Schema::rename('table_archery_user_athlete_codes', 'archery_user_athlete_codes');
         Schema::rename('table_temporrary_member', 'temporrary_members');
     }
 
