@@ -20,17 +20,21 @@ use Illuminate\Http\Request;
 
 $router->get('naruto_sasuke_sakura', function () {
     $data = User::where('verify_status', 3)->get();
-    foreach ($data as $d1) {
-        $d1['province'] = Provinces::find($d1->address_province_id);
-        $d1['city'] = City::find($d1->address_city_id);
-    }
-
     $data2 = User::where('verify_status', 1)->get();
 
-    foreach ($data2 as $d2) {
-        $d2['prefix'] = ArcheryUserAthleteCode::getAthleteCode($d2->id);
-        $d2['province'] = Provinces::find($d2->address_province_id);
-        $d2['city'] = City::find($d2->address_city_id);
+    if ($data->count() > 0) {
+        foreach ($data as $d1) {
+            $d1['province'] = Provinces::find($d1->address_province_id);
+            $d1['city'] = City::find($d1->address_city_id);
+        }
+    }
+
+    if ($data2->count() > 0) {
+        foreach ($data2 as $d2) {
+            $d2['prefix'] = ArcheryUserAthleteCode::getAthleteCode($d2->id);
+            $d2['province'] = Provinces::find($d2->address_province_id);
+            $d2['city'] = City::find($d2->address_city_id);
+        }
     }
     return view('athlete_code/index', [
         "data" => $data,
@@ -156,7 +160,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
 
                 $router->get('/participant/excel/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipant']);
-                
+
                 $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
