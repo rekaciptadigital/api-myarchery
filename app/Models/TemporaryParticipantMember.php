@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class TemporaryParticipantMember extends Model
 {
-    protected $table = 'table_temporrary_member';
+    protected $table = 'temporrary_members';
     protected $guarded = ['id'];
 }

@@ -9,6 +9,9 @@ use App\Models\TemporaryParticipantMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use DateTime;
+use DateTimeZone;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateParticipantMember extends Retrieval
@@ -38,6 +41,9 @@ class UpdateParticipantMember extends Retrieval
             throw new BLoCException("event category not found");
         }
 
+        $now = Carbon::now('Asia/jakarta');
+        $new_format = Carbon::parse($event_category_detail->start_event, new DateTimeZone('Asia/jakarta'));
+        
         $gender_category = $event_category_detail->gender_category;
 
         if ($gender_category == 'mix') {
