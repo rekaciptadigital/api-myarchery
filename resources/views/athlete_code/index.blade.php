@@ -52,7 +52,7 @@
                     <td>{{ $d->age }}</td>
                     <td>{{ $d->phone_number }}</td>
                     <td>{{ $d->province->name }}</td>
-                    <td>{{ $d->city->name }}</td>
+                    <td>{{ $d->city->name . ' (' . $d->city->id . '[' . $d->city->prefix . ']' }}</td>
                     <td>{{ $d->nik }}</td>
                     <td>
                         @if ($d->ktp_kk)
@@ -128,7 +128,8 @@
                     <td scope="col">{{ $d2->age }}</td>
                     <td scope="col">{{ $d2->phone_number }}</td>
                     <td scope="col">{{ $d2->province->name }}</td>
-                    <td scope="col">{{ $d2->city->name }}</td>
+                    <td scope="col">{{ $d2->city->name . ' (' . $d2->city->id . ' [' . $d2->city->prefix . '])' }}
+                    </td>
                     <td scope="col">{{ $d2->nik }}</td>
                     <td>
                         @if ($d2->ktp_kk)<a href="{{ $d2->ktp_kk }}"
