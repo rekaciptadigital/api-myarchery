@@ -20,6 +20,10 @@ use Illuminate\Http\Request;
 
 $router->get('index', function () {
     $data = User::where('verify_status', 3)->get();
+    foreach ($data as $d1) {
+        $d1['province'] = Provinces::find($d1->address_province_id);
+        $d1['city'] = City::find($d1->address_city_id);
+    }
 
     $data2 = User::where('verify_status', 1)->get();
 
@@ -148,9 +152,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
                 $router->get('/participant/excel/download/lunas', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantLunas']);
                 $router->get('/participant/excel/download/pending', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantPending']);
-    
 
-                
+
+
                 $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
