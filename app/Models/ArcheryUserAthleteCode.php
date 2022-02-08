@@ -23,7 +23,7 @@ class ArcheryUserAthleteCode extends Model
 
     public static function makePrefix($city_code)
     {   
-        $y = date("y");
+        $y = date("Y");
         $m = date("m");
         return $city_code . "" . $y . "" . $m;
     }
