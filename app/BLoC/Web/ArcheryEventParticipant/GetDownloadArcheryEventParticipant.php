@@ -36,7 +36,7 @@ class GetDownloadArcheryEventParticipant extends Retrieval
        
         $destinationPath = Storage::url($download_link);
         $file_path = env('APP_URL').$destinationPath;
-
+        dd($file_path.env('APP_URL'));
         return $file_path;
     
     }
