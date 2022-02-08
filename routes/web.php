@@ -51,7 +51,7 @@ $router->post('accept', function (Request $request) {
 
     $city = City::find($user->address_city_id);
     ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
-    return redirect('index');
+    return redirect('kioheswbgcgoiwagfp');
 });
 
 $router->post('reject', function (Request $request) {
@@ -63,7 +63,7 @@ $router->post('reject', function (Request $request) {
 
     // $city = City::find($user->address_city_id);
     // ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
-    return redirect('index');
+    return redirect('kioheswbgcgoiwagfp');
 });
 
 $router->group(['prefix' => 'web'], function () use ($router) {
