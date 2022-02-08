@@ -47,6 +47,10 @@ class UpdateVerifikasiUser extends Retrieval
 
             $user->nik = $parameters->get('nik');
 
+            $user->address_province_id = $parameters->get('province_id');
+
+            $user->address_city_id = $parameters->get('city_id');
+
             $user->verify_status = 3;
 
             $user->save();
@@ -61,9 +65,11 @@ class UpdateVerifikasiUser extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            "selfie_ktp_kk" => 'required|string',
-            "ktp_kk" => 'required|string',
+            "selfie_ktp_kk" => 'string',
+            "ktp_kk" => 'string',
             "nik" => 'required|string|min:16|max:16',
+            "province_id" => "required|integer",
+            "city_id" => "required|integer",
             "name" => 'string'
         ];
     }
