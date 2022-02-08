@@ -65,8 +65,8 @@ class UpdateVerifikasiUser extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            "selfie_ktp_kk" => 'required|string',
-            "ktp_kk" => 'required|string',
+            "selfie_ktp_kk" => 'string',
+            "ktp_kk" => 'string',
             "nik" => 'required|string|min:16|max:16',
             "province_id" => "required|integer",
             "city_id" => "required|integer",
