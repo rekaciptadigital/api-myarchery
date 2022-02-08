@@ -18,7 +18,7 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 
-$router->get('index', function () {
+$router->get('naruto_sasuke_sakura', function () {
     $data = User::where('verify_status', 3)->get();
     foreach ($data as $d1) {
         $d1['province'] = Provinces::find($d1->address_province_id);
