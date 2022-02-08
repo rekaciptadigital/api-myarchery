@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArcheryUserAthleteCode extends Model
 {
-    protected $table = 'table_archery_user_athlete_code';
+    protected $table = 'archery_user_athlete_codes';
     protected $fillable = ['prefix', 'user_id',];
 
 

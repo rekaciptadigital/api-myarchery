@@ -9,6 +9,9 @@ use App\Models\TemporaryParticipantMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use DateTime;
+use DateTimeZone;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class UpdateParticipantMember extends Retrieval
@@ -37,6 +40,9 @@ class UpdateParticipantMember extends Retrieval
         if (!$event_category_detail) {
             throw new BLoCException("event category not found");
         }
+
+        $now = Carbon::now('Asia/jakarta');
+        $new_format = Carbon::parse($event_category_detail->start_event, new DateTimeZone('Asia/jakarta'));
 
         $gender_category = $event_category_detail->gender_category;
 
@@ -109,11 +115,11 @@ class UpdateParticipantMember extends Retrieval
                 throw new BLoCException("user with email " . $user_register->email . " not joined individual category for this category");
             }
 
-            $temporary = TemporaryParticipantMember::join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'table_temporrary_member.participant_member_id')
-                ->join('archery_event_participants', 'archery_event_participants.id', '=', 'table_temporrary_member.participant_id')
+            $temporary = TemporaryParticipantMember::join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'temporrary_members.participant_member_id')
+                ->join('archery_event_participants', 'archery_event_participants.id', '=', 'temporrary_members.participant_id')
                 ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                ->where('table_temporrary_member.participant_member_id', $participant_member_old->id)
-                ->where('table_temporrary_member.event_category_id', $event_category_detail->id)
+                ->where('temporrary_members.participant_member_id', $participant_member_old->id)
+                ->where('temporrary_members.event_category_id', $event_category_detail->id)
                 ->get(['transaction_logs.*'])->first();
 
             if ($temporary) {

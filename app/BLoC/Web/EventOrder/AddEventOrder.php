@@ -266,11 +266,11 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("user with email " . $user_register->email . " not joined individual category for this category");
             }
 
-            $temporary = TemporaryParticipantMember::join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'table_temporrary_member.participant_member_id')
-                ->join('archery_event_participants', 'archery_event_participants.id', '=', 'table_temporrary_member.participant_id')
+            $temporary = TemporaryParticipantMember::join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'temporrary_members.participant_member_id')
+                ->join('archery_event_participants', 'archery_event_participants.id', '=', 'temporrary_members.participant_id')
                 ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                ->where('table_temporrary_member.participant_member_id', $participant_member_old->id)
-                ->where('table_temporrary_member.event_category_id', $event_category_detail->id)
+                ->where('temporrary_members.participant_member_id', $participant_member_old->id)
+                ->where('temporrary_members.event_category_id', $event_category_detail->id)
                 ->get(['transaction_logs.*'])->first();
 
             if ($temporary) {
