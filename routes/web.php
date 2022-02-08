@@ -18,15 +18,23 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 
-$router->get('index', function () {
+$router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
-
     $data2 = User::where('verify_status', 1)->get();
 
-    foreach ($data2 as $d2) {
-        $d2['prefix'] = ArcheryUserAthleteCode::getAthleteCode($d2->id);
-        $d2['province'] = Provinces::find($d2->address_province_id);
-        $d2['city'] = City::find($d2->address_city_id);
+    if ($data->count() > 0) {
+        foreach ($data as $d1) {
+            $d1['province'] = Provinces::find($d1->address_province_id);
+            $d1['city'] = City::find($d1->address_city_id);
+        }
+    }
+
+    if ($data2->count() > 0) {
+        foreach ($data2 as $d2) {
+            $d2['prefix'] = ArcheryUserAthleteCode::getAthleteCode($d2->id);
+            $d2['province'] = Provinces::find($d2->address_province_id);
+            $d2['city'] = City::find($d2->address_city_id);
+        }
     }
     return view('athlete_code/index', [
         "data" => $data,
@@ -43,7 +51,7 @@ $router->post('accept', function (Request $request) {
 
     $city = City::find($user->address_city_id);
     ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
-    return redirect('index');
+    return redirect('kioheswbgcgoiwagfp');
 });
 
 $router->post('reject', function (Request $request) {
@@ -55,7 +63,7 @@ $router->post('reject', function (Request $request) {
 
     // $city = City::find($user->address_city_id);
     // ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
-    return redirect('index');
+    return redirect('kioheswbgcgoiwagfp');
 });
 
 $router->group(['prefix' => 'web'], function () use ($router) {
@@ -148,10 +156,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
                 $router->get('/participant/excel/download/lunas', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantLunas']);
                 $router->get('/participant/excel/download/pending', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantPending']);
-                $router->get('/participant/excel/download/lunas-all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantLunasAll']);
-                $router->get('/participant/excel/download/pending-all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantPendingAll']);
 
-                
+
+
+                $router->get('/participant/excel/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipant']);
+
                 $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);

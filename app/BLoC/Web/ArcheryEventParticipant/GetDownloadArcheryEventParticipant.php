@@ -10,6 +10,8 @@ use App\Models\ArcheryEventS;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Exports\ArcheryEventParticipantExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
 
 class GetDownloadArcheryEventParticipant extends Retrieval
 {
@@ -20,15 +22,29 @@ class GetDownloadArcheryEventParticipant extends Retrieval
 
     protected function process($parameters)
     {
-      $event_id = $parameters->get('event_id');
-      $download= Excel::download(new ArcheryEventParticipantExport($event_id), 'invoices.xlsx');
-      return $download;
+        $event_id = $parameters->get('event_id');
+        $status_id =$parameters->get('status_id');
+  
+        if($status_id==1){
+            $download_link = 'daftar_peserta_yang_sudah_bayar_'.time().'.xlsx';
+        }else{
+            $download_link = 'daftar_peserta_yang_belum_bayar_'.time().'.xlsx';
+        }
+
+         
+        $download= Excel::store(new ArcheryEventParticipantExport($event_id,$status_id), $download_link, 'public');
+       
+        $destinationPath = Storage::url($download_link);
+        $file_path = env('APP_URL').$destinationPath;
+        dd($file_path.env('APP_URL'));
+        return $file_path;
+    
     }
 
     protected function validation($parameters)
     {
         return [
-            'event_id' => 'required',
+            'status_id' => 'required',
         ];
     }
 
