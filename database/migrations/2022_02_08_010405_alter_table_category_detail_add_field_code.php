@@ -14,7 +14,7 @@ class AlterTableCategoryDetailAddFieldCode extends Migration
     public function up()
     {
         Schema::table('archery_event_category_details', function (Blueprint $table) {
-            $table->string('category_code');
+            $table->string('category_code')->nullable();
         });
     }
 

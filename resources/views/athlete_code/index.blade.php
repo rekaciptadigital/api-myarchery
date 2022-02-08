@@ -45,17 +45,29 @@
                     <th scope="row">{{ $no++ }}</th>
                     <td>{{ $d->name }}</td>
                     <td>{{ $d->email }}</td>
-                    <td>{{$d->gender}}</td>
+                    <td>{{ $d->gender }}</td>
                     <td>{{ $d->nik }}</td>
                     <td>{{ $d->address }}</td>
-                    <td>{{$d->place_of_birth.", ".$d->date_of_birth}}</td>
+                    <td>{{ $d->place_of_birth . ', ' . $d->date_of_birth }}</td>
                     <td>{{ $d->age }}</td>
                     <td>{{ $d->phone_number }}</td>
                     <td>{{ $d->province->name }}</td>
                     <td>{{ $d->city->name }}</td>
                     <td>{{ $d->nik }}</td>
-                    <td><a href="{{ $d->ktp_kk }}">ktp_kk {{ $d->name }}</a></td>
-                    <td><a href="{{ $d->selfie_ktp_kk }}">selfie_ktp_kk {{ $d->name }}</a></td>
+                    <td>
+                        @if ($d->ktp_kk)
+                            <a href="{{ $d->ktp_kk }}" target="_blank">ktp_kk {{ $d->name }}</a>
+                        @else
+                            null
+                        @endif
+                    </td>
+                    <td>
+                        @if ($d->selfie_ktp_kk)
+                            <a href="{{ $d->selfie_ktp_kk }}" target="_blank">selfie_ktp_kk {{ $d->name }}</a>
+                        @else
+                            null
+                        @endif
+                    </td>
                     <td>
                         <form action="accept" method="post" style="display: inline-block">
                             <input type="hidden" name="user_id" value="{{ $d->id }}">
@@ -112,15 +124,33 @@
                     <td scope="col">{{ $d2->email }}</td>
                     <td scope="col">{{ $d2->gender }}</td>
                     <td scope="col">{{ $d2->address }}</td>
-                    <td scope="col">{{ $d2->place_of_birth.", ".$d2->date_of_birth }}</td>
+                    <td scope="col">{{ $d2->place_of_birth . ', ' . $d2->date_of_birth }}</td>
                     <td scope="col">{{ $d2->age }}</td>
                     <td scope="col">{{ $d2->phone_number }}</td>
                     <td scope="col">{{ $d2->province->name }}</td>
                     <td scope="col">{{ $d2->city->name }}</td>
                     <td scope="col">{{ $d2->nik }}</td>
-                    <td><a href="{{ $d2->ktp_kk }}">ktp/kk {{ $d2->name }}</a></td>
-                    <td><a href="{{ $d2->selfie_ktp_kk }}">selfie ktp/kk {{ $d2->sname }}</a></td>
-                    <td><a href="{{ $d2->avatar }}">foto {{ $d2->name }}</a></td>
+                    <td>
+                        @if ($d2->ktp_kk)<a href="{{ $d2->ktp_kk }}"
+                                target="_blank">ktp/kk {{ $d2->name }}</a>
+                        @else
+                            null
+                        @endif
+                    </td>
+                    <td>
+                        @if ($d2->selfie_ktp_kk)
+                            <a href="{{ $d2->selfie_ktp_kk }}" target="_blank">selfie ktp/kk{{ $d2->sname }}</a>
+                        @else
+                            null
+                        @endif
+                    </td>
+                    <td>
+                        @if ($d2->avatar)
+                            <a href="{{ $d2->avatar }}" target="_blank">foto {{ $d2->name }}</a>
+                        @else
+                            null
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>

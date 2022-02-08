@@ -18,7 +18,7 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 
-$router->get('naruto_sasuke_sakura', function () {
+$router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
     $data2 = User::where('verify_status', 1)->get();
 
