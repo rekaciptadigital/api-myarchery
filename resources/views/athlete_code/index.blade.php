@@ -22,9 +22,17 @@
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
+                <th scope="col">Gender</th>
                 <th scope="col">Nik</th>
-                <th scope="col">Foto KTP</th>
-                <th scope="col">Foto KK</th>
+                <th scope="col">Alamat Lengkap</th>
+                <th scope="col">Tempat Tanggal Lahir</th>
+                <th scope="col">Usia</th>
+                <th scope="col">Nomor Hp</th>
+                <th scope="col">Provinsi Domisili</th>
+                <th scope="col">Kota Domisili</th>
+                <th scope="col">Nik</th>
+                <th scope="col">Foto KTP/KK</th>
+                <th scope="col">Selfie KTP/KK</th>
                 <th scope="col">Aksi</th>
             </tr>
         </thead>
@@ -37,9 +45,17 @@
                     <th scope="row">{{ $no++ }}</th>
                     <td>{{ $d->name }}</td>
                     <td>{{ $d->email }}</td>
+                    <td>{{$d->gender}}</td>
                     <td>{{ $d->nik }}</td>
-                    <td><a href="{{ $d->ktp }}">ktp {{ $d->name }}</a></td>
-                    <td><a href="{{ $d->kk }}">kk {{ $d->name }}</a></td>
+                    <td>{{ $d->address }}</td>
+                    <td>{{$d->place_of_birth.", ".$d->date_of_birth}}</td>
+                    <td>{{ $d->age }}</td>
+                    <td>{{ $d->phone_number }}</td>
+                    <td>{{ $d->province->name }}</td>
+                    <td>{{ $d->city->name }}</td>
+                    <td>{{ $d->nik }}</td>
+                    <td><a href="{{ $d->ktp_kk }}">ktp_kk {{ $d->name }}</a></td>
+                    <td><a href="{{ $d->selfie_ktp_kk }}">selfie_ktp_kk {{ $d->name }}</a></td>
                     <td>
                         <form action="accept" method="post" style="display: inline-block">
                             <input type="hidden" name="user_id" value="{{ $d->id }}">
@@ -78,7 +94,8 @@
                 <th scope="col">Provinsi Domisili</th>
                 <th scope="col">Kota Domisili</th>
                 <th scope="col">Nik</th>
-                <th scope="col">Foto KTP</th>
+                <th scope="col">Foto KTP/KK</th>
+                <th scope="col">Selfie KTP/KK</th>
                 <th scope="col">Foto</th>
             </tr>
         </thead>
@@ -101,7 +118,8 @@
                     <td scope="col">{{ $d2->province->name }}</td>
                     <td scope="col">{{ $d2->city->name }}</td>
                     <td scope="col">{{ $d2->nik }}</td>
-                    <td><a href="{{ $d2->ktp }}">ktp {{ $d2->name }}</a></td>
+                    <td><a href="{{ $d2->ktp_kk }}">ktp/kk {{ $d2->name }}</a></td>
+                    <td><a href="{{ $d2->selfie_ktp_kk }}">selfie ktp/kk {{ $d2->sname }}</a></td>
                     <td><a href="{{ $d2->avatar }}">foto {{ $d2->name }}</a></td>
                 </tr>
             @endforeach
