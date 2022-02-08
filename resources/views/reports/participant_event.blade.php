@@ -6,7 +6,11 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>DAFTAR PARTISIPAN SUDAH BAYAR </title>
+    @if($status_id ==1)    
+    <title>DAFTAR PARTISIPAN SUDAH BAYAR</title>
+    @else
+    <title>DAFTAR PARTISIPAN BELUM BAYAR</title>     
+    @endif
    
 <style>
 table, th, td {
@@ -20,8 +24,13 @@ table, th, td {
 <table style="width: 100%; height: 70px;" border="0">
     <td colspan="9"
                     style="text-align: left; font-size: 13; color: #000000; font-weight: bold; white-space: pre-line">
-                    <strong>DAFTAR PARTISIPAN SUDAH BAYAR PADA EVENT {{$event_name}}</strong></td>
+                    @if($status_id ==1)    
+                    <strong>DAFTAR PARTISIPAN SUDAH BAYAR {{$event_name}}</strong></td>
+                    @else
+                    <strong>DAFTAR PARTISIPAN BELUM BAYAR {{$event_name}}</strong></td>     
+                    @endif
     </table>
+
 
 
     <table style="width:100%;border: 1px solid black;">
