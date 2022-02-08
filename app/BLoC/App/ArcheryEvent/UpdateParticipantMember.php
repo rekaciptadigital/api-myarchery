@@ -24,16 +24,18 @@ class UpdateParticipantMember extends Retrieval
 
         $participant = ArcheryEventParticipant::find($parameters->get('participant_id'));
         if (!$participant) {
-            throw new BLoCException("category event not found");
+            throw new BLoCException("participant not found");
         }
+
         if ($participant->user_id != $user->id) {
             throw new BLoCException("you are not owned this participant");
         }
+        
         $user_ids = $parameters->get('user_id');
 
         $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
         if (!$event_category_detail) {
-            throw new BLoCException("event category id not found");
+            throw new BLoCException("event category not found");
         }
 
         $gender_category = $event_category_detail->gender_category;
