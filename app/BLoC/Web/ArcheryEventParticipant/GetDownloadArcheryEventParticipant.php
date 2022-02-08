@@ -35,8 +35,7 @@ class GetDownloadArcheryEventParticipant extends Retrieval
         $download= Excel::store(new ArcheryEventParticipantExport($event_id,$status_id), $download_link, 'public');
        
         $destinationPath = Storage::url($download_link);
-        $file_path = env('APP_URL').$destinationPath;
-        dd($file_path.env('APP_URL'));
+        $file_path = env('APP_HOSTNAME').$destinationPath;
         return $file_path;
     
     }

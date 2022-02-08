@@ -47,10 +47,19 @@ $router->post('accept', function (Request $request) {
     $user = User::findOrFail($user_id);
     $user->verify_status = 1;
     $user->date_verified = new DateTime();
-    $user->save();
 
-    $city = City::find($user->address_city_id);
-    ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
+    $trim_nik = trim($user->nik, " ");
+    $substr = substr($trim_nik, 0, 4);
+
+    $city = City::find($substr);
+    $city_code = $city->prefix;
+
+    if ($city_code == null) {
+        throw new BLoCException("prefix not set");
+    }
+
+    ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city_code), $user->id);
+    $user->save();
     return redirect('kioheswbgcgoiwagfp');
 });
 
