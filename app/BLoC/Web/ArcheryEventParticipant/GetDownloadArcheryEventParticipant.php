@@ -20,15 +20,17 @@ class GetDownloadArcheryEventParticipant extends Retrieval
 
     protected function process($parameters)
     {
-      $event_id = $parameters->get('event_id');
-      $download= Excel::download(new ArcheryEventParticipantExport($event_id), 'invoices.xlsx');
-      return $download;
+        $event_id = $parameters->get('event_id');
+        $status_id = $parameters->get('status_id');
+  
+        $download= Excel::download(new ArcheryEventParticipantExport($event_id,$status_id), 'invoices.xlsx');
+        return $download;
     }
 
     protected function validation($parameters)
     {
         return [
-            'event_id' => 'required',
+            'status_id' => 'required',
         ];
     }
 
