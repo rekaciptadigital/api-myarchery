@@ -52,6 +52,9 @@ $router->post('accept', function (Request $request) {
     $substr = substr($trim_nik, 0, 4);
 
     $city = City::find($substr);
+    if(!$city){
+        throw new BLoCException("nik not valid");
+    }
     $city_code = $city->prefix;
 
     if ($city_code == null) {
