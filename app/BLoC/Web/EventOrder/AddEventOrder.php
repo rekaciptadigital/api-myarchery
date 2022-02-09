@@ -108,10 +108,10 @@ class AddEventOrder extends Transactional
             $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
             if ($check_date["y"] > $event_category_detail->max_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae." tahun");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age." tahun");
             }
             if ($check_date["y"] == $event_category_detail->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah" . $event_category_detail->max_gae." tahun");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age." tahun");
             }
         }
 
