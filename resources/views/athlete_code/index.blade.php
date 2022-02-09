@@ -52,7 +52,7 @@
                     <td>{{ $d->age }}</td>
                     <td>{{ $d->phone_number }}</td>
                     <td>{{ $d->province->name }}</td>
-                    <td>{{ $d->city->name . ' (' . $d->city->id . '[' . $d->city->prefix . ']' }}</td>
+                    <td>{{ $d->city->name . ' (' . $d->city->id . '[' . $d->city->prefix . '])' }}</td>
                     <td>{{ $d->nik }}</td>
                     <td>
                         @if ($d->ktp_kk)
