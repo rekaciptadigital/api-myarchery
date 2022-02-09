@@ -51,7 +51,8 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         return [];
     }
 
-    public function userArcheryInfo() {
+    public function userArcheryInfo()
+    {
         return $this->hasOne(UserArcheryInfo::class);
     }
 
@@ -60,7 +61,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     public function getAgeAttribute()
     {
         $today = Carbon::today('Asia/jakarta');
-        return $this->attributes['age'] = $today->diffInYears($this->date_of_birth);                  
+        return $this->attributes['age'] = $today->diffInYears($this->date_of_birth);
     }
 
     public function getStatusVerifyAttribute()
@@ -69,13 +70,13 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         $status = "Belum terverifikasi";
         if ($verify_status == 3) {
             $status = "Diajukan";
-        }else if($verify_status == 2){
+        } else if ($verify_status == 2) {
             $status = "Ditolak";
-        }elseif ($verify_status == 1) {
+        } elseif ($verify_status == 1) {
             $status = "Terverifikasi";
-        }else{
+        } else {
             $status = "Belum terverifikasi";
-        }                
+        }
 
         return $this->attributes['status_verify'] = $status;
     }

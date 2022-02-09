@@ -13,9 +13,9 @@ class AlterTableUserAddUniqueToNik extends Migration
      */
     public function up()
     {
-        // Schema::table('users', function (Blueprint $table) {
-        //     $table->unique('nik');
-        // });
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('nik');
+        });
     }
 
     /**
