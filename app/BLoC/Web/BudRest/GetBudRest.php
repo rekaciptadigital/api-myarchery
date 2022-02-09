@@ -45,7 +45,7 @@ class GetBudRest extends Transactional
                 if ($list_category->count() > 0) {
                     foreach ($list_category as $category) {
                         $detail_category = $category->getCategoryDetailById($category->id);
-                        $detail_category['bud_rest'] = BudRest::where('archery_event_category_id', $category->id);
+                        $detail_category['bud_rest'] = BudRest::where('archery_event_category_id', $category->id)->first();
                         $detail_category['total_participant'] = ParticipantMemberTeam::where('event_category_id', $category->id)->get()->count();
                         $start_event = ArcheryEventQualificationTime::where('category_detail_id', $category->id)->first();
                         $detail_category['qualification_start'] = $start_event ? $start_event->event_start_datetime : null;
