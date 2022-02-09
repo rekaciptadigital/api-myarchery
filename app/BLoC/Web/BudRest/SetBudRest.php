@@ -19,60 +19,61 @@ class SetBudRest extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $event = ArcheryEvent::find($parameters->get('event_id'));
+        $event_id=$parameters->get('event_id');
+
+        $event = ArcheryEvent::find($event_id);
         if (!$event) {
-            throw new BLoCException('event not found');
+            throw new BLoCException('event tidak ditemukan');
         }
 
         if ($event->admin_id != $admin->id) {
             throw new BLoCException('you are not owner this event');
         }
 
-        $data = $parameters->all();
-
-        $data_insert = [];
-
-        foreach ($data['event_category'] as $key) {
-            if ($key['bud_rest_start'] >= $key['bud_rest_end']) {
-                throw new BLoCException("input not valid");
-            }
-            $category_detail = ArcheryEventCategoryDetail::where('id', $key['archery_event_category_id'])->where('event_id', $event->id)->first();
-
-            if (!$category_detail) {
-                throw new BLoCException('category_detail_not found');
-            }
-            if ($category_detail->category_team != 'Individual') {
-                throw new BLoCException("team must be individual type");
+        $datas = $parameters->get('event_category', []);
+        
+        foreach ($datas as $data) {
+            $check_category = ArcheryEventCategoryDetail::select('archery_master_team_categories.type')
+                                ->leftJoin('archery_master_team_categories','archery_master_team_categories.id','archery_event_category_details.team_category_id')
+                                ->where('archery_event_category_details.id', $data['archery_event_category_id'])->where('event_id', $event_id)->first();
+            
+            if (!$check_category) {
+                throw new BLoCException('category detail id tidak ditemukan');
             }
 
-            if (count($data_insert) == 0) {
-                array_push($data_insert, $key);
-            } else {
-                foreach ($data_insert as $b) {
-                    if ($key['bud_rest_start'] >= $b['bud_rest_start'] && $key['bud_rest_start'] <= $b['bud_rest_end']) {
-                        throw new BLoCException('format not valid');
-                    }
-                }
-                array_push($data_insert, $key);
+            if ($check_category->type != 'Individual' ) {
+                throw new BLoCException("tipe category detail id harus tipe individual");
+            }
+
+            if ($data['bud_rest_start'] > $data['bud_rest_end'] || $data['bud_rest_end'] < $data['bud_rest_start']  ) {
+                throw new BLoCException("bud rest start tidak boleh lebih besar dari bud rest end, begitu pula sebaliknya");
+            }
+
+            if ($data['target_face'] > 4 ) { //4 adalah max ukuran bantalan
+                throw new BLoCException("target face tidak boleh lebih dari 4");
+            }
+
+            $budrest= Budrest::where('archery_event_category_id',$data['archery_event_category_id'])->first();
+
+            if(!$budrest){
+                $budrest = new Budrest();
+                $budrest->archery_event_category_id = $data['archery_event_category_id'];
+                $budrest->bud_rest_start =  $data['bud_rest_start'];
+                $budrest->bud_rest_end =  $data['bud_rest_end'];
+                $budrest->target_face =  $data['target_face'];
+                $budrest->type =  $data['type'];
+                $budrest->save();
+            }else{
+                $budrest->archery_event_category_id = $data['archery_event_category_id'];
+                $budrest->bud_rest_start =  $data['bud_rest_start'];
+                $budrest->bud_rest_end =  $data['bud_rest_end'];
+                $budrest->target_face =  $data['target_face'];
+                $budrest->type =  $data['type'];
+                $budrest->save();
             }
         }
 
-        foreach($data_insert as $di){
-            BudRest::create($di);
-        }
-
-        $return = [];
-        $return['event'] = $event;
-        $archery_category_detail = ArcheryEventCategoryDetail::where('event_id', $event->id)->get();
-        $archery_category_detail_individual = $archery_category_detail->where('category_team', 'Individual');
-        foreach ($archery_category_detail_individual as $archery) {
-            $category['archery_category_detail'] = $archery;
-            $bud = BudRest::where('archery_event_category_id', $archery->id)->get();
-            $category['bud_rest'] = $bud;
-            array_push($return, $category);
-        }
-
-        return $return;
+        return $budrest;
     }
 
     protected function validation($parameters)
@@ -80,7 +81,7 @@ class SetBudRest extends Transactional
         return [
             'event_id' => 'required|integer',
             'event_category' => 'required|array',
-            'event_category.*.archery_event_category_id' => 'required|integer|unique:bud_rest',
+            'event_category.*.archery_event_category_id' => 'required|integer',
             'event_category.*.bud_rest_start' => 'required|integer|min:1',
             'event_category.*.bud_rest_end' => 'required|integer|min:1',
             'event_category.*.target_face' => 'required|integer|min:1',
