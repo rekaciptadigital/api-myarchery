@@ -13,9 +13,9 @@ class AlterTableCitiesAddUniqueToFieldPrefix extends Migration
      */
     public function up()
     {
-        // Schema::table('cities', function (Blueprint $table) {
-        //     $table->unique('prefix');
-        // });
+        Schema::table('cities', function (Blueprint $table) {
+            $table->unique('prefix');
+        });
     }
 
     /**
