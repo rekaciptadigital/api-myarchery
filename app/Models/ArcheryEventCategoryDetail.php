@@ -13,7 +13,7 @@ class ArcheryEventCategoryDetail extends Model
     protected $guarded = ['id'];
     protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event'];
     const INDIVIDUAL_TYPE = "Individual";
-    const TEAM_TYPE = "TEAM";
+    const TEAM_TYPE = "Team";
 
     public function getCategoryDetailById($category_id)
     {
