@@ -41,6 +41,7 @@ class GetBudRest extends Transactional
                     ->where('archery_event_category_details.event_id', $event->id)
                     ->where('archery_event_category_details.competition_category_id', $competition_category->id)
                     ->where('archery_master_team_categories.type', 'Individual')
+                    ->distinct()
                     ->get(['archery_event_category_details.*']);
 
                 if ($list_category->count() > 0) {
