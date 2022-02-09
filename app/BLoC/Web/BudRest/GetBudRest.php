@@ -37,6 +37,7 @@ class GetBudRest extends Transactional
         if ($list_competition_category->count() > 0) {
             foreach ($list_competition_category as $competition_category) {
                 $list_category = ArcheryEventCategoryDetail::join('archery_master_team_categories', 'archery_master_team_categories.id', '=', 'archery_event_category_details.team_category_id')
+                    ->join('archery_event_qualification_time', 'archery_event_qualification_time.category_detail_id', '=', 'archery_event_category_details.id')
                     ->where('archery_event_category_details.event_id', $event->id)
                     ->where('archery_event_category_details.competition_category_id', $competition_category->id)
                     ->where('archery_master_team_categories.type', 'Individual')
