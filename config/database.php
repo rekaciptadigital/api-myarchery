@@ -1,7 +1,8 @@
 <?php
  
 return [
-  'default' => 'mysql',
+    'default' => 'mysql',
+    'migrations' => 'migrations',
   'connections' => [
     'mysql' => [
       'driver' => 'mysql',
