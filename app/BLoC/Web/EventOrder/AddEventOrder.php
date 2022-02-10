@@ -100,7 +100,7 @@ class AddEventOrder extends Transactional
         }
 
         // cek jika memiliki syarat max umur
-        
+
         if ($event_category_detail->max_age != 0) {
             if ($user->age == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
@@ -108,10 +108,10 @@ class AddEventOrder extends Transactional
             $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
             if ($check_date["y"] > $event_category_detail->max_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age." tahun");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age . " tahun");
             }
             if ($check_date["y"] == $event_category_detail->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age." tahun");
+                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age . " tahun");
             }
         }
 
@@ -122,21 +122,21 @@ class AddEventOrder extends Transactional
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user->age < $event_category_detail->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age." tahun");
+                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
             }
         }
 
         $gender_category = $event_category_detail->gender_category;
         if ($user->gender != $gender_category) {
-            if(empty($user->gender))
+            if (empty($user->gender))
                 throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
-            
+
             throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
         }
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->first();
+            ->where('user_id', $user->id)->where('club_id', $club_member->club_id)->first();
         if ($isExist) {
             if ($isExist->status == 1) {
                 throw new BLoCException("event dengan kategori ini sudah di ikuti");
@@ -146,7 +146,7 @@ class AddEventOrder extends Transactional
                 if ($isExist_transaction_log->status == 4 && $isExist_transaction_log->expired_time > time()) {
                     throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
                 }
-            } 
+            }
         }
 
         // insert data participant
@@ -199,13 +199,15 @@ class AddEventOrder extends Transactional
         return $this->composeResponse($res);
     }
 
-    private function getAge($birth_day, $date_check){
+    private function getAge($birth_day, $date_check)
+    {
         $birthDt = new DateTime($birth_day);
         $date = new DateTime($date_check);
-        return[
+        return [
             "y" => $date->diff($birthDt)->y,
             "m" => $date->diff($birthDt)->m,
-            "d" => $date->diff($birthDt)->d];
+            "d" => $date->diff($birthDt)->d
+        ];
     }
 
     private function registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id)
@@ -285,19 +287,19 @@ class AddEventOrder extends Transactional
                 ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
                 ->where('temporrary_members.participant_member_id', $participant_member_old->id)
                 ->where('temporrary_members.event_category_id', $event_category_detail->id)
-                ->get(['transaction_logs.*'])->first();
+                ->get(['transaction_logs.*']);
 
-            if ($temporary) {
-                if ($temporary->status == 4 && $temporary->expired_time > time()) {
-                    throw new BLoCException("user dengan email " . $user_register->email . " telah didaftarkan pada kategori ini sebelumnya dengan status menunggu pembayaran");
-                } elseif ($temporary->status == 1) {
-                    throw new BLoCException("user dengan email " . $user_register->email . " sudah pernah daftar kategory ini");
+            if ($temporary->count() > 0) {
+                foreach ($temporary as $t) {
+                    if ($t->status == 4 && $t->expired_time > time()) {
+                        throw new BLoCException("user dengan email " . $user_register->email . " telah didaftarkan pada category ini sebelumnya");
+                    }
                 }
             }
             array_push($participant_member_id, $participant_member_old);
             $participant_member_team = ParticipantMemberTeam::where('participant_member_id', $participant_member_old->id)->where('event_category_id', $event_category_detail->id)->first();
             if ($participant_member_team) {
-                throw new BLoCException("user with email " . $user_register->email . " already join this category");
+                throw new BLoCException("user dengan " . $user_register->email . " telah tergabung di category ini");
             }
         }
 

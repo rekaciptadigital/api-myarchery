@@ -16,6 +16,7 @@
         "midtrans/midtrans-php": "^2.5",
         "mpdf/mpdf": "^8.0",
         "mpdf/qrcode": "^1.1",
+        "phpoffice/phpspreadsheet": "^1.21",
         "ramsey/collection": "1.1.4",
         "ramsey/uuid": "^4.2",
         "sulfanoaf/api-util": "^1.0@alpha",

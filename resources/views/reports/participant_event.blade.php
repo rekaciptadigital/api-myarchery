@@ -6,11 +6,9 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    @if($status_id ==1)    
-    <title>DAFTAR PARTISIPAN SUDAH BAYAR</title>
-    @else
-    <title>DAFTAR PARTISIPAN BELUM BAYAR</title>     
-    @endif
+   
+    <title>DAFTAR PARTISIPAN EVENT</title>
+    
    
 <style>
 table, th, td {
@@ -24,11 +22,9 @@ table, th, td {
 <table style="width: 100%; height: 70px;" border="0">
     <td colspan="9"
                     style="text-align: left; font-size: 13; color: #000000; font-weight: bold; white-space: pre-line">
-                    @if($status_id ==1)    
-                    <strong>DAFTAR PARTISIPAN SUDAH BAYAR {{$event_name}}</strong></td>
-                    @else
-                    <strong>DAFTAR PARTISIPAN BELUM BAYAR {{$event_name}}</strong></td>     
-                    @endif
+                     
+                    <strong>DAFTAR PARTISIPAN SUDAH BAYAR PADA EVENT {{$event_name}}</strong></td>
+                   
     </table>
 
 
@@ -41,10 +37,10 @@ table, th, td {
         </thead>
         <tbody>
             <tr >
-                <th style="text-align: center; "><strong>KODE KATEGORI</strong></th>
-                <th style="text-align: center; "><strong>KODE ATLET</strong></th>
-                <th style="text-align: center; "><strong>Timestamp</strong></th>
-                <th style="text-align: center; "><strong>Email Address</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>KODE KATEGORI</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>KODE ATLET</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Timestamp</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Email Address</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NAMA LENGKAP</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>GENDER</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>ALAMAT LENGKAP</strong></th>
@@ -55,9 +51,9 @@ table, th, td {
                 <th style="text-align: center; background: #FFFF00;"><strong>KOTA DOMISILI</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NOMOR KTP/NIK (16 DIGIT)</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>FOTO KTP (WAJIB BAGI DOMISILI DKI JAKARTA)</strong></th>
-                <th style="text-align: center; "><strong>DIVISI KATEGORI INDIVIDU</strong></th>
-                <th style="text-align: center; "><strong>FOTO PESERTA</strong></th>
-                <th style="text-align: center; "><strong>FOTO BUKTI TRANSFER</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>DIVISI KATEGORI INDIVIDU</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>FOTO PESERTA</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>FOTO BUKTI TRANSFER</strong></th>
             </tr>
             @foreach ($datas as $data)
             <tr>
