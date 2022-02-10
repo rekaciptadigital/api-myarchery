@@ -64,7 +64,7 @@ class UpdateParticipantMember extends Retrieval
             throw new BLoCException("event category not found");
         }
 
-        $now = Carbon::now('Asia/jakarta');
+        $now = Carbon::now();
         $new_format = Carbon::parse($event_category_detail->start_event, new DateTimeZone('Asia/jakarta'));
 
         if ($new_format->diffInHours($now) < 24) {
