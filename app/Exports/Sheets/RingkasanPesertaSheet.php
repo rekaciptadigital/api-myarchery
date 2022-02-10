@@ -40,9 +40,9 @@ class RingkasanPesertaSheet implements FromView, WithColumnWidths, WithHeadings
 
         $jenis_kelamin=DB::select("SELECT if(gender='male','Putra','Putri') as gender , count(id) as total FROM `archery_event_participants` where event_id=:event_id group by gender",['event_id' => $event_id]);
         
-        //if(empty($jenis_regu || $nama_regu || $jenis_kelamin)){
-        //    throw new BLoCException("data tidak ditemukan");
-        //}
+        if(empty($jenis_regu || $nama_regu || $jenis_kelamin)){
+            throw new BLoCException("data tidak ditemukan");
+        }
         
         $data_jenis_regu = [];
         
@@ -83,6 +83,8 @@ class RingkasanPesertaSheet implements FromView, WithColumnWidths, WithHeadings
                 'total' => $value->total,
             ];
         }
+
+        
         
         $nomor_pertandingan = array(
             array('Barebow' => array('Biaya' => array('Individu Putra/Putri' => 'RP.45454','Beregu Putra/Putri' => 'RP.45454','Beregu Campuran' => 'rp.56456'),'Kuota' => array('Individu Putra/Putri' => '32123','Beregu Putra/Putri' => '312','Beregu Campuran' => '1'),'Terjual' => array('Individu Putra/Putri' => '43','Beregu Putra/Putri' => '64','Beregu Campuran' => '54'),'Sisa Kuota' => array('Individu Putra/Putri' => '64','Beregu Putra/Putri' => '4','Beregu Campuran' => '34'),'Total uang masuk' => 'RP.6436346')),
