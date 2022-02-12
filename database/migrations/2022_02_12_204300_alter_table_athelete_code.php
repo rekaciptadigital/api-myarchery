@@ -18,7 +18,7 @@ class AlterTableAtheleteCode extends Migration
             $table->string('perpani_code',225)->default("");
         });
         Schema::table('archery_user_athlete_codes', function (Blueprint $table) {
-            $table->string('city_code')->unique();
+            $table->string('city_code')->default("");
         });
     }
 
