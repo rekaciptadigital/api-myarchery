@@ -9,7 +9,7 @@ use App\Models\City;
 class ArcheryUserAthleteCode extends Model
 {
     protected $table = 'archery_user_athlete_codes';
-    protected $fillable = ['prefix', 'user_id',];
+    protected $fillable = ['prefix', 'user_id','city_code'];
 
 
     public static function getAthleteCode($user_id,$type = "my_archery")
