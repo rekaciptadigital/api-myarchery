@@ -138,8 +138,7 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
         }
 
 
-        $team_obj = [
-            [
+        $team_obj =  [
                 "Individual Putra & putri" =>[
                     "amount" => $team_category_obj["individu male"]["fee"],
                     "quota" => $team_category_obj["individu male"]["quota"] + $team_category_obj["individu female"]["quota"],
@@ -161,7 +160,6 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                     "left_quota" => $team_category_obj["mix_team"]["left_quota"],
                     "total_amount" => $team_category_obj["mix_team"]["total_amount"],
                 ]
-            ]
         ];
 
         $gender_obj = [

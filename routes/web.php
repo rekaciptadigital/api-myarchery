@@ -51,7 +51,7 @@ $router->post('accept', function (Request $request) {
     $trim_nik = trim($user->nik, " ");
     $substr = substr($trim_nik, 0, 4);
 
-    $city = City::find($substr);
+    $city = City::where("ktp_id",$substr)->first();
     if(!$city){
         throw new BLoCException("nik not valid");
     }
@@ -61,7 +61,7 @@ $router->post('accept', function (Request $request) {
         throw new BLoCException("prefix not set");
     }
 
-    ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city_code), $user->id);
+    ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city_code), $user->id, $city_code);
     $user->save();
     return redirect('kioheswbgcgoiwagfp');
 });
