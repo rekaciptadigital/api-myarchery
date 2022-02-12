@@ -45,7 +45,7 @@ table, th, td {
                 <th style="text-align: center; background: #FFFF00;"><strong>GENDER</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>ALAMAT LENGKAP</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>TEMPAT TANGGAL LAHIR</strong></th>
-                <th style="text-align: center; background: #FFFF00;"><strong>USIA PER 3 MARET 2022</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>USIA PER {{$event_start_date}}</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NOMOR HP WA AKTIF</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>PROVINSI DOMISILI</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>KOTA DOMISILI</strong></th>
@@ -57,21 +57,21 @@ table, th, td {
             </tr>
             @foreach ($datas as $data)
             <tr>
-                <td style="text-align: center;">{{ $data['kode_kategori'] ? $data['kode_kategori'] : '-' }}</td>
-                <td style="text-align: center;">{{ $data['kode_atlet'] ? $data['kode_atlet'] : '-' }}</td>
+                <td style="text-align: center;">{{ $data['category_code'] ? $data['category_code'] : '-' }}</td>
+                <td style="text-align: center;">{{ $data['athlete_code'] ? $data['athlete_code'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['timestamp'] ? $data['timestamp'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['email'] ? $data['email'] : '-' }}</td>
-                <td style="text-align: center;">{{ $data['nama_lengkap'] ? $data['nama_lengkap'] : '-' }}</td>
+                <td style="text-align: center;">{{ $data['full_name'] ? $data['full_name'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['gender'] ? $data['gender'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['address'] ? $data['address'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['date_of_birth'] ? $data['date_of_birth'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['age'] ? $data['age'] : '-' }} tahun </td>
                 <td style="text-align: center;">{{ $data['phone_number'] ? $data['phone_number'] : '-' }}</td>
-                <td style="text-align: center;">{{ $data['provinsi_domisili'] ? $data['provinsi_domisili'] : '-' }}</td>
-                <td style="text-align: center;">{{ $data['kota_domisili'] ? $data['kota_domisili'] : '-' }}  </td>
+                <td style="text-align: center;">{{ $data['province'] ? $data['province'] : '-' }}</td>
+                <td style="text-align: center;">{{ $data['city'] ? $data['city'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['nik'] ? $data['nik'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_ktp'] ? $data['foto_ktp'] : '-' }}  </td>
-                <td style="text-align: center;">{{ $data['divisi_kategori_individu'] ? $data['divisi_kategori_individu'] : '-' }}  </td>
+                <td style="text-align: center;">{{ $data['category'] ? $data['category'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_peserta'] ? $data['foto_peserta'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_bukti'] ? $data['foto_bukti'] : '-' }}  </td>
                

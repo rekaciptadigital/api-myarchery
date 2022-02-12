@@ -293,7 +293,7 @@ return [
         | storing reading or downloading. Here you can customize that path.
         |
         */
-        'local_path'          => storage_path('/public'),
+        'local_path'          => storage_path('/public/excel_report'),
 
         /*
         |--------------------------------------------------------------------------

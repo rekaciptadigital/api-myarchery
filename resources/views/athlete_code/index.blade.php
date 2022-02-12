@@ -52,7 +52,7 @@
                     <td>{{ $d->age }}</td>
                     <td>{{ $d->phone_number }}</td>
                     <td>{{ $d->province->name }}</td>
-                    <td>{{ $d->city->name . ' (' . $d->city->id . '[' . $d->city->prefix . '])' }}</td>
+                    <td>{{ $d->city->name . ' (' . $d->city->ktp_id . '[' . $d->city->prefix . '])' }}</td>
                     <td>{{ $d->nik }}</td>
                     <td>
                         @if ($d->ktp_kk)
@@ -69,6 +69,7 @@
                         @endif
                     </td>
                     <td>
+                        @if (!empty($d->city->prefix) && !empty($d->city->ktp_id))
                         <form action="accept" method="post" style="display: inline-block">
                             <input type="hidden" name="user_id" value="{{ $d->id }}">
                             <input type="submit" value="Accept" class="btn btn-sm btn-success">
@@ -77,6 +78,7 @@
                             <input type="hidden" name="user_id" value="{{ $d->id }}">
                             <input type="submit" value="Reject" class="btn btn-sm btn-danger">
                         </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
