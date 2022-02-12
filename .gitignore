@@ -5,3 +5,4 @@ Homestead.yaml
 .env
 /public/tmp/
 /public/asset
+/storage/framework/laravel-excel

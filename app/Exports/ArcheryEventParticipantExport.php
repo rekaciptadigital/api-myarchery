@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryUserAthleteCode;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Exports\Sheets\RingkasanPesertaSheet;
+use App\Exports\Sheets\SummaryParticipantSheet;
 use App\Exports\Sheets\ArcheryEventParticipantSheet;
 use \Maatwebsite\Excel\Sheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -36,14 +36,10 @@ class ArcheryEventParticipantExport implements WithMultipleSheets
     {
         $sheets = [];
 
-        $sheets[] = new RingkasanPesertaSheet($this->event_id);
+        $sheets[] = new SummaryParticipantSheet($this->event_id);
         $sheets[] = new ArcheryEventParticipantSheet($this->event_id);
         return $sheets;
     }
-   
-
-    
-    
 }
 
 
