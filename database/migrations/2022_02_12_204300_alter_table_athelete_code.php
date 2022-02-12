@@ -14,8 +14,8 @@ class AlterTableAtheleteCode extends Migration
     public function up()
     {
         Schema::table('cities', function (Blueprint $table) {
-            $table->string('ktp_id',225);
-            $table->string('perpani_code',225);
+            $table->string('ktp_id',225)->default("");
+            $table->string('perpani_code',225)->default("");
         });
         Schema::table('archery_user_athlete_codes', function (Blueprint $table) {
             $table->string('city_code')->unique();
