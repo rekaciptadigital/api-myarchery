@@ -44,9 +44,13 @@ class UpdateParticipantMember extends Retrieval
             throw new BLoCException("participant not found");
         }
 
+        if ($participant->status != 1) {
+            throw new BLoCException("anda belum terdaftar di category ini");
+        }
+
         // cek apakah yang daftar sama dengan yang login
         if ($participant->user_id != $user->id) {
-            throw new BLoCException("you are not owned this participant");
+            throw new BLoCException("kamu tidak pemilik participant ini");
         }
 
         // tangkap club yang dikirim dari frontend
