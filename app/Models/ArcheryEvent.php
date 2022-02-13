@@ -258,6 +258,7 @@ class ArcheryEvent extends Model
             }
         }
 
+        $detail["total_participant"] = ArcheryEventParticipant::where("event_id",$id)->where("status",1)->count();
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")
