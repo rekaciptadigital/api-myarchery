@@ -78,6 +78,22 @@ class GetListCategoryByUserLogin extends Retrieval
                     }
                 }
 
+
+                $club_detail = [];
+                if ($club != null) {
+                    $club_detail = [
+                        "club_id" => $club->id,
+                        "club_name" => $club->name,
+                        "club_logo" => $club->logo,
+                        "club_banner" => $club->banner,
+                        "club_place_name" => $club->place_name,
+                        "club_address" => $club->address,
+                        "club_description" => $club->description,
+                        "detail_province" => $club->detail_province,
+                        "detail_city" => $club->detail_city
+                    ];
+                }
+
                 $event_categoriy_data = $event_category->getCategoryDetailById($event_category->id);
                 $event_categoriy_data['detail_participant'] = [
                     "id_participant" => $d->id,
@@ -89,17 +105,7 @@ class GetListCategoryByUserLogin extends Retrieval
                     "status" => $d->status,
                     "team_name" => $d->team_name,
                     "order_id" => $transaction_log ? $transaction_log->order_id : null,
-                    "club_detail" => [
-                        "club_id" => $club->id,
-                        "club_name" => $club->name,
-                        "club_logo" => $club->logo,
-                        "club_banner" => $club->banner,
-                        "club_place_name" => $club->place_name,
-                        "club_address" => $club->address,
-                        "club_description" => $club->description,
-                        "detail_province" => $club->detail_province,
-                        "detail_city" => $club->detail_city
-                    ],
+                    "club_detail" => $club_detail,
                     "history_qualification" => $event_category->category_team == "Individual" ? $history_qualification : null
                 ];
                 array_push($output_category, $event_categoriy_data);
