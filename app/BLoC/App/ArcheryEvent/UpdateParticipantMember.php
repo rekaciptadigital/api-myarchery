@@ -123,13 +123,6 @@ class UpdateParticipantMember extends Retrieval
                     }
                 }
             }
-            $participant_for_check_on_club_destination = ArcheryEventParticipant::where('user_id', $user_login->id)
-                ->where('event_category_id', $participant->event_category_id)
-                ->where('club_id', $club_id)->first();
-
-            if ($participant_for_check_on_club_destination) {
-                throw new BLoCException("anda telah tergabung di category ini pada club tersebut");
-            }
         }
 
         $participant->club_id = $club_id;
