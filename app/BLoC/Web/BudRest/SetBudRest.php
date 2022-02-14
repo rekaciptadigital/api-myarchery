@@ -8,6 +8,8 @@ use App\Models\BudRest;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
+use DateTimeZone;
 
 class SetBudRest extends Transactional
 {
@@ -64,6 +66,16 @@ class SetBudRest extends Transactional
                 $budrest->type =  $data['type'];
                 $budrest->save();
             }else{
+                $check_qualification_time= ArcheryEventCategoryDetail::select('qualification_start_datetime' )
+                ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+                ->where('archery_event_category_details.id',$data['archery_event_category_id'])->first();
+
+                $now = Carbon::now();
+
+                if (is_null($check_qualification_time->qualification_start_datetime) || $now>= $check_qualification_time->qualification_start_datetime){
+                    throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
+                    
+                }
                 $budrest->archery_event_category_id = $data['archery_event_category_id'];
                 $budrest->bud_rest_start =  $data['bud_rest_start'];
                 $budrest->bud_rest_end =  $data['bud_rest_end'];
