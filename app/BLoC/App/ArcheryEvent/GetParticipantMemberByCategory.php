@@ -51,7 +51,7 @@ class GetParticipantMemberByCategory extends Retrieval
         ];
         $output['event_category_detail'] = $event_category ? $event_category->getCategoryDetailById($event_category->id) : null;
         $output['member'] = $users;
-        $output['club'] = $club;
+        $output['club'] = $club != null ? $club : [];
 
         return $output;
     }
