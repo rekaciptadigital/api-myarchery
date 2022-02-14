@@ -40,6 +40,7 @@ use App\BLoC\App\UserAuth\UpdateUserAvatar;
 use App\BLoC\General\GetProvince;
 use App\BLoC\General\GetCity;
 use App\BLoC\App\ArcheryEventIdCard\GetDownloadCard;
+use App\BLoC\App\ArcheryScoreSheet\DownloadPdf;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -89,6 +90,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerService("updateVerifikasiUser", UpdateVerifikasiUser::class);
         $this->registerService("getDataUserVerifikasi", GetDataUserVerifikasi::class);
+
+        $this->registerService("downloadPdf", DownloadPdf::class);
     }
 
     private function registerService($serviceName, $className)
