@@ -20,7 +20,7 @@ class CreateArcheryEventOfficialTable extends Migration
             $table->integer('club_id')->default(0)->unsigned()->index();
             $table->integer('relation_with_participant')->default(0);
             $table->string('relation_with_participant_label')->nullable();
-            $table->integer('status')->default(0)->comment('4 untuk pending, 3 untuk diproses, 2 gagal, 1 success');
+            $table->integer('status')->default(4)->comment('4 untuk pending, 3 untuk diproses, 2 gagal, 1 success');
             $table->integer('transaction_log_id')->unsigned()->index();
             $table->timestamps();
         });
