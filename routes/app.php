@@ -18,7 +18,12 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->get('/my-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantMemberByCategory']);
             $router->post('/update-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantMember']);
         });
-        
+
+        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.user'], function () use ($router) {
+            
+        });
+        $router->get('archery-score-sheet/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
+
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);
             $router->put('/update-profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userUpdateProfile']);
