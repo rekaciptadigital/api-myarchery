@@ -6,12 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArcheryEventOfficial extends Model
 {
-    public static $relation_with_participant = [
+    protected $relation_with_participant_detail = [
         '1' => 'Pelatih',
         '2' => 'Manager Club/Tim',
         '3' => 'Orang Tua',
         '4' => 'Saudara',
         '0' => 'Lainnya'
+    ];
+
+    protected $status_label = [
+        "4" => "Menunggu Pembayaran",
+        "3" => "Gagal",
+        "2" => "Kadaluarsa",
+        "1" => "Diikuti"
     ];
 
     protected $table = 'archery_event_official';
@@ -43,5 +50,9 @@ class ArcheryEventOfficial extends Model
                     $q->where("transaction_logs.expired_time", ">", $time_now);
                 });
             })->count();
+    }
+
+    public function getStatusLabel($status_id){
+        return isset($this->status_label[$status_id]) ? $this->status_label[$status_id] : "none"; 
     }
 }
