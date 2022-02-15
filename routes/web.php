@@ -112,6 +112,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
 
             $router->group(['prefix' => 'category-details'], function () use ($router) {
+                $router->get('/qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetailQualification']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetail']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryCategoryDetail']);
                 $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryCategoryDetail']);

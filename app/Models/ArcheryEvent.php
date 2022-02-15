@@ -64,6 +64,7 @@ class ArcheryEvent extends Model
     {
         $categories = ArcheryEventCategoryDetail::select(
             "archery_event_category_details.id",
+            "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
             "archery_event_category_details.fee",
             "archery_event_category_details.id AS key",
