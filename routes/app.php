@@ -20,9 +20,13 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.user'], function () use ($router) {
-            
         });
         $router->get('archery-score-sheet/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
+
+
+        $router->group(['prefix' => 'archery-event-official', 'middleware' => 'auth.user'], function () use ($router) {
+            $router->post('/order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderOfficial']);
+        });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:userLogout']);

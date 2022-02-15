@@ -5,7 +5,7 @@ namespace App\BLoC\App\ArcheryEventOfficial;
 use DAI\Utils\Abstracts\Retrieval;
 
 
-class GetDetailEventOfficial extends Retrieval
+class GetOrderEventOfficial extends Retrieval
 {
     public function getDescription()
     {
