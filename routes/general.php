@@ -40,6 +40,7 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
 
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
+        $router->get('/archery/scorer/qualificaiton', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualification']);
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
