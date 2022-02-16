@@ -73,4 +73,8 @@ class ArcheryEventOfficial extends Model
         }
         return $data;
     }
+
+    public function getListOfficial(){
+        return $this->relation_with_participant_detail;
+    }
 }
