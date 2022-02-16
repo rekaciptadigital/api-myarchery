@@ -7,6 +7,8 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMasterCategoryCode;
 use App\Models\ArcheryEvent;
 use App\Models\User;
+use App\Models\City;
+use App\Models\Provinces;
 use App\Models\ArcheryEventIdcardTemplate;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use DAI\Utils\Exceptions\BLoCException;
@@ -36,9 +38,15 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         $admin = Auth::user();
      
  
-        $data= ArcheryEventParticipant::select('archery_events.event_start_datetime','archery_event_participants.event_category_id','archery_event_participants.id','archery_event_participants.user_id','archery_event_participants.created_at','email','name','phone_number','team_category_id','gender','event_name')
+        $data= ArcheryEventParticipant::select('archery_events.event_start_datetime',
+                                                'archery_event_participants.event_category_id',
+                                                'archery_event_participants.id',
+                                                'archery_event_participants.user_id',
+                                                'archery_event_participants.created_at',
+                                                'email','archery_clubs.name as club','phone_number','team_category_id','gender','event_name')
         ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
         ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+        ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
         ->where('event_id',$event_id)
         ->where("archery_event_participants.status",1)
         ->get();
@@ -52,14 +60,17 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         foreach($data as $key => $value){
             
             $category=ArcheryEventCategoryDetail::find($value->event_category_id);
+            $category_label=ArcheryEventCategoryDetail::getCategoryLabelComplete($value->event_category_id);
             $category_code=ArcheryEventMasterCategoryCode::
                             where("age_category_id",$category->age_category_id)
-                            ->where("distance_category_id",$category->distance_category_id)
+                            ->where("distance_category_id",$category->distance_id)
                             ->where("competition_category_id",$category->competition_category_id)
                             ->where("team_category_id",$category->team_category_id)
                             ->first();
-            $user=User::select('date_of_birth','ktp_kk','selfie_ktp_kk','nik',DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, '2022-03-03') AS age"))->where('id',$value->user_id)->first();
+            $user=User::select('name','address_province_id','address_city_id','address','date_of_birth','ktp_kk','selfie_ktp_kk','place_of_birth','nik',DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, '2022-03-03') AS age"))->where('id',$value->user_id)->first();
             $athlete_code=ArcheryUserAthleteCode::getAthleteCode($value->user_id,"perpani");
+            $city = City::find($user["address_city_id"]);
+            $province = Provinces::find($user["address_province_id"]);
             if(!empty($user['date_of_birth']))
                 $age = $this->getAge($user['date_of_birth'],$value->event_start_datetime);
             $export_data[] = [
@@ -67,21 +78,21 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 'athlete_code' => $athlete_code ? $athlete_code: '-',
                 'timestamp' => $value->created_at,
                 'email' => $value->email,
-                'full_name' => $value->name,
+                'full_name' => $user["name"],
                 'gender' => $value->gender,
-                'address' =>'-',
-                'date_of_birth' => $user['date_of_birth']? $user['date_of_birth'] : '-',
+                'address' => $user["address"],
+                'date_of_birth' => $user['date_of_birth'].', '.$user["place_of_birth"],
                 'age' => !empty($user['date_of_birth']) ? $age["y"]." tahun ".$age["m"]." bulan ".$age["d"]." hari"  : '-',
                 'phone_number' => $value->phone_number,
                 'gender' => $value->gender,
-                'province' => '-',
-                'city' => '-',
-                'category' => '-',
+                'province' => $province ? $province->name : "",
+                'city' => $city ? $city->name : "",
+                'category' => $category_label,
                 'nik' => $user['nik']? $user['nik'] : '-',
-                'foto_peserta' => $user['selfie_ktp_kk']? $user['selfie_ktp_kk'] : '-',
+                'foto_peserta' => '-',
                 'foto_ktp' => $user['ktp_kk']? $user['ktp_kk'] : '-',
                 'foto_bukti' => '-',
-                
+                'club' => $value->club? $value->club : '-',
             ];
         }
                 
