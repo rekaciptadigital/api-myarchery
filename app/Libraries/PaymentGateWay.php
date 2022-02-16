@@ -24,10 +24,8 @@ class PaymentGateWay
     static $transaction_details = array();
     static $customer_details = array();
     static $enabled_payments = [
-        "credit_card", "cimb_clicks",
         "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
-        "bca_va", "bni_va", "bri_va", "other_va", "gopay", "indomaret",
-        "danamon_online", "akulaku", "shopeepay"
+        "bca_va", "bni_va", "bri_va", "other_va","indomaret"
     ];
     static $item_details = array();
 

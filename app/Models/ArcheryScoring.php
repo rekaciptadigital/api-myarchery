@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventParticipantMemberNumber;
 
 class ArcheryScoring extends Model
 {
@@ -477,14 +478,47 @@ class ArcheryScoring extends Model
         return $output;
     }
 
+    protected function getScoringRankByCategoryId($event_category_id,$score_type,array $sessions=[1,2]){
+        $participants = ArcheryEventParticipantMember::select(
+            "archery_event_participant_members.id",
+            "archery_event_participant_members.name",
+            "archery_event_participant_members.user_id",
+            "archery_event_participant_members.gender",
+            "archery_event_participants.event_id",
+            "archery_clubs.name as club_name",
+            "archery_event_qualification_schedule_full_day.bud_rest_number",
+            "archery_event_qualification_schedule_full_day.target_face"
+        )->
+        join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
+        leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->
+        leftJoin("archery_event_qualification_schedule_full_day","archery_event_participant_members.id","=","archery_event_qualification_schedule_full_day.participant_member_id")->
+        where('archery_event_participants.status', 1)->
+        where('archery_event_participants.event_category_id', $event_category_id)->get();
+        $archery_event_score = [];
+        foreach ($participants as $key => $value) {
+        $score = $this->generateScoreBySession($value->id,$score_type,$sessions);
+        $score["member"] = $value;
+        $score["member"]["participant_number"] = ArcheryEventParticipantMemberNumber::getMemberNumber($value->event_id, $value->user_id);
+        $archery_event_score[] = $score;
+        }
+
+        usort($archery_event_score, function($a, $b) {return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;});
+
+        return $archery_event_score;
+    }
+
     protected function getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id){
         $archery_event_participant = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.name",
             "archery_event_participant_members.gender",
-            "archery_event_participants.club"
+            "archery_clubs.name as club_name",
+            "archery_event_qualification_schedule_full_day.bud_rest_number",
+            "archery_event_qualification_schedule_full_day.target_face"
         )->
         join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
+        leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->
+        leftJoin("archery_event_qualification_schedule_full_day","archery_event_participants.id","=","archery_event_qualification_schedule_full_day.participant_member_id")->
         where('archery_event_participants.status', 1)->
         where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
