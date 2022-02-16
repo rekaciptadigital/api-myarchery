@@ -129,7 +129,6 @@ class EliminationFormat
                     $arr["postition"] = $i + 1;
                     $arr["win"] = 0;
                     $members_coll[$i] = $arr;
-                    error_log(\json_encode($members_coll[$i]));
                 }else
                     $members_coll[$i] = [];
             }
