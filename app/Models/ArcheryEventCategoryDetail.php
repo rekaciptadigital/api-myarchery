@@ -181,4 +181,5 @@ class ArcheryEventCategoryDetail extends Model
             return $category->label_age_categories . " - " . $category->label_competition_categories . " - " . $category->label_distance . " - " . $category->label_team;
         }
     }
+
 }
