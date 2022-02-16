@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventOfficial;
 use App\Models\TransactionLog;
 
 use Illuminate\Support\Facades\Storage;
@@ -161,6 +162,7 @@ class PaymentGateWay
 
     public static function notificationCallbackPaymnet()
     {
+
         \Midtrans\Config::$isProduction = env("MIDTRANS_IS_PROD");
         \Midtrans\Config::$serverKey = env("MIDTRANS_SERVER_KEY");
 
@@ -174,7 +176,6 @@ class PaymentGateWay
         $status = 3;
 
         $transaction_log = TransactionLog::where("order_id", $order_id)->first();
-        // return $transaction_log;
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
@@ -186,8 +187,6 @@ class PaymentGateWay
             $status = 2;
         }
 
-
-
         ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
 
         $transaction_log->status = $status;
@@ -197,51 +196,69 @@ class PaymentGateWay
         $transaction_log->save();
 
         if ($transaction_log->status == 1) {
-            $participant = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->first();
-            if (!$participant) {
-                throw new BLoCException("participant data not found");
-            }
-
-            $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
-            if (!$event_category_detail) {
-                throw new BLoCException("category not found");
-            }
-
-
-
-            if ($event_category_detail->category_team == 'Team') {
-                // return "ok team";
-                $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
-                foreach ($temporary_participant_member as $tmp) {
-                    ParticipantMemberTeam::create([
-                        'participant_id' => $tmp->participant_id,
-                        'participant_member_id' => $tmp->participant_member_id,
-                        'event_category_id' => $event_category_detail->id,
-                        'type' => $event_category_detail->category_team,
-                    ]);
-                }
-            } else {
-                $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
-                $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
-                if (!$qualification_time) {
-                    throw new BLoCException('event belum bisa di daftar');
-                }
-
-                $user = User::find($participant_member->user_id);
-                if (!$user) {
-                    throw new BLoCException("user not found");
-                }
-                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
-
-                ArcheryEventQualificationScheduleFullDay::create([
-                    'qalification_time_id' => $qualification_time->id,
-                    'participant_member_id' => $participant_member->id,
-                ]);
-
-                ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
+            if (substr($transaction_log->order_id, 0, 4) == env("ORDER_OFFICIAL_ID_PREFIX")) {
+                return self::orderOfficial($transaction_log, $status);
+            } elseif (substr($transaction_log->order_id, 0, 4) == env("ORDER_ID_PREFIX")) {
+                return self::orderEvent($transaction_log);
             }
         }
 
         return true;
+    }
+
+    private static function orderEvent($transaction_log)
+    {
+        $participant = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->first();
+        if (!$participant) {
+            throw new BLoCException("participant data not found");
+        }
+
+        $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
+        if (!$event_category_detail) {
+            throw new BLoCException("category not found");
+        }
+
+        if ($event_category_detail->category_team == 'Team') {
+            $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
+            foreach ($temporary_participant_member as $tmp) {
+                ParticipantMemberTeam::create([
+                    'participant_id' => $tmp->participant_id,
+                    'participant_member_id' => $tmp->participant_member_id,
+                    'event_category_id' => $event_category_detail->id,
+                    'type' => $event_category_detail->category_team,
+                ]);
+            }
+        } else {
+            $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
+            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
+            if (!$qualification_time) {
+                throw new BLoCException('event belum bisa di daftar');
+            }
+
+            $user = User::find($participant_member->user_id);
+            if (!$user) {
+                throw new BLoCException("user not found");
+            }
+            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
+
+            ArcheryEventQualificationScheduleFullDay::create([
+                'qalification_time_id' => $qualification_time->id,
+                'participant_member_id' => $participant_member->id,
+            ]);
+
+            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
+        }
+    }
+
+    private static function orderOfficial($transaction_log, $status)
+    {
+        $archery_event_official = ArcheryEventOfficial::where('transaction_log_id', $transaction_log->id)->first();
+        if (!$archery_event_official) {
+            throw new BLoCException("perubahan status official gagal");
+        }
+
+        $archery_event_official->update([
+            'status' => $status
+        ]);
     }
 }
