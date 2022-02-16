@@ -38,15 +38,6 @@ class UpdateVerifikasiUser extends Retrieval
                 $user->ktp_kk = $ktp_kk;
             }
 
-            if ($parameters->get('selfie_ktp_kk')) {
-                $selfie_ktp_kk = Upload::setPath("asset/selfie_ktp_kk/")->setFileName("selfie_ktp_kk_" . $this->getRandString(4) . "_" . time())->setBase64($parameters->get('selfie_ktp_kk'))->save();
-                $user->selfie_ktp_kk = $selfie_ktp_kk;
-            }
-
-            if ($parameters->get('name')) {
-                $user->name = $parameters->get('name');
-            }
-
             Validator::make($parameters->all(), [
                 'email' => [
                     'nik',
@@ -54,6 +45,10 @@ class UpdateVerifikasiUser extends Retrieval
                 ],
             ])->validate();
             $user->nik = $parameters->get('nik');
+
+            $user->name = $parameters->get('name');
+
+            $user->address = $parameters->get('address');
 
             $user->address_province_id = $parameters->get('province_id');
 
@@ -63,7 +58,7 @@ class UpdateVerifikasiUser extends Retrieval
 
             $user->save();
         } else {
-            throw new BLoCException("this user already verified");
+            throw new BLoCException("User telah terverifikasi");
         }
 
         return $user;
@@ -86,12 +81,12 @@ class UpdateVerifikasiUser extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            "selfie_ktp_kk" => 'string',
+            'address' => 'required|string',
             "ktp_kk" => 'string',
             "nik" => 'required|string|min:16|max:16',
             "province_id" => "required|integer",
             "city_id" => "required|integer",
-            "name" => 'string'
+            "name" => 'required|string'
         ];
     }
 }
