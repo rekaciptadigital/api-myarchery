@@ -27,6 +27,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         $router->group(['prefix' => 'archery-event-official', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderOfficial']);
             $router->get('/detail-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailOrderOfficial']);
+            $router->get('/order-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getOrderEventOfficial']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.user'], function () use ($router) {

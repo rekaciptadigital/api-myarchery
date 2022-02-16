@@ -14,7 +14,7 @@ class ArcheryEventOfficial extends Model
         '0' => 'Lainnya'
     ];
 
-    protected $status_label = [
+    protected static $status_label = [
         "4" => "Menunggu Pembayaran",
         "3" => "Gagal",
         "2" => "Kadaluarsa",
@@ -52,7 +52,25 @@ class ArcheryEventOfficial extends Model
             })->count();
     }
 
-    public function getStatusLabel($status_id){
-        return isset($this->status_label[$status_id]) ? $this->status_label[$status_id] : "none"; 
+    protected static function getStatusLabel($status_id)
+    {
+        return isset(self::$status_label[$status_id]) ? self::$status_label[$status_id] : "none";
+    }
+
+    public static function getDetailEventOfficialById($event_official_id)
+    {
+        $data = [];
+        $archery_event_official = ArcheryEventOfficial::find($event_official_id);
+        if ($archery_event_official) {
+            $data = [
+                'event_official_id' => $archery_event_official->id,
+                'type' => $archery_event_official->type,
+                'relation_with_participant' => $archery_event_official->relation_with_participant,
+                'relation_with_participant_label' => $archery_event_official->relation_with_participant_label,
+                'status' => $archery_event_official->status,
+                'status_label' => self::getStatusLabel($archery_event_official->status)
+            ];
+        }
+        return $data;
     }
 }

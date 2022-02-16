@@ -42,6 +42,7 @@ use App\BLoC\General\GetCity;
 use App\BLoC\App\ArcheryEventIdCard\GetDownloadCard;
 use App\BLoC\App\ArcheryEventOfficial\AddOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetDetailOrderOfficial;
+use App\BLoC\App\ArcheryEventOfficial\GetOrderEventOfficial;
 use App\BLoC\App\ArcheryScoreSheet\DownloadPdf;
 
 class AppServiceProvider extends ServiceProvider
@@ -97,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerService("addOrderOfficial", AddOrderOfficial::class);
         $this->registerService("getDetailOrderOfficial", GetDetailOrderOfficial::class);
+        $this->registerService("getOrderEventOfficial", GetOrderEventOfficial::class);
     }
 
     private function registerService($serviceName, $className)

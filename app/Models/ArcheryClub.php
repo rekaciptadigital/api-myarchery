@@ -14,22 +14,24 @@ class ArcheryClub extends Model
 
     public function getDetailProvinceAttribute()
     {
-        return $this->attributes['detail_province'] = Provinces::find($this->province);
+        $province = Provinces::find($this->province);
+        return $this->attributes['detail_province'] = $province ? $province : [];
     }
 
     public function getDetailCityAttribute()
     {
-        return $this->attributes['detail_city'] = City::find($this->city);
+        $city = City::find($this->city);
+        return $this->attributes['detail_city'] = $city ? $city : [];
     }
 
     public function getIsAdminAttribute()
     {
         $user = Auth::guard('app-api')->user();
-        if($user){
+        if ($user) {
             $member = ClubMember::where('user_id', $user->id)->where('club_id', $this->id)->first();
-            if($member && $member->role == 1){
+            if ($member && $member->role == 1) {
                 return 1;
-            }else{
+            } else {
                 return 0;
             }
         }

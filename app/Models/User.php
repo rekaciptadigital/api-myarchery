@@ -80,4 +80,24 @@ class User extends Model implements JWTSubject, AuthenticatableContract
 
         return $this->attributes['status_verify'] = $status;
     }
+
+    public static function getDetailUser($user_id)
+    {
+        $data = [];
+        $user = User::find($user_id);
+        if ($user) {
+            $data = [
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone_number' => $user->phone_number,
+                'avatar' => $user->avatar,
+                'date_of_birth' => $user->date_of_birth,
+                'age' => $user->age,
+                'gender' => $user->gender,
+                'address' => $user->address,
+            ];
+        }
+        return $data;
+    }
 }
