@@ -56,5 +56,6 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
 
         $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
         $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
+        $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);
     });
 });
