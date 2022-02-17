@@ -3,10 +3,12 @@
 namespace App\BLoC\App\ArcheryScoreSheet;
 
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ParticipantMemberTeam;
 use DAI\Utils\Abstracts\Retrieval;
-use DAI\Utils\Helpers\BLoCParams;
-use Illuminate\Support\Facades\Auth;
-use Mpdf\Output\Destination;
+use Mpdf\Mpdf;
 
 class DownloadPdf extends Retrieval
 {
@@ -17,35 +19,55 @@ class DownloadPdf extends Retrieval
 
     protected function process($parameters)
     {
-        $event_name = "The HuB Scoring 2021";
-        $name = "Aditya Priyantoro";
-        $category = "Individu-Umum-Barebow-50m";
-        $code = "1-15";
-        $date = "2021-09-28";
-
-        $data  = [
-            'event_name' => $event_name,
-            'name' => $name,
-            'category' => $category,
-            'code' => $code,
-            'date' => $date
+        $mpdf = new Mpdf();
+        $category = ArcheryEventCategoryDetail::find(8);
+        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete(8);
+        $event = ArcheryEvent::find($category->event_id);
+        // return $label;
+        $output = [
+            'event' => $event,
+            'category_label' => $label
         ];
+        // return $output;
+        $data = [];
+        $participant_member_team = ParticipantMemberTeam::select(
+            'participant_member_teams.participant_member_id as member_id',
+            'archery_event_qualification_schedule_full_day.bud_rest_number',
+            'archery_event_participants.id as participant_id',
+            'users.name',
+            'archery_clubs.name as club_name'
+        )
+            ->where('participant_member_teams.event_category_id', 8)
+            ->join('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
+            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+            ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
+            ->join('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+            ->get();
 
-        $mpdf = new \Mpdf\Mpdf([
-            'margin_left' => 0,
-            'margin_right' => 0,
-            'mode' => 'utf-8',
-            'format' => 'A4-L',
-            'orientation' => 'L',
-            'bleedMargin' => 0,
-            'dpi'        => 110,
-            'tempDir' => public_path() . '/tmp/pdf'
+        if ($participant_member_team->count() > 0) {
+        }
+
+        foreach ($participant_member_team as $pmt) {
+            for ($i = 1; $i <= $category->session_in_qualification; $i++) {
+                $pmt['sesi'] = $i;
+                $pmt['code'] = "1-" . $pmt->member_id . "-" . $i;
+                $data[] = $pmt;
+            }
+        }
+
+        $output['member'] = $data;
+        return $output;
+        $html = \view('template.invoice', [
+            // "data" => $data
         ]);
+        for ($i = 0; $i < 2; $i++) {
+            $mpdf->AddPage();
+            $mpdf->WriteHTML($html);
+        }
 
-        $html = \view('template.ScoreSheet', $data);
-
-        $mpdf->WriteHTML($html);
-        $mpdf->Output('coba.pdf');
+        // Output a PDF file directly to the browser
+        $mpdf->Output('./asset/naruto.pdf', 'F');
     }
 
     protected function validation($parameters)

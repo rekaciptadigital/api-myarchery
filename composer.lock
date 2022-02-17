@@ -651,23 +651,23 @@
         },
         {
             "name": "dompdf/dompdf",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/dompdf.git",
-                "reference": "de4aad040737a89fae2129cdeb0f79c45513128d"
+                "reference": "60b704331479a69e9bcdb3496da2315b5c4f94fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/de4aad040737a89fae2129cdeb0f79c45513128d",
-                "reference": "de4aad040737a89fae2129cdeb0f79c45513128d",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/60b704331479a69e9bcdb3496da2315b5c4f94fd",
+                "reference": "60b704331479a69e9bcdb3496da2315b5c4f94fd",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-mbstring": "*",
-                "phenx/php-font-lib": "^0.5.2",
-                "phenx/php-svg-lib": "^0.3.3",
+                "phenx/php-font-lib": "^0.5.4",
+                "phenx/php-svg-lib": "^0.3.3 || ^0.4.0",
                 "php": "^7.1 || ^8.0"
             },
             "require-dev": {
@@ -712,9 +712,9 @@
             "homepage": "https://github.com/dompdf/dompdf",
             "support": {
                 "issues": "https://github.com/dompdf/dompdf/issues",
-                "source": "https://github.com/dompdf/dompdf/tree/v1.1.1"
+                "source": "https://github.com/dompdf/dompdf/tree/v1.2.0"
             },
-            "time": "2021-11-24T00:45:04+00:00"
+            "time": "2022-02-07T13:02:10+00:00"
         },
         {
             "name": "dragonmantank/cron-expression",
@@ -2381,12 +2381,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Laravel\\Lumen\\": "src/"
-                },
                 "files": [
                     "src/helpers.php"
-                ]
+                ],
+                "psr-4": {
+                    "Laravel\\Lumen\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -4468,18 +4468,18 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "DAI\\Utils\\": "src/",
-                    "DAI\\Utils\\Abstracts\\": "src/abstracts/",
-                    "DAI\\Utils\\Exceptions\\": "src/exceptions/",
-                    "DAI\\Utils\\Helpers\\": "src/helpers/",
-                    "DAI\\Utils\\Interfaces\\": "src/interfaces/",
-                    "DAI\\Utils\\Rules\\": "src/rules/",
-                    "DAI\\Utils\\Traits\\": "src/traits/"
-                },
                 "files": [
                     "src/helpers/GlobalFunctions.php"
-                ]
+                ],
+                "psr-4": {
+                    "DAI\\Utils\\": "src/",
+                    "DAI\\Utils\\Rules\\": "src/rules/",
+                    "DAI\\Utils\\Traits\\": "src/traits/",
+                    "DAI\\Utils\\Helpers\\": "src/helpers/",
+                    "DAI\\Utils\\Abstracts\\": "src/abstracts/",
+                    "DAI\\Utils\\Exceptions\\": "src/exceptions/",
+                    "DAI\\Utils\\Interfaces\\": "src/interfaces/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5861,12 +5861,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Mbstring\\": ""
-                },
                 "files": [
                     "bootstrap.php"
-                ]
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [

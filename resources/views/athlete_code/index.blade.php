@@ -51,8 +51,20 @@
                     <td>{{ $d->place_of_birth . ', ' . $d->date_of_birth }}</td>
                     <td>{{ $d->age }}</td>
                     <td>{{ $d->phone_number }}</td>
-                    <td>{{ $d->province->name }}</td>
-                    <td>{{ $d->city->name . ' (' . $d->city->ktp_id . '[' . $d->city->prefix . '])' }}</td>
+                    <td>
+                        @if ($d->province)
+                            {{ $d->province->name }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        @if ($d->city)
+                            {{ $d->city->name . ' (' . $d->city->ktp_id . '[' . $d->city->prefix . '])' }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>{{ $d->nik }}</td>
                     <td>
                         @if ($d->ktp_kk)
@@ -70,14 +82,14 @@
                     </td>
                     <td>
                         @if (!empty($d->city->prefix) && !empty($d->city->ktp_id))
-                        <form action="accept" method="post" style="display: inline-block">
-                            <input type="hidden" name="user_id" value="{{ $d->id }}">
-                            <input type="submit" value="Accept" class="btn btn-sm btn-success">
-                        </form>
-                        <form action="reject" method="post" style="display: inline-block">
-                            <input type="hidden" name="user_id" value="{{ $d->id }}">
-                            <input type="submit" value="Reject" class="btn btn-sm btn-danger">
-                        </form>
+                            <form action="accept" method="post" style="display: inline-block">
+                                <input type="hidden" name="user_id" value="{{ $d->id }}">
+                                <input type="submit" value="Accept" class="btn btn-sm btn-success">
+                            </form>
+                            <form action="reject" method="post" style="display: inline-block">
+                                <input type="hidden" name="user_id" value="{{ $d->id }}">
+                                <input type="submit" value="Reject" class="btn btn-sm btn-danger">
+                            </form>
                         @endif
                     </td>
                 </tr>
@@ -129,13 +141,24 @@
                     <td scope="col">{{ $d2->place_of_birth . ', ' . $d2->date_of_birth }}</td>
                     <td scope="col">{{ $d2->age }}</td>
                     <td scope="col">{{ $d2->phone_number }}</td>
-                    <td scope="col">{{ $d2->province->name }}</td>
-                    <td scope="col">{{ $d2->city->name . ' (' . $d2->city->id . ' [' . $d2->city->prefix . '])' }}
+                    <td scope="col">
+                        @if ($d2->province)
+                            {{ $d2->province->name }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td scope="col">
+                        @if ($d->city)
+                            {{ $d2->city->name . ' (' . $d2->city->id . ' [' . $d2->city->prefix . '])' }}
+                        @else
+                            -
+                        @endif
                     </td>
                     <td scope="col">{{ $d2->nik }}</td>
                     <td>
-                        @if ($d2->ktp_kk)<a href="{{ $d2->ktp_kk }}"
-                                target="_blank">ktp/kk {{ $d2->name }}</a>
+                        @if ($d2->ktp_kk)
+                            <a href="{{ $d2->ktp_kk }}" target="_blank">ktp/kk {{ $d2->name }}</a>
                         @else
                             null
                         @endif
