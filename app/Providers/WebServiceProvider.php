@@ -83,6 +83,7 @@ use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
 use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
+use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
 
 use App\BLoC\Web\ArcheryUser\AcceptVerifyUser;
 
@@ -177,6 +178,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("bulkDownloadCard", BulkDownloadCard::class);
         $this->registerService("getDownloadArcheryEventParticipant", GetDownloadArcheryEventParticipant::class);
         $this->registerService("acceptVerifyUser", AcceptVerifyUser::class);
+        $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
     }
     
     

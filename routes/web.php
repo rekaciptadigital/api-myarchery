@@ -123,6 +123,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRest']);
             });
 
+            $router->group(['prefix' => 'official'], function () use ($router) {
+                $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventOfficial']);
+            });
+            
             $router->group(['prefix' => 'qualification-time'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventQualificationTime']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventQualificationTime']);
