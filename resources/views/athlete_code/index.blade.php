@@ -40,7 +40,7 @@
             @php
                 $no = 1;
             @endphp
-            @if ($data->count > 0)
+            @if ($data->count() > 0)
                 @foreach ($data as $d)
                     <tr>
                         <th scope="row">{{ $no++ }}</th>
