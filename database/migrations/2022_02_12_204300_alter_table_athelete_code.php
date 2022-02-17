@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterTableArcheryMasterTeamCategoryAddFieldRegu extends Migration
+class AlterTableAtheleteCode extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AlterTableArcheryMasterTeamCategoryAddFieldRegu extends Migration
      */
     public function up()
     {
-        Schema::table('archery_master_team_categories', function (Blueprint $table) {
-            $table->string('team_name');
+        Schema::table('cities', function (Blueprint $table) {
+            $table->string('ktp_id',225)->default("");
+            $table->string('perpani_code',225)->default("");
+        });
+        Schema::table('archery_user_athlete_codes', function (Blueprint $table) {
+            $table->string('city_code')->default("");
         });
     }
 

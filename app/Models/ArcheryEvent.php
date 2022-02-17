@@ -64,6 +64,7 @@ class ArcheryEvent extends Model
     {
         $categories = ArcheryEventCategoryDetail::select(
             "archery_event_category_details.id",
+            "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
             "archery_event_category_details.fee",
             "archery_event_category_details.id AS key",
@@ -258,6 +259,7 @@ class ArcheryEvent extends Model
             }
         }
 
+        $detail["total_participant"] = ArcheryEventParticipant::where("event_id",$id)->where("status",1)->count();
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")
