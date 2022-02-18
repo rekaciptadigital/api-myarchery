@@ -40,48 +40,65 @@
             @php
                 $no = 1;
             @endphp
-            @foreach ($data as $d)
-                <tr>
-                    <th scope="row">{{ $no++ }}</th>
-                    <td>{{ $d->name }}</td>
-                    <td>{{ $d->email }}</td>
-                    <td>{{ $d->gender }}</td>
-                    <td>{{ $d->nik }}</td>
-                    <td>{{ $d->address }}</td>
-                    <td>{{ $d->place_of_birth . ', ' . $d->date_of_birth }}</td>
-                    <td>{{ $d->age }}</td>
-                    <td>{{ $d->phone_number }}</td>
-                    <td>{{ $d->province->name }}</td>
-                    <td>{{ $d->city->name . ' (' . $d->city->ktp_id . '[' . $d->city->prefix . '])' }}</td>
-                    <td>{{ $d->nik }}</td>
-                    <td>
-                        @if ($d->ktp_kk)
-                            <a href="{{ $d->ktp_kk }}" target="_blank">ktp_kk {{ $d->name }}</a>
-                        @else
-                            null
-                        @endif
-                    </td>
-                    <td>
-                        @if ($d->selfie_ktp_kk)
-                            <a href="{{ $d->selfie_ktp_kk }}" target="_blank">selfie_ktp_kk {{ $d->name }}</a>
-                        @else
-                            null
-                        @endif
-                    </td>
-                    <td>
-                        @if (!empty($d->city->prefix) && !empty($d->city->ktp_id))
-                        <form action="accept" method="post" style="display: inline-block">
-                            <input type="hidden" name="user_id" value="{{ $d->id }}">
-                            <input type="submit" value="Accept" class="btn btn-sm btn-success">
-                        </form>
-                        <form action="reject" method="post" style="display: inline-block">
-                            <input type="hidden" name="user_id" value="{{ $d->id }}">
-                            <input type="submit" value="Reject" class="btn btn-sm btn-danger">
-                        </form>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+            @if ($data->count() > 0)
+                @foreach ($data as $d)
+                    <tr>
+                        <th scope="row">{{ $no++ }}</th>
+                        <td>{{ $d->name }}</td>
+                        <td>{{ $d->email }}</td>
+                        <td>{{ $d->gender }}</td>
+                        <td>{{ $d->nik }}</td>
+                        <td>{{ $d->address }}</td>
+                        <td>{{ $d->place_of_birth . ', ' . $d->date_of_birth }}</td>
+                        <td>{{ $d->age }}</td>
+                        <td>{{ $d->phone_number }}</td>
+                        <td>
+                            @if ($d->province)
+                                {{ $d->province->name }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
+                            @if ($d->city)
+                                {{ $d->city->name . ' (' . $d->city->ktp_id . '[' . $d->city->prefix . '])' }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>{{ $d->nik }}</td>
+                        <td>
+                            @if ($d->ktp_kk)
+                                <a href="{{ $d->ktp_kk }}" target="_blank">ktp_kk {{ $d->name }}</a>
+                            @else
+                                null
+                            @endif
+                        </td>
+                        <td>
+                            @if ($d->selfie_ktp_kk)
+                                <a href="{{ $d->selfie_ktp_kk }}" target="_blank">selfie_ktp_kk
+                                    {{ $d->name }}</a>
+                            @else
+                                null
+                            @endif
+                        </td>
+                        <td>
+                            @if (!empty($d->city->prefix) && !empty($d->city->ktp_id))
+                                <form action="accept" method="post" style="display: inline-block">
+                                    <input type="hidden" name="user_id" value="{{ $d->id }}">
+                                    <input type="submit" value="Accept" class="btn btn-sm btn-success">
+                                </form>
+                                <form action="reject" method="post" style="display: inline-block">
+                                    <input type="hidden" name="user_id" value="{{ $d->id }}">
+                                    <input type="submit" value="Reject" class="btn btn-sm btn-danger">
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <h1>data kosong</h1>
+            @endif
         </tbody>
     </table>
 
@@ -117,45 +134,61 @@
             @php
                 $no = 1;
             @endphp
-            @foreach ($data2 as $d2)
-                <tr>
-                    <th scope="row">{{ $no++ }}</th>
-                    <td scope="col">{{ $d2->prefix }}</td>
-                    <td scope="col">{{ $d2->date_verified }}</td>
-                    <td scope="col">{{ $d2->email }}</td>
-                    <td scope="col">{{ $d2->email }}</td>
-                    <td scope="col">{{ $d2->gender }}</td>
-                    <td scope="col">{{ $d2->address }}</td>
-                    <td scope="col">{{ $d2->place_of_birth . ', ' . $d2->date_of_birth }}</td>
-                    <td scope="col">{{ $d2->age }}</td>
-                    <td scope="col">{{ $d2->phone_number }}</td>
-                    <td scope="col">{{ $d2->province->name }}</td>
-                    <td scope="col">{{ $d2->city->name . ' (' . $d2->city->id . ' [' . $d2->city->prefix . '])' }}
-                    </td>
-                    <td scope="col">{{ $d2->nik }}</td>
-                    <td>
-                        @if ($d2->ktp_kk)<a href="{{ $d2->ktp_kk }}"
-                                target="_blank">ktp/kk {{ $d2->name }}</a>
-                        @else
-                            null
-                        @endif
-                    </td>
-                    <td>
-                        @if ($d2->selfie_ktp_kk)
-                            <a href="{{ $d2->selfie_ktp_kk }}" target="_blank">selfie ktp/kk{{ $d2->sname }}</a>
-                        @else
-                            null
-                        @endif
-                    </td>
-                    <td>
-                        @if ($d2->avatar)
-                            <a href="{{ $d2->avatar }}" target="_blank">foto {{ $d2->name }}</a>
-                        @else
-                            null
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+            @if ($data2->count() > 0)
+                @foreach ($data2 as $d2)
+                    <tr>
+                        <th scope="row">{{ $no++ }}</th>
+                        <td scope="col">{{ $d2->prefix }}</td>
+                        <td scope="col">{{ $d2->date_verified }}</td>
+                        <td scope="col">{{ $d2->email }}</td>
+                        <td scope="col">{{ $d2->email }}</td>
+                        <td scope="col">{{ $d2->gender }}</td>
+                        <td scope="col">{{ $d2->address }}</td>
+                        <td scope="col">{{ $d2->place_of_birth . ', ' . $d2->date_of_birth }}</td>
+                        <td scope="col">{{ $d2->age }}</td>
+                        <td scope="col">{{ $d2->phone_number }}</td>
+                        <td scope="col">
+                            @if ($d2->province)
+                                {{ $d2->province->name }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td scope="col">
+                            @if ($d2->city)
+                                {{ $d2->city->name . ' (' . $d2->city->id . ' [' . $d2->city->prefix . '])' }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td scope="col">{{ $d2->nik }}</td>
+                        <td>
+                            @if ($d2->ktp_kk)
+                                <a href="{{ $d2->ktp_kk }}" target="_blank">ktp/kk {{ $d2->name }}</a>
+                            @else
+                                null
+                            @endif
+                        </td>
+                        <td>
+                            @if ($d2->selfie_ktp_kk)
+                                <a href="{{ $d2->selfie_ktp_kk }}" target="_blank">selfie
+                                    ktp/kk{{ $d2->sname }}</a>
+                            @else
+                                null
+                            @endif
+                        </td>
+                        <td>
+                            @if ($d2->avatar)
+                                <a href="{{ $d2->avatar }}" target="_blank">foto {{ $d2->name }}</a>
+                            @else
+                                null
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <h1>data kosong</h1>
+            @endif
         </tbody>
     </table>
 
