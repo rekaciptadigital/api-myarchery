@@ -26,7 +26,7 @@ class ParticipantMemberTeam extends Model
     }
 
     public static function saveParticipantMemberTeam(
-        $event_category_id
+        $event_category_id,
         $participant_id,
         $participant_member_id,
         $type

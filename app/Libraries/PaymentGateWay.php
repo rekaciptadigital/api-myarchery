@@ -176,7 +176,6 @@ class PaymentGateWay
         $status = 3;
 
         $transaction_log = TransactionLog::where("order_id", $order_id)->first();
-        print_r($transaction_log);
         if (!$transaction_log || $transaction_log->status == 1) {
             // return false;
         }
