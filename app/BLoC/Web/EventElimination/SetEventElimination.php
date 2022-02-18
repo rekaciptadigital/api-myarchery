@@ -94,7 +94,6 @@ class SetEventElimination extends Transactional
     {
         return [
             'elimination_member_count' => 'required',
-            'gender' => 'required',
             'match_type' => 'required',
             'scoring_type' => 'required',
             'event_category_id' => 'required|exists:archery_event_category_details,id',
