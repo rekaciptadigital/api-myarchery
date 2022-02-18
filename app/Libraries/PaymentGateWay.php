@@ -187,21 +187,23 @@ class PaymentGateWay
             $status = 2;
         }
 
-        ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
-
         $transaction_log->status = $status;
         $activity = \json_decode($transaction_log->transaction_log_activity, true);
         $activity["notification_callback_" . $status] = \json_encode($notif->getResponse());
         $transaction_log->transaction_log_activity = \json_encode($activity);
         $transaction_log->save();
 
-        if ($transaction_log->status == 1) {
-            if (substr($transaction_log->order_id, 0, 4) == env("ORDER_OFFICIAL_ID_PREFIX")) {
+        if (substr($transaction_log->order_id, 0, 5) == env("ORDER_OFFICIAL_ID_PREFIX")) {
+            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
+            if ($status == 1) {
                 return self::orderOfficial($transaction_log, $status);
-            } elseif (substr($transaction_log->order_id, 0, 4) == env("ORDER_ID_PREFIX")) {
+            }
+        } elseif (substr($transaction_log->order_id, 0, 5) == env("ORDER_ID_PREFIX")) {
+            if ($status == 1) {
                 return self::orderEvent($transaction_log);
             }
         }
+        
 
         return true;
     }
@@ -231,9 +233,6 @@ class PaymentGateWay
         } else {
             $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
             $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
-            if (!$qualification_time) {
-                throw new BLoCException('event belum bisa di daftar');
-            }
 
             $user = User::find($participant_member->user_id);
             if (!$user) {
@@ -246,7 +245,7 @@ class PaymentGateWay
                 'participant_member_id' => $participant_member->id,
             ]);
 
-            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $participant_member, $event_category_detail);
+            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id,$participant->id, $participant_member->id, "individual");
         }
     }
 

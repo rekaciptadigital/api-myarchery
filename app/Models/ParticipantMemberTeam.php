@@ -24,4 +24,18 @@ class ParticipantMemberTeam extends Model
             'type' => $event_category_detail->category_team
         ]);
     }
+
+    public static function saveParticipantMemberTeam(
+        $event_category_id,
+        $participant_id,
+        $participant_member_id,
+        $type
+    ) {
+        return self::create([
+            'event_category_id' => $event_category_id,
+            'participant_id' => $participant_id,
+            'participant_member_id' => $participant_member_id,
+            'type' => $type
+        ]);
+    }
 }
