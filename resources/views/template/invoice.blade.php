@@ -6,157 +6,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
-        table {
+        table.detail-athlete td {
+            border: none;
+            text-align: start;
+            float: left;
+        }
+
+        table.table-scorer {
             width: 100%;
         }
 
-        table,
+        table.table-scorer,
         th,
         td {
-            border: 1px solid black;
+            /* border: 1px solid black; */
             border-collapse: collapse;
             text-align: center;
-            height: 50px;
+            height: 30px;
         }
+
+        .border {
+            border: 1px solid black;
+        }
+
     </style>
     <title>Document</title>
 </head>
 
 <body>
-    {{-- <h1>{{$data->event_name}}</h1> --}}
-    
-    <table>
+    <table class="detail-athlete">
+        <tr>
+            <td>Athlete</td>
+            <td>:</td>
+            <td>{{ $data['detail_member']['name'] }}</td>
+        </tr>
+        <tr>
+            <td>Club</td>
+            <td>:</td>
+            <td>{{ $data['detail_member']['club_name'] }}</td>
+        </tr>
+        <tr>
+            <td>No. Bantalan</td>
+            <td>:</td>
+            <td>{{ $data['detail_member']['bud_rest_number'] }}</td>
+        </tr>
+    </table>
+
+    <table class="table-scorer">
         <thead>
             <tr>
-                <th style="border: none; width:8%">50m-1</th>
-                <th>1</th>
-                <th>2</th>
-                <th>3</th>
-                <th>SUM</th>
-                <th style="width: 20%;">Total</th>
-                <th>10+x</th>
-                <th>x</th>
+                <th style="font-size: 11px; width:8%;">{{$category['distance_id']}}-{{$data['sesi']}}</th>
+                <th class="border">1</th>
+                <th class="border">2</th>
+                <th class="border">3</th>
+                <th class="border">SUM</th>
+                <th class="border" style="width: 20%;">Total</th>
+                <th class="border">10+x</th>
+                <th class="border">x</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td rowspan="2">1</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">1</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td></td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border"></td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td rowspan="2">2</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">2</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td rowspan="2">3</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">3</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td rowspan="2">4</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">4</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td rowspan="2">5</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">5</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td rowspan="2">6</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" rowspan="2">6</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
             <tr>
-                <td style="border: none;" colspan="5"> <span style="margin-right: 20px;;">total</span></td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td class="border" style="border: none;" colspan="5"> <span
+                        style="margin-right: 20px;;">total</span></td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
+                <td class="border">&nbsp;</td>
             </tr>
         </tbody>
     </table>
-    <!-- DivTable.com -->
+    <pagebreak />
 </body>
 
 </html>

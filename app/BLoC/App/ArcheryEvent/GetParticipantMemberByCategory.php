@@ -36,16 +36,22 @@ class GetParticipantMemberByCategory extends Retrieval
 
         $event_category = ArcheryEventCategoryDetail::find($participant->event_category_id);
 
+        $user_participant = [];
+        $detail_participant_user = User::find($participant->user_id);
+        if (!$detail_participant_user) {
+            throw new BLoCException("user participant tidak ditemukan");
+        }
+
         $output['participant'] = [
             "participant_id" => $participant->id,
             "event_id" => $participant->event_id,
             "user_id" => $participant->user_id,
-            "name" => $participant->name,
+            "name" => $detail_participant_user->name,
             "type" => $participant->type,
-            "email" => $participant->email,
-            "phone_number" => $participant->phone_number,
-            "age" => $participant->age,
-            "gender" => $participant->gender,
+            "email" => $detail_participant_user->email,
+            "phone_number" => $detail_participant_user->phone_number,
+            "age" => $detail_participant_user->age,
+            "gender" => $detail_participant_user->gender,
             "transaction_log_id" => $participant->transaction_log_id,
             "team_name" => $participant->team_name,
         ];
