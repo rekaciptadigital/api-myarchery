@@ -177,7 +177,7 @@ class PaymentGateWay
 
         $transaction_log = TransactionLog::where("order_id", $order_id)->first();
         if (!$transaction_log || $transaction_log->status == 1) {
-            // return false;
+            return false;
         }
         if ($transaction == 'settlement') {
             $status = 1;
