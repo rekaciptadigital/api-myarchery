@@ -31,6 +31,7 @@ class GetUserProfile extends Retrieval
             "address_province" => Provinces::find($user->address_province_id),
             "address_city" => City::find($user->address_city_id),
             "status_verify" => $user->status_verify,
+            "reason_rejected" => $user->reason_rejected,
             "date_verified" => $user->date_verified,
             "age" => $user->age,
         ];
