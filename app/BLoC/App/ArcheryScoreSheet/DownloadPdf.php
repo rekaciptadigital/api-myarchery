@@ -4,8 +4,6 @@ namespace App\BLoC\App\ArcheryScoreSheet;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ParticipantMemberTeam;
 use DAI\Utils\Abstracts\Retrieval;
 use Mpdf\Mpdf;
@@ -19,17 +17,30 @@ class DownloadPdf extends Retrieval
 
     protected function process($parameters)
     {
-        $mpdf = new Mpdf();
+        // return "ok";
+        $mpdf = new Mpdf([
+            'margin_left' => 3,
+            'margin_right' => 3,
+            'margin_top' => 3,
+            'mode' => 'utf-8',
+            'format' => 'A6-P',
+            'orientation' => 'P',
+            'bleedMargin' => 0,
+            'dpi'        => 110,
+            'default_font_size' => 7,
+            'shrink_tables_to_fit' => 1.4,
+            'tempDir' => public_path() . '/tmp/pdf'
+        ]);
         $category = ArcheryEventCategoryDetail::find(8);
         $label = ArcheryEventCategoryDetail::getCategoryLabelComplete(8);
         $event = ArcheryEvent::find($category->event_id);
         // return $label;
         $output = [
             'event' => $event,
-            'category_label' => $label
+            'category_label' => $label,
+            'category' => $category
         ];
-        // return $output;
-        $data = [];
+
         $participant_member_team = ParticipantMemberTeam::select(
             'participant_member_teams.participant_member_id as member_id',
             'archery_event_qualification_schedule_full_day.bud_rest_number',
@@ -45,28 +56,27 @@ class DownloadPdf extends Retrieval
             ->join('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
             ->get();
 
-        if ($participant_member_team->count() > 0) {
-        }
-
+        $array_pesrta_baru = [];
         foreach ($participant_member_team as $pmt) {
             for ($i = 1; $i <= $category->session_in_qualification; $i++) {
-                $pmt['sesi'] = $i;
-                $pmt['code'] = "1-" . $pmt->member_id . "-" . $i;
-                $data[] = $pmt;
+                $code_sesi['detail_member'] = $pmt;
+                $code_sesi['sesi'] = $i;
+                $code_sesi['code'] = "1-" . $pmt->member_id . "-" . $i;
+                array_push($array_pesrta_baru, $code_sesi);
             }
         }
 
-        $output['member'] = $data;
-        return $output;
-        $html = \view('template.invoice', [
-            // "data" => $data
-        ]);
-        for ($i = 0; $i < 2; $i++) {
-            $mpdf->AddPage();
+        $output['data_member'] = $array_pesrta_baru;
+
+        // return $output;
+
+        foreach ($output['data_member'] as $m) {
+            $html = \view('template.invoice', [
+                "data" => $m,
+                "category" => $output['category']
+            ]);
             $mpdf->WriteHTML($html);
         }
-
-        // Output a PDF file directly to the browser
         $mpdf->Output('./asset/naruto.pdf', 'F');
     }
 
