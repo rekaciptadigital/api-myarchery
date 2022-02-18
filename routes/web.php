@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
-    $data2 = User::where('verify_status', 1)->get();
+    $data2 = User::where('verify_status', 1)->orderBy("address_city_id","DESC")->get();
 
     if ($data->count() > 0) {
         foreach ($data as $d1) {

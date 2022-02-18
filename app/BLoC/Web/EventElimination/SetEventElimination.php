@@ -27,7 +27,7 @@ class SetEventElimination extends Transactional
     {
         $event_category_id = $parameters->event_category_id;
 
-        $elimination = ArcheryEventElimination::where("gender",$parameters->gender)->where("event_category_id",$event_category_id)->first();
+        $elimination = ArcheryEventElimination::where("event_category_id",$event_category_id)->first();
         if($elimination)
             throw new BLoCException("match sudah di setting");
     
@@ -50,7 +50,7 @@ class SetEventElimination extends Transactional
         $elimination->count_participant = $elimination_member_count;
         $elimination->elimination_type = $match_type;
         $elimination->elimination_scoring_type = $scoring_type;
-        $elimination->gender = $gender;
+        $elimination->gender = "none";
         $elimination->save();
 
         foreach ($template as $key => $value) {
