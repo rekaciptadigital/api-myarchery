@@ -39,7 +39,7 @@ use App\BLoC\App\UserAuth\UpdateUserProfile;
 use App\BLoC\App\UserAuth\UpdateUserAvatar;
 use App\BLoC\General\GetProvince;
 use App\BLoC\General\GetCity;
-use App\BLoC\App\ArcheryEventIdCard\GetDownloadCard;
+use App\BLoC\App\ArcheryEventIdcard\GetDownloadCard;
 use App\BLoC\App\ArcheryEventOfficial\AddOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetDetailOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetEventOfficialDetail;
