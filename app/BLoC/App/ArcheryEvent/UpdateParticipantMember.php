@@ -287,7 +287,7 @@ class UpdateParticipantMember extends Retrieval
         $participant->save();
 
         foreach ($participant_member_id as $pmi) {
-            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $pmi, $event_category_detail);
+            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $pmi->id, $event_category_detail->category_team);
         }
 
         $participant['members'] = User::join('archery_event_participant_members', 'archery_event_participant_members.user_id', '=', 'users.id')

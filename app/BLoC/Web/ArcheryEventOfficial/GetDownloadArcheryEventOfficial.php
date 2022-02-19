@@ -107,14 +107,25 @@ class GetDownloadArcheryEventOfficial extends Retrieval
         if(!$template){
             throw new BLoCException("template official was not found");
         }
+
+        if(!$template->background){
+            $background='';
+        }else{
+            $background='background:url("'.$template->background.'")';
+        }
+        
+        if(!$template->logo_event){
+            $logo='<div id="logo" style="padding:3px"></div>';
+        }else{
+            $logo='<img src="'.$template->logo_event.'" alt="Avatar" style="float:left;width:40px">';
+        }
         
         $html_template = base64_decode($template->html_template);
         $final_doc = str_replace(
-                    ['{%foreground%}', '{%background%}','{%logo_event%}','{%nama_peserta%}', '{%kategori%}', '{%club%}'], 
-                    [$template->foreground,$template->background,$template->logo_event, $user->name, 'Official', $club],
+                    ['{%foreground%}', "background:url('')",'<div></div>','{%nama_peserta%}', '{%club%}'], 
+                    [$template->foreground,$background,$logo, $user->name, $club],
                     $html_template
                 );
-        
                     
         return $final_doc;
     }
