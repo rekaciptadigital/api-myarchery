@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
     (new Dotenv\Dotenv(dirname(__DIR__)))->load();
@@ -92,6 +92,7 @@ $app->register(App\Providers\GeneralServiceProvider::class);
 $app->register(App\Providers\WebServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register('tibonilab\Pdf\PdfServiceProvider');
+class_alias('tibonilab\Pdf\PdfFacade', 'PDF2');
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Barryvdh\DomPDF\ServiceProvider::class);
@@ -115,9 +116,9 @@ $app->configure('mail');
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-    require __DIR__.'/../routes/general.php';
-    require __DIR__.'/../routes/web.php';
-    require __DIR__.'/../routes/app.php';
+    require __DIR__ . '/../routes/general.php';
+    require __DIR__ . '/../routes/web.php';
+    require __DIR__ . '/../routes/app.php';
 });
 
 return $app;

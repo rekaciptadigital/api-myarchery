@@ -136,7 +136,7 @@ class AddEventOrder extends Transactional
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->where('club_id', $club_member != null ? $club_member->club_id : 0)->first();
+            ->where('user_id', $user->id)->first();
         if ($isExist) {
             if ($isExist->status == 1) {
                 throw new BLoCException("event dengan kategori ini sudah di ikuti");
@@ -272,6 +272,7 @@ class AddEventOrder extends Transactional
             $participant_member_old = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
                 ->where('archery_event_participants.event_category_id', $category->id)
                 ->where('archery_event_participants.user_id', $u)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
                 ->get(['archery_event_participant_members.*'])
                 ->first();
 
