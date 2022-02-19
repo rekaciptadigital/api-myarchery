@@ -42,30 +42,17 @@ class PdfLibrary
 
     public static function generateIdcard()
     {
-        if(self::$kategori){
-            $mpdf = new \Mpdf\Mpdf([
-                'margin_left' => 10,
-                'margin_right' => 0,
-                'mode' => 'utf-8',
-                'format' => 'A6-P',
-                'orientation' => 'P',
-                'bleedMargin' => 0,
-                'dpi'        => 110,
-                'tempDir' => public_path().'/tmp/pdf'
-            ]);
-        }else{
-            $mpdf = new \Mpdf\Mpdf([
-                'margin_left' => 10,
-                'margin_right' => 0,
-                'mode' => 'utf-8',
-                'format' => 'A4-P',
-                'orientation' => 'P',
-                'bleedMargin' => 0,
-                'dpi'        => 110,
-                'tempDir' => public_path().'/tmp/pdf'
-            ]);
-        }
-       
+        $mpdf = new \Mpdf\Mpdf([
+            'margin_left' => 10,
+            'margin_right' => 0,
+            'mode' => 'utf-8',
+            'format' => 'A6-P',
+            'orientation' => 'P',
+            'bleedMargin' => 0,
+            'dpi'        => 110,
+            'tempDir' => public_path().'/tmp/pdf'
+        ]);
+      
 
         if(env("APP_ENV") != "production")
         $mpdf->SetWatermarkText('EXAMPLE');
@@ -79,12 +66,13 @@ class PdfLibrary
                 }
             }
         }else{
+            
             $mpdf->WriteHTML(self::$final_doc);
         }
         $pdf = $mpdf->Output(self::$file_name, Destination::STRING_RETURN);
-       
         
         $base64_pdf = "data:application/pdf;base64,".base64_encode($pdf);
+        
         return $base64_pdf;
     }
 }
