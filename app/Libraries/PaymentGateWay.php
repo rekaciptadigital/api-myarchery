@@ -25,7 +25,7 @@ class PaymentGateWay
     static $customer_details = array();
     static $enabled_payments = [
         "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
-        "bca_va", "bni_va", "bri_va", "other_va","indomaret"
+        "bca_va", "bni_va", "bri_va", "other_va", "indomaret"
     ];
     static $item_details = array();
 
@@ -193,17 +193,17 @@ class PaymentGateWay
         $transaction_log->transaction_log_activity = \json_encode($activity);
         $transaction_log->save();
 
-        if (substr($transaction_log->order_id, 0, 5) == env("ORDER_OFFICIAL_ID_PREFIX")) {
-            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
+        if (substr($transaction_log->order_id, 0, strlen(env("ORDER_OFFICIAL_ID_PREFIX"))) == env("ORDER_OFFICIAL_ID_PREFIX")) {
             if ($status == 1) {
                 return self::orderOfficial($transaction_log, $status);
             }
-        } elseif (substr($transaction_log->order_id, 0, 5) == env("ORDER_ID_PREFIX")) {
+        } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_ID_PREFIX"))) == env("ORDER_ID_PREFIX")) {
+            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
             if ($status == 1) {
                 return self::orderEvent($transaction_log);
             }
         }
-        
+
 
         return true;
     }
@@ -245,7 +245,7 @@ class PaymentGateWay
                 'participant_member_id' => $participant_member->id,
             ]);
 
-            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id,$participant->id, $participant_member->id, "individual");
+            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $participant_member->id, "individual");
         }
     }
 
