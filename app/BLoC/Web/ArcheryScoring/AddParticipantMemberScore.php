@@ -3,8 +3,12 @@
 namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\ArcheryScoring;
+use App\Models\Admin;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventEliminationMember;
 use DAI\Utils\Abstracts\Transactional;
@@ -22,7 +26,15 @@ class AddParticipantMemberScore extends Transactional
 
     protected function process($parameters)
     {
-        if($parameters->type == 1)
+        $code = \explode("-",$parameters->code);
+        if(count($code) < 3){
+            throw new BLoCException("kode bermasalah");
+        }
+        $type = $code[0];
+        $participant_member_id = $code[1];
+        $session = $code[2];
+
+        if($type == 1)
             return $this->addScoringQualification($parameters);
         if($parameters->type == 2)
             return $this->addScoringElimination($parameters);
@@ -115,78 +127,61 @@ class AddParticipantMemberScore extends Transactional
     }
 
     private function addScoringQualification($parameters){
-        $admin = Auth::user();
-        $schedule_member = ArcheryQualificationSchedules::find($parameters->schedule_id);
-        if($schedule_member->is_scoring == 1)
-            throw new BLoCException("scoring sudah pernah ditambahkan pada jadwal ini");
+        $admin = Admin::getProfile();
+        $code = \explode("-",$parameters->code);
+        if(count($code) < 3){
+            throw new BLoCException("kode bermasalah");
+        }
+        
+        $type = $code[0];
+        $participant_member_id = $code[1];
+        $session = $code[2];
+
+        $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id")
+                            ->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")    
+                            ->where("archery_event_participants.status",1)
+                            ->where("archery_event_participant_members.id",$participant_member_id)->first();
+        if(!$participant_member)
+            throw new BLoCException("peserta tidak terdaftar");
+
+        $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
+        if($category->session_in_qualification < $session)
+            throw new BLoCException("sesi tidak tersedia");
+        
+        $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id",$participant_member_id)->first();
+        if(!$schedule){
+            throw new BLoCException("jadwal belum di set");
+        }
+        $get_score = ArcheryScoring::where("scoring_session",$session)->where("participant_member_id",$participant_member_id)->first();
+        if($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
+            throw new BLoCException("scoring sudah dikunci");
 
         $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
-        $user_scores = ArcheryScoring::where("participant_member_id",$schedule_member->participant_member_id)->get();
         $check_scoring_count = 0;
-        $event_score_id = 0;
-        $scoring_session = 1;
-        foreach ($user_scores as $key => $value) {
-            $log = \json_decode($value->scoring_log); 
-            if($log->archery_qualification_schedules->id == $parameters->schedule_id){
-                $event_score_id = $value->id;
-                $scoring_session = $value->scoring_session;
-            }else{
-                $check_scoring_count = $check_scoring_count + 1;
-            }
-        }
-
-        if($check_scoring_count > 0){
-            if($check_scoring_count >= 3)
-                throw new BLoCException("peserta sudah melakukan 3x scoring");
-
-            if($event_score_id == 0)
-                $scoring_session = $check_scoring_count + 1;
-
-            if($check_scoring_count == 2){
-                $archery_event_score = ArcheryScoring::generateScoreBySession($schedule_member->participant_member_id,$parameters->type,[1,2,3]);
-                $tmpScoring = $archery_event_score["sessions"];
-                usort($tmpScoring, function($a, $b) {return $b["total_tmp"] < $a["total_tmp"] ? 1 : -1;});
-                    foreach ($tmpScoring as $key => $value) {
-                        if(($scoring_session == 3 && $value["session"] != 3 && $value["total_tmp"] < $score->total_tmp)
-                            ||($scoring_session < 3 && $value["session"] == 3 && $value["total_tmp"] > $score->total_tmp)){
-                            if(isset($value["scoring_id"])){
-                            {
-                                $user_score = ArcheryScoring::find($value["scoring_id"]);
-                                $tmp_session = $user_score->scoring_session;
-                                $user_score->scoring_session = $scoring_session;
-                                $user_score->save();
-                                $scoring_session = $tmp_session;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $event_score_id = $get_score ? $get_score->id : 0;
+        
         if($event_score_id){
             $scoring = ArcheryScoring::find($event_score_id);
         }else{
             $scoring = new ArcheryScoring;
         }
 
-        $scoring->participant_member_id = $schedule_member->participant_member_id;
+        $scoring->participant_member_id = $participant_member_id;
         $scoring->total = $score->total;
         $scoring->total_tmp = $score->total_tmp_string;
-        $scoring->scoring_session = $scoring_session;
-        $scoring->type = $parameters->type;
-        $scoring->item_value = "archery_qualification_schedules";
-        $scoring->item_id = $schedule_member->id;
+        $scoring->scoring_session = $session;
+        $scoring->type = $type;
+        $scoring->item_value = "archery_event_qualification_schedule_full_day";
+        $scoring->item_id = $schedule->id;
         $scoring->scoring_log = \json_encode(["admin" => $admin,
-                                            "archery_qualification_schedules"=>$schedule_member,
+                                            "archery_event_qualification_schedule_full_day"=>$schedule,
                                             "target_no" => $parameters->target_no]);
         $scoring->scoring_detail = \json_encode($score->scors);
-        $scoring->save();
-
         if($parameters->save_permanent){
-            $schedule_member->is_scoring = 1;
-            $schedule_member->save();
+            $scoring->is_lock = 1;
         }
 
+        $scoring->save();
         return $scoring;
     }
 
