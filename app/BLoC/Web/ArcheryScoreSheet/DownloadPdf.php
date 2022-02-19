@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\App\ArcheryScoreSheet;
+namespace App\BLoC\Web\ArcheryScoreSheet;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
