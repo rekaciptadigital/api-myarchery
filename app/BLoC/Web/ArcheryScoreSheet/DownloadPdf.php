@@ -38,7 +38,7 @@ class DownloadPdf extends Retrieval
             'shrink_tables_to_fit' => 1.4,
             'tempDir' => public_path() . '/tmp/pdf'
         ]);
-        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete(8);
+        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
         $event = ArcheryEvent::find($category->event_id);
         $output = [
             'event' => $event,
