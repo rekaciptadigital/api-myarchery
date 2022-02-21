@@ -9,6 +9,8 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Redis;
+
 use DateTimeZone;
 
 class SetBudRest extends Transactional
@@ -83,6 +85,8 @@ class SetBudRest extends Transactional
                 $budrest->type =  $data['type'];
                 $budrest->save();
             }
+            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
+            Redis::hset($key,$data['archery_event_category_id'],$data['archery_event_category_id']);
         }
 
         return $budrest;

@@ -88,7 +88,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
         });
 
-        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.user'], function () use ($router) {
+        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
         });
 
