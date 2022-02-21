@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
-    $data2 = User::where('verify_status', 1)->orderBy("address_city_id","DESC")->get();
+    $data2 = User::where('verify_status', 1)->orderBy("address_city_id", "DESC")->get();
 
     if ($data->count() > 0) {
         foreach ($data as $d1) {
@@ -51,8 +51,8 @@ $router->post('accept', function (Request $request) {
     $trim_nik = trim($user->nik, " ");
     $substr = substr($trim_nik, 0, 4);
 
-    $city = City::where("id",$user->address_city_id)->first();
-    if(!$city){
+    $city = City::where("id", $user->address_city_id)->first();
+    if (!$city) {
         throw new BLoCException("nik not valid");
     }
     $city_code = $city->prefix;
@@ -70,7 +70,7 @@ $router->post('reject', function (Request $request) {
     $user_id = $request->input('user_id');
     $user = User::findOrFail($user_id);
     $user->verify_status = 2;
-    $user->reason_rejected = $request->input('reason') ? $request->input('reason') : "pastikan data sudah benar" ;
+    $user->reason_rejected = $request->input('reason') ? $request->input('reason') : "pastikan data sudah benar";
     $user->save();
 
     // $city = City::find($user->address_city_id);
@@ -86,6 +86,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:forgotPassword']);
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
+        });
+
+        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -127,7 +131,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'official'], function () use ($router) {
                 $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventOfficial']);
             });
-            
+
             $router->group(['prefix' => 'qualification-time'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventQualificationTime']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventQualificationTime']);

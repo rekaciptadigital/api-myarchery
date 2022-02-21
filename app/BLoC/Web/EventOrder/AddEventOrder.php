@@ -29,6 +29,16 @@ class AddEventOrder extends Transactional
     public function getDescription()
     {
         return "";
+        /*
+            # order individu
+                db insert :
+                            - archery_event_participants
+                            - archery_event_participant_members
+                            - transaction_log (for have fee)
+                            - archery_event_participant_member_numbers (if free)
+                            - archery_event_qualification_schedule_full_days (if free)
+                            - participant_member_team (if free)
+        */
     }
 
     protected function process($parameters)
@@ -64,10 +74,9 @@ class AddEventOrder extends Transactional
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event);
         } else {
             Validator::make($parameters->all(), [
-                "user_id" => "required|array",
                 "team_name" => "required|string"
             ])->validate();
-            return $this->registerTeam($event_category_detail, $user, $club_member, $team_name, $user_id);
+            return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name);
         }
     }
 
@@ -180,6 +189,7 @@ class AddEventOrder extends Transactional
                 "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
+            
             return $this->composeResponse($res);
         }
 
@@ -329,6 +339,102 @@ class AddEventOrder extends Transactional
             return $this->composeResponse($res);
         }
 
+
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
+        $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            ->setCustomerDetails($user->name, $user->email, $user->phone_number)
+            ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
+            ->createSnap();
+
+        foreach ($participant_member_id as $pm) {
+            TemporaryParticipantMember::create([
+                'user_id' => $pm->user_id,
+                'participant_member_id' => $pm->id,
+                'participant_id' => $participant_new->id,
+                'event_category_id' => $event_category_detail->id
+            ]);
+        }
+        $participant_new->transaction_log_id = $payment->transaction_log_id;
+        $participant_new->save();
+        $res = [
+            "archery_event_participant_id" => $participant_new->id,
+            "payment_info" => $payment
+        ];
+        return $this->composeResponse($res);
+    }
+
+    private function registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name)
+    {
+        // mengambil gender category
+
+        $gender_category = $event_category_detail->gender_category;
+        $time_now = time();
+
+        $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+        ->where('archery_event_participants.club_id', $club_member->club_id)
+        ->where(function ($query) use ($time_now) {
+            $query->where("archery_event_participants.status", 1);
+            $query->orWhere(function ($q) use ($time_now) {
+                $q->where("archery_event_participants.status", 4);
+                $q->where("transaction_logs.expired_time", ">", $time_now);
+            });
+        })
+        ->count();
+    
+        if ($gender_category == 'mix') {
+            if($check_register_same_category >= 1){
+                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 4);
+                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->count();
+                if($check_panding > 0)
+                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
+                else
+                    throw new BLoCException("club anda sudah terdaftar 1 kali di kategory ini");
+            }
+        } else {
+            if($check_register_same_category >= 2){
+                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 4);
+                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->count();
+                if($check_panding > 0)
+                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
+                else
+                    throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
+            }
+            $team_category_id = $event_category_detail->team_category_id == "female_team" ? "individu female" : "individu male";
+            $check_individu_category_detail = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
+                ->where('age_category_id', $event_category_detail->age_category_id)
+                ->where('competition_category_id', $event_category_detail->competition_category_id)
+                ->where('distance_id', $event_category_detail->distance_id)
+                ->where('team_category_id', $team_category_id)
+                ->first();
+
+            $check_participant = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+                ->where('archery_event_participants.event_category_id', $check_individu_category_detail->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->count();
+            if($check_participant < (($check_register_same_category + 1) * 3)){
+                throw new BLoCException("untuk pendaftaran ke ".($check_register_same_category +1)." minimal harus ada ".(($check_register_same_category + 1) * 3)." peserta tedaftar dengan club ini");
+            }
+        }
+
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
+
+        if ($event_category_detail->fee < 1) {
+            $participant_new->status = 1;
+            $participant_new->save();
+
+            $res = [
+                "archery_event_participant_id" => $participant_new->id,
+                "payment_info" => null
+            ];
+            return $this->composeResponse($res);
+        }
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)

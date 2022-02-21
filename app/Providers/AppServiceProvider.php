@@ -44,7 +44,6 @@ use App\BLoC\App\ArcheryEventOfficial\AddOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetDetailOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetEventOfficialDetail;
 use App\BLoC\App\ArcheryEventOfficial\GetOrderEventOfficial;
-use App\BLoC\App\ArcheryScoreSheet\DownloadPdf;
 use App\BLoC\General\GetListOfficial;
 
 class AppServiceProvider extends ServiceProvider
@@ -95,8 +94,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerService("updateVerifikasiUser", UpdateVerifikasiUser::class);
         $this->registerService("getDataUserVerifikasi", GetDataUserVerifikasi::class);
-
-        $this->registerService("downloadPdf", DownloadPdf::class);
 
         $this->registerService("addOrderOfficial", AddOrderOfficial::class);
         $this->registerService("getDetailOrderOfficial", GetDetailOrderOfficial::class);

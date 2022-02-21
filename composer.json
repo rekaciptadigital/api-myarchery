@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^0.9.0",
         "doctrine/dbal": "^2.13",
         "dompdf/dompdf": "^1.2",
+        "flipbox/lumen-generator": "^8.2",
         "illuminate/mail": "5.7.*",
         "illuminate/redis": "5.7.*",
         "laravel/lumen-framework": "5.7.*",
