@@ -369,18 +369,42 @@ class AddEventOrder extends Transactional
         // mengambil gender category
 
         $gender_category = $event_category_detail->gender_category;
+        $time_now = time();
 
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
         ->where('archery_event_participants.club_id', $club_member->club_id)
+        ->where(function ($query) use ($time_now) {
+            $query->where("archery_event_participants.status", 1);
+            $query->orWhere(function ($q) use ($time_now) {
+                $q->where("archery_event_participants.status", 4);
+                $q->where("transaction_logs.expired_time", ">", $time_now);
+            });
+        })
         ->count();
     
         if ($gender_category == 'mix') {
             if($check_register_same_category >= 1){
-                throw new BLoCException("club anda sudah terdaftar 1 kali di kategory ini");
+                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 4);
+                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->count();
+                if($check_panding > 0)
+                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
+                else
+                    throw new BLoCException("club anda sudah terdaftar 1 kali di kategory ini");
             }
         } else {
             if($check_register_same_category >= 2){
-                throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
+                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 4);
+                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->count();
+                if($check_panding > 0)
+                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
+                else
+                    throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
             }
             $team_category_id = $event_category_detail->team_category_id == "female_team" ? "individu female" : "individu male";
             $check_individu_category_detail = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
