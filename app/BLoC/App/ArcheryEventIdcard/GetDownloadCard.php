@@ -13,6 +13,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryClub;
+use Illuminate\Support\Facades\DB;
 
 class GetDownloadCard extends Retrieval
 {
@@ -37,7 +38,7 @@ class GetDownloadCard extends Retrieval
         ->where('archery_event_participant_members.id', $participant_member_id)
         ->where('archery_event_participant_members.user_id', $user['id'])
         ->get();
-        
+
         if(!$detail_member) throw new BLoCException("Anda tidak mengikuti event ini");
 
         $archery_event  = ArcheryEvent::select('id', 'event_name', 'admin_id')->where('id', $detail_member->event_id)->first();
