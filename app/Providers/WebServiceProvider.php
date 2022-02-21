@@ -88,7 +88,7 @@ use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadPdf;
 use App\BLoC\Web\ArcheryUser\AcceptVerifyUser;
-
+use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -185,6 +185,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
 
         $this->registerService("downloadPdf", DownloadPdf::class);
+
+        $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
     }
     
     

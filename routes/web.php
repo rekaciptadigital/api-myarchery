@@ -88,7 +88,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
         });
 
-        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.user'], function () use ($router) {
+        $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
         });
 
@@ -210,6 +210,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventElimination']);
             $router->post('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationSchedule']);
             $router->delete('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:removeEventEliminationSchedule']);
+        });
+
+        
+        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->put('/update-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantCategory']);
         });
 
         $router->group(['prefix' => 'archery'], function () use ($router) {
