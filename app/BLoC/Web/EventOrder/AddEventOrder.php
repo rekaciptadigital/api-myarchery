@@ -136,7 +136,7 @@ class AddEventOrder extends Transactional
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->where('club_id', $club_member != null ? $club_member->club_id : 0)->first();
+            ->where('user_id', $user->id)->first();
         if ($isExist) {
             if ($isExist->status == 1) {
                 throw new BLoCException("event dengan kategori ini sudah di ikuti");
@@ -174,7 +174,7 @@ class AddEventOrder extends Transactional
                 'qalification_time_id' => $qualification_time->id,
                 'participant_member_id' => $member->id,
             ]);
-            ParticipantMemberTeam::insertParticipantMemberTeam($participant, $member, $event_category_detail);
+            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $member->id, $event_category_detail->category_team);
 
             $res = [
                 "archery_event_participant_id" => $participant->id,
@@ -184,7 +184,7 @@ class AddEventOrder extends Transactional
         }
 
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va"])
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
@@ -272,6 +272,7 @@ class AddEventOrder extends Transactional
             $participant_member_old = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
                 ->where('archery_event_participants.event_category_id', $category->id)
                 ->where('archery_event_participants.user_id', $u)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
                 ->get(['archery_event_participant_members.*'])
                 ->first();
 
@@ -316,7 +317,7 @@ class AddEventOrder extends Transactional
                 }
                 $participant_member_old = ArcheryEventParticipantMember::where('user_id', $u)->where('archery_event_participant_id', $participant_old->id)->first();
                 if ($participant_member_old) {
-                    ParticipantMemberTeam::insertParticipantMemberTeam($participant_old, $participant_member_old, $event_category_detail);
+                    ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant_old->id, $participant_member_old->id, $event_category_detail->category_team);
                 } else {
                     throw new BLoCException("this user not participant for category individual");
                 }
@@ -331,7 +332,7 @@ class AddEventOrder extends Transactional
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$event_category_detail->fee, $order_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va"])
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();

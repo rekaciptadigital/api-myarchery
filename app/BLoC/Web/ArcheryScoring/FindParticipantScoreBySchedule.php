@@ -3,9 +3,11 @@
 namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryQualificationSchedules;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
@@ -16,12 +18,22 @@ class FindParticipantScoreBySchedule extends Retrieval
 {
     public function getDescription()
     {
-        return "";
+        return "
+            1. for fullday qualification make code : <type scoring qualification>-<member_id>-<session> ex (1-23-1) 
+        ";
     }
 
     protected function process($parameters)
     {
+        $code = $parameters->code ? $parameters->code : "";
         $type = $parameters->type ? $parameters->type : 1;
+        if($code){
+            $code = explode("-",$parameters->code);
+            $type = $code[0];
+            if($type == 1)
+                return $this->qualificationFullDay($parameters);
+        }
+        
         if($type == 1){
             return $this->qualification($parameters);
         }
@@ -31,6 +43,36 @@ class FindParticipantScoreBySchedule extends Retrieval
         }
     }
 
+    private function qualificationFullDay($parameters){
+        $code = explode("-",$parameters->code);
+        $type = $code[0];
+        $participant_member_id = $code[1];
+        $session = $code[2];
+        $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id")
+                            ->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")    
+                            ->where("archery_event_participants.status",1)
+                            ->where("archery_event_participant_members.id",$participant_member_id)->first();
+        if(!$participant_member)
+            throw new BLoCException("member tidak ditemukan");
+
+        $score = ArcheryScoring::
+                        where("participant_member_id",$participant_member_id)
+                        ->where("scoring_session",$session)
+                        ->where("type",$type)
+                        ->first();
+        $output = (object)array();
+        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) array());
+        $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
+        $output->score = $s;
+        $category_detail = new ArcheryEventCategoryDetail;
+        $output->category = $category_detail->getCategoryDetailById($participant_member->event_category_id);
+        $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id",$participant_member_id)->first();
+        $output->budrest_number = $schedule && !empty($schedule->bud_rest_number)? $schedule->bud_rest_number.$schedule->target_face : "";
+        $output->session = $session;
+        $output->is_updated = isset($score->is_lock) ? $score->is_lock : 0;
+        return $output;
+    }
+
     private function qualification($parameters){
         $schedule_member = ArcheryQualificationSchedules::find($parameters->schedule_id);
         $user_scores = ArcheryScoring::where("participant_member_id",$schedule_member->participant_member_id)->get();
@@ -38,7 +80,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         $score = (object)array();
         foreach ($user_scores as $key => $value) {
             $log = \json_decode($value->scoring_log); 
-            if($log->archery_qualification_schedules->id == $parameters->schedule_id){
+            if(isset($log->archery_qualification_schedules) && $log->archery_qualification_schedules->id == $parameters->schedule_id){
                 $score = $value;
                 $session = $value->scoring_session;
             }
@@ -95,11 +137,6 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     protected function validation($parameters)
     {
-        if(!$parameters->type || $parameters->type == 1)
-        return [
-            'schedule_id' => 'required|exists:archery_qualification_schedules,id',
-        ];
-
         return [];
     }
 }

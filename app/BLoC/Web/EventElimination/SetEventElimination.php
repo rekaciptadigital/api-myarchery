@@ -27,29 +27,30 @@ class SetEventElimination extends Transactional
     {
         $event_category_id = $parameters->event_category_id;
 
-        $elimination = ArcheryEventElimination::where("gender",$parameters->gender)->where("event_category_id",$event_category_id)->first();
+        $elimination = ArcheryEventElimination::where("event_category_id",$event_category_id)->first();
         if($elimination)
             throw new BLoCException("match sudah di setting");
     
         $category = ArcheryEventCategoryDetail::find($event_category_id);
-        $team_category_id = $category->team_category_id;
-        $competition_category_id = $category->competition_category_id;
-        $distance_id = $category->distance_id;
-        $age_category_id = $category->age_category_id;
-        $gender = $parameters->gender;
         $score_type = 1; // 1 for type qualification
         $event_id = $category->event_id;
         $match_type = $parameters->match_type;
         $scoring_type = $parameters->scoring_type; // 1 for point, 2 for acumalition score
         $elimination_member_count = $parameters->elimination_member_count;
-        $qualification_rank = ArcheryScoring::getScoringRank($distance_id,$team_category_id,$competition_category_id,$age_category_id,$gender,$score_type,$event_id);
+
+        $session = [];
+        for ($i=0; $i < $category->session_in_qualification; $i++) { 
+            $session[] = $i+1;
+        }
+
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id,$score_type,$session);
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $event_category_id;
         $elimination->count_participant = $elimination_member_count;
         $elimination->elimination_type = $match_type;
         $elimination->elimination_scoring_type = $scoring_type;
-        $elimination->gender = $gender;
+        $elimination->gender = "none";
         $elimination->save();
 
         foreach ($template as $key => $value) {
@@ -81,7 +82,7 @@ class SetEventElimination extends Transactional
                     $match->index = $i;
                     if(isset($team["win"]))
                         $match->win = $team["win"];
-                    $match->gender = $parameters->gender;
+                    $match->gender = "none";
                     $match->save();
                 }
             }
@@ -93,7 +94,6 @@ class SetEventElimination extends Transactional
     {
         return [
             'elimination_member_count' => 'required',
-            'gender' => 'required',
             'match_type' => 'required',
             'scoring_type' => 'required',
             'event_category_id' => 'required|exists:archery_event_category_details,id',

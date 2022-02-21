@@ -39,23 +39,40 @@
             <td>Athlete</td>
             <td>:</td>
             <td>{{ $data['detail_member']['name'] }}</td>
+            <td>Event</td>
+            <td>:</td>
+            <td>{{ $event['event_name'] }}</td>
         </tr>
         <tr>
             <td>Club</td>
             <td>:</td>
             <td>{{ $data['detail_member']['club_name'] }}</td>
+            <td>Lokasi</td>
+            <td>:</td>
+            <td>{{ $event['detail_city']['name'] }}</td>
         </tr>
         <tr>
             <td>No. Bantalan</td>
             <td>:</td>
             <td>{{ $data['detail_member']['bud_rest_number'] }}</td>
+            <td>Category</td>
+            <td>:</td>
+            <td>{{ $category_label }}</td>
+        </tr>
+        <tr>
+            <td>Sesi</td>
+            <td>:</td>
+            <td>{{ $data['sesi'] }}</td>
+            <td>Code</td>
+            <td>:</td>
+            <td>{{ $data['code'] }}</td>
         </tr>
     </table>
 
     <table class="table-scorer">
         <thead>
             <tr>
-                <th style="font-size: 11px; width:8%;">{{$category['distance_id']}}-{{$data['sesi']}}</th>
+                <th style="font-size: 11px; width:8%;">{{ $category['distance_id'] }}-{{ $data['sesi'] }}</th>
                 <th class="border">1</th>
                 <th class="border">2</th>
                 <th class="border">3</th>
@@ -182,13 +199,16 @@
             </tr>
             <tr>
                 <td class="border" style="border: none;" colspan="5"> <span
-                        style="margin-right: 20px;;">total</span></td>
+                        style="margin-right: 20px;">total</span></td>
                 <td class="border">&nbsp;</td>
                 <td class="border">&nbsp;</td>
                 <td class="border">&nbsp;</td>
             </tr>
         </tbody>
     </table>
+
+    <img src="{{$qr}}">
+    
     <pagebreak />
 </body>
 

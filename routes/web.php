@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
-    $data2 = User::where('verify_status', 1)->get();
+    $data2 = User::where('verify_status', 1)->orderBy("address_city_id","DESC")->get();
 
     if ($data->count() > 0) {
         foreach ($data as $d1) {
@@ -51,7 +51,7 @@ $router->post('accept', function (Request $request) {
     $trim_nik = trim($user->nik, " ");
     $substr = substr($trim_nik, 0, 4);
 
-    $city = City::where("ktp_id",$substr)->first();
+    $city = City::where("id",$user->address_city_id)->first();
     if(!$city){
         throw new BLoCException("nik not valid");
     }
@@ -70,7 +70,7 @@ $router->post('reject', function (Request $request) {
     $user_id = $request->input('user_id');
     $user = User::findOrFail($user_id);
     $user->verify_status = 2;
-    $user->reason_rejected = "data not valid";
+    $user->reason_rejected = $request->input('reason') ? $request->input('reason') : "pastikan data sudah benar" ;
     $user->save();
 
     // $city = City::find($user->address_city_id);
