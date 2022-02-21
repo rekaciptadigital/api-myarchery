@@ -31,7 +31,13 @@ class GetDownloadCard extends Retrieval
 
         $participant_id = $archery_event_participant_member->archery_event_participant_id;
         
-        $detail_member  = ArcheryEventParticipant::getMemberByUserId($user['id'], $participant_id);
+        $detail_member  = ArcheryEventParticipantMember::select('archery_event_participant_members.*', 'archery_event_participants.event_id', 'archery_event_participants.event_category_id','archery_event_participants.club_id',DB::RAW('archery_event_participants.id as partisipant'))
+        ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+        ->where('archery_event_participants.status', 1)
+        ->where('archery_event_participant_members.id', $participant_member_id)
+        ->where('archery_event_participant_members.user_id', $user['id'])
+        ->get();
+        
         if(!$detail_member) throw new BLoCException("Anda tidak mengikuti event ini");
 
         $archery_event  = ArcheryEvent::select('id', 'event_name', 'admin_id')->where('id', $detail_member->event_id)->first();
