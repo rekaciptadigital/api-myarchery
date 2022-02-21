@@ -37,7 +37,8 @@ class GetDownloadCard extends Retrieval
         ->where('archery_event_participants.status', 1)
         ->where('archery_event_participant_members.id', $participant_member_id)
         ->where('archery_event_participant_members.user_id', $user['id'])
-        ->get();
+        ->first();
+       
 
         if(!$detail_member) throw new BLoCException("Anda tidak mengikuti event ini");
 
