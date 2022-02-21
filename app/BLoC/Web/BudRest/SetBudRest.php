@@ -75,8 +75,7 @@ class SetBudRest extends Transactional
                 $now = Carbon::now();
 
                 if (is_null($check_qualification_time->qualification_start_datetime)){
-                    throw new BLoCException("set jadwal kualifikasi terlebih dahulu");
-                    
+                    throw new BLoCException("set jadwal kualifikasi terlebih dahulu ".$data['archery_event_category_id'].$check_qualification_time->qualification_start_datetime);
                 }
 
                 if (strtotime($check_qualification_time->qualification_start_datetime) < strtotime('now')){
