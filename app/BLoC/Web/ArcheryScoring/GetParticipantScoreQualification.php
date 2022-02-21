@@ -95,7 +95,7 @@ class GetParticipantScoreQualification extends Retrieval
                                             "teams"=>$club_members
                                             ];
                 }
-                
+                usort($participant_club, function($a, $b) {return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;});
                 return $participant_club;
     }
 
@@ -160,6 +160,7 @@ class GetParticipantScoreQualification extends Retrieval
                                             "teams"=>$club_members
                                             ];
                 }
+                usort($participant_club, function($a, $b) {return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;});
                 
                 return $participant_club;
     }
