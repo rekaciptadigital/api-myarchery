@@ -3,6 +3,8 @@
 namespace App\BLoC\App\UserAuth;
 
 use App\Libraries\Upload;
+use App\Models\City;
+use App\Models\Provinces;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -49,6 +51,16 @@ class UpdateVerifikasiUser extends Retrieval
             $user->name = $parameters->get('name');
 
             $user->address = $parameters->get('address');
+
+            $city = City::find($parameters->get('city_id'));
+            if (!$city) {
+                throw new BLoCException("Kota tidak tersedia");
+            }
+
+            $province = Provinces::find($parameters->get("province_id"));
+            if (!$province) {
+                throw new BLoCException("Provinsi tidak tersedia");
+            }
 
             $user->address_province_id = $parameters->get('province_id');
 
