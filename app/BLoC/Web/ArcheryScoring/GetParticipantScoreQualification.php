@@ -40,15 +40,9 @@ class GetParticipantScoreQualification extends Retrieval
 
         if(strtolower($team_category->type) == "team"){
             if($team_category->id == "mix_team"){
-                $category_detail_male = ArcheryEventCategoryDetail::
-                                        where("age_category_id",$category_detail->age_category_id)
-                                        ->where("competition_category_id",$category_detail->competition_category_id)
-                                        ->where("distance_id",$category_detail->distance_id)
-                                        ->where("team_category_id","individu male")->first();
-                $qualification_rank_male = ArcheryScoring::getScoringRankByCategoryId($event_category_id,$score_type,$session);
-                return $qualification_rank_male;
+                return $this->mixTeamBestOfThree($category_detail,$team_category,$session);
             }else{
-                return $this->teamBestOfThree($category_detail,$team_category)
+                return $this->teamBestOfThree($category_detail,$team_category,$session);
             }
         }
         if(strtolower($team_category->type) == "individual"){
@@ -58,7 +52,7 @@ class GetParticipantScoreQualification extends Retrieval
         return [];
     }
 
-    private function teamBestOfThree($category_detail,$team_category)
+    private function teamBestOfThree($category_detail,$team_category,$session)
     {
         $team_cat = ($team_category->id) == "male_team" ? "individu male" : "individu female";
                 $category_detail_team = ArcheryEventCategoryDetail::
@@ -66,7 +60,7 @@ class GetParticipantScoreQualification extends Retrieval
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id",$team_cat)->first();
-                $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id,$score_type,$session);
+                $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id,1,$session);
                 
                 $participant_club =[]; 
                 $sequence_club = [];
@@ -105,21 +99,21 @@ class GetParticipantScoreQualification extends Retrieval
                 return $participant_club;
     }
 
-    private function mixTeamBestOfThree($category_detail,$team_category)
+    private function mixTeamBestOfThree($category_detail,$team_category,$session)
     {
                 $category_detail_male = ArcheryEventCategoryDetail::
                 where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu male")->first();
-                $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id,$score_type,$session);
+                $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id,1,$session);
                 
                 $category_detail_female = ArcheryEventCategoryDetail::
                 where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu female")->first();
-                $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id,$score_type,$session);
+                $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id,1,$session);
 
                 $participant_club =[]; 
                 $sequence_club = [];
@@ -130,17 +124,29 @@ class GetParticipantScoreQualification extends Retrieval
                     $total_per_point = [];
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
-                    foreach ($qualification_rank as $member_rank) {
-                        if($value->club_id == $member_rank["club_id"]){
-                            foreach ($member_rank["total_per_points"] as $p => $t) {
+                    foreach ($qualification_male as $male_rank) {
+                        if($value->club_id == $male_rank["club_id"]){
+                            foreach ($male_rank["total_per_points"] as $p => $t) {
                                 $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
                             }
-                            $total = $total + $member_rank["total"];
-                            $club_members[] = $member_rank["member"];
+                            $total = $total + $male_rank["total"];
+                            $club_members[] = $male_rank["member"];
                         }
-                        if(count($club_members) == 3)
+                        if(count($club_members) == 1)
                             break;
                     }
+                    foreach ($qualification_female as $female_rank) {
+                        if($value->club_id == $female_rank["club_id"]){
+                            foreach ($female_rank["total_per_points"] as $p => $t) {
+                                $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                            }
+                            $total = $total + $female_rank["total"];
+                            $club_members[] = $female_rank["member"];
+                        }
+                        if(count($club_members) == 2)
+                            break;
+                    }
+
                     $participant_club[] = [
                                             "participant_id"=>$value->id,
                                             "club_id"=>$value->club_id,
