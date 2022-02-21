@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\BudRest;
 
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Transactional;
