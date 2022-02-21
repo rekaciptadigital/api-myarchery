@@ -437,6 +437,7 @@ class ArcheryScoring extends Model
             "sessions" => $sessions,
             "total" => $total,
             "total_x" => $total_per_points["x"],
+            "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
             "total_tmp" => $this->getTotalTmp($total_per_points, $total),
         ];
@@ -486,6 +487,7 @@ class ArcheryScoring extends Model
             "archery_event_participant_members.gender",
             "archery_event_participants.event_id",
             "archery_clubs.name as club_name",
+            "archery_clubs.id as club_id",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )->
@@ -497,6 +499,8 @@ class ArcheryScoring extends Model
         $archery_event_score = [];
         foreach ($participants as $key => $value) {
         $score = $this->generateScoreBySession($value->id,$score_type,$sessions);
+        $score["club_id"] = $value->club_id;
+        $score["club_name"] = $value->club_name;
         $score["member"] = $value;
         $score["member"]["participant_number"] = ArcheryEventParticipantMemberNumber::getMemberNumber($value->event_id, $value->user_id);
         $archery_event_score[] = $score;
