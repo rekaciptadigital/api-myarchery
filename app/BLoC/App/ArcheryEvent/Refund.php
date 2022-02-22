@@ -14,6 +14,7 @@ use App\Models\City;
 use App\Models\ParticipantMemberTeam;
 use App\Models\Provinces;
 use App\Models\TransactionLog;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use DAI\Utils\Abstracts\Retrieval;
@@ -45,19 +46,86 @@ class Refund extends Retrieval
             throw new BLoCException("tidak bisa melakukan refund");
         }
 
-        $participant_memmber = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
-        if (!$participant_memmber) {
-            throw new BLoCException("data participant member tidak tersedia");
+        $category_participant = ArcheryEventCategoryDetail::find($participant->event_category_id);
+        if (!$category_participant) {
+            throw new BLoCException("kategori tidak ditemukan");
         }
 
-        $category_participant = ArcheryEventCategoryDetail::find($participant->event_category_id);
         $now = Carbon::now();
         $new_format = Carbon::parse($category_participant->start_event);
         if ($now > $new_format) {
             throw new BLoCException("event telah lewat");
         }
         if ($new_format->diffInDays($now) < 1) {
-            throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 24 jam sebelum berlangsungnya event");
+            throw new BLoCException("tidak dapat refund, minimal refund adalah 24 jam sebelum berlangsungnya event");
+        }
+
+        $participant->update([
+            "status" => 2
+        ]);
+
+        $transaction_log = TransactionLog::find($participant->transaction_log_id);
+        if (!$transaction_log) {
+            throw new BLoCException("data transaksi tidak ditemukan");
+        }
+
+        $transaction_log->update([
+            "status" => 2
+        ]);
+
+        if ($category_participant->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
+            return $this->refundIndividu($participant_id, $category_participant->id, $user->id);
+        } else {
+            return $this->refundTeam($participant->id);
+        }
+
+        return $participant;
+    }
+
+    protected function validation($parameters)
+    {
+        return [
+            "participant_id" => "required|integer"
+        ];
+    }
+
+    private function refundTeam($participant_id)
+    {
+        $participant = ArcheryEventParticipant::find($participant_id);
+        if (!$participant) {
+            throw new BLoCException("participant tidak tersedia");
+        }
+
+        $participant_member_team =  ParticipantMemberTeam::where("participant_id", $participant_id)->get();
+        if ($participant_member_team->count() > 0) {
+            foreach ($participant_member_team as $pmt) {
+                $pmt->delete();
+            }
+        }
+
+        return $participant;
+    }
+
+    private function refundIndividu($participant_id, $category_id, $user_id)
+    {
+        $participant = ArcheryEventParticipant::find($participant_id);
+        if (!$participant) {
+            throw new BLoCException("participant tidak tersedia");
+        }
+
+        $category_participant = ArcheryEventCategoryDetail::find($category_id);
+        if (!$category_participant) {
+            throw new BLoCException("kategori tidak ditemukan");
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            throw new BLoCException("user tidak tersedia");
+        }
+
+        $participant_memmber = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
+        if (!$participant_memmber) {
+            throw new BLoCException("data participant member tidak tersedia");
         }
 
         $category_detai_team = ArcheryEventCategoryDetail::where('event_id', $category_participant->event_id)
@@ -80,19 +148,6 @@ class Refund extends Retrieval
             }
         }
 
-        $participant->update([
-            "status" => 2
-        ]);
-
-        $transaction_log = TransactionLog::find($participant->transaction_log_id);
-        if (!$transaction_log) {
-            throw new BLoCException("data transaksi tidak ditemukan");
-        }
-
-        $transaction_log->update([
-            "status" => 2
-        ]);
-
         $participant_member_team =  ParticipantMemberTeam::where("participant_id", $participant->id)->first();
         if (!$participant_member_team) {
             throw new BLoCException("data participant member team tidak tersedia");
@@ -113,12 +168,5 @@ class Refund extends Retrieval
         $member_number_prefix->delete();
 
         return $participant;
-    }
-
-    protected function validation($parameters)
-    {
-        return [
-            "participant_id" => "required|integer"
-        ];
     }
 }

@@ -136,15 +136,17 @@ class AddEventOrder extends Transactional
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->first();
-        if ($isExist) {
-            if ($isExist->status == 1) {
-                throw new BLoCException("event dengan kategori ini sudah di ikuti");
-            }
-            $isExist_transaction_log = TransactionLog::find($isExist->transaction_log_id);
-            if ($isExist_transaction_log) {
-                if ($isExist_transaction_log->status == 4 && $isExist_transaction_log->expired_time > time()) {
-                    throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
+            ->where('user_id', $user->id)->get();
+        if ($isExist->count() > 0) {
+            foreach ($isExist as $ie) {
+                if ($ie->status == 1) {
+                    throw new BLoCException("event dengan kategori ini sudah di ikuti");
+                }
+                $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
+                if ($ie_transaction_log) {
+                    if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
+                        throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
+                    }
                 }
             }
         }
