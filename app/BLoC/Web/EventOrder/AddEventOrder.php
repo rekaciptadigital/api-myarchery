@@ -386,8 +386,8 @@ class AddEventOrder extends Transactional
             if($check_register_same_category >= 1){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->where('archery_event_participants.club_id', $club_member->club_id)
-                ->where("archery_event_participants.status", 4);
-                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->count();
                 if($check_panding > 0)
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
@@ -398,8 +398,8 @@ class AddEventOrder extends Transactional
             if($check_register_same_category >= 2){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->where('archery_event_participants.club_id', $club_member->club_id)
-                ->where("archery_event_participants.status", 4);
-                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->count();
                 if($check_panding > 0)
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");

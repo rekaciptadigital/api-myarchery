@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\BudRest;
 
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Transactional;
@@ -68,16 +69,19 @@ class SetBudRest extends Transactional
                 $budrest->type =  $data['type'];
                 $budrest->save();
             }else{
-                $check_qualification_time= ArcheryEventCategoryDetail::select('qualification_start_datetime' )
-                ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
-                ->where('archery_event_category_details.id',$data['archery_event_category_id'])->first();
+                $check_qualification_time= ArcheryEventQualificationTime::where('category_detail_id',$data['archery_event_category_id'])->first();
 
                 $now = Carbon::now();
 
-                if (is_null($check_qualification_time->qualification_start_datetime) || $now>= $check_qualification_time->qualification_start_datetime){
+                if (is_null($check_qualification_time->event_start_datetime)){
+                    throw new BLoCException("set jadwal kualifikasi terlebih dahulu ");
+                }
+
+                if (strtotime($check_qualification_time->event_start_datetime) < strtotime('now')){
                     throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
                     
                 }
+
                 $budrest->archery_event_category_id = $data['archery_event_category_id'];
                 $budrest->bud_rest_start =  $data['bud_rest_start'];
                 $budrest->bud_rest_end =  $data['bud_rest_end'];
