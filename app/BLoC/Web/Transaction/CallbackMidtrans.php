@@ -11,6 +11,12 @@ class CallbackMidtrans extends Transactional
     public function getDescription()
     {
         return "";
+        /* 
+            db insert :
+                        - archery_event_participant_member_numbers
+                        - archery_event_sualification_schedule_full_days
+                        - participant_member_teams
+        */    
     }
 
     protected function process($parameters)

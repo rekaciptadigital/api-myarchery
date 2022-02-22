@@ -221,15 +221,15 @@ class PaymentGateWay
         }
 
         if ($event_category_detail->category_team == 'Team') {
-            $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
-            foreach ($temporary_participant_member as $tmp) {
-                ParticipantMemberTeam::create([
-                    'participant_id' => $tmp->participant_id,
-                    'participant_member_id' => $tmp->participant_member_id,
-                    'event_category_id' => $event_category_detail->id,
-                    'type' => $event_category_detail->category_team,
-                ]);
-            }
+            // $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
+            // foreach ($temporary_participant_member as $tmp) {
+            //     ParticipantMemberTeam::create([
+            //         'participant_id' => $tmp->participant_id,
+            //         'participant_member_id' => $tmp->participant_member_id,
+            //         'event_category_id' => $event_category_detail->id,
+            //         'type' => $event_category_detail->category_team,
+            //     ]);
+            // }
         } else {
             $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
             $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
