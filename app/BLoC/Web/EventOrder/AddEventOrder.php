@@ -383,7 +383,7 @@ class AddEventOrder extends Transactional
         ->count();
     
         if ($gender_category == 'mix') {
-            if($check_register_same_category >= 1){
+            if($check_register_same_category >= 2){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where('archery_event_participants.club_id', $club_member->club_id)
@@ -444,15 +444,6 @@ class AddEventOrder extends Transactional
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
-
-        foreach ($participant_member_id as $pm) {
-            TemporaryParticipantMember::create([
-                'user_id' => $pm->user_id,
-                'participant_member_id' => $pm->id,
-                'participant_id' => $participant_new->id,
-                'event_category_id' => $event_category_detail->id
-            ]);
-        }
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();
         $res = [
