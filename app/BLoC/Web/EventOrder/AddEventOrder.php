@@ -44,7 +44,7 @@ class AddEventOrder extends Transactional
     protected function process($parameters)
     {
         $user = Auth::guard('app-api')->user();
-        $team_name = $parameters->get('team_name');
+        $team_name = $parameters->get('team_name') ? $parameters->get('team_name') : "";
         $event_category_id = $parameters->get('event_category_id');
         $user_id = $parameters->get('user_id');
 
@@ -73,9 +73,6 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event);
         } else {
-            Validator::make($parameters->all(), [
-                "team_name" => "required|string"
-            ])->validate();
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name);
         }
     }
