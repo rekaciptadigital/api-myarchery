@@ -15,6 +15,22 @@ use DAI\Utils\Abstracts\Retrieval;
 
 class GetParticipantScoreQualification extends Retrieval
 {
+    var $total_per_points = [
+        "" => 0,
+        "1" => 0,
+        "2" => 0,
+        "3" => 0,
+        "4" => 0,
+        "5" => 0,
+        "6" => 0,
+        "7" => 0,
+        "8" => 0,
+        "9" => 0,
+        "10" => 0,
+        "x" => 0,
+        "m" => 0,
+    ];
+
     public function getDescription()
     {
         return "";
@@ -70,11 +86,14 @@ class GetParticipantScoreQualification extends Retrieval
                                 ->leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->get();
                 foreach ($participants as $key => $value) {
                     $club_members = [];
-                    $total_per_point = [];
+                    $total_per_point = $this->total_per_points;
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
                     foreach ($qualification_rank as $member_rank) {
                         if($value->club_id == $member_rank["club_id"]){
+                            if($member_rank["total"]  < 1){
+                                continue;
+                            }
                             foreach ($member_rank["total_per_points"] as $p => $t) {
                                 $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
                             }
@@ -124,11 +143,14 @@ class GetParticipantScoreQualification extends Retrieval
                         ->leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->get();
                 foreach ($participants as $key => $value) {
                     $club_members = [];
-                    $total_per_point = [];
+                    $total_per_point = $this->total_per_point;
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
                     foreach ($qualification_male as $male_rank) {
                         if($value->club_id == $male_rank["club_id"]){
+                            if($male_rank["total"]  < 1){
+                                continue;
+                            }
                             foreach ($male_rank["total_per_points"] as $p => $t) {
                                 $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
                             }
@@ -140,6 +162,9 @@ class GetParticipantScoreQualification extends Retrieval
                     }
                     foreach ($qualification_female as $female_rank) {
                         if($value->club_id == $female_rank["club_id"]){
+                            if($female_rank["total"]  < 1){
+                                continue;
+                            }
                             foreach ($female_rank["total_per_points"] as $p => $t) {
                                 $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
                             }
