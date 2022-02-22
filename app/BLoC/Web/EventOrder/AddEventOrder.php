@@ -442,15 +442,6 @@ class AddEventOrder extends Transactional
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$event_category_detail->fee, $event_category_detail->event_name)
             ->createSnap();
-
-        foreach ($participant_member_id as $pm) {
-            TemporaryParticipantMember::create([
-                'user_id' => $pm->user_id,
-                'participant_member_id' => $pm->id,
-                'participant_id' => $participant_new->id,
-                'event_category_id' => $event_category_detail->id
-            ]);
-        }
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();
         $res = [
