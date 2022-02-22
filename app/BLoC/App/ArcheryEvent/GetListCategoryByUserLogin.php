@@ -31,7 +31,6 @@ class GetListCategoryByUserLogin extends Retrieval
         $data = DB::table('archery_event_category_details')->select(
             'archery_event_participants.id',
             'archery_event_participants.user_id',
-            'archery_event_participants.user_id',
             'archery_event_participants.email',
             'archery_event_participants.phone_number',
             'archery_event_participants.age',
