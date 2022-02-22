@@ -142,15 +142,17 @@ class AddEventOrder extends Transactional
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->first();
-        if ($isExist) {
-            if ($isExist->status == 1) {
-                throw new BLoCException("event dengan kategori ini sudah di ikuti");
-            }
-            $isExist_transaction_log = TransactionLog::find($isExist->transaction_log_id);
-            if ($isExist_transaction_log) {
-                if ($isExist_transaction_log->status == 4 && $isExist_transaction_log->expired_time > time()) {
-                    throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
+            ->where('user_id', $user->id)->get();
+        if ($isExist->count() > 0) {
+            foreach ($isExist as $ie) {
+                if ($ie->status == 1) {
+                    throw new BLoCException("event dengan kategori ini sudah di ikuti");
+                }
+                $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
+                if ($ie_transaction_log) {
+                    if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
+                        throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran");
+                    }
                 }
             }
         }
@@ -369,6 +371,7 @@ class AddEventOrder extends Transactional
         $time_now = time();
 
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+        ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
         ->where('archery_event_participants.club_id', $club_member->club_id)
         ->where(function ($query) use ($time_now) {
             $query->where("archery_event_participants.status", 1);
@@ -382,6 +385,7 @@ class AddEventOrder extends Transactional
         if ($gender_category == 'mix') {
             if($check_register_same_category >= 1){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where('archery_event_participants.club_id', $club_member->club_id)
                 ->where("archery_event_participants.status", 4)
                 ->where("transaction_logs.expired_time", ">", $time_now)
@@ -394,6 +398,7 @@ class AddEventOrder extends Transactional
         } else {
             if($check_register_same_category >= 2){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where('archery_event_participants.club_id', $club_member->club_id)
                 ->where("archery_event_participants.status", 4)
                 ->where("transaction_logs.expired_time", ">", $time_now)
