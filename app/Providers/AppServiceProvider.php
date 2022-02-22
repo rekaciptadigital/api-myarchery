@@ -34,6 +34,7 @@ use App\BLoC\App\ArcheryEvent\GetEventCategoryDetail;
 use App\BLoC\App\ArcheryEvent\GetListCategoryByUserLogin;
 use App\BLoC\App\ArcheryEvent\GetListEventByUserLogin;
 use App\BLoC\App\ArcheryEvent\GetParticipantMemberByCategory;
+use App\BLoC\App\ArcheryEvent\Refund;
 use App\BLoC\App\ArcheryEvent\UpdateParticipantMember;
 use App\BLoC\App\UserAuth\UpdateUserProfile;
 use App\BLoC\App\UserAuth\UpdateUserAvatar;
@@ -100,6 +101,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getOrderEventOfficial", GetOrderEventOfficial::class);
         $this->registerService("getEventOfficialDetail", GetEventOfficialDetail::class);
         $this->registerService("getListOfficial", GetListOfficial::class);
+        $this->registerService("refund", Refund::class);
     }
 
     private function registerService($serviceName, $className)

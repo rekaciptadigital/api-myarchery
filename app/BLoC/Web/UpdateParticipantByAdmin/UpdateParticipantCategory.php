@@ -83,7 +83,7 @@ class UpdateParticipantCategory extends Transactional
                     ->first();
 
                 if ($participant_member_team) {
-                    throw new BLoCException("tidak dapat mengubah club karena anda telah terdaftar di team");
+                    throw new BLoCException("tidak dapat mengubah kategori karena anda telah terdaftar di team");
                 }
             }
         }
@@ -108,7 +108,7 @@ class UpdateParticipantCategory extends Transactional
 
         if ($category->max_age != 0) {
             if ($user->age == null) {
-                throw new BLoCException("tgl user belum di set");
+                throw new BLoCException("tgl lahir user belum di set");
             }
             $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
@@ -142,8 +142,12 @@ class UpdateParticipantCategory extends Transactional
         $now = Carbon::now();
         $new_format = Carbon::parse($category->start_event);
 
+        if ($now > $new_format) {
+            throw new BLoCException("event telah lewat");
+        }
+
         if ($new_format->diffInDays($now) < 1) {
-            throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 1 hari sebelum berlangsungnya event");
+            throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 24 jam sebelum berlangsungnya event");
         }
 
         $participant_count = ArcheryEventParticipant::countEventUserBooking($category->id);
