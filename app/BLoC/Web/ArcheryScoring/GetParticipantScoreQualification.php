@@ -143,7 +143,7 @@ class GetParticipantScoreQualification extends Retrieval
                         ->leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->get();
                 foreach ($participants as $key => $value) {
                     $club_members = [];
-                    $total_per_point = $this->total_per_point;
+                    $total_per_point = $this->total_per_points;
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
                     foreach ($qualification_male as $male_rank) {
