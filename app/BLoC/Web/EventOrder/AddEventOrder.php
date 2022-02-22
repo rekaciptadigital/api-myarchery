@@ -44,7 +44,7 @@ class AddEventOrder extends Transactional
     protected function process($parameters)
     {
         $user = Auth::guard('app-api')->user();
-        $team_name = $parameters->get('team_name');
+        $team_name = $parameters->get('team_name') ? $parameters->get('team_name') : "";
         $event_category_id = $parameters->get('event_category_id');
         $user_id = $parameters->get('user_id');
 
@@ -73,9 +73,6 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event);
         } else {
-            Validator::make($parameters->all(), [
-                "team_name" => "required|string"
-            ])->validate();
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name);
         }
     }
@@ -386,8 +383,8 @@ class AddEventOrder extends Transactional
             if($check_register_same_category >= 1){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->where('archery_event_participants.club_id', $club_member->club_id)
-                ->where("archery_event_participants.status", 4);
-                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->count();
                 if($check_panding > 0)
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
@@ -398,8 +395,8 @@ class AddEventOrder extends Transactional
             if($check_register_same_category >= 2){
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->where('archery_event_participants.club_id', $club_member->club_id)
-                ->where("archery_event_participants.status", 4);
-                ->where("transaction_logs.expired_time", ">", $time_now);
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->count();
                 if($check_panding > 0)
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
