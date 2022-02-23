@@ -482,9 +482,9 @@ class ArcheryScoring extends Model
     protected function getScoringRankByCategoryId($event_category_id,$score_type,array $sessions=[1,2]){
         $participants = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
-            "archery_event_participant_members.name",
+            "users.name",
             "archery_event_participant_members.user_id",
-            "archery_event_participant_members.gender",
+            "users.gender",
             "archery_event_participants.event_id",
             "archery_clubs.name as club_name",
             "archery_clubs.id as club_id",
@@ -492,6 +492,7 @@ class ArcheryScoring extends Model
             "archery_event_qualification_schedule_full_day.target_face"
         )->
         join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")->
+        join("users","archery_event_participant_members.user_id","=","users.id")->
         leftJoin("archery_clubs","archery_event_participants.club_id","=","archery_clubs.id")->
         leftJoin("archery_event_qualification_schedule_full_day","archery_event_participant_members.id","=","archery_event_qualification_schedule_full_day.participant_member_id")->
         where('archery_event_participants.status', 1)->
