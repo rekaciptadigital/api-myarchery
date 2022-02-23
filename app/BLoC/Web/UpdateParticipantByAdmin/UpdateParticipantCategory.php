@@ -51,6 +51,10 @@ class UpdateParticipantCategory extends Transactional
             throw new BLoCException("Kategori tidak ditemukan");
         }
 
+        if ($category->category_team != ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
+            throw new BLoCException("tidak bisa ubah ke kategori beregu");
+        }
+
         $event = ArcheryEvent::find($category->event_id);
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
@@ -168,7 +172,11 @@ class UpdateParticipantCategory extends Transactional
         }
 
         $partticipant->update([
-            "event_category_id" => $category->id
+            "event_category_id" => $category->id,
+            "team_category_id" => $category->team_category_id,
+            "age_category_id" => $category->age_category_id,
+            "competition_category_id" => $category->competition_category_id,
+            "distance_id" => $category->distance_id
         ]);
 
         $participant_member_team_old = ParticipantMemberTeam::where('participant_id', $partticipant->id)
