@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionLog extends Model
 {
+    protected $guarded = ["id"];
+
     protected $status = [
         4 => "Menunggu Pembayaran",
         1 => "Di Ikuti",

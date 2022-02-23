@@ -9,6 +9,8 @@ class ArcheryEventParticipantMemberNumber extends Model
     protected $table = 'archery_event_participant_member_numbers';
     protected $fillable = ['prefix', 'user_id', 'event_id'];
 
+    protected $primaryKey = "sequence";
+
     public static function getMemberNumber($event_id, $user_id)
     {
         $number = "";
