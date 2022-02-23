@@ -25,7 +25,7 @@ class BudRest extends Model
         $path = 'asset/score_sheet/'.$category->id.'/';
         if(!$update_file){
                 if (file_exists(public_path()."/".$path."score_sheet_" . $category->id . ".pdf")) {
-                return ["url"=>public_path()."/".$path."score_sheet_" . $category->id . ".pdf#oldData","member_not_have_budrest"=>[]];
+                return ["url"=>$path."score_sheet_" . $category->id . ".pdf#oldData","member_not_have_budrest"=>[]];
             }
         }
         $mpdf = new Mpdf([
