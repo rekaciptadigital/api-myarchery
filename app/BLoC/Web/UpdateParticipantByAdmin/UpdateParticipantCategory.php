@@ -60,6 +60,10 @@ class UpdateParticipantCategory extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
+        if ($partticipant->event_id != $event->id) {
+            throw new BLoCException("event tidak sama");
+        }
+
         if ($event->admin_id != $admin->id) {
             throw new BLoCException("forbiden");
         }
