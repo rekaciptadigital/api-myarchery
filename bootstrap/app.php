@@ -113,6 +113,10 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->configure('dompdf');
 $app->configure('mail');
 
+if ($app->environment() !== 'production') {
+    $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+}
+
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
