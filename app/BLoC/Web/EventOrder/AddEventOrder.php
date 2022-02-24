@@ -23,6 +23,7 @@ use Carbon\Carbon as CarbonCarbon;
 use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redis;
 
 class AddEventOrder extends Transactional
 {
@@ -175,7 +176,8 @@ class AddEventOrder extends Transactional
             $participant->status = 1;
             $participant->save();
             ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $user->id, $event_category_detail->event_id);
-
+            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
+            Redis::hset($key,$event_category_id,$event_category_id);
             ArcheryEventQualificationScheduleFullDay::create([
                 'qalification_time_id' => $qualification_time->id,
                 'participant_member_id' => $member->id,
@@ -391,7 +393,7 @@ class AddEventOrder extends Transactional
                 if($check_panding > 0)
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
                 else
-                    throw new BLoCException("club anda sudah terdaftar 1 kali di kategory ini");
+                    throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
             }
         } else {
             if($check_register_same_category >= 2){

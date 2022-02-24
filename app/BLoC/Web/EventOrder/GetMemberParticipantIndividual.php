@@ -46,7 +46,6 @@ class GetMemberParticipantIndividual extends Retrieval
                 }
             })->get();
 
-
         $array_participant = [];
         // cek apakah terdapat category individual
         if ($category->count() > 0) {

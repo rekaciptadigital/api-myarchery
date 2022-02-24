@@ -17,6 +17,7 @@ use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Redis;
 
 class PaymentGateWay
 {
@@ -239,7 +240,8 @@ class PaymentGateWay
                 throw new BLoCException("user not found");
             }
             ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
-
+            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
+            Redis::hset($key,$event_category_id,$event_category_id);
             ArcheryEventQualificationScheduleFullDay::create([
                 'qalification_time_id' => $qualification_time->id,
                 'participant_member_id' => $participant_member->id,
