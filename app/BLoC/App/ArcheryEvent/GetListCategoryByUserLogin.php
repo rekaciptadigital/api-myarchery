@@ -51,30 +51,32 @@ class GetListCategoryByUserLogin extends Retrieval
         $data_all = [];
         if ($data->count() > 0) {
             foreach ($data as $d) {
-                $category_team = ArcheryEventCategoryDetail::select(
-                    "archery_event_category_details.*",
-                    'archery_event_participants.id as participant_id',
-                    'archery_event_participants.user_id',
-                    'archery_event_participants.email',
-                    'archery_event_participants.phone_number',
-                    'archery_event_participants.age',
-                    'archery_event_participants.gender',
-                    'archery_event_participants.status',
-                    'archery_event_participants.transaction_log_id',
-                    'archery_event_participants.event_category_id',
-                    'archery_event_participants.team_name',
-                    'archery_event_participants.club_id')->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
-                    ->where("archery_event_participants.age_category_id", $d->age_category_id)
-                    ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
-                    ->where("archery_event_participants.distance_id", $d->distance_id)
-                    ->where("archery_event_participants.type", "team")
-                    ->where("archery_event_participants.club_id", $d->club_id)
-                    ->first();
+                    if ($d->category_team == "team") {
+                        continue;
+                    }
+                    $category_team = ArcheryEventCategoryDetail::select(
+                        "archery_event_category_details.*",
+                        'archery_event_participants.id as participant_id',
+                        'archery_event_participants.user_id',
+                        'archery_event_participants.email',
+                        'archery_event_participants.phone_number',
+                        'archery_event_participants.age',
+                        'archery_event_participants.gender',
+                        'archery_event_participants.status',
+                        'archery_event_participants.transaction_log_id',
+                        'archery_event_participants.event_category_id',
+                        'archery_event_participants.team_name',
+                        'archery_event_participants.club_id')->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
+                        ->where("archery_event_participants.age_category_id", $d->age_category_id)
+                        ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
+                        ->where("archery_event_participants.distance_id", $d->distance_id)
+                        ->where("archery_event_participants.type", "team")
+                        ->where("archery_event_participants.club_id", $d->club_id)
+                        ->first();
 
-                if ($category_team) {
-                    array_push($data_all, $category_team);
-                }
-
+                    if ($category_team) {
+                        array_push($data_all, $category_team);
+                    }
                 array_push($data_all, $d);
             }
         }
