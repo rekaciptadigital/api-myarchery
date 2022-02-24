@@ -265,9 +265,7 @@ class AddParticipantMemberScore extends Transactional
     {
         if($parameters->type == 1)
         return [
-            'schedule_id' => 'required|exists:archery_qualification_schedules,id',
             'shoot_scores' => 'required',
-            'target_no' => 'required'
         ];
 
         return [];

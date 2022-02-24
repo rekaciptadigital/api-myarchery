@@ -46,8 +46,7 @@ class UpdateVerifikasiUser extends Retrieval
             }
 
             Validator::make($parameters->all(), [
-                'email' => [
-                    'nik',
+                'nik' => [
                     Rule::unique('users')->ignore($user->id),
                 ],
             ])->validate();

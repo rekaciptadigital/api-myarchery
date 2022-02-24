@@ -1,27 +1,22 @@
 <?php
 
-namespace App\BLoC\App\ArcheryEvent;
+namespace App\BLoC\Web\UpdateParticipantByAdmin;
 
-use App\Models\Admin;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventMoreInformation;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
-use App\Models\City;
 use App\Models\ParticipantMemberTeam;
-use App\Models\Provinces;
 use App\Models\TransactionLog;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class Refund extends Retrieval
+class Refund extends Transactional
 {
     public function getDescription()
     {
@@ -30,7 +25,8 @@ class Refund extends Retrieval
 
     protected function process($parameters)
     {
-        $user = Auth::guard('app-api')->user();
+        $admin = Auth::user();
+
         $participant_id = $parameters->get("participant_id");
 
         $participant = ArcheryEventParticipant::find($participant_id);
@@ -38,7 +34,17 @@ class Refund extends Retrieval
             throw new BLoCException("participant tidak tersedia");
         }
 
-        if ($participant->user_id != $user->id) {
+        $user = User::find($participant->user_id);
+        if (!$user) {
+            throw new BLoCException("user tidak ada");
+        }
+
+        $event = ArcheryEvent::find($participant->event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
+
+        if ($event->admin_id != $admin->id) {
             throw new BLoCException("forbiden");
         }
 
@@ -61,7 +67,7 @@ class Refund extends Retrieval
         }
 
         $participant->update([
-            "status" => 2
+            "status" => 5
         ]);
 
         $transaction_log = TransactionLog::find($participant->transaction_log_id);
@@ -70,7 +76,7 @@ class Refund extends Retrieval
         }
 
         $transaction_log->update([
-            "status" => 2
+            "status" => 5
         ]);
 
         if ($category_participant->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
