@@ -87,6 +87,8 @@ use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
 use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadPdf;
+use App\BLoC\Web\EliminationScoreSheet\DownloadEliminationScoreSheet;
+
 use App\BLoC\Web\ArcheryUser\AcceptVerifyUser;
 use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
@@ -186,6 +188,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
 
         $this->registerService("downloadPdf", DownloadPdf::class);
+
+        $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
         $this->registerService("refund", Refund::class);

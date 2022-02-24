@@ -14,6 +14,7 @@ class TransactionLog extends Model
         1 => "Di Ikuti",
         2 => "Kadarluarsa",
         3 => "Gagal",
+        5 => "Refund"
     ];
 
     protected function getStatus($status_id)
