@@ -2,11 +2,8 @@
 
 namespace App\BLoC\App\ArcheryEventIdcard;
 
-use App\Models\ArcheryEvent;
+use App\Models\ParticipantMemberTeam;
 use App\Models\ArcheryEventIdcardTemplate;
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Libraries\PdfLibrary;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -24,42 +21,34 @@ class GetDownloadCard extends Retrieval
 
     protected function process($parameters)
     {
-        $participant_member_id = $parameters->get('participant_member_id');
+        $participant_member_team = $parameters->get('participant_member_team');
         $user = Auth::guard('app-api')->user();
 
-        $archery_event_participant_member = ArcheryEventParticipantMember::find($participant_member_id);
-        if(!$archery_event_participant_member) throw new BLoCException("Data tidak ditemukan");
-
-        $participant_id = $archery_event_participant_member->archery_event_participant_id;
-        
-        $detail_member  = ArcheryEventParticipantMember::select('archery_event_participant_members.*', 'archery_event_participants.event_id', 'archery_event_participants.event_category_id','archery_event_participants.club_id',DB::RAW('archery_event_participants.id as partisipant'))
-        ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-        ->where('archery_event_participants.status', 1)
-        ->where('archery_event_participant_members.id', $participant_member_id)
-        ->where('archery_event_participant_members.user_id', $user['id'])
+        $find_participant_member_team = ParticipantMemberTeam::select('users.name','archery_event_participants.event_id','archery_event_participants.user_id','participant_member_teams.participant_id','archery_event_participants.club_id')
+        ->where('participant_member_teams.id',$participant_member_team)
+        ->leftJoin("archery_event_participants","archery_event_participants.id","participant_member_teams.participant_id")
+        ->leftJoin("users","users.id","archery_event_participants.user_id")
         ->first();
-       
 
-        if(!$detail_member) throw new BLoCException("Anda tidak mengikuti event ini");
-
-        $archery_event  = ArcheryEvent::select('id', 'event_name', 'admin_id')->where('id', $detail_member->event_id)->first();
-        $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $archery_event->id)->first();
-        if(!$idcard_event) throw new BLoCException("Event ID Card tidak ditemukan");
-
-        $idcard_category = ArcheryEventIdcardTemplate::getCategoryLabel($participant_id, $user['id']);
-        if($idcard_category == "") throw new BLoCException("Kategori tidak ditemukan");
+        if(!$find_participant_member_team) throw new BLoCException("Data partisipan member team tidak ditemukan");
+        if($find_participant_member_team->user_id != $user['id'] ) throw new BLoCException("Data partisipan member team bukan milik dari user yang login");
         
-        $prefix = ArcheryEventIdcardTemplate::setPrefix($participant_id, $archery_event->id);
+        $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $find_participant_member_team->event_id)->first();
+        if(!$idcard_event) throw new BLoCException("Template event id card tidak ditemukan");
+
+        $category = ArcheryEventIdcardTemplate::getCategoryLabel($find_participant_member_team->participant_id, $find_participant_member_team->user_id);
+        if($category == "") throw new BLoCException("Kategori tidak ditemukan");
+        
+        $prefix = ArcheryEventIdcardTemplate::setPrefix($find_participant_member_team->participant_id, $find_participant_member_team->event_id);
         if($prefix == "") throw new BLoCException("Prefix gagal digenerate");
         
-        $club_find = ArcheryClub::find($detail_member->club_id);
-        if(!$club_find){
+        $club = ArcheryClub::find($find_participant_member_team->club_id);
+        if(!$club){
             $club='';
         }else{
-            $club=$club_find->name;
+            $club=$club->name;
         }
 
-        $member_id = ArcheryEventParticipantMemberNumber::getMemberNumber($archery_event->id, $user['id']);
         $html_template = base64_decode($idcard_event->html_template);
         
         if(!$idcard_event->background){
@@ -77,11 +66,11 @@ class GetDownloadCard extends Retrieval
         //dd($background);
         $final_doc = str_replace(
             ['{%member_name%}', '{%event_category%}','{%club%}',"background:url('')",'<div></div>'], 
-            [$archery_event_participant_member->name, $idcard_category,$club,$background,$logo],
+            [$find_participant_member_team->name, $category,$club,$background,$logo],
             $html_template
         );
                    
-        $file_name = "idcard_".$participant_member_id.".pdf";
+        $file_name = "idcard_".$participant_member_team.".pdf";
        
         $generate_idcard = PdfLibrary::setFinalDoc($final_doc)->setFileName($file_name)->generateIdcard();
 
