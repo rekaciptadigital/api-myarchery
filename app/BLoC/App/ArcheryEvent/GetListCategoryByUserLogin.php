@@ -48,6 +48,7 @@ class GetListCategoryByUserLogin extends Retrieval
             ->where("archery_event_participants.status", 1)
             ->get();
 
+        $data_all = [];
         if ($data->count() > 0) {
             foreach ($data as $d) {
                 $category_team = ArcheryEventCategoryDetail::select(
