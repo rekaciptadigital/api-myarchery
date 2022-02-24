@@ -90,8 +90,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
+            $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
         });
-        $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
 
         
 
