@@ -67,7 +67,7 @@ class Refund extends Transactional
         }
 
         $participant->update([
-            "status" => 2
+            "status" => 5
         ]);
 
         $transaction_log = TransactionLog::find($participant->transaction_log_id);
@@ -76,7 +76,7 @@ class Refund extends Transactional
         }
 
         $transaction_log->update([
-            "status" => 2
+            "status" => 5
         ]);
 
         if ($category_participant->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
