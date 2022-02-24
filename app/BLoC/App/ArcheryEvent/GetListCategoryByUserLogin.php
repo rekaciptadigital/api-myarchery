@@ -42,8 +42,7 @@ class GetListCategoryByUserLogin extends Retrieval
             'archery_event_participants.transaction_log_id',
             'archery_event_participants.event_category_id',
             'archery_event_participants.team_name',
-            'archery_event_participants.club_id'
-        )->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
+            'archery_event_participants.club_id')->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
             ->where('archery_event_category_details.event_id', $event->id)
             ->where("archery_event_participants.user_id", $user->id)
             ->where("archery_event_participants.status", 1)
@@ -63,9 +62,7 @@ class GetListCategoryByUserLogin extends Retrieval
                     'archery_event_participants.transaction_log_id',
                     'archery_event_participants.event_category_id',
                     'archery_event_participants.team_name',
-                    'archery_event_participants.club_id',
-                )
-                    ->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
+                    'archery_event_participants.club_id')->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
                     ->where("archery_event_participants.age_category_id", $d->age_category_id)
                     ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
                     ->where("archery_event_participants.distance_id", $d->distance_id)
