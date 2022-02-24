@@ -97,7 +97,7 @@ class GetListCategoryByUserLogin extends Retrieval
                     ->first();
 
                 if ($category_team) {
-                    array_push($data_all, $category_team );
+                    array_push($data_all, $category_team);
                 }
 
                 array_push($data_all, $d);
