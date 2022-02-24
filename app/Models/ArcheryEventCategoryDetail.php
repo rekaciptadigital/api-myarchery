@@ -58,8 +58,12 @@ class ArcheryEventCategoryDetail extends Model
 
     public function getCategoryTeamAttribute()
     {
+        $type = null;
         $team = ArcheryEventMasterTeamCategory::where('id', $this->team_category_id)->first();
-        return $this->attributes['category_team'] = $team->type;
+        if ($team) {
+            $type = $team->type;
+        }
+        return $this->attributes['category_team'] = $type;
     }
 
     public function getGenderCategoryAttribute()

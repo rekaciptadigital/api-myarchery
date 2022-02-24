@@ -90,11 +90,11 @@
                                 </form>
                             @endif
                             <form action="reject" method="post" style="display: inline-block">
-                                    <input type="hidden" name="user_id" value="{{ $d->id }}">
-                                    <input type="submit" value="Reject" class="btn btn-sm btn-danger">
-</br><label>Reason reject</label>
-                                    <textarea name="reason" ></textarea>
-                                </form>
+                                <input type="hidden" name="user_id" value="{{ $d->id }}">
+                                <input type="submit" value="Reject" class="btn btn-sm btn-danger">
+                                </br><label>Reason reject</label>
+                                <textarea name="reason"></textarea>
+                            </form>
                         </td>
                     </tr>
                 @endforeach
