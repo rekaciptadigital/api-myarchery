@@ -104,6 +104,8 @@ class GetListCategoryByUserLogin extends Retrieval
             }
         }
 
+        return $data_all;
+
         $output = [];
         $output_category = [];
 
