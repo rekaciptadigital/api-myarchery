@@ -28,8 +28,7 @@ class EditArcheryEvent extends Transactional
     {
         $admin = Auth::user();
         $time = time();
-        $event_slug = $time . '-' . Str::slug($parameters->get('event_name'));
-
+        
         $archery_event = ArcheryEvent::find($parameters->get('id'));
         $archery_event->event_type = $parameters->get('event_type');
         if(!empty($parameters->get('poster'))){
@@ -37,7 +36,6 @@ class EditArcheryEvent extends Transactional
         }
         $archery_event->handbook = $parameters->get('handbook') ? $this->saveFile($parameters->get('handbook'), 'handbook', $event_slug, $time) : null;
         $archery_event->event_name = $parameters->get('event_name');
-        $archery_event->event_slug = $event_slug;
         $archery_event->registration_start_datetime = $parameters->get('registration_start_datetime');
         $archery_event->registration_end_datetime = $parameters->get('registration_end_datetime');
         $archery_event->event_start_datetime = $parameters->get('event_start_datetime');

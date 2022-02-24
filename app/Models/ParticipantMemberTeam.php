@@ -19,10 +19,6 @@ class ParticipantMemberTeam extends Model
         $participant_member_id,
         $type
     ) {
-        if($type == "individual"){
-            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
-            Redis::hset($key,$event_category_id,$event_category_id);
-        }
         return self::create([
             'event_category_id' => $event_category_id,
             'participant_id' => $participant_id,
