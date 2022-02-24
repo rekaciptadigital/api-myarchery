@@ -30,26 +30,6 @@ class GetListCategoryByUserLogin extends Retrieval
             throw new BLoCException("event not found");
         }
 
-        // $data = DB::table('archery_event_category_details')->select(
-        //     'archery_event_participants.id',
-        //     'archery_event_participants.user_id',
-        //     'archery_event_participants.email',
-        //     'archery_event_participants.phone_number',
-        //     'archery_event_participants.age',
-        //     'archery_event_participants.gender',
-        //     'archery_event_participants.status',
-        //     'archery_event_participants.transaction_log_id',
-        //     'archery_event_participants.event_category_id',
-        //     'archery_event_participants.team_name',
-        //     'archery_event_participants.club_id',
-        //     'archery_event_participant_members.id as member_id'
-        // )
-        //     ->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
-        //     ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-        //     ->join('archery_event_participants', 'archery_event_participants.id', '=', 'participant_member_teams.participant_id')
-        //     ->where('archery_event_participant_members.user_id', $user->id)
-        //     ->where('archery_event_category_details.event_id', $event->id)->get();
-
         $data = ArcheryEventCategoryDetail::select(
             "archery_event_category_details.*",
             'archery_event_participants.id as participant_id',
@@ -69,8 +49,6 @@ class GetListCategoryByUserLogin extends Retrieval
             ->where("archery_event_participants.status", 1)
             ->get();
 
-
-        $data_all = [];
         if ($data->count() > 0) {
             foreach ($data as $d) {
                 $category_team = ArcheryEventCategoryDetail::select(
