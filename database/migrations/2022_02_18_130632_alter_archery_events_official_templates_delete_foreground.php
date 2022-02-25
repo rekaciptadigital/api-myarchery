@@ -15,7 +15,6 @@ class AlterArcheryEventsOfficialTemplatesDeleteForeground extends Migration
     {
         Schema::table('archery_event_official_template', function (Blueprint $table) {
             $table->dropColumn('foreground');
-            
         });
     }
 

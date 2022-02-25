@@ -207,6 +207,7 @@ class ArcheryEvent extends Model
                     'quota' => $value->quota,
                     'fee' => $value->fee,
                     'total_participant' => $count_participant,
+                    "closed_register" => true
                 ];
             }
         }
@@ -258,7 +259,8 @@ class ArcheryEvent extends Model
                 $detail['admins'] = $admins_data;;
             }
         }
-
+        $end = $detail['public_information']["event_end_register"];
+        $detail["closed_register"] = strtotime($end) < strtotime('now') ? true : false;
         $detail["total_participant"] = ArcheryEventParticipant::where("event_id",$id)->where("status",1)->count();
         return $detail;
     }

@@ -54,7 +54,6 @@ class FindArcheryEventBySlug extends Retrieval
         $categories = ArcheryEvent::getCategories($archery_event["id"]);
 
         $archery_event["categories"] = $categories;
-
         return $archery_event;
     }
 
