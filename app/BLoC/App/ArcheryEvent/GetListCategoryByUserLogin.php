@@ -41,7 +41,6 @@ class GetListCategoryByUserLogin extends Retrieval
         if ($category_individu->count() > 0) {
             $gender_team_category = $user->gender == "female" ? "female_team" : "male_team";
             foreach ($category_individu as $d) {
-                return $d->club_id;
                 $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $d->age_category_id)
                     ->where("archery_event_participants.club_id", $d->club_id)
                     ->where("archery_event_participants.status", 1)
@@ -60,8 +59,6 @@ class GetListCategoryByUserLogin extends Retrieval
                 array_push($data_all, $d);
             }
         }
-
-        return $data_all;
 
         $output = [];
         $output_category = [];
