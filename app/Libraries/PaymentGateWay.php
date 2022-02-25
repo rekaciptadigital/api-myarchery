@@ -239,6 +239,7 @@ class PaymentGateWay
             if (!$user) {
                 throw new BLoCException("user not found");
             }
+            ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($event_category_detail->id, $user->gender), $participant->id);
             ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
             $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
             Redis::hset($key,$event_category_detail->id,$event_category_detail->id);

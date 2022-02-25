@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\EventOrder;
 
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
@@ -177,6 +178,7 @@ class AddEventOrder extends Transactional
         if ($event_category_detail->fee < 1) {
             $participant->status = 1;
             $participant->save();
+            ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($event_category_detail->id, $user->gender), $participant->id);
             ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $user->id, $event_category_detail->event_id);
             $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
             Redis::hset($key,$event_category_detail->id,$event_category_detail->id);
