@@ -72,9 +72,10 @@ class GetListCategoryByUserLogin extends Retrieval
                     ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
                     ->where("archery_event_participants.distance_id", $d->distance_id)
                     ->where("archery_event_participants.type", "team")
-                    ->where("archery_event_category_details.team_category_id", $gender_team_category)
-                    ->orWhere("archery_event_category_details.team_category_id", 'mix_team')
+                    ->where("archery_event_participants.team_category_id", $gender_team_category)
+                    ->orWhere("archery_event_participants.team_category_id", 'mix_team')
                     ->where("archery_event_participants.club_id", $d->club_id)
+                    ->where("archery_event_participants.status", 1)
                     ->first();
 
                 if ($category_team) {
