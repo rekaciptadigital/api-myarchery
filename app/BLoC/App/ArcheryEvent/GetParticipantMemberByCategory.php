@@ -34,7 +34,6 @@ class GetParticipantMemberByCategory extends Retrieval
         if ($participant->type == "individual") {
             $user_member = User::find($participant->user_id);
         } else {
-            if($participant->team_category_id == mix)
             $gender_category = $participant->team_category_id;
             $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.club_id", $participant->club_id)
