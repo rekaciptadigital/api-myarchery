@@ -42,14 +42,14 @@ class GetListCategoryByUserLogin extends Retrieval
             $gender_team_category = $user->gender == "female" ? "female_team" : "male_team";
             foreach ($category_individu as $d) {
                 $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $d->age_category_id)
+                    ->where("archery_event_participants.club_id", $d->club_id)
+                    ->where("archery_event_participants.status", 1)
+                    ->where("archery_event_participants.event_id", $d->event_id)
                     ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
                     ->where("archery_event_participants.distance_id", $d->distance_id)
                     ->where("archery_event_participants.type", "team")
                     ->where("archery_event_participants.team_category_id", $gender_team_category)
                     ->orWhere("archery_event_participants.team_category_id", 'mix_team')
-                    ->where("archery_event_participants.club_id", $d->club_id)
-                    ->where("archery_event_participants.status", 1)
-                    ->where("archery_event_participants.event_id", $d->event_id)
                     ->first();
 
 
@@ -59,8 +59,6 @@ class GetListCategoryByUserLogin extends Retrieval
                 array_push($data_all, $d);
             }
         }
-
-        return $data_all;
 
         $output = [];
         $output_category = [];
