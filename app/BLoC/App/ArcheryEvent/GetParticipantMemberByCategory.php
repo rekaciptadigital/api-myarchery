@@ -29,18 +29,30 @@ class GetParticipantMemberByCategory extends Retrieval
         $club = ArcheryClub::find($participant->club_id);
 
         $output = [];
-
+        
         $user_member = [];
         if ($participant->type == "individual") {
             $user_member = User::find($participant->user_id);
         } else {
+            if($participant->team_category_id == mix)
+            $gender_category = $participant->team_category_id;
             $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.club_id", $participant->club_id)
                 ->where("archery_event_participants.status", 1)
                 ->where("archery_event_participants.event_id", $participant->event_id)
                 ->where("archery_event_participants.competition_category_id", $participant->competition_category_id)
                 ->where("archery_event_participants.distance_id", $participant->distance_id)
-                ->where("archery_event_participants.type", "individual")
+                ->where(function ($query) use ($gender_category) {
+                    if ($gender_category == "male_team") {
+                        $query->where("archery_event_participants.team_category_id", "individu male");
+                    }
+                    if ($gender_category == "female_team") {
+                        $query->where("archery_event_participants.team_category_id", "individu female");
+                    }
+                    if ($gender_category == "mix_team") {
+                        $query->whereIn("archery_event_participants.team_category_id", ["individu male","individu female"]);
+                    }
+                })
                 ->get();
 
                 if ($category_team->count() > 0) {
