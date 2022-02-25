@@ -54,7 +54,7 @@ class GetListCategoryByUserLogin extends Retrieval
         if ($category_individu->count() > 0) {
             $gender_team_category = $user->gender == "female" ? "female_team" : "male_team";
             foreach ($category_individu as $d) {
-                $category_team = ArcheryEventCategoryDetail::select(
+                $category_team = ArcheryEventParticipant::select(
                     "archery_event_category_details.*",
                     'archery_event_participants.id as participant_id',
                     'archery_event_participants.user_id',
@@ -67,7 +67,7 @@ class GetListCategoryByUserLogin extends Retrieval
                     'archery_event_participants.event_category_id',
                     'archery_event_participants.team_name',
                     'archery_event_participants.club_id'
-                )->join("archery_event_participants", "archery_event_participants.event_category_id", '=', 'archery_event_category_details.id')
+                )->join("archery_event_category_details", "archery_event_category_details.id", '=', 'archery_event_participants.event_category_id')
                     ->where("archery_event_participants.age_category_id", $d->age_category_id)
                     ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
                     ->where("archery_event_participants.distance_id", $d->distance_id)
