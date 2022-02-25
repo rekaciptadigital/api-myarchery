@@ -30,33 +30,32 @@ class GetListCategoryByUserLogin extends Retrieval
             throw new BLoCException("event not found");
         }
 
-        $category_individu = ArcheryEventParticipant::where('archery_event_participants.event_id', $event->id)
+        $data_all = ArcheryEventParticipant::where('archery_event_participants.event_id', $event->id)
             ->where("archery_event_participants.user_id", $user->id)
             ->where("archery_event_participants.status", 1)
-            ->where("archery_event_participants.type", "individual")
             ->get();
 
 
-        $data_all = [];
-        if ($category_individu->count() > 0) {
-            $gender_team_category = $user->gender == "female" ? "female_team" : "male_team";
-            foreach ($category_individu as $d) {
-                $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $d->age_category_id)
-                    ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
-                    ->where("archery_event_participants.distance_id", $d->distance_id)
-                    ->where("archery_event_participants.club_id", $d->club_id)
-                    ->where("archery_event_participants.status", 1)
-                    ->where("archery_event_participants.event_id", $d->event_id)
-                    ->where("archery_event_participants.team_category_id", $gender_team_category)
-                    ->orWhere("archery_event_participants.team_category_id", 'mix_team')
-                    ->first();
+        // $data_all = [];
+        // if ($category_individu->count() > 0) {
+        //     $gender_team_category = $user->gender == "female" ? "female_team" : "male_team";
+        //     foreach ($category_individu as $d) {
+        //         $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $d->age_category_id)
+        //             ->where("archery_event_participants.competition_category_id", $d->competition_category_id)
+        //             ->where("archery_event_participants.distance_id", $d->distance_id)
+        //             ->where("archery_event_participants.club_id", $d->club_id)
+        //             ->where("archery_event_participants.status", 1)
+        //             ->where("archery_event_participants.event_id", $d->event_id)
+        //             ->where("archery_event_participants.team_category_id", $gender_team_category)
+        //             ->orWhere("archery_event_participants.team_category_id", 'mix_team')
+        //             ->first();
 
-                if ($category_team) {
-                    array_push($data_all, $category_team);
-                }
-                array_push($data_all, $d);
-            }
-        }
+        //         if ($category_team) {
+        //             array_push($data_all, $category_team);
+        //         }
+        //         array_push($data_all, $d);
+        //     }
+        // }
 
         $output = [];
         $output_category = [];
