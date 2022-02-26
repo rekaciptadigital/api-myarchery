@@ -70,6 +70,8 @@ class FindParticipantScoreBySchedule extends Retrieval
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number)? $schedule->bud_rest_number.$schedule->target_face : "";
         $output->session = $session;
         $output->is_updated = 1;
+        if(isset($score->is_lock))
+         $output->is_updated = $score->is_lock == 1 ? 0 : 1 ;
         return $output;
     }
 
