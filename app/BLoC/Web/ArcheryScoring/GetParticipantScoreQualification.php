@@ -78,7 +78,6 @@ class GetParticipantScoreQualification extends Retrieval
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id",$team_cat)->first();
                 $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id,1,$session);
-                print_r($category_detail_team->id);exit;
                 
                 $participant_club =[]; 
                 $sequence_club = [];
