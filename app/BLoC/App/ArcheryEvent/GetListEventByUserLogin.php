@@ -20,7 +20,7 @@ class GetListEventByUserLogin extends Retrieval
 
     protected function process($parameters)
     {
-        $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
+        $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 10;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
 
