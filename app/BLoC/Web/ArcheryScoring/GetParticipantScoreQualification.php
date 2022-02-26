@@ -72,7 +72,8 @@ class GetParticipantScoreQualification extends Retrieval
     {
         $team_cat = ($team_category->id) == "male_team" ? "individu male" : "individu female";
                 $category_detail_team = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id",$team_cat)->first();
