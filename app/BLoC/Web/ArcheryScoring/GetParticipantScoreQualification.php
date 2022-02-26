@@ -125,14 +125,16 @@ class GetParticipantScoreQualification extends Retrieval
     private function mixTeamBestOfThree($category_detail,$team_category,$session)
     {
                 $category_detail_male = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu male")->first();
                 $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id,1,$session);
                 
                 $category_detail_female = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu female")->first();
