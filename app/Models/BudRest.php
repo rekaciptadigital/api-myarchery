@@ -80,9 +80,6 @@ class BudRest extends Model
         }
 
         $output['data_member'] = $array_pesrta_baru;
-        if (file_exists(public_path()."/".$path))
-            $this->rrmdir(public_path()."/".$path);
-
         if (!file_exists(public_path()."/".$path)) {
             mkdir(public_path()."/".$path, 0777);
         }
