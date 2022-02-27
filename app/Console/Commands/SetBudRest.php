@@ -100,11 +100,11 @@ class SetBudRest extends Command
                 }
             }
             if($count > 0){
-                $download = BudRest::downloadQualificationScoreSheet($event_category_detail,true);
-                if(count($download["member_not_have_budrest"])){
-                    echo "member_not_have_budrest : ";
-                    print_r($download["member_not_have_budrest"]);
-                }
+                // $download = BudRest::downloadQualificationScoreSheet($event_category_detail,true);
+                // if(count($download["member_not_have_budrest"])){
+                //     echo "member_not_have_budrest : ";
+                //     print_r($download["member_not_have_budrest"]);
+                // }
             }    
             echo "----------------- FINISH ".$event_category_detail." [".$count." data] -----------------\n\n";
         }
