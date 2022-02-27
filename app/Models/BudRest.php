@@ -79,9 +79,12 @@ class BudRest extends Model
         }
 
         $output['data_member'] = $array_pesrta_baru;
+        if (file_exists(public_path()."/".$path))
+            rmdir(public_path()."/".$path);
+
         if (!file_exists(public_path()."/".$path)) {
             mkdir(public_path()."/".$path, 0777);
-        }        
+        }
         $member_not_have_budrest = [];
         foreach ($output['data_member'] as $m) {
             if($m["detail_member"]["bud_rest_number"] == 0){

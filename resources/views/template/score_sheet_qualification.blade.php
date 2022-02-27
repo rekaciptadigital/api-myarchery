@@ -93,9 +93,7 @@
                 <th class="border" style="height: 42px; width: 50.2;">Jumlah</th>
                 <th class="border" style="width: 50.3px; height: 42px;">Total</th>
                 <th class="border" style="height: 42px; width: 50.01px;">10+x</th>
-                <th class="border" style="height: 42px; width: 50.2;">Jumlah</th>
                 <th class="border" style="height: 42px; width: 50px;">x</th>
-                <th class="border" style="height: 42px; width: 50.2;">Jumlah</th>
             </tr>
         </thead>
         <tbody>
@@ -107,9 +105,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="background-color: #e3e2de;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -127,9 +123,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -147,9 +141,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="background-color: #e3e2de;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -167,9 +159,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -187,9 +177,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="background-color: #e3e2de;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -207,9 +195,7 @@
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
-                <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -224,10 +210,8 @@
                 </td>
                 <td class="border" style="width: 50.2; height: 30px;"><strong>Total</strong></td>
                 <td class="border" style="width: 50.3px; height: 30px;">&nbsp;</td>
-                <td class="border" style="width: 50.3px; height: 30px;background-color: #000000;">&nbsp;</td>
-                <td class="border" style="width: 50.01px; height: 30px;">&nbsp;</td>
-                <td class="border" style="width: 50.3px; height: 30px;background-color: #000000;">&nbsp;</td>
-                <td class="border" style="width: 50px; height: 30px;">&nbsp;</td>
+                <td class="border" style="width: 50.3px; height: 30px;">&nbsp;</td>
+                <td class="border" style="width: 50.3px; height: 30px;">&nbsp;</td>
             </tr>
         </tbody>
     </table>
