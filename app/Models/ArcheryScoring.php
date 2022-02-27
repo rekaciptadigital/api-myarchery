@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
 
@@ -485,6 +486,7 @@ class ArcheryScoring extends Model
             "users.name",
             "archery_event_participant_members.user_id",
             "users.gender",
+            "archery_event_participants.id as participant_id",
             "archery_event_participants.event_id",
             "archery_clubs.name as club_name",
             "archery_clubs.id as club_id",
@@ -503,7 +505,7 @@ class ArcheryScoring extends Model
         $score["club_id"] = $value->club_id;
         $score["club_name"] = $value->club_name;
         $score["member"] = $value;
-        $score["member"]["participant_number"] = ArcheryEventParticipantMemberNumber::getMemberNumber($value->event_id, $value->user_id);
+        $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
         $archery_event_score[] = $score;
         }
 

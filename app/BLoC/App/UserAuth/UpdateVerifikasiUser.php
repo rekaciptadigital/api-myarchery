@@ -34,19 +34,20 @@ class UpdateVerifikasiUser extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        if ($user->ktp_kk == null || "") {
-            Validator::make($parameters->all(), [
-                'ktp_kk' => [
-                    'required'
-                ],
-            ])->validate();
-        }
         if ($user->verify_status == 4 || $user->verify_status == 3 || $user->verify_status == 2) {
             if ($parameters->get('ktp_kk')) {
                 $ktp_kk = "";
                 if ($user->ktp_kk != null && $user->ktp_kk == $parameters->get("ktp_kk")) {
                     $ktp_kk = $user->ktp_kk;
                 } else {
+                    Validator::make($parameters->all(), [
+                        'ktp_kk' => [
+                            'required'
+                        ],
+                    ])->validate();
+                    if (filter_var($parameters->get("ktp_kk"), FILTER_VALIDATE_URL) != false) {
+                        throw new BLoCException("upload ulang ktp anda");
+                    }
                     $ktp_kk = Upload::setPath("asset/ktp_kk/")->setFileName("ktp_kk_" . $this->getRandString(4) . "_" . time())->setBase64($parameters->get('ktp_kk'))->save();
                 }
                 $user->ktp_kk = $ktp_kk;
