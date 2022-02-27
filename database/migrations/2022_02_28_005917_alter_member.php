@@ -14,7 +14,7 @@ class AlterMember extends Migration
     public function up()
     {
         Schema::table('archery_event_participant_members', function (Blueprint $table) {
-            $table->integer('is_series');
+            $table->integer('is_series')->default(0);
         });
     }
 
