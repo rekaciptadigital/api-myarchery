@@ -58,11 +58,11 @@ class BudRest extends Model
             'archery_clubs.name as club_name'
         )
             ->where('participant_member_teams.event_category_id', $category->id)
-            ->join('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
-            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-            ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
-            ->join('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
+            ->leftJoin('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+            ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->leftJoin('users', 'users.id', '=', 'archery_event_participants.user_id')
+            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
             ->orderBy("archery_event_participants.club_id","DESC")
             ->get();
 
