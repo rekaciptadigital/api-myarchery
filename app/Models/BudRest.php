@@ -80,7 +80,7 @@ class BudRest extends Model
 
         $output['data_member'] = $array_pesrta_baru;
         if (file_exists(public_path()."/".$path))
-            rmdir(public_path()."/".$path);
+            $this->rrmdir(public_path()."/".$path);
 
         if (!file_exists(public_path()."/".$path)) {
             mkdir(public_path()."/".$path, 0777);
@@ -118,4 +118,19 @@ class BudRest extends Model
         $mpdf->Output(public_path()."/".$full_path, "F");
         return ["url" => $full_path,"member_not_have_budrest"=>$member_not_have_budrest];
     }
+
+    protected function rrmdir($dir) {
+        if (is_dir($dir)) {
+          $objects = scandir($dir);
+          foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {
+              if (filetype($dir."/".$object) == "dir") 
+                 rrmdir($dir."/".$object); 
+              else unlink   ($dir."/".$object);
+            }
+          }
+          reset($objects);
+          rmdir($dir);
+        }
+       }
 }
