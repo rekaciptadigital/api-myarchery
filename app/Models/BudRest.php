@@ -70,10 +70,15 @@ class BudRest extends Model
         // return $output;
 
         $array_pesrta_baru = [];
+        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id,$category->distance_id] : [
+            substr($category->distance_id,0,2),
+            substr($category->distance_id,2,2),
+            substr($category->distance_id,4,2)
+        ];
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             foreach ($participant_member_team as $pmt) {
                 $code_sesi['detail_member'] = $pmt;
-                $code_sesi['sesi'] = $i;
+                $code_sesi['sesi'] = $distance[$i-1]."-".$i;
                 $code_sesi['code'] = "1-" . $pmt->member_id . "-" . $i;
                 array_push($array_pesrta_baru, $code_sesi);
             }

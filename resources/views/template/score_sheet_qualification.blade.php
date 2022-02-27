@@ -86,7 +86,7 @@
         <thead>
             <tr style="height: 42px;">
                 <th style="font-size: 11px; width: 29px; height: 42px; text-align: left;">
-                    {{ $category['distance_id'] }}-{{ $data['sesi'] }}</th>
+                    {{ $data['sesi'] }}</th>
                 <th class="border" style="height: 42px; width: 20px;">1</th>
                 <th class="border" style="height: 42px; width: 20px;">2</th>
                 <th class="border" style="height: 42px; width: 20px;">3</th>
