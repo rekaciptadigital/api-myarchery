@@ -72,7 +72,8 @@ class GetParticipantScoreQualification extends Retrieval
     {
         $team_cat = ($team_category->id) == "male_team" ? "individu male" : "individu female";
                 $category_detail_team = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id",$team_cat)->first();
@@ -89,7 +90,7 @@ class GetParticipantScoreQualification extends Retrieval
                     $total_per_point = $this->total_per_points;
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
-                    foreach ($qualification_rank as $member_rank) {
+                    foreach ($qualification_rank as $k => $member_rank) {
                         if($value->club_id == $member_rank["club_id"]){
                             if($member_rank["total"]  < 1){
                                 continue;
@@ -99,6 +100,7 @@ class GetParticipantScoreQualification extends Retrieval
                             }
                             $total = $total + $member_rank["total"];
                             $club_members[] = $member_rank["member"];
+                            unset($qualification_rank[$k]);
                         }
                         if(count($club_members) == 3)
                             break;
@@ -123,14 +125,16 @@ class GetParticipantScoreQualification extends Retrieval
     private function mixTeamBestOfThree($category_detail,$team_category,$session)
     {
                 $category_detail_male = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu male")->first();
                 $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id,1,$session);
                 
                 $category_detail_female = ArcheryEventCategoryDetail::
-                where("age_category_id",$category_detail->age_category_id)
+                where("event_id",$category_detail->event_id)
+                ->where("age_category_id",$category_detail->age_category_id)
                 ->where("competition_category_id",$category_detail->competition_category_id)
                 ->where("distance_id",$category_detail->distance_id)
                 ->where("team_category_id","individu female")->first();
@@ -146,7 +150,7 @@ class GetParticipantScoreQualification extends Retrieval
                     $total_per_point = $this->total_per_points;
                     $total = 0;
                     $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
-                    foreach ($qualification_male as $male_rank) {
+                    foreach ($qualification_male as $k => $male_rank) {
                         if($value->club_id == $male_rank["club_id"]){
                             if($male_rank["total"]  < 1){
                                 continue;
@@ -156,11 +160,12 @@ class GetParticipantScoreQualification extends Retrieval
                             }
                             $total = $total + $male_rank["total"];
                             $club_members[] = $male_rank["member"];
+                            unset($qualification_male[$k]);
                         }
                         if(count($club_members) == 1)
                             break;
                     }
-                    foreach ($qualification_female as $female_rank) {
+                    foreach ($qualification_female as $ky => $female_rank) {
                         if($value->club_id == $female_rank["club_id"]){
                             if($female_rank["total"]  < 1){
                                 continue;
@@ -170,6 +175,7 @@ class GetParticipantScoreQualification extends Retrieval
                             }
                             $total = $total + $female_rank["total"];
                             $club_members[] = $female_rank["member"];
+                            unset($qualification_female[$ky]);
                         }
                         if(count($club_members) == 2)
                             break;

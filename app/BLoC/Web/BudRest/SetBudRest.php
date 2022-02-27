@@ -77,10 +77,10 @@ class SetBudRest extends Transactional
                     throw new BLoCException("set jadwal kualifikasi terlebih dahulu ");
                 }
 
-                if (strtotime($check_qualification_time->event_start_datetime) < strtotime('now')){
-                    throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
+                // if (strtotime($check_qualification_time->event_start_datetime) < strtotime('now')){
+                //     throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
                     
-                }
+                // }
 
                 $budrest->archery_event_category_id = $data['archery_event_category_id'];
                 $budrest->bud_rest_start =  $data['bud_rest_start'];

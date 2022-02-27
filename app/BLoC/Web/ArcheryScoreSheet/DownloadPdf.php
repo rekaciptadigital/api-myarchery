@@ -20,8 +20,8 @@ class DownloadPdf extends Retrieval
     protected function process($parameters)
     {
         $category_id = $parameters->get('event_category_id');
-        $download = BudRest::downloadQualificationScoreSheet($category_id);
-        return env('APP_HOSTNAME') . $download["url"];
+        $download = BudRest::downloadQualificationScoreSheet($category_id,true);
+        return env('APP_HOSTNAME') . $download["url"]."#".time();
     }
 
     protected function validation($parameters)

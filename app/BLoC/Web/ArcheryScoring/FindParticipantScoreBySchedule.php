@@ -69,7 +69,9 @@ class FindParticipantScoreBySchedule extends Retrieval
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id",$participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number)? $schedule->bud_rest_number.$schedule->target_face : "";
         $output->session = $session;
-        $output->is_updated = isset($score->is_lock) && $score->is_lock == 0 ? 1 : 0;
+        $output->is_updated = 1;
+        if(isset($score->is_lock))
+         $output->is_updated = $score->is_lock == 1 ? 0 : 1 ;
         return $output;
     }
 

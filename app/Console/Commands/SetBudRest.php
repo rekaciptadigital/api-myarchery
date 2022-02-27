@@ -71,22 +71,17 @@ class SetBudRest extends Command
                 $data_count = count($schedules);
                 $check_budrest = ceil($data_count/$bud_rest->target_face);
                 $data_budrest = [];
-                if($check_budrest > ($bud_rest_end - $bud_rest_start)){
-                    echo "\n[WARNING !!] Budrest tidak cukup\n\n";
-                    break;   
-                }else{
-                    $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
-                    for ($i=0; $i < $check_budrest; $i++) { 
-                        $tf = [];
-                        $tmp_tp = $m_target_face;
-                        for ($x=0; $x < $bud_rest->target_face; $x++) { 
-                            // $tmp_i = rand(0,count($tmp_tp)-1);
-                            $tf[] = $tmp_tp[$x];
+                $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
+                for ($i=0; $i < $check_budrest; $i++) { 
+                    $tf = [];
+                    $tmp_tp = $m_target_face;
+                    for ($x=0; $x < $bud_rest->target_face; $x++) { 
+                        // $tmp_i = rand(0,count($tmp_tp)-1);
+                        $tf[] = $tmp_tp[$x];
                             // unset($tmp_tp[$tmp_i]); 
                             // $tmp_tp = array_values($tmp_tp);
                         }
                         $data_budrest[] = $tf;
-                    }
                 }
                 $index = 0;
                 for ($z=0; $z < $bud_rest->target_face; $z++) { 
