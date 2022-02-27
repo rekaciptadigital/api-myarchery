@@ -34,7 +34,7 @@ class UpdateVerifikasiUser extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        if ($user->ktp_kk == null || "") {
+        if ($user->ktp_kk == null || $user->ktp_kk == "") {
             Validator::make($parameters->all(), [
                 'ktp_kk' => [
                     'required'
