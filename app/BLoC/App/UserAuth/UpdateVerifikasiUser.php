@@ -42,11 +42,17 @@ class UpdateVerifikasiUser extends Retrieval
                 } else {
                     Validator::make($parameters->all(), [
                         'ktp_kk' => [
-                            'required'
+                            'required',
                         ],
                     ])->validate();
                     if (filter_var($parameters->get("ktp_kk"), FILTER_VALIDATE_URL) != false) {
                         throw new BLoCException("upload ulang ktp anda");
+                    }
+
+                    $array_file_index_0 = explode(";", $parameters->get("ktp_kk"))[0];
+                    $ext_file_upload =  explode("/", $array_file_index_0)[1];
+                    if ($ext_file_upload != "jpg" && $ext_file_upload != "jpeg" && $ext_file_upload != "png") {
+                        throw new BLoCException("mohon inputkan tipe data gambar png, jpeg, jpg");
                     }
                     $ktp_kk = Upload::setPath("asset/ktp_kk/")->setFileName("ktp_kk_" . $this->getRandString(4) . "_" . time())->setBase64($parameters->get('ktp_kk'))->save();
                 }
