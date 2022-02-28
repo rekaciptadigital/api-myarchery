@@ -23,12 +23,17 @@ class ArcheryEventCategoryDetail extends Model
         $competition_category_detail = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
         $distance_detail = ArcheryMasterDistanceCategory::find($category->distance_id);
         $team_category_details = ArcheryMasterTeamCategory::find($category->team_category_id);
-        $have_series = 0;
+        $archery_event_series = ArcheryEventSerie::where("event_id", $category->event_id)->first();
+        $serie_id  = 0;
+        if ($archery_event_series) {
+            $serie_id  = $archery_event_series->serie_id;
+        }
         $have_series = 0;
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
             ->where("competition_category_id", $category->competition_category_id)
             ->where("distance_id", $category->distance_id)
             ->where("team_category_id", $category->team_category_id)
+            ->where("serie_id", $serie_id)
             ->first();
         if ($archerySeriesCategory) {
             $have_series = 1;
