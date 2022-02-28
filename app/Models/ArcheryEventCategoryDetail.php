@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\ArcherySerieCity;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ArcheryEventCategoryDetail extends Model
 {
@@ -17,11 +21,52 @@ class ArcheryEventCategoryDetail extends Model
 
     public function getCategoryDetailById($category_id)
     {
+        $user = Auth::guard('app-api')->user();
         $category = ArcheryEventCategoryDetail::find($category_id);
         $age_category_detail = ArcheryMasterAgeCategory::find($category->age_category_id);
         $competition_category_detail = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
         $distance_detail = ArcheryMasterDistanceCategory::find($category->distance_id);
         $team_category_details = ArcheryMasterTeamCategory::find($category->team_category_id);
+        $archery_event_series = ArcheryEventSerie::where("event_id", $category->event_id)->first();
+        $serie_id  = 0;
+        $join_serie_category_id  = 0;
+        $can_join_series  = 0;
+        if ($archery_event_series) {
+            $serie_id  = $archery_event_series->serie_id;
+        }
+        $have_series = 0;
+        $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
+            ->where("competition_category_id", $category->competition_category_id)
+            ->where("distance_id", $category->distance_id)
+            ->where("team_category_id", $category->team_category_id)
+            ->where("serie_id", $serie_id)
+            ->first();
+        if ($archerySeriesCategory) {
+            $have_series = 1;
+            if($user){
+                if($user->verify_status == 1){
+                    $check_serie_city = ArcherySerieCity::where("city_id", $user->address_city_id)
+                    ->where("serie_id", $serie_id)
+                    ->first();
+                    if($check_serie_city){
+                        $can_join_series = 1;    
+                        $check_join_serie = ArcheryEventParticipantMember::select("archery_event_participants.event_category_id")
+                                            ->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                                            ->where("archery_event_participants.event_id",$category->event_id)
+                                            ->where("archery_event_participant_members.is_series",1)
+                                            ->first();
+                        if($check_join_serie){
+                            $join_serie_category_id = $check_join_serie->event_category_id;
+                        }
+                    }   
+                }
+            }
+        }
+
+        $can_update_series = 0;
+        if (Carbon::now() <  $this->start_event && $have_series == 1) {
+            $can_update_series = 1;
+        }
         $output = [
             "id" => $category->id,
             "quota" => $category->quota,
@@ -29,6 +74,10 @@ class ArcheryEventCategoryDetail extends Model
             "gender_category" => $category->gender_category,
             "category_label" => $age_category_detail->label . "-" . $team_category_details->label . "-" . $distance_detail->label,
             "category_type" => $category->category_team,
+            "have_series" => $have_series,
+            "can_update_series" => $can_update_series,
+            "join_serie_category_id" => $join_serie_category_id,
+            "can_join_series" => $can_join_series,
             "category_team" => [
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->label

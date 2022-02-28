@@ -6,6 +6,7 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ClubMember;
 use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
@@ -62,6 +63,7 @@ class GetListCategoryByUserLogin extends Retrieval
 
         if (count($data_all) > 0) {
             foreach ($data_all as $d) {
+                $member = ArcheryEventParticipantMember::where("archery_event_participant_id",$d->id)->first();
                 $event_category = ArcheryEventCategoryDetail::find($d->event_category_id);
                 $club = ArcheryClub::find($d->club_id);
                 $transaction_log = TransactionLog::find($d->transaction_log_id);
@@ -106,6 +108,7 @@ class GetListCategoryByUserLogin extends Retrieval
                 $event_categoriy_data['detail_participant'] = [
                     "id_participant" => $d->id,
                     "user_id" => $d->user_id,
+                    "member_id" => $member->id,
                     "email" => $d->email,
                     "phone_number" => $d->phone_number,
                     "age" => $d->age,
