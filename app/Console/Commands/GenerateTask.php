@@ -39,7 +39,7 @@ class GenerateTask extends Command
      */
     public function handle()
     {
-        $p = ArcheryEventParticipant::where("event_id",21)->get();
+        $p = ArcheryEventParticipant::where("event_id",21)->where("status",1)->get();
         foreach ($p as $key => $value) {
             $u = User::find($value->user_id);
             ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($value->event_category_id, $u->gender), $value->id);

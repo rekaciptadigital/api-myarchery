@@ -58,21 +58,27 @@ class BudRest extends Model
             'archery_clubs.name as club_name'
         )
             ->where('participant_member_teams.event_category_id', $category->id)
-            ->join('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
-            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-            ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
-            ->join('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
-            ->orderBy("archery_event_participants.club_id","DESC")
+            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
+            ->leftJoin('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+            ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->leftJoin('users', 'users.id', '=', 'archery_event_participants.user_id')
+            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+            ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number","ASC")
+            ->orderBy("archery_event_qualification_schedule_full_day.target_face","ASC")
             ->get();
 
         // return $output;
 
         $array_pesrta_baru = [];
-        foreach ($participant_member_team as $pmt) {
-            for ($i = 1; $i <= $category->session_in_qualification; $i++) {
+        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id,$category->distance_id] : [
+            substr($category->distance_id,0,2),
+            substr($category->distance_id,2,2),
+            substr($category->distance_id,4,2)
+        ];
+        for ($i = 1; $i <= $category->session_in_qualification; $i++) {
+            foreach ($participant_member_team as $pmt) {
                 $code_sesi['detail_member'] = $pmt;
-                $code_sesi['sesi'] = $i;
+                $code_sesi['sesi'] = $distance[$i-1]."-".$i;
                 $code_sesi['code'] = "1-" . $pmt->member_id . "-" . $i;
                 array_push($array_pesrta_baru, $code_sesi);
             }
@@ -81,7 +87,7 @@ class BudRest extends Model
         $output['data_member'] = $array_pesrta_baru;
         if (!file_exists(public_path()."/".$path)) {
             mkdir(public_path()."/".$path, 0777);
-        }        
+        }
         $member_not_have_budrest = [];
         foreach ($output['data_member'] as $m) {
             if($m["detail_member"]["bud_rest_number"] == 0){
@@ -115,4 +121,19 @@ class BudRest extends Model
         $mpdf->Output(public_path()."/".$full_path, "F");
         return ["url" => $full_path,"member_not_have_budrest"=>$member_not_have_budrest];
     }
+
+    protected function rrmdir($dir) {
+        if (is_dir($dir)) {
+          $objects = scandir($dir);
+          foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {
+              if (filetype($dir."/".$object) == "dir") 
+                 rrmdir($dir."/".$object); 
+              else unlink   ($dir."/".$object);
+            }
+          }
+          reset($objects);
+          rmdir($dir);
+        }
+       }
 }
