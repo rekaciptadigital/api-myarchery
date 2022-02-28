@@ -52,6 +52,7 @@ class ArcheryEventCategoryDetail extends Model
                         $can_join_series = 1;    
                         $check_join_serie = ArcheryEventParticipantMember::select("archery_event_participants.event_category_id")
                                             ->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                                            ->where("archery_event_participant_members.user_id",$user->id)
                                             ->where("archery_event_participants.event_id",$category->event_id)
                                             ->where("archery_event_participant_members.is_series",1)
                                             ->first();
