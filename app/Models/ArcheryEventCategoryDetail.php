@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Carbon;
 
 class ArcheryEventCategoryDetail extends Model
 {
@@ -22,6 +23,21 @@ class ArcheryEventCategoryDetail extends Model
         $competition_category_detail = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
         $distance_detail = ArcheryMasterDistanceCategory::find($category->distance_id);
         $team_category_details = ArcheryMasterTeamCategory::find($category->team_category_id);
+        $have_series = 0;
+        $have_series = 0;
+        $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
+            ->where("competition_category_id", $category->competition_category_id)
+            ->where("distance_id", $category->distance_id)
+            ->where("team_category_id", $category->team_category_id)
+            ->first();
+        if ($archerySeriesCategory) {
+            $have_series = 1;
+        }
+
+        $can_update_series = 0;
+        if (Carbon::now() <  $this->start_event && $have_series == 1) {
+            $can_update_series = 1;
+        }
         $output = [
             "id" => $category->id,
             "quota" => $category->quota,
@@ -29,6 +45,8 @@ class ArcheryEventCategoryDetail extends Model
             "gender_category" => $category->gender_category,
             "category_label" => $age_category_detail->label . "-" . $team_category_details->label . "-" . $distance_detail->label,
             "category_type" => $category->category_team,
+            "have_series" => $have_series,
+            "can_update_series" => $can_update_series,
             "category_team" => [
                 "id" => $team_category_details->id,
                 "label" => $team_category_details->label
