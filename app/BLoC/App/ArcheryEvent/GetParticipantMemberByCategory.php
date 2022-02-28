@@ -5,6 +5,7 @@ namespace App\BLoC\App\ArcheryEvent;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -29,10 +30,19 @@ class GetParticipantMemberByCategory extends Retrieval
         $club = ArcheryClub::find($participant->club_id);
 
         $output = [];
-        
+
         $user_member = [];
         if ($participant->type == "individual") {
             $user_member = User::find($participant->user_id);
+            if (!$user_member) {
+                throw new BLoCException("user tidak ditemukan");
+            }
+            $archery_member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
+            if (!$archery_member) {
+                throw new BLoCException("data member tidak ditemukan");
+            }
+
+            $user_member['member_id'] = $archery_member->id;
         } else {
             $gender_category = $participant->team_category_id;
             $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $participant->age_category_id)
@@ -49,27 +59,26 @@ class GetParticipantMemberByCategory extends Retrieval
                         $query->where("archery_event_participants.team_category_id", "individu female");
                     }
                     if ($gender_category == "mix_team") {
-                        $query->whereIn("archery_event_participants.team_category_id", ["individu male","individu female"]);
+                        $query->whereIn("archery_event_participants.team_category_id", ["individu male", "individu female"]);
                     }
                 })
                 ->get();
 
-                if ($category_team->count() > 0) {
-                    foreach ($category_team as $ct) {
-                        $user = User::find($ct->user_id);
-                        if (!$user) {
-                            throw new BLoCException("user tidak ada");
-                        }
-                        array_push($user_member, $user);
+            if ($category_team->count() > 0) {
+                foreach ($category_team as $ct) {
+                    $user = User::find($ct->user_id);
+                    if (!$user) {
+                        throw new BLoCException("user tidak ada");
                     }
+                    array_push($user_member, $user);
                 }
+            }
         }
 
         $participant['members'] = $user_member;
 
         $event_category = ArcheryEventCategoryDetail::find($participant->event_category_id);
 
-        $user_participant = [];
         $detail_participant_user = User::find($participant->user_id);
         if (!$detail_participant_user) {
             throw new BLoCException("user participant tidak ditemukan");

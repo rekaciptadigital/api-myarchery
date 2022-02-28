@@ -19,6 +19,10 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->post('/update-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantMember']);
         });
 
+        $router->group(['prefix' => 'archery-series', 'middleware' => 'auth.user'], function () use ($router) {
+            $router->post('/join-archery-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setMemberSeries']);
+        });
+
         $router->group(['prefix' => 'archery-event-official', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderOfficial']);
             $router->get('/detail-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailOrderOfficial']);
@@ -49,13 +53,10 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->post('/unset', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:unsetEventQualificationSchedule']);
             });
             $router->group(['prefix' => 'certificate', 'middleware' => 'auth.user'], function () use ($router) {
-                //$router->group(['prefix' => 'certificate'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownload']);
                 $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListDownloadCertificate']);
             });
             $router->group(['prefix' => 'archery-club', 'middleware' => 'auth.user'], function () use ($router) {
-                // $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryClubs']);
-                // $router->get('/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfileClub']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryClub']);
                 $router->put('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryClub']);
                 $router->post('/join', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:joinArcheryClub']);
