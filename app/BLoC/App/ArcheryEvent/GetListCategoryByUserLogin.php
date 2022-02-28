@@ -108,7 +108,7 @@ class GetListCategoryByUserLogin extends Retrieval
                 $event_categoriy_data['detail_participant'] = [
                     "id_participant" => $d->id,
                     "user_id" => $d->user_id,
-                    "member_id" => $member->id,
+                    "member_id" => $d->type == "individual" ? $member->id : 0,
                     "email" => $d->email,
                     "phone_number" => $d->phone_number,
                     "age" => $d->age,
