@@ -368,9 +368,7 @@
         <p align="right"  style="margin-right:-2%">Individual Finals - 202203912</p>
       </div>
     </div>
-    <div align="center" style="width:100%;">
-    <img  src="https://i.ibb.co/pXx14Zr/logo-email-archery.png" alt="Avatar" style="width:3.5%;">
-    </div>
+    
     
   </body>
 </html>
