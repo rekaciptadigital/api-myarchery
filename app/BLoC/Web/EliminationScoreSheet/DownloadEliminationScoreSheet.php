@@ -24,8 +24,8 @@ class DownloadEliminationScoreSheet extends Retrieval
             'margin_right' => 3,
             'margin_top' => 3,
             'mode' => 'utf-8',
-            'format' => 'A4-P',
-            'orientation' => 'P',
+            'format' => 'A4-L',
+            'orientation' => 'L',
             'bleedMargin' => 0,
             'dpi'        => 110,
             'default_font_size' => 9,
@@ -35,10 +35,10 @@ class DownloadEliminationScoreSheet extends Retrieval
 
         $html = view('template.score_sheet_elimination');
         $mpdf->WriteHTML($html);
-        $path = 'asset/score_sheet/';
-        $full_path = $path . "score_sheet_elimination.pdf";
-        $mpdf->Output(public_path() . "/" . $full_path, "F");
-        return env('APP_HOSTNAME') . $full_path;
+        //$path = 'asset/score_sheet/';
+        //$full_path = $path . "score_sheet_elimination.pdf";
+        //$mpdf->Output(public_path() . "/" . $full_path, "F");
+        return $mpdf->Output();
     }
 
     protected function validation($parameters)
