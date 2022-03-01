@@ -37,23 +37,10 @@ class GetListCategorySeries extends Retrieval
             ->get();
 
         foreach ($series_category as $sc) {
-            $age_category_detail = ArcheryMasterAgeCategory::find($sc->age_category_id);
-            $competition_category_detail = ArcheryMasterCompetitionCategory::find($sc->competition_category_id);
-            $distance_category_detail = ArcheryMasterDistanceCategory::find($sc->distance_id);
-            $team_category_detail = ArcheryMasterTeamCategory::find($sc->team_category_id);
             $event = ArcheryEvent::find($sc->event_id);
             if (!$event) {
                 throw new BLoCException("event tidk tersedia");
             }
-            $sc["age_detail"] = $age_category_detail;
-            $sc["competition_detail"] = $competition_category_detail;
-            $sc["distance_detail"] = $distance_category_detail;
-            $sc["team_detail"] = $team_category_detail;
-            $category_label = "";
-            if ($age_category_detail != null && $competition_category_detail != null && $distance_category_detail != null && $team_category_detail != null) {
-                $category_label = $age_category_detail->label . "-" . $competition_category_detail->label . "-" . $distance_category_detail->label . "-" . $team_category_detail->label;
-            }
-            $sc["category_label"] = $category_label;
             $sc["event_detail"] = $event->getDetailEventById($event->id);
         }
 
