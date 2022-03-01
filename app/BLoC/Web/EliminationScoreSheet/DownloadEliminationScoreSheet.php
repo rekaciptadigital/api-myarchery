@@ -38,7 +38,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         $path = 'asset/score_sheet/';
         $full_path = $path . "score_sheet_elimination.pdf";
         $mpdf->Output(public_path() . "/" . $full_path, "F");
-        //return $mpdf->Output();
+        return env('APP_HOSTNAME') . $full_path;
     }
 
     protected function validation($parameters)
