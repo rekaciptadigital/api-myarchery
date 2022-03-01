@@ -2,9 +2,12 @@
 
 namespace App\BLoC\App\Series;
 
+use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventSerie;
 use App\Models\ArcherySerie;
 use App\Models\ArcherySeriesCategory;
 use App\Models\ArcherySeriesUserPint;
@@ -12,7 +15,6 @@ use App\Models\ArcherySeriesUserPoint;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class GetListParticipantByCategorySeriesId extends Retrieval
 {
@@ -42,9 +44,27 @@ class GetListParticipantByCategorySeriesId extends Retrieval
                     throw new BLoCException("user tidak ditemukan");
                 }
                 $aup["detail_users"] = $detail_user;
+                $event_series = ArcheryEventSerie::find($aup->event_serie_id);
+                if (!$event_series) {
+                    throw new BLoCException("event series tidak ada");
+                }
+                $participant = ArcheryEventParticipant::where("team_category_id", $category_series->team_category_id)
+                    ->where("age_category_id", $category_series->age_category_id)
+                    ->where("competition_category_id", $category_series->competition_category_id)
+                    ->where("distance_id", $category_series->distance_id)
+                    ->where("event_id", $event_series->event_id)
+                    ->where("user_id", $aup->user_id)
+                    ->where("status", 1)
+                    ->first();
+                if (!$participant) {
+                    throw new BLoCException("participant tidak ada");
+                }
+
+                $club = ArcheryClub::find($participant->club_id);
+                $aup["club_detail"] = $club;
             }
         }
-        $output["user_poin"][] = $aup;
+        $output["user_poin"][] = $archery_user_point;
         return $output;
     }
 
