@@ -58,10 +58,10 @@ class GetListParticipantByCategorySeriesId extends Retrieval
                 }
 
                 $club = ArcheryClub::find($participant->club_id);
-                $aup["club_detail"] = $club;
+                $aup["detail_club"] = $club;
             }
         }
-        $output["user_poin"][] = $archery_user_point;
+        $output["user_poin"] = $archery_user_point;
         return $output;
     }
 
