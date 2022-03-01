@@ -44,6 +44,10 @@ use App\BLoC\App\ArcheryEventOfficial\AddOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetDetailOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetEventOfficialDetail;
 use App\BLoC\App\ArcheryEventOfficial\GetOrderEventOfficial;
+use App\BLoC\App\Series\GetListCategorySeries;
+use App\BLoC\App\Series\GetListEventBySeriesId;
+use App\BLoC\App\Series\GetListParticipantByCategorySeriesId;
+use App\BLoC\App\Series\GetListSeries;
 use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 
@@ -103,6 +107,10 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getListOfficial", GetListOfficial::class);
 
         $this->registerService("setMemberSeries", SetMemberSeries::class);
+        $this->registerService("getListSeries", GetListSeries::class);
+        $this->registerService("getListEventBySeriesId", GetListEventBySeriesId::class);
+        $this->registerService("getListCategorySeries", GetListCategorySeries::class);
+        $this->registerService("getListParticipantByCategorySeriesId", GetListParticipantByCategorySeriesId::class);
     }
 
     private function registerService($serviceName, $className)
