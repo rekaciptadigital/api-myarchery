@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
+        body {
+        height: 842px;
+        width: 595px;
+        /* to centre page on screen*/
+        margin-left: auto;
+        margin-right: auto;
+    }
       .header {
         width: 70%;
         align-content: center;
@@ -12,14 +19,14 @@
       }
 
       #col1 {
-        display: inline-block;
+        float: left;
         width: 46%;
         align-content: center;
         align: center;
       }
 
       #col2 {
-        display: inline-block;
+        float: left;
         width: 46%;
         align-content: center;
         align: center;
@@ -29,6 +36,9 @@
       .beta th {
         border: 1px solid black;
       }
+      .img-bottom {
+  align-self: flex-end;
+}
     </style>
     <title>Score Sheet Elimination</title>
   </head>
@@ -40,7 +50,7 @@
             <td style="vertical-align: center">
               <img src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt="" height="95" />
             </td>
-            <td style="padding-left:0; padding-top:15px; vertical-align:top; width:80%; line-height: 1.6">
+            <td style="padding-left:0; padding-top:15px; vertical-align:top; width:65%; line-height: 1.6">
               <h1 style="font-size: 14pt;">KEJOHANAN MEMANAH TERBUKA PDAC - SULI ARCHERY 2</h1>
               <p>KELAB MEMANAH PD (PDA2019)</p>
               <p>LAPANG SASAR MEMANAH SMK KAMPUNG BARU SI RUSA, PORT DICKSON, NEGERI SEMBILAN, </p>
@@ -52,7 +62,7 @@
         </tbody>
       </table>
     </div>
-    <div align="center" style="margin-top:5%">
+    <div align="center" style="margin-top:3%;margin-left:7%;">
       <div id="col1">
         <table class="" style="margin-right: 10px;border:1px solid black;width:95%;" cellspacing="0">
           <tr>
@@ -84,20 +94,20 @@
         </table>
       </div>
       <div id="col2">
-        <table style="margin-right: 10px;border:1px solid black;width:95%;" cellspacing="0">
+      <table class="" style="margin-right: 10px;border:1px solid black;width:95%;" cellspacing="0">
           <tr>
             <td style="width:15%;">Athlete</td>
             <td style="width: 2%">:</td>
             <td style="width: 50%">MOHD YATIM Haji Diris</td>
             <td style="width: 15%"></td>
-            <td style="width: 25%; text-align:center;border-left:1px solid black; background-color: #808080">Rank</td>
+            <td style="width: 25%; text-align:center; border-left:1px solid black;background-color: #808080">Rank</td>
           </tr>
           <tr>
             <td>Country</td>
             <td>:</td>
             <td>Ikm Jasin Barebow Archery Team (IJBAT)</td>
             <td></td>
-            <td style="font-size: 22pt; text-align:center;border-left:1px solid black; background-color: #808080;" rowspan="3">3</td>
+            <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;" rowspan="3">3</td>
           </tr>
           <tr>
             <td style="">Category</td>
@@ -114,9 +124,9 @@
         </table>
       </div>
     </div>
-    <div align="center" style="margin-top:2%">
+    <div align="center" style="margin-top:2%;margin-left:7%;">
       <div id="col1">
-        <table class="beta" style="margin-right: 10px;width:95%;" cellspacing="0">
+        <table class="beta" style="margin-right: 10px;width:97%;" cellspacing="0">
           <thead>
             <tr style="border:1px solid black;">
               <th style="width: 5%;border:none;"></th>
@@ -199,7 +209,7 @@
         </table>
       </div>
       <div id="col2">
-        <table class="beta" style="margin-right: 10px;width:95%;" cellspacing="0">
+        <table class="beta" style="margin-right: 10px;width:97%;" cellspacing="0">
           <thead>
             <tr style="border:1px solid black;">
               <th style="width: 5%;border:none;"></th>
@@ -282,89 +292,85 @@
         </table>
       </div>
     </div>
-    <div align="left">
-      <div id="col1" style="margin-left:4.7%">
-        <table style="" border=1 cellspacing="0">
-          <tr>
+    <div align="left" style="margin-top:2%;">
+      <div id="col1" style="margin-left:7%">
+        <table style="" border=1 cellspacing="0" >
+          <tr >
             <th rowspan=4>S.O.</th>
-            <th style="width:50px;" colspan=2>&nbsp&nbsp&nbsp</th>
+            <th style="width:200px;height:20px;" colspan=2 ></th>
           </tr>
           <tr>
-            <td colspan=2>&nbsp&nbsp&nbsp</td>
+            <td colspan=2 style="width:200px;height:20px;"></td>
           </tr>
           <tr>
-            <td colspan=2>&nbsp&nbsp&nbsp</td>
+          <td style="width:200px;height:20px;" coslpan=2> </td>
           </tr>
           <tr>
-            <td>&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp </td>
+          <td style="width:200px;height:20px;" coslpan=2> </td>
+            
           </tr>
         </table>
         <p>Closest to the center</p>
       </div>
-      <div id="col2">
-        <table style="" border=1 cellspacing="0">
-          <tr>
+      <div id="col2" style="margin-left:-3.3%">
+      <table style="" border=1 cellspacing="0" >
+          <tr >
             <th rowspan=4>S.O.</th>
-            <th style="width:50px;" colspan=2>&nbsp&nbsp&nbsp</th>
+            <th style="width:200px;height:20px;" colspan=2 ></th>
           </tr>
           <tr>
-            <td colspan=2>&nbsp&nbsp&nbsp</td>
+            <td colspan=2 style="width:200px;height:20px;"></td>
           </tr>
           <tr>
-            <td colspan=2>&nbsp&nbsp&nbsp</td>
+          <td style="width:200px;height:20px;" coslpan=2> </td>
           </tr>
           <tr>
-            <td>&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp </td>
+          <td style="width:200px;height:20px;" coslpan=2> </td>
+            
           </tr>
         </table>
         <p>Closest to the center</p>
       </div>
     </div>
-    <div align="left" style="">
+    <div align="left" style="margin-left:2.5%;">
       <div id="col1" style="margin-left:4.7%;width:44%;">
         <p>Archer/Agent</p>
-        <hr>
+        
       </div>
-      <div id="col2" style="margin-left:2%;width:44%;">
-        <p>Archer Agent</p>
-        <hr>
+      <div id="col2" style="margin-left:0.5%;width:44%;">
+        <p>Archer/Agent</p>
+        
       </div>
+      
     </div>
-    <table style="width:90.5%;margin-left:4.7%">
+    <hr style="width:85.5%">
+    <table style="width:92.5%;margin-left:7%">
       <tr style="border-bottom: 2px solid black">
-        <td colspan=2 style="width:72%;border-bottom: 2px solid black">Target Judge Signature </td>
+        <td colspan=2 style="width:70%;border-bottom: 2px solid black">Target Judge Signature </td>
         <td style="border:2px solid black"> Signature Timestamp (HH:MM)</td>
       </tr>
     </table>
-    <table style="width:90.5%;margin-left:4.7%">
+    <table style="width:92.5%;margin-left:7%">
       <tr style="border-bottom: 2px solid black">
         <td style="border-bottom: 2px solid black">Anotations </td>
       </tr>
     </table>
-    <table style="width:90.5%;margin-left:4.7%">
+    <table style="width:92.5%;margin-left:7%;height:10%;">
       <tr style="border-bottom: 2px solid black">
-        <td style="border-bottom: 2px solid black">&nbsp </td>
+        <td style="border-bottom: 2px solid black;height:20px;" > </td>
       </tr>
     </table>
     <div align="center">
       <div id="col1">
-        <p align="right" style="margin-right:-2%">7/12</p>
+        <p align="right" style="margin-right:-10%">7/12</p>
       </div>
       <div id="col2">
-        <p align="right" style="margin-right:2.5%">Individual Finals - 202203912</p>
+        <p align="right"  style="margin-right:-2%">Individual Finals - 202203912</p>
       </div>
     </div>
-    <div align="center">
-      <table style="width:100%;margin-top:50px;">
-        <tr>
-          <td align="center">
-            <img src="https://i.ibb.co/pXx14Zr/logo-email-archery.png" alt="Avatar" style="display: block;
-                      margin: 0 auto; width:40px; margin-top:-30px;">
-          </td>
-        </tr>
-      </table>
+    <div align="center" style="width:100%;margin-top:10%">
+    <img  src="https://i.ibb.co/pXx14Zr/logo-email-archery.png" alt="Avatar" style="width:3.5%;">
     </div>
+    
   </body>
 </html>
