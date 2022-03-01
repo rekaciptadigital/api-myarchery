@@ -40,9 +40,6 @@ class GetListParticipantByCategorySeriesId extends Retrieval
         if ($archery_user_point->count() > 0) {
             foreach ($archery_user_point as $aup) {
                 $detail_user = User::getDetailUser($aup->user_id);
-                if (!$detail_user) {
-                    throw new BLoCException("user tidak ditemukan");
-                }
                 $aup["detail_users"] = $detail_user;
                 $event_series = ArcheryEventSerie::find($aup->event_serie_id);
                 if (!$event_series) {
