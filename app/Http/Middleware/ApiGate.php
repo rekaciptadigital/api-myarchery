@@ -33,7 +33,7 @@ class ApiGate
 
         $ip = $this->get_client_ip();
         $allow = explode("|",env("ALLOWED_IP_MAINTENANCE"));
-        if(env("ALLOWED_IP_MAINTENANCE",false) && !in_array($ip,$allow)){
+        if(env("MAINTENANCE_MODE",false) && !in_array($ip,$allow)){
             return response()->json(["message"=>"maintenance"], 503, $headers);
         }
 
