@@ -46,8 +46,8 @@ class PdfLibrary
             'margin_left' => 10,
             'margin_right' => 0,
             'mode' => 'utf-8',
-            'format' => 'A6-P',
-            'orientation' => 'P',
+            'format' => 'A4-L',
+            'orientation' => 'L',
             'bleedMargin' => 0,
             'dpi'        => 110,
             'tempDir' => public_path().'/tmp/pdf'
@@ -83,8 +83,8 @@ class PdfLibrary
                 'margin_top' => 2,
                 'margin_bottom' => 2,
                 'mode' => 'utf-8',
-                'format' => 'A6-P',
-                'orientation' => 'P',
+                'format' => 'A4-L',
+                'orientation' => 'L',
                 'bleedMargin' => 0,
                 'dpi'        => 110,
                 'tempDir' => public_path().'/tmp/pdf'
