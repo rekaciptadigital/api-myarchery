@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ArcheryEvent;
+use App\Models\ArcheryClub;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventS;
@@ -30,6 +30,8 @@ class ArcheryEventParticipantMember extends Model
         
         $participant->category_label = $category_label;
         $participant->member = $member;
+        $club = ArcheryClub::find($participant->club_id);
+        $participant->club = $club ? $club->name: "";
         return $participant;
     }
 }
