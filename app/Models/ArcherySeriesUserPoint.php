@@ -30,10 +30,14 @@ class ArcherySeriesUserPoint extends Model
         ->where("distance_id", $category->distance_id)
         ->where("team_category_id", $category->team_category_id)
         ->where("serie_id", $event_serie->serie_id)
-        ->first();;
+        ->first();
         if(!$archerySeriesCategory) return false;
+        $t = 1;
+        if($type == "elimination"){
+            $t = 2;
+        }
 
-        $point = ArcherySeriesMasterPoint::where("serie_id",$event_serie->serie_id)->where("start_pos",">=",$pos)->where("end_pos","<=",$pos)->first();
+        $point = ArcherySeriesMasterPoint::where("type",$t)->where("serie_id",$event_serie->serie_id)->where("start_pos","<=",$pos)->where("end_pos",">=",$pos)->first();
         if(!$point) return false;
 
         // get detail event
