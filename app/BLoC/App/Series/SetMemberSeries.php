@@ -5,6 +5,7 @@ namespace App\BLoC\App\Series;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcherySeriesCategory;
+use App\Models\ArcherySeriesUserPoint;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +60,17 @@ class SetMemberSeries extends Retrieval
             $member->update([
                 "is_series" => 1
             ]);
+
+            ArcherySeriesUserPoint::where("member_id", $member->id)->update([
+                "status" => 1
+            ]);
         } else {
             $member->update([
                 "is_series" => 0
+            ]);
+
+            ArcherySeriesUserPoint::where("member_id", $member->id)->update([
+                "status" => 0
             ]);
         }
 
