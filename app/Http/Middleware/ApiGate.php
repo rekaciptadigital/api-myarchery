@@ -31,6 +31,12 @@ class ApiGate
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }
 
+        $ip = $this->get_client_ip();
+        $allow = explode("|",env("ALLOWED_IP_MAINTENANCE"));
+        if(env("ALLOWED_IP_MAINTENANCE",false) && !in_array($ip,$allow)){
+            return response()->json(["message"=>"maintenance"], 503, $headers);
+        }
+
         $lang = ($request->hasHeader('Accept-Language')) ? $request->header('Accept-Language') : 'en';
 
         app('translator')->setLocale($lang);
@@ -59,4 +65,25 @@ class ApiGate
         }
         return $response;
     }
+
+    
+// Function to get the client IP address
+function get_client_ip() {
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
 }
