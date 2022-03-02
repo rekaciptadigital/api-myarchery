@@ -12,6 +12,7 @@ use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventEliminationMember;
+use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -70,8 +71,11 @@ class SetEventElimination extends Transactional
                             $elimination_member->member_id = $member_id;
                             $elimination_member->position_qualification = $position_qualification;
                             $elimination_member->save();
+                            ArcherySeriesUserPoint::setPoint($team["user_id"],$member_id,$event_category_id,"qualification",$position_qualification);
                         }
                         $elimination_member_id = $elimination_member->id;
+
+                        // TODO : tambahin proses input ke point series
                     }
                     $match = new ArcheryEventEliminationMatch;
                     $match->event_elimination_id = $elimination->id;
@@ -82,6 +86,7 @@ class SetEventElimination extends Transactional
                     $match->index = $i;
                     if(isset($team["win"]))
                         $match->win = $team["win"];
+                    
                     $match->gender = "none";
                     $match->save();
                 }

@@ -31,12 +31,14 @@ class ApiGate
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }
 
-        $ip = $this->get_client_ip();
-        $allow = explode("|",env("ALLOWED_IP_MAINTENANCE"));
-        if(env("MAINTENANCE_MODE",false) && !in_array($ip,$allow)){
-            return response()->json(["message"=>"maintenance", "ip" => $ip], 503, $headers);
+        if(env("MAINTENANCE_MODE",false)){
+            $ip = $this->get_client_ip();
+            $allow = explode("|",env("ALLOWED_IP_MAINTENANCE"));
+            if(!in_array($ip,$allow)){
+                return response()->json(["message"=>"maintenance", "ip" => $ip], 503, $headers);
+            }
         }
-
+        
         $lang = ($request->hasHeader('Accept-Language')) ? $request->header('Accept-Language') : 'en';
 
         app('translator')->setLocale($lang);
