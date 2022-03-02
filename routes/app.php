@@ -23,6 +23,14 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->post('/join-archery-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setMemberSeries']);
         });
 
+        $router->group(['prefix' => 'archery-series'], function () use ($router) {
+            $router->post('/join-archery-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setMemberSeries']);
+            $router->get('/get-list-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSeries']);
+            $router->get('/get-list-event-by-series-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListEventBySeriesId']);
+            $router->get('/get-list-category-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategorySeries']);
+            $router->get('/get-list-member-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListParticipantByCategorySeriesId']);
+        });
+
         $router->group(['prefix' => 'archery-event-official', 'middleware' => 'auth.user'], function () use ($router) {
             $router->post('/order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderOfficial']);
             $router->get('/detail-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailOrderOfficial']);
