@@ -13,6 +13,14 @@
 
 $app = require __DIR__.'/../bootstrap/app.php';
 
+$ip = get_client_ip();
+$allow = explode("|",env("ALLOWED_IP_MAINTENANCE"));
+if(env("ALLOWED_IP_MAINTENANCE",false) && !in_array($ip,$allow)){
+    http_response_code(503);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(["message"=>"maintenance"]);
+    exit;
+}
 /*
 |--------------------------------------------------------------------------
 | Run The Application
@@ -26,3 +34,24 @@ $app = require __DIR__.'/../bootstrap/app.php';
 */
 
 $app->run();
+
+
+// Function to get the client IP address
+function get_client_ip() {
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
