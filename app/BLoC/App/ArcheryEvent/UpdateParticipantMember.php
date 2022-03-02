@@ -71,13 +71,13 @@ class UpdateParticipantMember extends Retrieval
         $now = Carbon::now();
         $new_format = Carbon::parse($event_category_detail->start_event, new DateTimeZone('Asia/jakarta'));
 
-        if ($new_format->diffInHours($now) < 24) {
-            throw new BLoCException("tidak dapat mengubah peserta, minimal mengubah peserta adalah 24 jam sebelum berlangsungnya event");
-        }
+        // if ($new_format->diffInHours($now) < 24) {
+        //     throw new BLoCException("tidak dapat mengubah peserta, minimal mengubah peserta adalah 24 jam sebelum berlangsungnya event");
+        // }
 
-        if ($now > $new_format) {
-            throw new BLoCException("event telah lewat");
-        }
+        // if ($now > $new_format) {
+        //     throw new BLoCException("event telah lewat");
+        // }
 
 
 
