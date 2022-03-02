@@ -46,7 +46,8 @@ class SetBudRest extends Command
         $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
         $event_categories =Redis::hgetall($key);
         foreach ($event_categories as $event_category_detail) {
-            Redis::hdel($key,$event_category_detail);            
+            Redis::hdel($key,$event_category_detail);     
+            return;       
             echo "----------------- Start Set Budrest[".$event_category_detail."] ".date("Y-m-d H:i:s")."-----------------\n\n";
             // ArcheryEventQualificationScheduleFullDay
             $bud_rest = BudRest::where("archery_event_category_id",$event_category_detail)->first();

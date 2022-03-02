@@ -85,7 +85,7 @@
     <table class="table-scorer" style="height: 276px; width: 549px;">
         <thead>
             <tr style="height: 42px;">
-                <th style="font-size: 11px; width: 29px; height: 42px; text-align: left;">
+                <th style="font-size: 11px; width: 17px; height: 42px; text-align: left;">
                     {{ $data['sesi'] }}</th>
                 <th class="border" style="height: 42px; width: 20px;">1</th>
                 <th class="border" style="height: 42px; width: 20px;">2</th>
@@ -98,7 +98,7 @@
         </thead>
         <tbody>
             <tr style="background-color: #e3e2de;">
-                <td class="border" style="height: 36px; width: 29px;" rowspan="2">1</td>
+                <td class="border" style="height: 36px; width: 17px;" rowspan="2">1</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -116,7 +116,7 @@
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
-                <td class="border" style="height: 36px; width: 29px; text-align: center;" rowspan="2">2</td>
+                <td class="border" style="height: 36px; width: 17px; text-align: center;" rowspan="2">2</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -134,7 +134,7 @@
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
             </tr>
             <tr style="background-color: #e3e2de;">
-                <td class="border" style="height: 36px; width: 29px; text-align: center;" rowspan="2">3</td>
+                <td class="border" style="height: 36px; width: 17px; text-align: center;" rowspan="2">3</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -152,7 +152,7 @@
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
-                <td class="border" style="height: 36px; width: 29px; text-align: center;" rowspan="2">4</td>
+                <td class="border" style="height: 36px; width: 17px; text-align: center;" rowspan="2">4</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -170,7 +170,7 @@
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
             </tr>
             <tr style="background-color: #e3e2de;">
-                <td class="border" style="height: 36px; width: 29px; text-align: center;" rowspan="2">5</td>
+                <td class="border" style="height: 36px; width: 17px; text-align: center;" rowspan="2">5</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
@@ -188,7 +188,7 @@
                 <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
             </tr>
             <tr style="height: 60px;">
-                <td class="border" style="height: 36px; width: 29px; text-align: center;" rowspan="2">6</td>
+                <td class="border" style="height: 36px; width: 17px; text-align: center;" rowspan="2">6</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
