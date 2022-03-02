@@ -33,7 +33,9 @@ class BulkDownloadCard extends Retrieval
         $participants = ArcheryEventParticipant::where("event_category_id",$category_id)->where("status",1)->get();
         $archery_event = ArcheryEvent::find($parameters->get('event_id'));
         if(!$archery_event) throw new BLoCException("tidak ada data tersedia");
-
+        
+        if($participants->isEmpty()) throw new BLoCException("tidak ada partisipan");
+        
         $final_doc=[];
         
         $category = ArcheryEventCategoryDetail::find($category_id);
@@ -45,31 +47,36 @@ class BulkDownloadCard extends Retrieval
        
         $background=$idcard_event->background;
         $logo= !empty($idcard_event->logo_event) ? $idcard_event->logo_event : "https://i.ibb.co/pXx14Zr/logo-email-archery.png";
+        
         foreach ($participants as $participant) {
-            $member = ArcheryEventParticipantMember::where("archery_event_participant_id",$participant->id)->first();            
+            $member = ArcheryEventParticipantMember::where("archery_event_participant_id",$participant->id)->first();   
+            
+            if(!$member) throw new BLoCException("tidak ada data tersedia");       
             $user = User::find($member->user_id);            
             $number = ArcheryEventParticipantNumber::getNumber($participant->id);
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id",$member->id)->first();
             
-            $club = ArcheryClub::find($member->club_id);
+            $club = ArcheryClub::find($member->club);
             if(!$club){
                 $club='';
             }else{
                 $club=$club->name;
             }
-
+            
             $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number.$schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
-            //dd($background);
+            
             $final_doc[] = str_replace(
                 ['{%budrest_number%}','{%id_number%}','{%member_name%}','{%avatar%}' ,'{%event_category%}','{%club%}',"{%background%}",'{%logo%}'], 
                 [$budrest_number,$number,$user->name, $avatar, $categoryLabel,$club,$background,$logo],
                 $html_template
             );                    
         }
-
-        $file_name = "asset/idcard/idcard_".$category_id.".pdf";
+        
+        $category_file=str_replace(' ', '', $categoryLabel);
+        $file_name = "asset/idcard/idcard_".$category_file."_".$category_id.".pdf";
         $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf();
+        
         return [
                 "file_name" => env('APP_HOSTNAME') .$file_name,
                 "file_base_64" => env('APP_HOSTNAME') .$generate_idcard,
