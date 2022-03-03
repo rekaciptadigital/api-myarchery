@@ -9,7 +9,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 
 class ArcheryScoring extends Model
 {
-    protected $score_value = [
+    protected $ArcheryScoring = [
         "" => 0,
         "1" => 1,
         "2" => 2,
@@ -70,6 +70,23 @@ class ArcheryScoring extends Model
         array("id" => 2, "value" => "elimination")
     );
 
+    protected function ArcheryScoringDetailPoint(){
+        return [
+            "" => 0,
+            "1" => 0,
+            "2" => 0,
+            "3" => 0,
+            "4" => 0,
+            "5" => 0,
+            "6" => 0,
+            "7" => 0,
+            "8" => 0,
+            "9" => 0,
+            "10" => 0,
+            "x" => 0,
+            "m" => 0,
+        ];
+    }
     protected function makeScoringFormat(object $scoring){
         $scores = [];
         if(empty((array)$scoring)){
