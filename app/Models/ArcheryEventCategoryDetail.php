@@ -64,7 +64,7 @@ class ArcheryEventCategoryDetail extends Model
             }
         }
 
-        $can_update_series = 0;
+        $can_update_series = 1;
         if (Carbon::now() <  $this->start_event && $have_series == 1) {
             $can_update_series = 1;
         }
