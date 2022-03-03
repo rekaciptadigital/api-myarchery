@@ -7,6 +7,8 @@ use App\Models\ArcheryEventSerie;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcherySeriesCategory;
+use App\Models\User;
+use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
 
 class ArcherySeriesUserPoint extends Model
@@ -14,7 +16,6 @@ class ArcherySeriesUserPoint extends Model
     protected $table = 'archery_serie_user_point';
     protected $guarded = ['id'];
 
-    // TODO : 
     protected function setPoint($user_id,$member_id,$category_id,$type,$pos){
         $category = ArcheryEventCategoryDetail::find($category_id);
         if(!$category) return false;
@@ -44,17 +45,57 @@ class ArcherySeriesUserPoint extends Model
         $this->create([
             "event_serie_id" => $event_serie->id,
             "user_id" => $user_id,
-            "event_category_id" => $category_id,
+            "event_category_id" => $archerySeriesCategory->id,
             "point" => $point->point,
             "status" => $member->is_series,
             "type" => $type,
             "position" => $pos,
             "member_id" => $member_id,
         ]);
-        // check event nya tegabung series
-        // cari kategori tergabung ga dalam series
-        // get member detail
-        // get data master point
-        // insert or update 
+    }
+
+    protected function getUserSeriePointByCategory($category_serie_id){
+        $category_series = ArcherySeriesCategory::find($category_serie_id);
+        $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)->where("status", 1)->get();
+        $users = [];
+        $output = [];
+        foreach ($archery_user_point as $key => $value) {
+            $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
+            $scores = ArcheryScoring::where("participant_member_id", $value->member_id)->get();
+            foreach ($scores as $s => $score) {
+                if($score->type == 1){
+                    if(!$scores) continue;
+                    $score_details = json_decode($score->scoring_detail);
+                    foreach ($score_details as $score_detail) {
+                        foreach ($score_detail as $sd) {
+                            $member_score_details[$sd->id] = $member_score_details[$sd->id] + 1;
+                        }
+                    }
+                }else{
+                    $score_details = json_decode($score->scoring_detail);
+                    foreach ($score_details->shot as $shot) {
+                        foreach ($shot->score as $sps) {
+                            $member_score_details[$sps] = $member_score_details[$sps] + 1;
+                        }
+                    }
+                }
+            }
+            $users[$value->user_id]["score_detail"] = $member_score_details;
+            $users[$value->user_id]["total_point"] = isset($users[$value->user_id]["total_point"]) ? $users[$value->user_id]["total_point"] + $value->point : $value->point;
+        }
+
+        foreach ($users as $u => $user) {
+            $user_detail = User::select("name")->where("id",$u)->first();
+            $output[] = [
+                "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail"],$user["total_point"]),
+                "total_point" => $user["total_point"],
+                "user" => $user_detail
+            ];
+        }
+
+        usort($output, function($a, $b) {return $b["tmp_score"] > $a["tmp_score"] ? 1 : -1;});
+
+        return $output;
+
     }
 }
