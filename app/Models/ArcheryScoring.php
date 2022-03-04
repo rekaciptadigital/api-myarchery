@@ -9,7 +9,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 
 class ArcheryScoring extends Model
 {
-    protected $ArcheryScoring = [
+    protected $score_value = [
         "" => 0,
         "1" => 1,
         "2" => 2,
