@@ -18,7 +18,12 @@ class ArcherySeriesUserPoint extends Model
     protected $table = 'archery_serie_user_point';
     protected $guarded = ['id'];
 
+<<<<<<< HEAD
     protected function setPoint($member_id,$type,$pos){
+=======
+    protected function setPoint($user_id, $member_id, $category_id, $type, $pos)
+    {
+>>>>>>> ae982c29a649a769807d74d6b0746f4a5927dd76
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) return false;
 
