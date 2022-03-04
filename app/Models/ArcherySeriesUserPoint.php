@@ -22,6 +22,10 @@ class ArcherySeriesUserPoint extends Model
         $member = ArcheryEventParticipantMember::find($member_id);
         if (!$member) return false;
 
+        $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
+        if(!$participant) return false;
+
+        $user_id = $participant->user_id;
         $category_id = $participant->event_category_id;
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) return false;
@@ -29,10 +33,6 @@ class ArcherySeriesUserPoint extends Model
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
         if (!$event_serie) return false;
 
-        $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
-        if(!$participant) return false;
-
-        $user_id = $participant->user_id;
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
             ->where("competition_category_id", $category->competition_category_id)
             ->where("distance_id", $category->distance_id)
