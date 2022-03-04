@@ -70,10 +70,9 @@ class ArcherySeriesUserPoint extends Model
         foreach ($archery_user_point as $key => $value) {
             $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
             $member_score_detail_qualification = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail_qualification"]) ? $users[$value->user_id]["score_detail_qualification"] : ArcheryScoring::ArcheryScoringDetailPoint();
-            $scores = ArcheryScoring::where("participant_member_id", $value->member_id)->get();
-            foreach ($scores as $s => $score) {
-                if ($score->type == 1) {
-                    if (!$scores) continue;
+            if($value->type == "qualification"){
+                $scores = ArcheryScoring::where("participant_member_id", $value->member_id)->where("type",1)->get();
+                foreach ($scores as $s => $score) {
                     $score_details = json_decode($score->scoring_detail);
                     foreach ($score_details as $score_detail) {
                         foreach ($score_detail as $sd) {
@@ -81,7 +80,10 @@ class ArcherySeriesUserPoint extends Model
                             $member_score_detail_qualification[$sd->id] = $member_score_detail_qualification[$sd->id] + 1;
                         }
                     }
-                } else {
+                }
+            }else{
+                $scores = ArcheryScoring::where("participant_member_id", $value->member_id)->where("type",2)->get();
+                foreach ($scores as $s => $score) {
                     $score_details = json_decode($score->scoring_detail);
                     foreach ($score_details->shot as $shot) {
                         foreach ($shot->score as $sps) {
@@ -90,6 +92,7 @@ class ArcherySeriesUserPoint extends Model
                     }
                 }
             }
+            
             $users[$value->user_id]["score_detail"] = $member_score_details;
             $users[$value->user_id]["score_detail_qualification"] = $member_score_detail_qualification;
             $users[$value->user_id]["total_point"] = isset($users[$value->user_id]["total_point"]) ? $users[$value->user_id]["total_point"] + $value->point : $value->point;
