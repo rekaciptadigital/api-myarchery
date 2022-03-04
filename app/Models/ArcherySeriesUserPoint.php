@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventSerie;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcherySeriesCategory;
 use App\Models\City;
 use App\Models\User;
@@ -17,7 +18,7 @@ class ArcherySeriesUserPoint extends Model
     protected $table = 'archery_serie_user_point';
     protected $guarded = ['id'];
 
-    protected function setPoint($user_id,$member_id,$category_id,$type,$pos){
+    protected function setPoint($member_id,$type,$pos){
         $category = ArcheryEventCategoryDetail::find($category_id);
         if(!$category) return false;
 
@@ -27,6 +28,11 @@ class ArcherySeriesUserPoint extends Model
         $member = ArcheryEventParticipantMember::find($member_id);
         if(!$member) return false;
 
+        $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
+        if(!$participant) return false;
+
+        $category_id = $participant->event_category_id;
+        $user_id = $participant->user_id;
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
         ->where("competition_category_id", $category->competition_category_id)
         ->where("distance_id", $category->distance_id)
