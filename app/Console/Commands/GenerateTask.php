@@ -7,8 +7,12 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventSerie;
 use App\Models\ArcherySeriesUserPoint;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcherySeriesCategory;
+use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantNumber;
+use App\Libraries\EliminationFormat;
 use App\Models\User;
 class GenerateTask extends Command
 {
@@ -44,24 +48,37 @@ class GenerateTask extends Command
     public function handle()
     {
         $cat_id = $this->argument('category');
-        $category = ArcheryEventCategoryDetail::find($cat_id);
-        if(!$category) return false;
+        $elimination = ArcheryEventElimination::where("gender","none")->get();
+        foreach ($elimination as $key => $value) {
+            $match = ArcheryEventEliminationMatch::where("event_elimination_id",$value->id)->where("elimination_member_id","!=",0)->get();
+            foreach ($match as $m => $mat) {
+                $member = ArcheryEventEliminationMember::find($mat->elimination_member_id);
+                $champion = EliminationFormat::EliminationChampion($value->count_participant,$mat->round,$mat->match,$mat->win);
+                $check = ArcherySeriesUserPoint::where("member_id",$member->member_id)->where("type","elimination")->count();
+                if($champion != 0 && $check < 1)
+                    ArcherySeriesUserPoint::setPoint($member->member_id,"elimination",$champion);
+            }
+        }
 
-        $event_serie = ArcheryEventSerie::where("event_id",$category->event_id)->first();
-        if(!$event_serie) return false;
-        
-        $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
-        ->where("competition_category_id", $category->competition_category_id)
-        ->where("distance_id", $category->distance_id)
-        ->where("team_category_id", $category->team_category_id)
-        ->where("serie_id", $event_serie->serie_id)
-        ->first();
-        
-        if(!$archerySeriesCategory) return false;
 
-        ArcherySeriesUserPoint::where("event_category_id", $category->id)->update([
-            "event_category_id" => $archerySeriesCategory->id
-        ]);
+        // $category = ArcheryEventCategoryDetail::find($cat_id);
+        // if(!$category) return false;
+
+        // $event_serie = ArcheryEventSerie::where("event_id",$category->event_id)->first();
+        // if(!$event_serie) return false;
+        
+        // $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
+        // ->where("competition_category_id", $category->competition_category_id)
+        // ->where("distance_id", $category->distance_id)
+        // ->where("team_category_id", $category->team_category_id)
+        // ->where("serie_id", $event_serie->serie_id)
+        // ->first();
+        
+        // if(!$archerySeriesCategory) return false;
+
+        // ArcherySeriesUserPoint::where("event_category_id", $category->id)->update([
+        //     "event_category_id" => $archerySeriesCategory->id
+        // ]);
         
         // $p = ArcheryEventParticipant::where("event_id",21)->where("status",1)->get();
         // foreach ($p as $key => $value) {

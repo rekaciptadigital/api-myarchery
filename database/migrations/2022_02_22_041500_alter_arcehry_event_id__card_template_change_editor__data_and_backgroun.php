@@ -16,7 +16,6 @@ class AlterArcehryEventIdCardTemplateChangeEditorDataAndBackgroun extends Migrat
         Schema::table('archery_event_idcard_templates', function (Blueprint $table) {
             $table->longText('editor_data')->nullable()->change();
             $table->longText('background')->nullable()->change();
-            
         });
     }
 

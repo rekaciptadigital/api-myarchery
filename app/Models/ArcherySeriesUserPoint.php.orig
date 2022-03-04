@@ -18,21 +18,26 @@ class ArcherySeriesUserPoint extends Model
     protected $table = 'archery_serie_user_point';
     protected $guarded = ['id'];
 
+<<<<<<< HEAD
     protected function setPoint($member_id,$type,$pos){
-        $member = ArcheryEventParticipantMember::find($member_id);
-        if (!$member) return false;
-
-        $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
-        if(!$participant) return false;
-
-        $user_id = $participant->user_id;
-        $category_id = $participant->event_category_id;
+=======
+    protected function setPoint($user_id, $member_id, $category_id, $type, $pos)
+    {
+>>>>>>> ae982c29a649a769807d74d6b0746f4a5927dd76
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) return false;
 
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
         if (!$event_serie) return false;
 
+        $member = ArcheryEventParticipantMember::find($member_id);
+        if (!$member) return false;
+
+        $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
+        if(!$participant) return false;
+
+        $category_id = $participant->event_category_id;
+        $user_id = $participant->user_id;
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
             ->where("competition_category_id", $category->competition_category_id)
             ->where("distance_id", $category->distance_id)
@@ -93,7 +98,7 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "avatar", "address_city_id")->where("id", $u)->first();
+            $user_detail = User::select("name", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
             if (!empty($user_detail->address_city_id)) {
                 $c = City::find($user_detail->address_city_id);

@@ -25,6 +25,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
 
         $router->group(['prefix' => 'archery-series'], function () use ($router) {
             $router->post('/join-archery-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setMemberSeries']);
+            $router->get('/get-detail-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailSeriesById']);
             $router->get('/get-list-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSeries']);
             $router->get('/get-list-event-by-series-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListEventBySeriesId']);
             $router->get('/get-list-category-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategorySeries']);
