@@ -462,7 +462,7 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function getTotalTmp(array $total_per_point,$total){
+    protected function getTotalTmp(array $total_per_point,$total,$key = 0.01){
         $one = $total_per_point[1];
         $two = $total_per_point[2];
         $three = $total_per_point[3];
@@ -475,7 +475,7 @@ class ArcheryScoring extends Model
         $ten = $total_per_point[10];
         $x = $total_per_point["x"];
         $x_plus_y = $x+$ten;
-        $output = $total+(($x_plus_y+(($x+(($ten+(($nine+(($eight+(($seven+(($six+(($five+(($four+(($three+(($two+($one*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01))*0.01);
+        $output = $total+(($x_plus_y+(($x+(($ten+(($nine+(($eight+(($seven+(($six+(($five+(($four+(($three+(($two+($one*$key))*$key))*$key))*$key))*$key))*$key))*$key))*$key))*$key))*$key))*$key))*$key);
         return $output;
     }
 
