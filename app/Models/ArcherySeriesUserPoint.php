@@ -88,7 +88,7 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("name", "avatar", "address_city_id")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
             if (!empty($user_detail->address_city_id)) {
                 $c = City::find($user_detail->address_city_id);
