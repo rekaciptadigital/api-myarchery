@@ -69,6 +69,7 @@ class ArcherySeriesUserPoint extends Model
         $output = [];
         foreach ($archery_user_point as $key => $value) {
             $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
+            $member_score_detail_qualification = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail_qualification"]) ? $users[$value->user_id]["score_detail_qualification"] : ArcheryScoring::ArcheryScoringDetailPoint();
             $scores = ArcheryScoring::where("participant_member_id", $value->member_id)->get();
             foreach ($scores as $s => $score) {
                 if ($score->type == 1) {
@@ -77,6 +78,7 @@ class ArcherySeriesUserPoint extends Model
                     foreach ($score_details as $score_detail) {
                         foreach ($score_detail as $sd) {
                             $member_score_details[$sd->id] = $member_score_details[$sd->id] + 1;
+                            $member_score_detail_qualification[$sd->id] = $member_score_detail_qualification[$sd->id] + 1;
                         }
                     }
                 } else {
@@ -89,6 +91,7 @@ class ArcherySeriesUserPoint extends Model
                 }
             }
             $users[$value->user_id]["score_detail"] = $member_score_details;
+            $users[$value->user_id]["score_detail_qualification"] = $member_score_detail_qualification;
             $users[$value->user_id]["total_point"] = isset($users[$value->user_id]["total_point"]) ? $users[$value->user_id]["total_point"] + $value->point : $value->point;
         }
 
@@ -115,7 +118,7 @@ class ArcherySeriesUserPoint extends Model
             ];
             
             $output[] = [
-                "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail"], $total_score,0.001),
+                "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail_qualification"], $total_score,0.001),
                 "total_point" => $user["total_point"],
                 "user" => $user_profile,
             ];
