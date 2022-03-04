@@ -95,25 +95,40 @@ class ArcherySeriesUserPoint extends Model
         foreach ($users as $u => $user) {
             $user_detail = User::select("id", "name", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
+            $total_score = 0;
+            foreach ($user["score_detail"] as $x => $v) {
+                if(in_array($x,[1,2,3,4,5,6,7,8,9,10,"x"])){
+                    $score_value = $x == "x" ? 10 : $x;
+                    $total_score = $total_score + ($score_value*$v);
+                }
+            }
             if (!empty($user_detail->address_city_id)) {
                 $c = City::find($user_detail->address_city_id);
                 $city = $c->name;
             }
+            
             $user_profile = [
                 "id" => $user_detail->id,
                 "name" => $user_detail->name,
                 "avatar" => $user_detail->avatar,
                 "city" => $city,
             ];
+            
             $output[] = [
-                "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail"], $user["total_point"]),
+                "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail"], $total_score,0.001),
                 "total_point" => $user["total_point"],
                 "user" => $user_profile,
             ];
         }
 
         usort($output, function ($a, $b) {
-            return $b["tmp_score"] > $a["tmp_score"] ? 1 : -1;
+            if($a["total_point"] == $b["total_point"]){
+                return $b["tmp_score"] > $a["tmp_score"] ? 1 : -1;
+            }
+            if($a["total_point"] < $b["total_point"]){
+                return 1;
+            }
+            return -1;
         });
 
         return $output;
