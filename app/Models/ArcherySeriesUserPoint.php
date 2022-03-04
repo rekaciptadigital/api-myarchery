@@ -7,6 +7,7 @@ use App\Models\ArcheryEventSerie;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcherySeriesCategory;
+use App\Models\City;
 use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
@@ -85,11 +86,22 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("name")->where("id",$u)->first();
+            $user_detail = User::select("name","avatar","city_id")->where("id",$u)->first();
+            $city = "";
+            if(!empty($user_detail->address_city_id)){
+                $c = City::find($user_detail->address_city_id);
+                $city = $c->name;
+            }
+            $user_profile = [
+                "id" => $user_detail->id,
+                "name" => $user_detail->name,
+                "avatar" => $user_detail->avatar,
+                "city" => $city,
+            ];
             $output[] = [
                 "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail"],$user["total_point"]),
                 "total_point" => $user["total_point"],
-                "user" => $user_detail
+                "user" => $user_profile,
             ];
         }
 
