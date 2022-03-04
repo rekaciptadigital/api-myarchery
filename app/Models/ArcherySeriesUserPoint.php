@@ -99,7 +99,7 @@ class ArcherySeriesUserPoint extends Model
             $user_detail = User::select("id", "name", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
             $total_score = 0;
-            foreach ($user["score_detail"] as $x => $v) {
+            foreach ($user["score_detail_qualification"] as $x => $v) {
                 if(in_array($x,[1,2,3,4,5,6,7,8,9,10,"x"])){
                     $score_value = $x == "x" ? 10 : $x;
                     $total_score = $total_score + ($score_value*$v);
