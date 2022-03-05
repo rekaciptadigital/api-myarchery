@@ -30,35 +30,19 @@ class UpdateUserProfile extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        if ($parameters->get('date_of_birth')) {
-            if (!$user->date_of_birth || $user->date_of_birth == $parameters->get('date_of_birth')) {
-                $user->date_of_birth = $parameters->get('date_of_birth');
-            } else {
-                throw new BLoCException("tidak dapat mengubah tanggal lahir");
-            }
-        }
-
-        if ($parameters->get('gender')) {
-            if (!$user->gender || $user->gender == $parameters->get('gender')) {
-                $user->gender = $parameters->get('gender');
-            } else {
-                throw new BLoCException("tidak dapat mengubah jenis kelamin");
-            }
-        }
-
         if (
             $parameters->get('name')
             || $parameters->get('place_of_birth')
-            || $parameters->get('address_province_id')
-            || $parameters->get('address_city_id')
+            || $parameters->get('gender')
+            || $parameters->get("date_of_birth")
         ) {
             if ($user->verify_status == 1) {
                 throw new BLoCException("tidak dapat mengubah data karena status anda telah terverifikasi");
             } else {
                 $user->name = $parameters->get("name");
                 $user->place_of_birth = $parameters->get('place_of_birth');
-                $user->address_province_id = $parameters->get('address_province_id');
-                $user->address_city_id = $parameters->get('address_city_id');
+                $user->gender = $parameters->get('gender');
+                $user->date_of_birth = $parameters->get('date_of_birth');
             }
         }
 
@@ -79,8 +63,6 @@ class UpdateUserProfile extends Retrieval
             'gender' => 'in:male,female',
             'address' => 'string',
             'place_of_birth' => 'string',
-            'address_province_id' => 'integer',
-            'address_city_id' => 'integer',
             'phone_number' => 'string'
         ];
     }
