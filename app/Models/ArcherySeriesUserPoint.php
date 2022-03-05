@@ -8,6 +8,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcherySeriesCategory;
+use App\Models\ArcherySerieCity;
 use App\Models\City;
 use App\Models\User;
 use App\Models\ArcheryScoring;
@@ -108,22 +109,39 @@ class ArcherySeriesUserPoint extends Model
                                     ->where("archery_event_participant_members.is_series",1)
                                     ->where("archery_event_participants.status",1)
                                     ->where("archery_event_participant_members.user_id",$value->user_id)->count();
+            
+            $u = User::find($value->user_id);
+            $check_serie_city = ArcherySerieCity::where("city_id",$u->address_city_id)->where("serie_id",$event_serie->serie_id)->count();
             if($check_member_join_serie > 0) {
                 $not_set[] = "v".$value->user_id."\n";
+                if($check_serie_city < 1){
+                    $remove[] = $value->user_id;
+
+                    ArcheryEventParticipantMember::where("id",$value->member_id)->update([
+                        "is_series" => 0
+                    ]);
+        
+                    ArcherySeriesUserPoint::where("member_id", $value->member_id)->update([
+                        "status" => 0
+                    ]);
+        
+                }
                 continue;
             }
+            if($check_serie_city > 0){
+                ArcheryEventParticipantMember::where("id",$value->member_id)->update([
+                    "is_series" => 1
+                ]);
 
-            ArcheryEventParticipantMember::where("id",$value->member_id)->update([
-                "is_series" => 1
-            ]);
+                ArcherySeriesUserPoint::where("member_id", $value->member_id)->update([
+                    "status" => 1
+                ]);
 
-            ArcherySeriesUserPoint::where("member_id", $value->member_id)->update([
-                "status" => 1
-            ]);
-
-            $success[] = $value->user_id;
+                $success[] = $value->user_id;
+            }
         }
         error_log("[".$event_id."]not set : ==> ".json_encode($not_set));
+        error_log("[".$event_id."]remove : ==> ".json_encode($remove));
         error_log("[".$event_id."]set : ==> ".json_encode($success));
     }
 
