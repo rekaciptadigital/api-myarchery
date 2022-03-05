@@ -80,7 +80,7 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 'athlete_code' => $athlete_code ? $athlete_code: '-',
                 'timestamp' => $value->created_at,
                 'is_series' => $value->is_series,
-                'verify_status' => $value->verify_status,
+                'verify_status' => $user["verify_status"],
                 'email' => $value->email,
                 'full_name' => $user["name"],
                 'gender' => $value->gender,
