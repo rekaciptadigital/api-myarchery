@@ -44,7 +44,7 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                                                 'archery_event_participants.user_id',
                                                 'archery_event_participants.created_at',
                                                 'archery_event_participant_members.is_series',
-                                                'email','archery_clubs.name as club','phone_number','team_category_id','gender','event_name')
+                                                'archery_event_participants.email','archery_clubs.name as club','archery_event_participants.phone_number','archery_event_participants.team_category_id','archery_event_participants.gender','event_name')
         ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
         ->leftJoin("archery_event_participant_members", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
         ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")

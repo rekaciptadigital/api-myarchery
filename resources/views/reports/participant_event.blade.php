@@ -63,8 +63,8 @@ table, th, td {
                 <td style="text-align: center;">{{ $data['category_code'] ? $data['category_code'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['athlete_code'] ? $data['athlete_code'] : '-' }}</td>
                 <td style="text-align: left;">{{ $data['category'] ? $data['category'] : '-' }}  </td>
-                <td style="text-align: center;">{{ $data['is_series'] && $data['is_series'] == 1 ? √ : '' }}</td>
-                <td style="text-align: center;">{{ $data['verify_status'] && $data['verify_status'] == 1 ? √ : '' }}</td>
+                <td style="text-align: center;">{{ $data['is_series'] && $data['is_series'] == 1 ? '√' : '' }}</td>
+                <td style="text-align: center;">{{ $data['verify_status'] && $data['verify_status'] == 1 ? '√' : '' }}</td>
                 <td style="text-align: center;">{{ $data['timestamp'] ? $data['timestamp'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['email'] ? $data['email'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['full_name'] ? $data['full_name'] : '-' }}</td>
