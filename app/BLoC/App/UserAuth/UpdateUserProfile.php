@@ -39,7 +39,7 @@ class UpdateUserProfile extends Retrieval
         }
 
         if ($parameters->get('gender')) {
-            if (!$user->gender || $user->gender == $parameters->get('gender')) {
+            if (!$user->gender) {
                 $user->gender = $parameters->get('gender');
             } else {
                 throw new BLoCException("tidak dapat mengubah jenis kelamin");
