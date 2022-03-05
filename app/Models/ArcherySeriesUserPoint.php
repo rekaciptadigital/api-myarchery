@@ -61,6 +61,72 @@ class ArcherySeriesUserPoint extends Model
         ]);
     }
 
+    protected function setAutoUserMemberCategory($event_id)
+    {
+        $event_serie = ArcheryEventSerie::where("event_id", $event_id)->first();
+        if (!$event_serie) return false;
+        $success = [];
+        $not_set = [];
+        $list_member_category = ArcheryEventParticipantMember::select(
+                                                                        "archery_event_participant_members.user_id",
+                                                                        "archery_event_participants.event_id",
+                                                                        "archery_serie_categories.id as serie_category_id",
+                                                                        "archery_event_participant_members.id as member_id"
+                                                                        )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                                    ->join("archery_event_series","archery_event_participants.event_id","=","archery_event_series.event_id")                            
+                                    ->join('archery_serie_categories', function ($join) {
+                                        $join->on("archery_event_participants.age_category_id","=","archery_serie_categories.age_category_id")
+                                            ->on("archery_event_participants.competition_category_id","=","archery_serie_categories.competition_category_id")
+                                            ->on("archery_event_participants.distance_id","=","archery_serie_categories.distance_id")
+                                            ->on("archery_event_participants.team_category_id","=","archery_serie_categories.team_category_id");
+                                    })
+                                    ->where("archery_event_participants.event_id",$event_id)
+                                    ->where("archery_event_participants.status",1)->orderBy("archery_event_participant_members.user_id","DESC")->get();
+        foreach ($list_member_category as $key => $value) {
+            $check_member_category = ArcheryEventParticipantMember::select(
+                                                        "archery_event_participant_members.user_id",
+                                                        "archery_event_participants.event_id",
+                                                        "archery_serie_categories.id as serie_category_id",
+                                                        "archery_event_participant_members.id as member_id"
+                                                        )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                                        ->join("archery_event_series","archery_event_participants.event_id","=","archery_event_series.event_id")                            
+                                        ->join('archery_serie_categories', function ($join) {
+                                        $join->on("archery_event_participants.age_category_id","=","archery_serie_categories.age_category_id")
+                                        ->on("archery_event_participants.competition_category_id","=","archery_serie_categories.competition_category_id")
+                                        ->on("archery_event_participants.distance_id","=","archery_serie_categories.distance_id")
+                                        ->on("archery_event_participants.team_category_id","=","archery_serie_categories.team_category_id");
+                                        })->where("archery_event_participant_members.user_id",$value->user_id)
+                                        ->where("archery_event_participants.event_id",$event_id)
+                                        ->where("archery_event_participants.status",1)->count();
+            if($check_member_category > 1){
+                $not_set[] = "x".$value->user_id."\n";
+                continue;
+            }
+
+            $check_member_join_serie = ArcheryEventParticipantMember::join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                                    ->where("archery_event_participants.event_id",$event_id)
+                                    ->where("archery_event_participant_members.is_series",1)
+                                    ->where("archery_event_participants.status",1)
+                                    ->where("archery_event_participant_members.user_id",$value->user_id)->count();
+            if($check_member_join_serie > 0) {
+                $not_set[] = "v".$value->user_id."\n";
+                continue;
+            }
+
+            ArcheryEventParticipantMember::where("id",$value->member_id)->update([
+                "is_series" => 1
+            ]);
+
+            ArcherySeriesUserPoint::where("member_id", $value->member_id)->update([
+                "status" => 1
+            ]);
+
+            $success[] = $value->user_id;
+        }
+        error_log("[".$event_id."]not set : ==> ".json_encode($not_set));
+        error_log("[".$event_id."]set : ==> ".json_encode($success));
+    }
+
     protected function getUserSeriePointByCategory($category_serie_id)
     {
         $category_series = ArcherySeriesCategory::find($category_serie_id);

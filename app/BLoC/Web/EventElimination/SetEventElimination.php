@@ -74,8 +74,6 @@ class SetEventElimination extends Transactional
                             ArcherySeriesUserPoint::setPoint($member_id,"qualification",$position_qualification);
                         }
                         $elimination_member_id = $elimination_member->id;
-
-                        // TODO : tambahin proses input ke point series
                     }
                     $match = new ArcheryEventEliminationMatch;
                     $match->event_elimination_id = $elimination->id;
