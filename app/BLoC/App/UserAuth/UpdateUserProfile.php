@@ -49,16 +49,12 @@ class UpdateUserProfile extends Retrieval
         if (
             $parameters->get('name')
             || $parameters->get('place_of_birth')
-            || $parameters->get('address_province_id')
-            || $parameters->get('address_city_id')
         ) {
             if ($user->verify_status == 1) {
                 throw new BLoCException("tidak dapat mengubah data karena status anda telah terverifikasi");
             } else {
                 $user->name = $parameters->get("name");
                 $user->place_of_birth = $parameters->get('place_of_birth');
-                $user->address_province_id = $parameters->get('address_province_id');
-                $user->address_city_id = $parameters->get('address_city_id');
             }
         }
 
@@ -79,8 +75,6 @@ class UpdateUserProfile extends Retrieval
             'gender' => 'in:male,female',
             'address' => 'string',
             'place_of_birth' => 'string',
-            'address_province_id' => 'integer',
-            'address_city_id' => 'integer',
             'phone_number' => 'string'
         ];
     }
