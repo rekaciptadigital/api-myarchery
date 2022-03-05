@@ -49,17 +49,40 @@ class ArcherySeriesUserPoint extends Model
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
         if (!$point) return false;
 
+        $member_point = $this->where("member_id",$member_id)->where("type",$type)->first();
         // get detail event
-        $this->create([
-            "event_serie_id" => $event_serie->id,
-            "user_id" => $user_id,
-            "event_category_id" => $archerySeriesCategory->id,
-            "point" => $point->point,
-            "status" => $member->is_series,
-            "type" => $type,
-            "position" => $pos,
-            "member_id" => $member_id,
-        ]);
+        if($member_point){
+            $member_point->update([
+                "point" => $point->point,
+                "status" => $member->is_series,
+                "position" => $pos,
+            ]);
+        }else{
+            $this->create([
+                "event_serie_id" => $event_serie->id,
+                "user_id" => $user_id,
+                "event_category_id" => $archerySeriesCategory->id,
+                "point" => $point->point,
+                "status" => $member->is_series,
+                "type" => $type,
+                "position" => $pos,
+                "member_id" => $member_id,
+            ]);
+        }
+    }
+
+    protected function setMemberQualificationPoint($event_category_id){
+        $category = ArcheryEventCategoryDetail::find($event_category_id);
+        $session = [];
+        for ($i=0; $i < $category->session_in_qualification; $i++) { 
+            $session[] = $i+1;
+        }
+        $pos = 0;
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id,1,$session);
+        foreach ($qualification_rank as $key => $value) {
+            $pos = $pos+1;
+            $this->setPoint($value["member"]->id,"qualification",$pos);
+        }
     }
 
     protected function setAutoUserMemberCategory($event_id)
@@ -68,6 +91,7 @@ class ArcherySeriesUserPoint extends Model
         if (!$event_serie) return false;
         $success = [];
         $not_set = [];
+        $remove = [];
         $list_member_category = ArcheryEventParticipantMember::select(
                                                                         "archery_event_participant_members.user_id",
                                                                         "archery_event_participants.event_id",
@@ -114,7 +138,7 @@ class ArcherySeriesUserPoint extends Model
             $check_serie_city = ArcherySerieCity::where("city_id",$u->address_city_id)->where("serie_id",$event_serie->serie_id)->count();
             if($check_member_join_serie > 0) {
                 $not_set[] = "v".$value->user_id."\n";
-                if($check_serie_city < 1){
+                if($check_serie_city < 1 || $u->verify_status != 1){
                     $remove[] = $value->user_id;
 
                     ArcheryEventParticipantMember::where("id",$value->member_id)->update([

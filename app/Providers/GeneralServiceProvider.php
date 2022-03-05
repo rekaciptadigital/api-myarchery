@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\BLoC\General\GetEventClubRanked;
 
 class GeneralServiceProvider extends ServiceProvider
 {
@@ -13,6 +14,13 @@ class GeneralServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerService("getEventClubRanked", GetEventClubRanked::class);
+    }
+
+    private function registerService($serviceName, $className)
+    {
+        $this->app->singleton($serviceName, function () use ($className) {
+            return new $className;
+        });
     }
 }

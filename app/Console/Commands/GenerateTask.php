@@ -13,6 +13,7 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Libraries\EliminationFormat;
+use App\Libraries\ClubRanked;
 use App\Models\User;
 class GenerateTask extends Command
 {
@@ -21,7 +22,7 @@ class GenerateTask extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:task';
+    protected $signature = 'generate:task {param}';
 
     /**
      * The console command description.
@@ -47,9 +48,13 @@ class GenerateTask extends Command
      */
     public function handle()
     {
+        $cat_id = $this->argument('param');
 
         ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
-
+        ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
+        
+        
+        
         // $cat_id = $this->argument('category');
         // $elimination = ArcheryEventElimination::where("gender","none")->get();
         // foreach ($elimination as $key => $value) {

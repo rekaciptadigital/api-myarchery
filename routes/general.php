@@ -34,6 +34,10 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
     });
 
+    $router->group(['prefix' => 'event-ranked'], function () use ($router) {
+        $router->get('/club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventClubRanked']);
+    });
+
     $router->group(['prefix' => 'archery-events'], function () use ($router) {
         $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventGlobal']);
     });
