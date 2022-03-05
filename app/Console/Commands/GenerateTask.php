@@ -21,7 +21,7 @@ class GenerateTask extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:task {category}';
+    protected $signature = 'generate:task';
 
     /**
      * The console command description.
@@ -47,18 +47,21 @@ class GenerateTask extends Command
      */
     public function handle()
     {
-        $cat_id = $this->argument('category');
-        $elimination = ArcheryEventElimination::where("gender","none")->get();
-        foreach ($elimination as $key => $value) {
-            $match = ArcheryEventEliminationMatch::where("event_elimination_id",$value->id)->where("elimination_member_id","!=",0)->get();
-            foreach ($match as $m => $mat) {
-                $member = ArcheryEventEliminationMember::find($mat->elimination_member_id);
-                $champion = EliminationFormat::EliminationChampion($value->count_participant,$mat->round,$mat->match,$mat->win);
-                $check = ArcherySeriesUserPoint::where("member_id",$member->member_id)->where("type","elimination")->count();
-                if($champion != 0 && $check < 1)
-                    ArcherySeriesUserPoint::setPoint($member->member_id,"elimination",$champion);
-            }
-        }
+
+        ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
+
+        // $cat_id = $this->argument('category');
+        // $elimination = ArcheryEventElimination::where("gender","none")->get();
+        // foreach ($elimination as $key => $value) {
+        //     $match = ArcheryEventEliminationMatch::where("event_elimination_id",$value->id)->where("elimination_member_id","!=",0)->get();
+        //     foreach ($match as $m => $mat) {
+        //         $member = ArcheryEventEliminationMember::find($mat->elimination_member_id);
+        //         $champion = EliminationFormat::EliminationChampion($value->count_participant,$mat->round,$mat->match,$mat->win);
+        //         $check = ArcherySeriesUserPoint::where("member_id",$member->member_id)->where("type","elimination")->count();
+        //         if($champion != 0 && $check < 1)
+        //             ArcherySeriesUserPoint::setPoint($member->member_id,"elimination",$champion);
+        //     }
+        // }
 
 
         // $category = ArcheryEventCategoryDetail::find($cat_id);
