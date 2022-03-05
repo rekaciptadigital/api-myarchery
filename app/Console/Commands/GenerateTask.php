@@ -49,9 +49,9 @@ class GenerateTask extends Command
     public function handle()
     {
         $cat_id = $this->argument('param');
-
-        ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
-        ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
+        // ClubRanked::getEventRanked(21);
+        // ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
+        // ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
         
         
         
