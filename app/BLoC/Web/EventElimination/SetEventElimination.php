@@ -71,7 +71,6 @@ class SetEventElimination extends Transactional
                             $elimination_member->member_id = $member_id;
                             $elimination_member->position_qualification = $position_qualification;
                             $elimination_member->save();
-                            ArcherySeriesUserPoint::setPoint($member_id,"qualification",$position_qualification);
                         }
                         $elimination_member_id = $elimination_member->id;
                     }
@@ -90,6 +89,7 @@ class SetEventElimination extends Transactional
                 }
             }
         }
+        ArcherySeriesUserPoint::setMemberQualificationPoint($category->id);
         return $template;
     }
 
