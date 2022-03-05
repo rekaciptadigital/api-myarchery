@@ -61,7 +61,7 @@ class GetEventEliminationTemplate extends Retrieval
                         )
                         ->leftJoin("archery_event_elimination_members","archery_event_elimination_matches.elimination_member_id","=","archery_event_elimination_members.id")
                         ->leftJoin("archery_event_participant_members","archery_event_elimination_members.member_id","=","archery_event_participant_members.id")
-                        ->join("users","users.id","=","archery_event_participant_members.user_id")
+                        ->leftJoin("users","users.id","=","archery_event_participant_members.user_id")
                         ->leftJoin("archery_event_elimination_schedules","archery_event_elimination_matches.elimination_schedule_id","=","archery_event_elimination_schedules.id")
                         ->where("archery_event_elimination_matches.event_elimination_id",$elimination_id)->get();
         $qualification_rank = [];
