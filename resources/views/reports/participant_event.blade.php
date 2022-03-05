@@ -39,6 +39,9 @@ table, th, td {
             <tr >
                 <th style="text-align: center; background: #FFFF00;"><strong>KODE KATEGORI</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>KODE ATLET</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>DIVISI KATEGORI INDIVIDU</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Pemeringkatan</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Status Verifikasi</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Timestamp</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Email Address</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NAMA LENGKAP</strong></th>
@@ -51,7 +54,6 @@ table, th, td {
                 <th style="text-align: center; background: #FFFF00;"><strong>NOMOR HP WA AKTIF</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NOMOR KTP/NIK (16 DIGIT)</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>FOTO KTP (WAJIB BAGI DOMISILI DKI JAKARTA)</strong></th>
-                <th style="text-align: center; background: #FFFF00;"><strong>DIVISI KATEGORI INDIVIDU</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>FOTO PESERTA</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>FOTO BUKTI TRANSFER</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>KLUB BERLATIH</strong></th>
@@ -60,6 +62,9 @@ table, th, td {
             <tr>
                 <td style="text-align: center;">{{ $data['category_code'] ? $data['category_code'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['athlete_code'] ? $data['athlete_code'] : '-' }}</td>
+                <td style="text-align: left;">{{ $data['category'] ? $data['category'] : '-' }}  </td>
+                <td style="text-align: center;">{{ $data['is_series'] && $data['is_series'] == 1 ? √ : '' }}</td>
+                <td style="text-align: center;">{{ $data['verify_status'] && $data['verify_status'] == 1 ? √ : '' }}</td>
                 <td style="text-align: center;">{{ $data['timestamp'] ? $data['timestamp'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['email'] ? $data['email'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['full_name'] ? $data['full_name'] : '-' }}</td>
@@ -72,7 +77,6 @@ table, th, td {
                 <td style="text-align: left;">{{ $data['phone_number'] ? $data['phone_number'] : '-' }}</td>
                 <td style="text-align: center;">{{ $data['nik'] ? $data['nik'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_ktp'] ? $data['foto_ktp'] : '-' }}  </td>
-                <td style="text-align: left;">{{ $data['category'] ? $data['category'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_peserta'] ? $data['foto_peserta'] : '-' }}  </td>
                 <td style="text-align: center;">{{ $data['foto_bukti'] ? $data['foto_bukti'] : '-' }}  </td>
                 <td style="text-align: left;">{{ $data['club'] ? $data['club'] : '-' }}  </td>
