@@ -27,25 +27,6 @@ class UserRegister extends Transactional
             'phone_number' => $parameters->get('phone_number'),
         ]);
 
-        $club = $parameters->get('club');
-        $club_id = null;
-        $club_name = null;
-        if (!is_null($club)) {
-            $club_id = array_key_exists('id', $club) ? $club['id'] : null;
-            $club_name = array_key_exists('name', $club) ? $club['name'] : null;
-        }
-        if (!$club_id && !is_null($club_name)) {
-            $new_club = new ArcheryClub();
-            $new_club->name = $club_name;
-            $new_club->save();
-            $club_id = $new_club->id;
-        }
-
-        $user_archery_info = new UserArcheryInfo();
-        $user_archery_info->user_id = $user->id;
-        $user_archery_info->archery_club_id = $club_id;
-        $user_archery_info->save();
-
         $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
             'password' => $parameters->get('password'),

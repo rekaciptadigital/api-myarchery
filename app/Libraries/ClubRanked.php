@@ -26,12 +26,16 @@ class ClubRanked
         
         foreach ($members as $key => $value) {
             $medal_qualification = self::getMedalByPos($value->position_qualification);
-            if(!empty($medal_qualification))
+            if(!empty($medal_qualification)){
                 $club_ids[$value->club_id][$medal_qualification] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id][$medal_qualification]) ? $club_ids[$value->club_id][$medal_qualification] + 1 : 1;
+                $club_ids[$value->club_id]["detail_medal"]["qualification"][$medal_qualification] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id]["detail_medal"]["qualification"][$medal_qualification]) ? $club_ids[$value->club_id]["detail_medal"]["qualification"][$medal_qualification] + 1 : 1;
+            }
             
             $medal_elimination = self::getMedalByPos($value->elimination_ranked);
-            if(!empty($medal_elimination))
+            if(!empty($medal_elimination)){
                 $club_ids[$value->club_id][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id][$medal_elimination]) ? $club_ids[$value->club_id][$medal_elimination] + 1 : 1;
+                $club_ids[$value->club_id]["detail_medal"]["elimination"][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id]["detail_medal"]["elimination"][$medal_elimination]) ? $club_ids[$value->club_id]["detail_medal"]["elimination"][$medal_elimination] + 1 : 1;
+            }
         }
 
         
@@ -51,8 +55,10 @@ class ClubRanked
                     if($mrank["total"] < 1) continue; 
 
                     $medal_mix_team = self::getMedalByPos($mix_pos);
-                    if(!empty($medal_mix_team))
+                    if(!empty($medal_mix_team)){
                         $club_ids[$mrank["club_id"]][$medal_mix_team] = isset($club_ids[$mrank["club_id"]]) && isset($club_ids[$mrank["club_id"]][$medal_mix_team]) ? $club_ids[$mrank["club_id"]][$medal_mix_team] + 1 : 1;
+                        $club_ids[$mrank["club_id"]]["detail_medal"]["mix_team_qualification"][$medal_mix_team] = isset($club_ids[$mrank["club_id"]]) && isset($club_ids[$mrank["club_id"]]["detail_medal"]["mix_team_qualification"][$medal_mix_team]) ? $club_ids[$mrank["club_id"]]["detail_medal"]["mix_team_qualification"][$medal_mix_team] + 1 : 1;
+                    }
                    
                     if($mix_pos >= 3) break;
                 }
@@ -64,8 +70,10 @@ class ClubRanked
                     if($rank["total"] < 1) continue; 
 
                     $medal_team = self::getMedalByPos($pos);
-                    if(!empty($medal_team))
+                    if(!empty($medal_team)){
                         $club_ids[$rank["club_id"]][$medal_team] = isset($club_ids[$rank["club_id"]]) && isset($club_ids[$rank["club_id"]][$medal_team]) ? $club_ids[$rank["club_id"]][$medal_team] + 1 : 1;
+                        $club_ids[$rank["club_id"]]["detail_medal"]["team_qualification"][$medal_team] = isset($club_ids[$rank["club_id"]]) && isset($club_ids[$rank["club_id"]]["detail_medal"]["team_qualification"][$medal_team]) ? $club_ids[$rank["club_id"]]["detail_medal"]["team_qualification"][$medal_team] + 1 : 1;
+                    }
                    
                      if($pos >= 3) break;
                 }
@@ -88,6 +96,7 @@ class ClubRanked
                 "club_name" => $club->name,
                 "club_logo" => $club->logo,
                 "club_city" => $city ? $city->name : "",
+                "detail_medal" => $v["detail_medal"],
                 "gold" => $gold,
                 "silver" => $silver,
                 "bronze" => $bronze,
