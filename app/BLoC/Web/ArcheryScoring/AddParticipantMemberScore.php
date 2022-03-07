@@ -38,28 +38,6 @@ class AddParticipantMemberScore extends Transactional
         $participant_member_id = $code[1];
         $session = $code[2];
 
-        // ambil event yang diikuti
-        $participant_member = ArcheryEventParticipantMember::select("archery_event_participants.event_id")
-            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_participant_members.id", $participant_member_id)->first();
-
-        if (!$participant_member) {
-            throw new BLoCException("peserta tidak terdaftar");
-        }
-
-        $event = ArcheryEvent::find($participant_member->event_id);
-        if (!$event) {
-            throw new BLoCException("event tidak ditemukan");
-        }
-
-        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
-        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
-
-        if ($new_format_event_end_datetime < Carbon::today()) {
-            throw new BLoCException('event telah selesai');
-        }
-
         if ($type == 1)
             return $this->addScoringQualification($parameters);
         if ($parameters->type == 2)
@@ -76,8 +54,26 @@ class AddParticipantMemberScore extends Transactional
         $members = $parameters->members;
         $valid = 1;
         $get_elimination = ArcheryEventElimination::find($elimination_id);
-        if (!$get_elimination)
+        if (!$get_elimination) {
             throw new BLoCException("elimination tidak valid");
+        }
+
+        $category = ArcheryEventCategoryDetail::find($get_elimination->event_category_id);
+        if (!$category) {
+            throw new BLoCException("kategori tidak tersedia");
+        }
+
+        $event = ArcheryEvent::find($category->event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
+
+        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
+        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
+
+        if ($new_format_event_end_datetime < Carbon::today()) {
+            throw new BLoCException('event telah selesai');
+        }
 
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
@@ -166,12 +162,26 @@ class AddParticipantMemberScore extends Transactional
         $participant_member_id = $code[1];
         $session = $code[2];
 
-        $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id")
+        $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id", "archery_event_participants.event_id")
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->where("archery_event_participants.status", 1)
             ->where("archery_event_participant_members.id", $participant_member_id)->first();
-        if (!$participant_member)
+
+        if (!$participant_member) {
             throw new BLoCException("peserta tidak terdaftar");
+        }
+
+        $event = ArcheryEvent::find($participant_member->event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
+
+        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
+        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
+
+        if ($new_format_event_end_datetime < Carbon::today()) {
+            throw new BLoCException('event telah selesai');
+        }
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
