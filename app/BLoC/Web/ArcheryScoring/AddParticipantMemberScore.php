@@ -53,9 +53,10 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
-        $new_format = Carbon::parse($event->event_end_datetime, new DateTimeZone('Asia/jakarta'));
+        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
+        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
 
-        if ($new_format->toDateString() < Carbon::today()) {
+        if ($new_format_event_end_datetime < Carbon::today()) {
             throw new BLoCException('event telah selesai');
         }
 
