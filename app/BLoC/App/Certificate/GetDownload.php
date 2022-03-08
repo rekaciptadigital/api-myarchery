@@ -53,7 +53,7 @@ class GetDownload extends Retrieval
     
     if($type_certificate==$list['winner']){
       $get_peringkat=ArcheryEventCertificateTemplates::checkElimination($member_id);
-      if(!$get_peringkat || $get_peringkat->elimination_ranked == 0)
+      if(!$get_peringkat)
         throw new BLoCException("data elimination tidak ditemukan");
       $ranked=$get_peringkat->elimination_ranked;
 

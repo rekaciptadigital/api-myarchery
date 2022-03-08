@@ -56,6 +56,7 @@ class ArcheryEventCertificateTemplates extends Model
   {
     $check_elimination=DB::table('archery_event_elimination_members')
     ->where('member_id', $member_id)
+    ->where('elimination_ranked','!=',0)
     ->first();
 
     return $check_elimination;
