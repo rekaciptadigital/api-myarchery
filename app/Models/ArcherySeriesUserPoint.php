@@ -87,7 +87,7 @@ class ArcherySeriesUserPoint extends Model
         }
     }
 
-    protected function setAutoUserMemberCategory($event_id)
+    protected function setAutoUserMemberCategory($event_id, $user_id = 0)
     {
         $event_serie = ArcheryEventSerie::where("event_id", $event_id)->first();
         if (!$event_serie) return false;
@@ -106,6 +106,10 @@ class ArcherySeriesUserPoint extends Model
                     ->on("archery_event_participants.competition_category_id", "=", "archery_serie_categories.competition_category_id")
                     ->on("archery_event_participants.distance_id", "=", "archery_serie_categories.distance_id")
                     ->on("archery_event_participants.team_category_id", "=", "archery_serie_categories.team_category_id");
+            })
+            ->where(function ($query) use ($user_id) {
+                if($user_id != 0)
+                    return $query->where('archery_event_participant_members.user_id', $user_id);
             })
             ->where("archery_event_participants.event_id", $event_id)
             ->where("archery_event_participants.status", 1)->orderBy("archery_event_participant_members.user_id", "DESC")->get();
@@ -153,7 +157,7 @@ class ArcherySeriesUserPoint extends Model
                 }
                 continue;
             }
-            if ($check_serie_city > 0) {
+            if ($check_serie_city > 0 && $u->verify_status == 1) {
                 ArcheryEventParticipantMember::where("id", $value->member_id)->update([
                     "is_series" => 1
                 ]);
