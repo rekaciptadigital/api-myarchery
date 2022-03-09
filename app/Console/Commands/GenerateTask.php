@@ -50,7 +50,7 @@ class GenerateTask extends Command
     {
         $cat_id = $this->argument('param');
         // ClubRanked::getEventRanked(21);
-        // ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
+        ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
         // ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
         
         
