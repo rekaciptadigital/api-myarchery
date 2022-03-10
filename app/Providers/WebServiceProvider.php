@@ -91,6 +91,7 @@ use App\BLoC\Web\EliminationScoreSheet\DownloadEliminationScoreSheet;
 
 use App\BLoC\Web\ArcheryUser\AcceptVerifyUser;
 use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
+use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 
@@ -193,6 +194,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
+        $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);
         $this->registerService("refund", Refund::class);
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
     }

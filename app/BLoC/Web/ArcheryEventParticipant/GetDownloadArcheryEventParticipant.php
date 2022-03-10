@@ -26,7 +26,8 @@ class GetDownloadArcheryEventParticipant extends Retrieval
         
         $filename = '/report-event/'.$event_id.'/ARCHERY_EVENT_PARTISIPANT.xlsx';
     
-        $download= Excel::store(new ArcheryEventParticipantExport($event_id), $filename, 'public');
+        $data = new ArcheryEventParticipantExport($event_id);
+        $download= Excel::store($data, $filename, 'public');
        
         $destinationPath = Storage::url($filename);
         $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
