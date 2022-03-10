@@ -209,10 +209,11 @@ class ArcherySeriesUserPoint extends Model
             $users[$value->user_id]["score_detail"] = $member_score_details;
             $users[$value->user_id]["score_detail_qualification"] = $member_score_detail_qualification;
             $users[$value->user_id]["total_point"] = isset($users[$value->user_id]["total_point"]) ? $users[$value->user_id]["total_point"] + $value->point : $value->point;
+            $users[$value->user_id]["point_details"][$value->type] = isset($users[$value->user_id]["point_details"][$value->type]) ? $users[$value->user_id]["point_details"][$value->type] + $value->point : $value->point;
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "avatar", "address_city_id")->where("id", $u)->first();
+            $user_detail = User::select("id", "name","email", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
             $total_score = 0;
             foreach ($user["score_detail_qualification"] as $x => $v) {
@@ -229,6 +230,7 @@ class ArcherySeriesUserPoint extends Model
             $user_profile = [
                 "id" => $user_detail->id,
                 "name" => $user_detail->name,
+                "email" => $user_detail->email,
                 "avatar" => $user_detail->avatar,
                 "city" => $city,
             ];
@@ -236,6 +238,7 @@ class ArcherySeriesUserPoint extends Model
             $output[] = [
                 "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail_qualification"], $total_score, 0.001),
                 "total_point" => $user["total_point"],
+                "point_details" => $user["point_details"],
                 "user" => $user_profile,
             ];
         }
