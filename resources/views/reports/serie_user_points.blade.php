@@ -20,7 +20,7 @@ table, th, td {
 
 <body>
 <table style="width: 100%; height: 70px;" border="0">
-    <td colspan="7" style="text-align: center;">
+    <td colspan="9" style="text-align: center;">
             <strong>    
                 <h1>{{$category}}</h1>
             </strong>
@@ -47,6 +47,8 @@ table, th, td {
                 <th style="text-align: center; background: #FFFF00;"><strong>Poin Kualifikasi</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Poin Eliminasi</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Total Point</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Total Score Kualifikasi</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Total x-y Kualifikasi</strong></th>
             </tr>
             @foreach ($datas as $data)
             <tr>
@@ -57,6 +59,8 @@ table, th, td {
                 <td style="text-align: center;">{{ $data['point_qualification'] ? $data['point_qualification'] : '0' }}</td>
                 <td style="text-align: center;">{{ $data['point_elimination'] ? $data['point_elimination'] : '0' }}</td>
                 <td style="text-align: center;">{{ $data['total_point'] ? $data['total_point'] : '0' }}</td>
+                <td style="text-align: center;">{{ $data['total_score_qualification'] ? $data['total_score_qualification'] : '0' }}</td>
+                <td style="text-align: center;">{{ $data['x_y_qualification'] ? $data['x_y_qualification'] : '0' }}</td>
             </tr>
             @endforeach
             <!-- <tr>
