@@ -19,7 +19,6 @@ class ArcheryMemberCertificate extends Model
     protected $replace_item_by_certificate_type = [
                 "{%member_name%}" => "",
                 "{%category_name%}" => "",
-                "{%qualification_ranked%}" => "",
                 "{%ranked%}" => "",
                 "{%certificate_verify_url%}" => "",
                 "{%background%}" => ""

@@ -8,6 +8,7 @@ use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
+use App\Libraries\Upload;
 
 class AddArcheryEventCertificateTemplates extends Transactional
 {
@@ -32,7 +33,10 @@ class AddArcheryEventCertificateTemplates extends Transactional
 
       $archery_event_certificate_templates->event_id = $event_id;
       $archery_event_certificate_templates->html_template =  $parameters->get('html_template');
-      $archery_event_certificate_templates->background_url = $parameters->get('background_url');
+      if ($parameters->get('background_img')) {
+          $bg_url = Upload::setPath("asset/certificate/event_".$event_id."/".$type_certificate."/")->setFileName("bg_" . $type_certificate)->setBase64($parameters->get('background_img'))->save();
+          $archery_event_certificate_templates->background_url = $bg_url;
+      };
       $archery_event_certificate_templates->editor_data = $parameters->get('editor_data');
       $archery_event_certificate_templates->type_certificate = $type_certificate;
       $archery_event_certificate_templates->save();
