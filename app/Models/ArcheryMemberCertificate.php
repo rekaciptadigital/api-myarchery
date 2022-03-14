@@ -123,21 +123,21 @@ class ArcheryMemberCertificate extends Model
                     'certificate_template_id' => $template->id,
                 ));
 
-                $path = "asset/certificate/user_".$user_id;
+                $path = "asset/certificate/event_".$event_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/user_".$user_id."/".$event_id;
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"];
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/user_".$user_id."/".$event_id."/".$user_certificate["type"];
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/".$user_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
 
                 $file_name = $path."/"."[".$member_certificate_id."]".$category."-".$user_certificate["type_label"].".pdf";
-                if (!file_exists(public_path()."/".$path)) {
+                if (!file_exists(public_path()."/".$file_name)) {
                     PdfLibrary::setFinalDoc($html_template)->setFileName($file_name)->savePdf();
                 }
                 
