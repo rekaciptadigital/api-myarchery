@@ -13,7 +13,10 @@ class AlterTableCategoryDetailAddFieldEarlyBirdAndDateEarlyBird extends Migratio
      */
     public function up()
     {
-        //
+        Schema::table('archery_event_category_details', function (Blueprint $table) {
+            $table->decimal('early_bird', 19, 4)->default(0);
+            $table->dateTime('end_date_early_bird')->nullable();
+        });
     }
 
     /**
@@ -23,6 +26,8 @@ class AlterTableCategoryDetailAddFieldEarlyBirdAndDateEarlyBird extends Migratio
      */
     public function down()
     {
-        //
+        Schema::table('archery_event_category_details', function (Blueprint $table) {
+            $table->dropColumn(['early_bird', 'end_date_early_bird']);
+        });
     }
 }

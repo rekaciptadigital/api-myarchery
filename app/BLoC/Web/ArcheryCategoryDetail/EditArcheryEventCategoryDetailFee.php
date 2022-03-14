@@ -19,13 +19,12 @@ class EditArcheryEventCategoryDetailFee extends Transactional
     {
         $admin = Auth::user();
         $archery_event_category_detail_fee = ArcheryEventCategoryDetail::where('event_id', $parameters->get('event_id'));
-        
-        if(!empty($archery_event_category_detail_fee)){
+
+        if (!empty($archery_event_category_detail_fee)) {
             return $this->processEdit($parameters);
-        }else{
+        } else {
             throw new BLoCException("event_id not found");
         }
-       
     }
 
     protected function validation($parameters)
@@ -36,19 +35,23 @@ class EditArcheryEventCategoryDetailFee extends Transactional
         ];
     }
 
-    private function processEdit($parameters){
+    private function processEdit($parameters)
+    {
         $datas = $parameters->get('data', []);
         foreach ($datas as $data) {
             $archery_event_category_detail_fee = ArcheryEventCategoryDetail::where('event_id', $parameters->get('event_id'))
-                                                ->where('team_category_id',$data['team_category_id']);
-            if(!empty($archery_event_category_detail_fee)){
+                ->where('team_category_id', $data['team_category_id']);
+            if (!empty($archery_event_category_detail_fee)) {
                 $values = ArcheryEventCategoryDetail::where('event_id', $parameters->get('event_id'))
-                            ->where('team_category_id',$data['team_category_id'])
-                            ->update(['fee'=>$data['fee']]);
-            }else{
+                    ->where('team_category_id', $data['team_category_id'])
+                    ->update([
+                        'fee' => $data['fee'],
+                        'early_bird' => $data['early_bird'],
+                        'end_date_early_bird' => $data['end_date_early_bird']
+                    ]);
+            } else {
                 throw new BLoCException("team_category_id not found");
             }
-                                                
         }
     }
 }

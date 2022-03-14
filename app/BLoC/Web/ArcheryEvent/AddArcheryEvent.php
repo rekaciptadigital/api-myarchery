@@ -81,6 +81,8 @@ class AddArcheryEvent extends Transactional
                 $archery_event_category_detail->team_category_id = $event_category['team_category_id'];
                 $archery_event_category_detail->quota = $event_category['quota'];
                 $archery_event_category_detail->fee = $event_category['fee'];
+                $archery_event_category_detail->early_bird = $event_category['early_bird'];
+                $archery_event_category_detail->end_date_early_bird = $event_category['end_date_early_bird'];
                 $archery_event_category_detail->save();
             }
 
