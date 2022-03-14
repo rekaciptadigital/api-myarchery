@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventCertificateTemplates;
 use App\Libraries\PdfLibrary;
 use App\Models\User;
+use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventParticipantMember;
 
 class ArcheryMemberCertificate extends Model
@@ -35,6 +36,7 @@ class ArcheryMemberCertificate extends Model
                                                         "archery_event_participants.club_id",
                                                         "archery_event_participants.competition_category_id",
                                                         "archery_event_participants.distance_id",
+                                                        "archery_event_participants.team_category_id",
                                                         "archery_event_participants.age_category_id"
                                                         )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
                     ->where("archery_event_participants.event_id",$event_id)
@@ -50,8 +52,8 @@ class ArcheryMemberCertificate extends Model
         foreach ($members as $key => $value) {
             $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($value->event_category_id);
             $category_detail = ArcheryEventCategoryDetail::find($value->event_category_id);
-            $item["{%category_name%}"] = $category;
             $elimination_member = ArcheryEventEliminationMember::where("member_id",$value->id)->first();
+            $item["{%category_name%}"] = $category;
             
             foreach ($certificate_templates as $c => $template) {
                 $type_certificate = $template->type_certificate;
@@ -66,8 +68,9 @@ class ArcheryMemberCertificate extends Model
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")){
                     if(!$elimination_member || $elimination_member->position_qualification > 3) continue;
                     $item["{%ranked%}"] = $elimination_member->position_qualification;
-                }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("team_qualification_winner") || $type_certificate == ArcheryEventCertificateTemplates::getCertificateType("mix_team_qualification_winner")){
+                }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("team_qualification_winner")){
                     if($value->club_id == 0) continue;
+                    $team_category = $value->team_category_id == "individu female" ? "female_team" : "male_team";
                     $team_participant = ArcheryEventParticipant::select("archery_event_participants.event_category_id")
                         ->where("archery_event_participants.type","team")
                         ->where("archery_event_participants.event_id",$event_id)
@@ -75,22 +78,71 @@ class ArcheryMemberCertificate extends Model
                         ->where("archery_event_participants.distance_id",$value->distance_id)
                         ->where("archery_event_participants.age_category_id",$value->age_category_id)
                         ->where("archery_event_participants.club_id",$value->club_id)
+                        ->where("archery_event_participants.team_category_id",$team_category)
                         ->where("archery_event_participants.status",1)
                         ->groupBy("archery_event_participants.event_category_id")
                         ->get();
+                    $rank = 0;
                     foreach ($team_participant as $tp => $team) {
+                        $item["{%category_name%}"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($team->event_category_id);
                         $team_category_detail = ArcheryEventCategoryDetail::find($team->event_category_id);
                         if($team_category_detail->qualification_mode == "best_of_three"){
-                            if($team_category_detail->team_category_id == "mix_team"){
-
-                            }else{
-                                $team_category = $team_category_detail->team_category_id == "individu female" ? "female_team" : "male_team";
-                                if($team_category_detail->team_category_id == $team_category){
-                                    
+                            $team_score = ArcheryScoring::teamBestOfThree($category_detail->id,$category_detail->session_in_qualification,$team->event_category_id);
+                            foreach ($team_score as $ts => $score) {
+                                $matching = false;
+                                if($ts >= 3) break;
+                                foreach ($score["teams"] as $t => $team) {
+                                    if($team->id == $value->id){
+                                        $rank = $ts+1;
+                                        $matching = true;
+                                        break;
+                                    }
                                 }
+                                if($matching)
+                                    break;
                             }
                         }
                     }
+                    if($rank == 0) continue;
+                    $item["{%ranked%}"] = $rank;
+                }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("mix_team_qualification_winner")){
+                    if($value->club_id == 0) continue;
+                    $team_category = "mix_team";
+                    $team_participant = ArcheryEventParticipant::select("archery_event_participants.event_category_id")
+                        ->where("archery_event_participants.type","team")
+                        ->where("archery_event_participants.event_id",$event_id)
+                        ->where("archery_event_participants.competition_category_id",$value->competition_category_id)
+                        ->where("archery_event_participants.distance_id",$value->distance_id)
+                        ->where("archery_event_participants.age_category_id",$value->age_category_id)
+                        ->where("archery_event_participants.club_id",$value->club_id)
+                        ->where("archery_event_participants.team_category_id",$team_category)
+                        ->where("archery_event_participants.status",1)
+                        ->groupBy("archery_event_participants.event_category_id")
+                        ->get();
+                    $rank = 0;
+
+                    foreach ($team_participant as $tp => $team) {
+                        $item["{%category_name%}"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($team->event_category_id);
+                        $team_category_detail = ArcheryEventCategoryDetail::find($team->event_category_id);
+                        if($team_category_detail->qualification_mode == "best_of_three"){
+                            $team_score = ArcheryScoring::mixTeamBestOfThree($category_detail);
+                            foreach ($team_score as $ts => $score) {
+                                $matching = false;
+                                if($ts >= 3) break;
+                                foreach ($score["teams"] as $t => $team) {
+                                    if($team->id == $value->id){
+                                        $rank = $ts+1;
+                                        $matching = true;
+                                        break;
+                                    }
+                                }
+                                if($matching)
+                                    break;
+                            }
+                        }
+                    }
+                    if($rank == 0) continue;
+                    $item["{%ranked%}"] = $rank;
                 }else{
                     continue;
                 }
@@ -135,6 +187,9 @@ class ArcheryMemberCertificate extends Model
                     mkdir(public_path()."/".$path, 0775);
                 }
 
+                $category_arr = explode(" - ",$category);
+                if(count($category_arr) > 3)
+                    $category = trim($category_arr[0])." - ".trim($category_arr[1])." - ".trim($category_arr[2]);
                 $file_name = $path."/"."[".$member_certificate_id."]".$category."-".$user_certificate["type_label"].".pdf";
                 if (!file_exists(public_path()."/".$file_name)) {
                     PdfLibrary::setFinalDoc($html_template)->setFileName($file_name)->savePdf();

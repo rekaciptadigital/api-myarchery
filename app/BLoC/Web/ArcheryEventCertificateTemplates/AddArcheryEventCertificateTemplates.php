@@ -41,6 +41,8 @@ class AddArcheryEventCertificateTemplates extends Transactional
       $archery_event_certificate_templates->type_certificate = $type_certificate;
       $archery_event_certificate_templates->save();
 
+      Common::removeDir(public_path()."/asset/certificate/event_".$event_id."/".$type_certificate);
+
       return $archery_event_certificate_templates;
 
     }
