@@ -13,6 +13,7 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Libraries\EliminationFormat;
+use App\Libraries\Common;
 use App\Libraries\ClubRanked;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -52,9 +53,8 @@ class GenerateTask extends Command
     {
         $cat_id = $this->argument('param');
 
-        
         // ClubRanked::getEventRanked(21);
-        ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
+        // ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
         // ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
         
         
@@ -116,7 +116,6 @@ class GenerateTask extends Command
         $download= Excel::store($view, $filename, 'public');
         $destinationPath = Storage::url($filename);
         $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
-
         
         return;
     }
