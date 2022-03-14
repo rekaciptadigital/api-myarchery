@@ -83,6 +83,7 @@ use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
+use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
 use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
@@ -197,6 +198,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);
         $this->registerService("refund", Refund::class);
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
+        $this->registerService("deleteHandBook", DeleteHandBook::class);
     }
     
     

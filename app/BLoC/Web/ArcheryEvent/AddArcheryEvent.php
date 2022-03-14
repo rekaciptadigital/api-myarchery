@@ -21,29 +21,40 @@ class AddArcheryEvent extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $event_type=$parameters->get('event_type');
-     
+        $event_type = $parameters->get('event_type');
+
         if ($event_type === 'Full_day') {
             $time = time();
-            
+
             $archery_event = new ArcheryEvent();
 
             $archery_event->event_type = $event_type;
-            $archery_event->event_competition = $parameters->get('event_competition'); 
-            $archery_event->status = $parameters->get('status'); 
+            $archery_event->event_competition = $parameters->get('event_competition');
+            $archery_event->status = $parameters->get('status');
 
             $public_informations = $parameters->get('public_information');
-            
-            $poster = Upload::setPath("asset/poster/")->setFileName("poster_".$public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
+
+            $poster = Upload::setPath("asset/poster/")->setFileName("poster_" . $public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
             $archery_event->poster = $poster;
+
+            if ($public_informations['handbook']) {
+                $array_file_index_0 = explode(";", $public_informations['handbook'])[0];
+                $ext_file_upload =  explode("/", $array_file_index_0)[1];
+                if ($ext_file_upload != "pdf") {
+                    throw new BLoCException("mohon inputkan tipe data pdf");
+                }
+                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $public_informations['event_name'])->setBase64($public_informations['handbook'])->savePdf();
+                $archery_event->handbook = $handbook;
+            }
+
             $archery_event->event_name = $public_informations['event_name'];
-            if(!empty($public_informations['event_description'])){
+            if (!empty($public_informations['event_description'])) {
                 $archery_event->description = $public_informations['event_description'];
             }
-            $archery_event->location = $public_informations['event_location']; 
+            $archery_event->location = $public_informations['event_location'];
             $archery_event->city_id = $public_informations['event_city'];
-            $archery_event->location_type =$public_informations['event_location_type']; 
-            $archery_event->registration_start_datetime =$public_informations['event_start_register']; 
+            $archery_event->location_type = $public_informations['event_location_type'];
+            $archery_event->registration_start_datetime = $public_informations['event_start_register'];
             $archery_event->registration_end_datetime = $public_informations['event_end_register'];
             $archery_event->event_start_datetime = $public_informations['event_start'];
             $archery_event->event_end_datetime = $public_informations['event_end'];
@@ -74,10 +85,9 @@ class AddArcheryEvent extends Transactional
             }
 
             return $archery_event;
-        }else{
+        } else {
             throw new BLoCException("masukan event_type sebagai Full_day");
         }
-
     }
 
     protected function validation($parameters)
@@ -88,8 +98,8 @@ class AddArcheryEvent extends Transactional
             "status" => "required",
             "public_information" => "required|array|min:1",
             "public_information.event_banner" => "required",
+            "public_information.handbook" => "required",
             "public_information.event_name" => "required",
-            //"public_information.event_description" => "required",
             "public_information.event_location" => "required",
             "public_information.event_city" => "required",
             "public_information.event_location_type" => "required",

@@ -93,7 +93,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
         });
 
-        
+
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:logout']);
@@ -189,7 +189,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
-
+                $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
                 $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
                 $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
             });
@@ -216,7 +216,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->delete('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:removeEventEliminationSchedule']);
         });
 
-        
+
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->put('/update-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantCategory']);
             $router->post('/refund', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:refund']);
