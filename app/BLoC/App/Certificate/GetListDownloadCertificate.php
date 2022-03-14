@@ -29,9 +29,11 @@ class GetListDownloadCertificate extends Retrieval
     $events = ArcheryEventParticipantMember::select("archery_event_participants.id",
                                                     "archery_event_participants.event_id"
                                                     )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
+                    ->join("archery_events","archery_event_participants.event_id","=","archery_events.id")
                     ->where("archery_event_participants.type","individual")
                     ->where("archery_event_participant_members.user_id",$user["id"])
                     ->where("archery_event_participants.status",1)
+                    ->orderBy("archery_events.event_end_datetime","DESC")
                     ->get();
     
     $output = [];
