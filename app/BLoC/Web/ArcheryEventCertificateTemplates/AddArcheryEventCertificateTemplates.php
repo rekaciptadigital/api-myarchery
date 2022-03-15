@@ -34,15 +34,23 @@ class AddArcheryEventCertificateTemplates extends Transactional
 
       $archery_event_certificate_templates->event_id = $event_id;
       $archery_event_certificate_templates->html_template =  $parameters->get('html_template');
+      Common::removeDir(public_path()."/asset/certificate/event_".$event_id."/".$type_certificate);
       if ($parameters->get('background_img')) {
-          $bg_url = Upload::setPath("asset/certificate/event_".$event_id."/".$type_certificate."/")->setFileName("bg_" . $type_certificate)->setBase64($parameters->get('background_img'))->save();
-          $archery_event_certificate_templates->background_url = $bg_url;
+        $path = "asset/certificate/event_".$event_id;
+        if (!file_exists(public_path()."/".$path)) {
+          mkdir(public_path()."/".$path, 0775);
+        }
+        $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"];
+        if (!file_exists(public_path()."/".$path)) {
+          mkdir(public_path()."/".$path, 0775);
+        }
+        $bg_url = Upload::setPath($path."/")->setFileName("bg_" . $type_certificate)->setBase64($parameters->get('background_img'))->save();
+        $archery_event_certificate_templates->background_url = $bg_url;
       };
       $archery_event_certificate_templates->editor_data = $parameters->get('editor_data');
       $archery_event_certificate_templates->type_certificate = $type_certificate;
       $archery_event_certificate_templates->save();
 
-      Common::removeDir(public_path()."/asset/certificate/event_".$event_id."/".$type_certificate);
 
       return $archery_event_certificate_templates;
 

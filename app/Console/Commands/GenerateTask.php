@@ -53,6 +53,7 @@ class GenerateTask extends Command
     {
         $cat_id = $this->argument('param');
 
+        Common::removeDir(public_path()."/asset/certificate/event_21/5");
         // ClubRanked::getEventRanked(21);
         // ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
         // ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
