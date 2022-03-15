@@ -54,4 +54,20 @@ class Upload
         file_put_contents($file, $image_base64);
         return $file_name2."#".time();
     }
+
+    public static function savePdf()
+    {
+        $pdf_parts = explode(";base64,", self::$base_64);
+        $pdf_type_aux = explode("application/", $pdf_parts[0]);
+        $pdf_type = $pdf_type_aux[1];
+        if(!empty(self::$ext)){
+            $pdf_type = self::$ext;
+        }
+        $pdf_base64 = base64_decode($pdf_parts[1]);
+        $file = self::$path.self::$file_name.'.'.$pdf_type;
+        $file_name2 = env('APP_HOSTNAME').$file;
+    
+        file_put_contents($file, $pdf_base64);
+        return $file_name2."#".time();
+    }
 }

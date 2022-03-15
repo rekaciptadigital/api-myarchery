@@ -7,6 +7,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
+use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TransactionLog;
@@ -172,6 +173,13 @@ class Refund extends Transactional
             throw new BLoCException("member number tidak ditemukan");
         }
         $member_number_prefix->delete();
+
+        $participant_number = ArcheryEventParticipantNumber::where("participant_id", $participant->id)->first();
+        if (!$participant_number) {
+            throw new BLoCException("participant number tidak ditemukan");
+        }
+
+        $participant_number->delete();
 
         return $participant;
     }
