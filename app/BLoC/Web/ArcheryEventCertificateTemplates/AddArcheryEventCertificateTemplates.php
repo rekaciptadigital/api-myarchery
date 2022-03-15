@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Libraries\Upload;
+use App\Libraries\Common;
 
 class AddArcheryEventCertificateTemplates extends Transactional
 {
