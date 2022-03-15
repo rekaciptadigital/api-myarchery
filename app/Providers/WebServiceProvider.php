@@ -95,6 +95,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -199,6 +200,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("refund", Refund::class);
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
+        $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
     }
     
     
