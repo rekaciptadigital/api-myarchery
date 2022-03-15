@@ -40,7 +40,7 @@ class AddArcheryEventCertificateTemplates extends Transactional
         if (!file_exists(public_path()."/".$path)) {
           mkdir(public_path()."/".$path, 0775);
         }
-        $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"];
+        $path = "asset/certificate/event_".$event_id."/".$type_certificate["type"];
         if (!file_exists(public_path()."/".$path)) {
           mkdir(public_path()."/".$path, 0775);
         }
