@@ -225,6 +225,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/refund', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:refund']);
         });
 
+        $router->group(['prefix' => 'series', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/download/user-points', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadUserSeriePoint']);
+        });
+
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->get('/event-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEventBySlug']);
 

@@ -13,7 +13,10 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Libraries\EliminationFormat;
+use App\Libraries\Common;
 use App\Libraries\ClubRanked;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 class GenerateTask extends Command
 {
@@ -49,6 +52,7 @@ class GenerateTask extends Command
     public function handle()
     {
         $cat_id = $this->argument('param');
+
         // ClubRanked::getEventRanked(21);
         // ArcherySeriesUserPoint::setAutoUserMemberCategory(21);
         // ArcherySeriesUserPoint::setMemberQualificationPoint($cat_id);
@@ -93,5 +97,26 @@ class GenerateTask extends Command
         //     $u = User::find($value->user_id);
         //     ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($value->event_category_id, $u->gender), $value->id);
         // }
+    }
+
+    private function downloadPointSeries($serie_id){
+        $categories = ArcherySeriesCategory::where("serie_id",$serie_id)->get();
+        $view = [];
+        foreach ($categories as $key => $value) {
+            $participant_ranked = ArcherySeriesUserPoint::getUserSeriePointByCategory($value->id); 
+            $datas = [];
+            $view[] = view('reports.serie_user_points', [
+                'datas' => $datas,
+                'category' => $value->getCategoryLabelAttribute()
+            ]);     
+        }
+
+        $filename = '/report-serie/'.$serie_id.'/ARCHERY_USER_POINT.xlsx';
+    
+        $download= Excel::store($view, $filename, 'public');
+        $destinationPath = Storage::url($filename);
+        $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
+        
+        return;
     }
 }

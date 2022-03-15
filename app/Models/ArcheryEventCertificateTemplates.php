@@ -25,6 +25,18 @@ class ArcheryEventCertificateTemplates extends Model
     "participant" => "1",
     "winner" => "2",
     "elimination" => "3",
+    "qualification_winner" => "4",
+    "team_qualification_winner" => "5",
+    "mix_team_qualification_winner" => "6",
+  ];
+
+  protected static $type_certificate_label = [
+    "1" => "Peserta",
+    "2" => "Pemenang Eliminasi",
+    "3" => "Eliminasi",
+    "4" => "Pemenang Kualifikasi",
+    "5" => "Pemenang Kualifikasi Beregu",
+    "6" => "Pemenang Kualifikasi Beregu Campuran",
   ];
 
   public static function getTypeCertificate()
@@ -40,6 +52,16 @@ class ArcheryEventCertificateTemplates extends Model
       };
 
       return "";
+  }
+
+  public static function getCertificateLabelByType($id)
+  {
+      return isset(self::$type_certificate_label[$id]) ? self::$type_certificate_label[$id] : "";
+  }
+
+  public static function getCertificateType($type)
+  {
+      return isset(self::$type_certificates[$type]) ? self::$type_certificates[$type] : "";
   }
   
   public static function  getCertificateByEventAndType($event_id, $type_certificate)
