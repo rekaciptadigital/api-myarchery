@@ -160,10 +160,6 @@ class ArcheryEvent extends Model
             ->where('archery_events.id', $id)
             ->get();
 
-
-
-        $output = [];
-
         $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
         $moreinformations_data = [];
         if ($more_informations) {
@@ -252,7 +248,8 @@ class ArcheryEvent extends Model
                     'event_end' => $data->event_end_datetime,
                     'event_status' => $data->status,
                     'event_slug' => $data->event_slug,
-                    'event_url' => $event_url
+                    'event_url' => $event_url,
+                    'need_verify' => $data->need_verify
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
@@ -261,7 +258,7 @@ class ArcheryEvent extends Model
         }
         $end = $detail['public_information']["event_end_register"];
         $detail["closed_register"] = strtotime($end) < strtotime('now') ? true : false;
-        $detail["total_participant"] = ArcheryEventParticipant::where("event_id",$id)->where("status",1)->count();
+        $detail["total_participant"] = ArcheryEventParticipant::where("event_id", $id)->where("status", 1)->count();
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")
