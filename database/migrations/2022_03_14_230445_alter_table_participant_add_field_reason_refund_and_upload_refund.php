@@ -13,7 +13,10 @@ class AlterTableParticipantAddFieldReasonRefundAndUploadRefund extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('archery_event_participants', function (Blueprint $table) {
+            $table->string("reason_refund");
+            $table->string("upload_image_refund");
+        });
     }
 
     /**
@@ -23,6 +26,8 @@ class AlterTableParticipantAddFieldReasonRefundAndUploadRefund extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('archery_event_participants', function (Blueprint $table) {
+            $table->dropColumn(['reason_refund', 'upload_image_refund']);
+        });
     }
 }
