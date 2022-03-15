@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Libraries\Upload;
+use Illuminate\Support\Carbon;
 
 class AddArcheryEvent extends Transactional
 {
@@ -37,15 +38,15 @@ class AddArcheryEvent extends Transactional
             $poster = Upload::setPath("asset/poster/")->setFileName("poster_" . $public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
             $archery_event->poster = $poster;
 
-            if ($public_informations['handbook']) {
-                $array_file_index_0 = explode(";", $public_informations['handbook'])[0];
-                $ext_file_upload =  explode("/", $array_file_index_0)[1];
-                if ($ext_file_upload != "pdf") {
-                    throw new BLoCException("mohon inputkan tipe data pdf");
-                }
-                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $public_informations['event_name'])->setBase64($public_informations['handbook'])->savePdf();
-                $archery_event->handbook = $handbook;
-            }
+            // if ($public_informations['handbook']) {
+            //     $array_file_index_0 = explode(";", $public_informations['handbook'])[0];
+            //     $ext_file_upload =  explode("/", $array_file_index_0)[1];
+            //     if ($ext_file_upload != "pdf") {
+            //         throw new BLoCException("mohon inputkan tipe data pdf");
+            //     }
+            //     $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $public_informations['event_name'])->setBase64($public_informations['handbook'])->savePdf();
+            //     $archery_event->handbook = $handbook;
+            // }
 
             $archery_event->event_name = $public_informations['event_name'];
             if (!empty($public_informations['event_description'])) {
@@ -73,6 +74,19 @@ class AddArcheryEvent extends Transactional
 
             $event_categories = $parameters->get('event_categories', []);
             foreach ($event_categories as $event_category) {
+                // $carbon_early_bird_datetime = Carbon::parse($event_category['end_date_early_bird']);
+                // $carbon_registration_start_datetime = Carbon::parse($archery_event->registration_start_datetime);
+                // $carbon_registration_end_datetime = Carbon::parse($archery_event->registration_end_datetime);
+
+                // $carbon_registration_start_date = Carbon::create($carbon_registration_start_datetime->year, $carbon_registration_start_datetime->month, $carbon_registration_start_datetime->day, 0, 0, 0);
+                // $carbon_registration_end_date = Carbon::create($carbon_registration_end_datetime->year, $carbon_registration_end_datetime->month, $carbon_registration_end_datetime->day, 0, 0, 0);
+
+
+                // $check = Carbon::create($carbon_early_bird_datetime->year, $carbon_early_bird_datetime->month, $carbon_early_bird_datetime->day, 0, 0, 0)->between($carbon_registration_start_date, $carbon_registration_end_date);
+
+                // if (!$check) {
+                //     throw new BLoCException("tanggal early bird harus berada pada rentang tanggal pendaftaran");
+                // }
                 $archery_event_category_detail = new ArcheryEventCategoryDetail();
                 $archery_event_category_detail->event_id = $archery_event->id;
                 $archery_event_category_detail->age_category_id = $event_category['age_category_id'];
@@ -81,8 +95,8 @@ class AddArcheryEvent extends Transactional
                 $archery_event_category_detail->team_category_id = $event_category['team_category_id'];
                 $archery_event_category_detail->quota = $event_category['quota'];
                 $archery_event_category_detail->fee = $event_category['fee'];
-                $archery_event_category_detail->early_bird = $event_category['early_bird'];
-                $archery_event_category_detail->end_date_early_bird = $event_category['end_date_early_bird'];
+                // $archery_event_category_detail->early_bird = $event_category['early_bird'];
+                // $archery_event_category_detail->end_date_early_bird = $event_category['end_date_early_bird'];
                 $archery_event_category_detail->save();
             }
 
@@ -100,7 +114,7 @@ class AddArcheryEvent extends Transactional
             "status" => "required",
             "public_information" => "required|array|min:1",
             "public_information.event_banner" => "required",
-            "public_information.handbook" => "required",
+            // "public_information.handbook" => "required",
             "public_information.event_name" => "required",
             "public_information.event_location" => "required",
             "public_information.event_city" => "required",

@@ -48,7 +48,6 @@ class AddEventOrder extends Transactional
         $user = Auth::guard('app-api')->user();
         $team_name = $parameters->get('team_name') ? $parameters->get('team_name') : "";
         $event_category_id = $parameters->get('event_category_id');
-        $user_id = $parameters->get('user_id');
 
         // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
@@ -62,10 +61,30 @@ class AddEventOrder extends Transactional
             $price = $event_category_detail->early_bird;
         }
 
-        // cek waktu pendaftaran sudah berakhir atau belum
         $event = ArcheryEvent::find($event_category_detail->event_id);
-        if ($event->registration_end_datetime < Carbon::now()) {
-            throw new BLoCException('pendaftaran telah ditutup');
+        if (!$event) {
+            throw new BLoCException("event tidak tersedia");
+        }
+
+        // cek apakah event butuh verifikasi user atau tidak
+        if ($event->need_verify == 1) {
+            if ($user->verify_status == 4 || $user->verify_status == 2) {
+                throw new BLoCException("akun anda belum terverifikasi");
+            }
+        }
+
+        // cek waktu pendaftaran sudah berakhir atau belum
+        $carbon_registration_start_datetime = Carbon::parse($event->registration_start_datetime);
+        $carbon_registration_end_datetime = Carbon::parse($event->registration_end_datetime);
+
+        $carbon_registration_start_date = Carbon::create($carbon_registration_start_datetime->year, $carbon_registration_start_datetime->month, $carbon_registration_start_datetime->day, 0, 0, 0);
+        $carbon_registration_end_date = Carbon::create($carbon_registration_end_datetime->year, $carbon_registration_end_datetime->month, $carbon_registration_end_datetime->day, 0, 0, 0);
+
+
+        $check = Carbon::today()->between($carbon_registration_start_date, $carbon_registration_end_date);
+
+        if (!$check) {
+            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
 
         // cek apakah user sudah tergabung dalam club atau belum
