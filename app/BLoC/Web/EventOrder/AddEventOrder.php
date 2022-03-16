@@ -445,6 +445,10 @@ class AddEventOrder extends Transactional
                 ->where('team_category_id', $team_category_id)
                 ->first();
 
+            if (!$check_individu_category_detail) {
+                throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
+            }
+
             $check_participant = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
                 ->where('archery_event_participants.event_category_id', $check_individu_category_detail->id)
                 ->where('archery_event_participants.club_id', $club_member->club_id)
