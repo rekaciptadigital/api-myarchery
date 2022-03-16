@@ -2,11 +2,13 @@
 
 namespace App\BLoC\Web\UpdateParticipantByAdmin;
 
+use App\Libraries\Upload;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
+use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TransactionLog;
@@ -15,6 +17,7 @@ use Illuminate\Support\Carbon;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Generator\Parameter;
 
 class Refund extends Transactional
 {
@@ -66,8 +69,24 @@ class Refund extends Transactional
             throw new BLoCException("tidak dapat refund, minimal refund adalah 24 jam sebelum berlangsungnya event");
         }
 
+        $image_refund = "";
+        if ($parameters->get("image_refund")) {
+            if ($participant->upload_image_refund == $parameters->get("image_refund")) {
+                $image_refund = $participant->upload_image_refund;
+            } else {
+                $array_file_index_0 = explode(";", $parameters->get("image_refund"))[0];
+                $ext_file_upload =  explode("/", $array_file_index_0)[1];
+                if ($ext_file_upload != "jpg" && $ext_file_upload != "jpeg" && $ext_file_upload != "png") {
+                    throw new BLoCException("mohon inputkan tipe data gambar png, jpeg, jpg");
+                }
+                $image_refund = Upload::setPath("asset/image_refund/")->setFileName("image_refund_" . $participant->id)->setBase64($parameters->get('image_refund'))->save();
+            }
+        }
+
         $participant->update([
-            "status" => 5
+            "status" => 5,
+            "upload_image_refund" => $image_refund,
+            "reason_refund" => $parameters->get("reason_refund")
         ]);
 
         $transaction_log = TransactionLog::find($participant->transaction_log_id);
@@ -84,14 +103,14 @@ class Refund extends Transactional
         } else {
             return $this->refundTeam($participant->id);
         }
-
-        return $participant;
     }
 
     protected function validation($parameters)
     {
         return [
-            "participant_id" => "required|integer"
+            "participant_id" => "required|integer",
+            "image_refund" => "required|string",
+            "reason_refund" => "required|"
         ];
     }
 
@@ -172,6 +191,13 @@ class Refund extends Transactional
             throw new BLoCException("member number tidak ditemukan");
         }
         $member_number_prefix->delete();
+
+        $participant_number = ArcheryEventParticipantNumber::where("participant_id", $participant->id)->first();
+        if (!$participant_number) {
+            throw new BLoCException("participant number tidak ditemukan");
+        }
+
+        $participant_number->delete();
 
         return $participant;
     }

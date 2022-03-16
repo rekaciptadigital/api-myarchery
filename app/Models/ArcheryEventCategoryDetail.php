@@ -15,7 +15,7 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event'];
+    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event', 'is_early_bird'];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
@@ -43,23 +43,23 @@ class ArcheryEventCategoryDetail extends Model
             ->first();
         if ($archerySeriesCategory) {
             $have_series = 1;
-            if($user){
-                if($user->verify_status == 1){
+            if ($user) {
+                if ($user->verify_status == 1) {
                     $check_serie_city = ArcherySerieCity::where("city_id", $user->address_city_id)
-                    ->where("serie_id", $serie_id)
-                    ->first();
-                    if($check_serie_city){
-                        $can_join_series = 1;    
+                        ->where("serie_id", $serie_id)
+                        ->first();
+                    if ($check_serie_city) {
+                        $can_join_series = 1;
                         $check_join_serie = ArcheryEventParticipantMember::select("archery_event_participants.event_category_id")
-                                            ->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
-                                            ->where("archery_event_participant_members.user_id",$user->id)
-                                            ->where("archery_event_participants.event_id",$category->event_id)
-                                            ->where("archery_event_participant_members.is_series",1)
-                                            ->first();
-                        if($check_join_serie){
+                            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+                            ->where("archery_event_participant_members.user_id", $user->id)
+                            ->where("archery_event_participants.event_id", $category->event_id)
+                            ->where("archery_event_participant_members.is_series", 1)
+                            ->first();
+                        if ($check_join_serie) {
                             $join_serie_category_id = $check_join_serie->event_category_id;
                         }
-                    }   
+                    }
                 }
             }
         }
@@ -114,6 +114,20 @@ class ArcheryEventCategoryDetail extends Model
             $type = $team->type;
         }
         return $this->attributes['category_team'] = $type;
+    }
+
+    public function getIsEarlyBirdAttribute()
+    {
+        $is_early_bird = 0;
+        if ($this->early_bird > 0) {
+            $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
+            $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
+
+            if ($new_format_early_bird_end_datetime > Carbon::today()) {
+                $is_early_bird = 1;
+            }
+        }
+        return $this->attributes['is_early_bird'] = $is_early_bird;
     }
 
     public function getGenderCategoryAttribute()
