@@ -34,9 +34,9 @@ class ArcheryEventCertificateTemplates extends Model
     "1" => "Peserta",
     "2" => "Pemenang Eliminasi",
     "3" => "Eliminasi",
-    "4" => "Pemenang Kualifikasi",
-    "5" => "Pemenang Kualifikasi Beregu",
-    "6" => "Pemenang Kualifikasi Beregu Campuran",
+    "4" => "Kualifikasi",
+    "5" => "Kualifikasi Beregu",
+    "6" => "Kualifikasi Beregu Campuran",
   ];
 
   public static function getTypeCertificate()
