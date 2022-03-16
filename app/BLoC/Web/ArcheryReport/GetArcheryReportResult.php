@@ -35,8 +35,8 @@ class GetArcheryReportResult extends Retrieval
             'margin_right' => 3,
             'margin_top' => 3,
             'mode' => 'utf-8',
-            'format' => 'A4-L',
-            'orientation' => 'L',
+            'format' => 'A4-P',
+            'orientation' => 'P',
             'bleedMargin' => 0,
             'dpi'        => 110,
             'default_font_size' => 9,
@@ -204,8 +204,53 @@ class GetArcheryReportResult extends Retrieval
                         }
 
                     }
+
                     //buat pengecekan kalo sebelumnya ada data winner baru print seluruh pesertanya
                     if($data_report){
+                        $html = view('report_graph',[
+                            'orderMen1' => '$orderMen1',  
+                            'orderMen2' => '$orderMen2', 
+                            '{{orderMen3}}' => '$orderMen3', 
+                            '{{orderMen4}}' => '$orderMen4', 
+                            '{{orderMen5}}' => '$orderMen5',  
+                            '{{orderMen6}}' => '$orderMen6', 
+                            '{{orderMen7}}' => '$orderMen7', 
+                            '{{orderMen8}}' => '$orderMen8', 
+                            '{{orderMen9}}' => '$orderMen9',  
+                            '{{orderMen10}}' => '$orderMen10', 
+                            '{{orderMen11}}' => '$orderMen11', 
+                            '{{orderMen12}}' => '$orderMen12', 
+                            '{{orderMen13}}' => '$orderMen13',  
+                            '{{orderMen14}}' => '$orderMen14', 
+                            '{{orderMen15}}' => '$orderMen15', 
+                            '{{orderMen16}}' => '$orderMen16', 
+                            ]);
+                            
+                            $mpdf->WriteHTML($html);
+                            $mpdf->AddPage();
+                        
+                        $html = view('report_graph',[
+                            '{{orderWomen1}}' => '$orderWomen1',  
+                            '{{orderWomen2}}' => '$orderWomen2', 
+                            '{{orderWomen3}}' => '$orderWomen3', 
+                            '{{orderWomen4}}' => '$orderWomen4', 
+                            '{{orderWomen5}}' => '$orderWomen5',  
+                            '{{orderWomen6}}' => '$orderWomen6', 
+                            '{{orderWomen7}}' => '$orderWomen7', 
+                            '{{orderWomen8}}' => '$orderWomen8', 
+                            '{{orderWomen9}}' => '$orderWomen9',  
+                            '{{orderWomen0}}' => '$orderWomen0', 
+                            '{{orderWomen1}}' => '$orderWomen1', 
+                            '{{orderWomen2}}' => '$orderWomen2', 
+                            '{{orderWomen3}}' => '$orderWomen3',  
+                            '{{orderWomen4}}' => '$orderWomen4', 
+                            '{{orderWomen5}}' => '$orderWomen5', 
+                            '{{orderWomen6}}' => '$orderWomen6',
+                            ]);
+                            
+                            $mpdf->WriteHTML($html);
+                            $mpdf->AddPage();
+
                         $data_report = array();
                         foreach ($team_category as $team) {
                             $members_qualificaiton = ArcheryEventEliminationMember::select("*","archery_event_category_details.id as category_details_id",DB::RAW('date(archery_event_elimination_members.created_at) as date'))
@@ -245,6 +290,7 @@ class GetArcheryReportResult extends Retrieval
                             } 
                             
                             if($data_report){
+
                                 $html = view('report_result_all',[
                                 'data_report' => $data_report,  
                                 'competition' => $competition->competition_category,
