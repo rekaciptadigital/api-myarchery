@@ -26,8 +26,7 @@ class GetArcheryEventCertificateTemplates extends Retrieval
       $type_certificate=$parameters->get("type_certificate");
       $query= ArcheryEventCertificateTemplates::getCertificateByEventAndType($event_id,$type_certificate);
       //dd($query);
-      if(!$query)throw new BLoCException("event dan/atau tipe sertifikat tidak ditemukan");
-
+      
       return $query;
 
     }
