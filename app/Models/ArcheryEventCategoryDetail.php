@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcherySerieCity;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
-use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -176,9 +175,7 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = DB::table('archery_event_category_details')
-            ->select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee')
-            ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
+        $datas = ArcheryEventCategoryDetail::leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
             ->orderBy('archery_master_team_categories.short', 'asc')
             ->orderBy('archery_event_category_details.age_category_id', 'asc')
