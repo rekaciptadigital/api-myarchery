@@ -67,6 +67,8 @@ class ArcheryEvent extends Model
             "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
             "archery_event_category_details.fee",
+            "archery_event_category_details.early_bird",
+            "archery_event_category_details.end_date_early_bird",
             "archery_event_category_details.id AS key",
             "archery_master_age_categories.label as label_age",
             "archery_master_age_categories.id as id_age",
@@ -203,7 +205,10 @@ class ArcheryEvent extends Model
                     'quota' => $value->quota,
                     'fee' => $value->fee,
                     'total_participant' => $count_participant,
-                    "closed_register" => true
+                    "closed_register" => true,
+                    "early_bird" => $value->early_bird,
+                    "end_date_early_bird" => $value->end_date_early_bird,
+                    "is_early_bird" => $value->is_early_bird
                 ];
             }
         }
