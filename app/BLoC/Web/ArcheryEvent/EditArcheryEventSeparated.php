@@ -57,7 +57,7 @@ class EditArcheryEventSeparated extends Transactional
                 if ($ext_file_upload != "pdf") {
                     throw new BLoCException("mohon inputkan tipe data pdf");
                 }
-                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $archery_event->event_name . "_" . $archery_event->id)->setBase64($handbook)->savePdf();
+                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $archery_event->event_name . "_" . $archery_event->id)->setBase64($handbook)->savePdf1();
                 $archery_event->handbook = $handbook;
             }
         }
