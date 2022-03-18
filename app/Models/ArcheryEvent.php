@@ -154,6 +154,7 @@ class ArcheryEvent extends Model
             'provinces.name as provinces_name',
             'admins.name as admin_name',
             'admins.email as admin_email',
+            'archery_events.handbook',
             'admin_id'
         )
             ->leftJoin("cities", "cities.id", "=", "archery_events.city_id")
@@ -238,6 +239,7 @@ class ArcheryEvent extends Model
                 $detail['public_information'] = [
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
+                    'handbook' => $data->handbook,
                     'event_description' => $data->description,
                     'event_location' => $data->location,
                     'event_city' => [
