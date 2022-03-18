@@ -75,18 +75,25 @@ class AddArcheryEvent extends Transactional
 
             $event_categories = $parameters->get('event_categories', []);
             foreach ($event_categories as $event_category) {
-                $carbon_early_bird_datetime = Carbon::parse($event_category['end_date_early_bird']);
-                $carbon_registration_start_datetime = Carbon::parse($archery_event->registration_start_datetime);
-                $carbon_registration_end_datetime = Carbon::parse($archery_event->registration_end_datetime);
+                $early_bird = 0;
+                $end_date_early_bird = null;
+                if (($event_category['early_bird'] > 0) && ($event_category['end_date_early_bird'] != null)) {
+                    $carbon_early_bird_datetime = Carbon::parse($event_category['end_date_early_bird']);
+                    $carbon_registration_start_datetime = Carbon::parse($archery_event->registration_start_datetime);
+                    $carbon_registration_end_datetime = Carbon::parse($archery_event->registration_end_datetime);
 
-                $carbon_registration_start_date = Carbon::create($carbon_registration_start_datetime->year, $carbon_registration_start_datetime->month, $carbon_registration_start_datetime->day, 0, 0, 0);
-                $carbon_registration_end_date = Carbon::create($carbon_registration_end_datetime->year, $carbon_registration_end_datetime->month, $carbon_registration_end_datetime->day, 0, 0, 0);
+                    $carbon_registration_start_date = Carbon::create($carbon_registration_start_datetime->year, $carbon_registration_start_datetime->month, $carbon_registration_start_datetime->day, 0, 0, 0);
+                    $carbon_registration_end_date = Carbon::create($carbon_registration_end_datetime->year, $carbon_registration_end_datetime->month, $carbon_registration_end_datetime->day, 0, 0, 0);
 
 
-                $check = Carbon::create($carbon_early_bird_datetime->year, $carbon_early_bird_datetime->month, $carbon_early_bird_datetime->day, 0, 0, 0)->between($carbon_registration_start_date, $carbon_registration_end_date);
+                    $check = Carbon::create($carbon_early_bird_datetime->year, $carbon_early_bird_datetime->month, $carbon_early_bird_datetime->day, 0, 0, 0)->between($carbon_registration_start_date, $carbon_registration_end_date);
 
-                if (!$check) {
-                    throw new BLoCException("tanggal early bird harus berada pada rentang tanggal pendaftaran");
+                    if (!$check) {
+                        throw new BLoCException("tanggal early bird harus berada pada rentang tanggal pendaftaran");
+                    }
+
+                    $early_bird = $event_category['early_bird'];
+                    $end_date_early_bird = $event_category['end_date_early_bird'];
                 }
                 $archery_event_category_detail = new ArcheryEventCategoryDetail();
                 $archery_event_category_detail->event_id = $archery_event->id;
@@ -96,8 +103,8 @@ class AddArcheryEvent extends Transactional
                 $archery_event_category_detail->team_category_id = $event_category['team_category_id'];
                 $archery_event_category_detail->quota = $event_category['quota'];
                 $archery_event_category_detail->fee = $event_category['fee'];
-                $archery_event_category_detail->early_bird = $event_category['early_bird'];
-                $archery_event_category_detail->end_date_early_bird = $event_category['end_date_early_bird'];
+                $archery_event_category_detail->early_bird = $early_bird;
+                $archery_event_category_detail->end_date_early_bird = $end_date_early_bird;
                 $archery_event_category_detail->save();
             }
 
