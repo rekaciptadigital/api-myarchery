@@ -54,7 +54,7 @@ class Upload
         return $file_name2 . "#" . time();
     }
 
-    public static function savePdf1()
+    public static function pdf()
     {
         $pdf_parts = explode(";base64,", self::$base_64);
         $pdf_type_aux = explode("application/", $pdf_parts[0]);

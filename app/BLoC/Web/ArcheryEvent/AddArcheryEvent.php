@@ -45,7 +45,7 @@ class AddArcheryEvent extends Transactional
                 if ($ext_file_upload != "pdf") {
                     throw new BLoCException("mohon inputkan tipe data pdf");
                 }
-                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $public_informations['event_name'])->setBase64($public_informations['handbook'])->savePdf1();
+                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $public_informations['event_name'])->setBase64($public_informations['handbook'])->pdf();
                 $archery_event->handbook = $handbook;
             }
 
