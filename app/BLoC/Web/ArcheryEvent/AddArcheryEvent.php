@@ -38,6 +38,7 @@ class AddArcheryEvent extends Transactional
             $poster = Upload::setPath("asset/poster/")->setFileName("poster_" . $public_informations['event_name'])->setBase64($public_informations['event_banner'])->save();
             $archery_event->poster = $poster;
 
+            // upload handbook
             if ($public_informations['handbook']) {
                 $array_file_index_0 = explode(";", $public_informations['handbook'])[0];
                 $ext_file_upload =  explode("/", $array_file_index_0)[1];
