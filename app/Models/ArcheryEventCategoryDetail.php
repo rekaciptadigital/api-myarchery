@@ -122,8 +122,10 @@ class ArcheryEventCategoryDetail extends Model
         if ($this->early_bird > 0) {
             $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
             $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
+            // // return $new_format_early_bird_end_datetime;
+            // return Carbon::today();
 
-            if ($new_format_early_bird_end_datetime > Carbon::today()) {
+            if (Carbon::today() <= $new_format_early_bird_end_datetime) {
                 $is_early_bird = 1;
             }
         }
@@ -176,8 +178,8 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = DB::table('archery_event_category_details')
-            ->select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee')
+        $datas = ArcheryEventCategoryDetail
+            ::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird")
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
             ->orderBy('archery_master_team_categories.short', 'asc')

@@ -12,7 +12,6 @@ class Upload
 
     public function __construct()
     {
-        
     }
 
     public static function setPath(string $path)
@@ -44,30 +43,32 @@ class Upload
         $image_parts = explode(";base64,", self::$base_64);
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
-        if(!empty(self::$ext)){
+        if (!empty(self::$ext)) {
             $image_type = self::$ext;
         }
         $image_base64 = base64_decode($image_parts[1]);
-        $file = self::$path.self::$file_name.'.'.$image_type;
-        $file_name2 = env('APP_HOSTNAME').$file;
-    
+        $file = self::$path . self::$file_name . '.' . $image_type;
+        $file_name2 = env('APP_HOSTNAME') . $file;
+
         file_put_contents($file, $image_base64);
-        return $file_name2."#".time();
+        return $file_name2 . "#" . time();
     }
 
-    public static function savePdf()
+
+    
+    public static function pdf()
     {
         $pdf_parts = explode(";base64,", self::$base_64);
         $pdf_type_aux = explode("application/", $pdf_parts[0]);
         $pdf_type = $pdf_type_aux[1];
-        if(!empty(self::$ext)){
+        if (!empty(self::$ext)) {
             $pdf_type = self::$ext;
         }
         $pdf_base64 = base64_decode($pdf_parts[1]);
-        $file = self::$path.self::$file_name.'.'.$pdf_type;
-        $file_name2 = env('APP_HOSTNAME').$file;
-    
+        $file = self::$path . self::$file_name . '.' . $pdf_type;
+        $file_name2 = env('APP_HOSTNAME') . $file;
+
         file_put_contents($file, $pdf_base64);
-        return $file_name2."#".time();
+        return $file_name2 . "#" . time();
     }
 }

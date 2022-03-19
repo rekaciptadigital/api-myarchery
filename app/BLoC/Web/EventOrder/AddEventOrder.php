@@ -68,7 +68,7 @@ class AddEventOrder extends Transactional
 
         // cek apakah event butuh verifikasi user atau tidak
         if ($event->need_verify == 1) {
-            if ($user->verify_status == 4) {
+            if ($user->verify_status != 1) {
                 throw new BLoCException("akun anda belum terverifikasi");
             }
         }

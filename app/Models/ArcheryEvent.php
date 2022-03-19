@@ -67,6 +67,8 @@ class ArcheryEvent extends Model
             "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
             "archery_event_category_details.fee",
+            "archery_event_category_details.early_bird",
+            "archery_event_category_details.end_date_early_bird",
             "archery_event_category_details.id AS key",
             "archery_master_age_categories.label as label_age",
             "archery_master_age_categories.id as id_age",
@@ -152,6 +154,7 @@ class ArcheryEvent extends Model
             'provinces.name as provinces_name',
             'admins.name as admin_name',
             'admins.email as admin_email',
+            'archery_events.handbook',
             'admin_id'
         )
             ->leftJoin("cities", "cities.id", "=", "archery_events.city_id")
@@ -203,7 +206,10 @@ class ArcheryEvent extends Model
                     'quota' => $value->quota,
                     'fee' => $value->fee,
                     'total_participant' => $count_participant,
-                    "closed_register" => true
+                    "closed_register" => true,
+                    "early_bird" => $value->early_bird,
+                    "end_date_early_bird" => $value->end_date_early_bird,
+                    "is_early_bird" => $value->is_early_bird
                 ];
             }
         }
@@ -233,6 +239,7 @@ class ArcheryEvent extends Model
                 $detail['public_information'] = [
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
+                    'handbook' => $data->handbook,
                     'event_description' => $data->description,
                     'event_location' => $data->location,
                     'event_city' => [

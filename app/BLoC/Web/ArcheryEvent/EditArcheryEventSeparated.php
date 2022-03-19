@@ -49,18 +49,18 @@ class EditArcheryEventSeparated extends Transactional
             $archery_event->poster = $poster;
         }
 
-        // if ($parameters->get("handbook")) {
-        //     $handbook = $parameters->get("handbook");
-        //     if ($archery_event->handbook != $handbook) {
-        //         $array_file_index_0 = explode(";", $handbook)[0];
-        //         $ext_file_upload =  explode("/", $array_file_index_0)[1];
-        //         if ($ext_file_upload != "pdf") {
-        //             throw new BLoCException("mohon inputkan tipe data pdf");
-        //         }
-        //         $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $archery_event->event_name . "_" . $archery_event->id)->setBase64($handbook)->savePdf();
-        //         $archery_event->handbook = $handbook;
-        //     }
-        // }
+        if ($parameters->get("handbook")) {
+            $handbook = $parameters->get("handbook");
+            if ($archery_event->handbook != $handbook) {
+                $array_file_index_0 = explode(";", $handbook)[0];
+                $ext_file_upload =  explode("/", $array_file_index_0)[1];
+                if ($ext_file_upload != "pdf") {
+                    throw new BLoCException("mohon inputkan tipe data pdf");
+                }
+                $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $archery_event->event_name . "_" . $archery_event->id)->setBase64($handbook)->pdf();
+                $archery_event->handbook = $handbook;
+            }
+        }
 
         $archery_event->event_name = $parameters->get('event_name');
         $archery_event->description = $parameters->get('event_description');
