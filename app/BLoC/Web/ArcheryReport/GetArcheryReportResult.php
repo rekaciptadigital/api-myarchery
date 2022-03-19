@@ -20,8 +20,6 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
 use App\Http\Services\PDFService;
 use Illuminate\Support\Facades\Storage;
-use PDFv2;
-use Knp\Snappy\Pdf;
 
 
 
@@ -41,36 +39,23 @@ class GetArcheryReportResult extends Retrieval
         ->orderBy('competition_category_id', 'DESC')->get();
         $file_name="sdasd.pdf";
         $html='csdfas';
-        $pdf = PDFv2::loadView('report_result', [
-            'competition_category' => $competition_category            
-        ]); 
-
-        $pdf->setOptions([
-            'margin-top'    => 10,
-            'margin-bottom' => 15,
-            'page-size'     => 'a4',
-            'orientation'   => 'portrait',
-            'enable-javascript' => true,
-            'javascript-delay' => 9000,
-            'no-stop-slow-scripts' => true,
-            'enable-smart-shrinking' => true
-        ]);
-        // return $pdf->download();
-
-        $path       = 'download';          
+        $path = 'asset/score_sheet/sfasfa.pdf';
         if (!file_exists(public_path()."/".$path)) {
-            mkdir(public_path()."/".$path, 0775);
+            mkdir(public_path()."/".$path, 0777);
         }
-        // $filePath   = Storage::path($path);
-        $filePath   = Storage::disk('public')->path($path);
-        $fileName   = 'grafik_data_dampak_.pdf';
-        $generate   = $pdf->save(''.$filePath.'/'.$fileName.'');
+        $full_path = $path ;
+        $filePath= env('APP_HOSTNAME') . $full_path;
         
+         
+        $generate   = (new PDFService())->generate($html, $filePath, $file_name);
+     
         $response = [
-            'file_path' => $disk->url($path.$fileName)
+            'file_path' => $filePath
         ];
         
         return Response::api("Data berhasil diunduh", $response);
+       
+        
        
        
     }
