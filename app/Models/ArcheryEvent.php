@@ -260,12 +260,19 @@ class ArcheryEvent extends Model
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
-                $detail['admins'] = $admins_data;;
+                $detail['admins'] = $admins_data;
             }
         }
         $end = $detail['public_information']["event_end_register"];
         $detail["closed_register"] = strtotime($end) < strtotime('now') ? true : false;
         $detail["total_participant"] = ArcheryEventParticipant::where("event_id", $id)->where("status", 1)->count();
+        $end_date_early_bird = null;
+        $category_with_early_bird = ArcheryEventCategoryDetail::where("end_date_early_bird", "!=", null)->where("early_bird", ">", 0)->first();
+        if ($category_with_early_bird) {
+            $end_date_early_bird = $category_with_early_bird->end_date_early_bird;
+        }
+
+        $detail["end_date_early_bird"] = $end_date_early_bird;
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")
