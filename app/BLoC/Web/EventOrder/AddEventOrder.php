@@ -87,6 +87,11 @@ class AddEventOrder extends Transactional
             throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
 
+
+        if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
+            throw new BLoCException("club harus diisi");
+        }
+
         // cek apakah user sudah tergabung dalam club atau belum
         if ($parameters->get('club_id') != 0) {
             $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
@@ -491,6 +496,7 @@ class AddEventOrder extends Transactional
         return [
             "event_category_id" => "required",
             "club_id" => "required",
+            "with_club" => "required"
         ];
     }
 

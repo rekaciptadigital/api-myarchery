@@ -77,6 +77,15 @@ class AddArcheryEvent extends Transactional
             foreach ($event_categories as $event_category) {
                 $early_bird = 0;
                 $end_date_early_bird = null;
+
+                if (($event_category['early_bird'] > 0) && ($event_category['end_date_early_bird'] == null)) {
+                    throw new BLoCException("harap atur tanggal early bird");
+                }
+
+                if (($event_category['end_date_early_bird'] != null) && ($event_category['early_bird'] == 0)) {
+                    throw new BLoCException("harap inputkan harga early bird");
+                }
+
                 if (($event_category['early_bird'] > 0) && ($event_category['end_date_early_bird'] != null)) {
                     $carbon_early_bird_datetime = Carbon::parse($event_category['end_date_early_bird']);
                     $carbon_registration_start_datetime = Carbon::parse($archery_event->registration_start_datetime);

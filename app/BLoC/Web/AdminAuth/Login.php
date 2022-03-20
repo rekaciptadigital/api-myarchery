@@ -17,9 +17,15 @@ class Login extends Transactional
     protected function process($parameters)
     {
         $token = Auth::setTTL(60 * 24 * 7)->attempt($parameters->all());
+        $error_message = "Password salah";
         if (!$token) {
-            throw new BLoCException(__('response.invalid_credential'));
+            $admin = Admin::where("email", $parameters->get("email"))->first();
+            if (!$admin) {
+                $error_message = "Email anda belum terdaftar";
+            }
+            throw new BLoCException($error_message);
         }
+
         $admin = Auth::user();
 
         return [
