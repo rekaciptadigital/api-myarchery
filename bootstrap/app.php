@@ -33,6 +33,9 @@ $app->configure('database');
 class_alias('Illuminate\Support\Facades\App', 'App');
 class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
 class_alias('Maatwebsite\Excel\Facades\Excel', 'Excel');
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -100,6 +103,11 @@ $app->register(Illuminate\Redis\RedisServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+
+
+class_alias('Barryvdh\Snappy\Facades\SnappyPdf', 'PDFv2');
+$app->register(Barryvdh\Snappy\LumenServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

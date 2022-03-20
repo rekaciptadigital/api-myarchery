@@ -68,7 +68,7 @@ class AddEventOrder extends Transactional
 
         // cek apakah event butuh verifikasi user atau tidak
         if ($event->need_verify == 1) {
-            if ($user->verify_status == 4 || $user->verify_status == 2) {
+            if ($user->verify_status != 1) {
                 throw new BLoCException("akun anda belum terverifikasi");
             }
         }
@@ -444,6 +444,10 @@ class AddEventOrder extends Transactional
                 ->where('distance_id', $event_category_detail->distance_id)
                 ->where('team_category_id', $team_category_id)
                 ->first();
+
+            if (!$check_individu_category_detail) {
+                throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
+            }
 
             $check_participant = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
                 ->where('archery_event_participants.event_category_id', $check_individu_category_detail->id)
