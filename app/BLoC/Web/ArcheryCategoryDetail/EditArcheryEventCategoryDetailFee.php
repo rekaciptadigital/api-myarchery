@@ -48,7 +48,10 @@ class EditArcheryEventCategoryDetailFee extends Transactional
 
             $early_bird = 0;
             $end_date_early_bird = null;
-            if (($data['early_bird'] > 0) && ($data['end_date_early_bird'] != null)) {
+            if ($data['end_date_early_bird'] != null) {
+                if ($data['early_bird'] == 0) {
+                    throw new BLoCException("harga early bird harus di atur lebih besar dari 0");
+                }
                 $carbon_early_bird_datetime = Carbon::parse($data['end_date_early_bird']);
                 $carbon_registration_start_datetime = Carbon::parse($event->registration_start_datetime);
                 $carbon_registration_end_datetime = Carbon::parse($event->registration_end_datetime);
