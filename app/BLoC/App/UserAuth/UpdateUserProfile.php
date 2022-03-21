@@ -30,22 +30,12 @@ class UpdateUserProfile extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        if (
-            $parameters->get('name')
-            || $parameters->get('place_of_birth')
-            || $parameters->get('gender')
-            || $parameters->get("date_of_birth")
-        ) {
-            if ($user->verify_status == 1) {
-                throw new BLoCException("tidak dapat mengubah data karena status anda telah terverifikasi");
-            } else {
-                $user->name = $parameters->get("name");
-                $user->place_of_birth = $parameters->get('place_of_birth');
-                $user->gender = $parameters->get('gender');
-                $user->date_of_birth = $parameters->get('date_of_birth');
-            }
+        if ($user->verify_status != 1) {
+            $user->name = $parameters->get("name");
+            $user->place_of_birth = $parameters->get('place_of_birth');
+            $user->gender = $parameters->get('gender');
+            $user->date_of_birth = $parameters->get('date_of_birth');
         }
-
 
         $user->phone_number = $parameters->get('phone_number');
         $user->address = $parameters->get('address');
