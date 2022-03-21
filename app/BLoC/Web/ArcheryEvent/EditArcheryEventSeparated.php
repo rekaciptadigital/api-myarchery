@@ -71,7 +71,6 @@ class EditArcheryEventSeparated extends Transactional
         $archery_event->registration_end_datetime = $parameters->get('event_end_register');
         $archery_event->event_start_datetime = $parameters->get('event_start');
         $archery_event->event_end_datetime = $parameters->get('event_end');
-        $archery_event->event_slug = $time . '-' . Str::slug($parameters->get('event_name'));
         $archery_event->admin_id = $admin['id'];
         $archery_event->save();
     }
