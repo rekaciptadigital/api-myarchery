@@ -9,15 +9,29 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMoreInformation;
 use App\Models\City;
 use App\Models\ArcheryEventParticipant;
+use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories', 'detail_city'];
+    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status'];
     protected $guarded = ['id'];
 
     public function getDetailCityAttribute()
     {
         return $this->attributes['detail_city'] = City::find($this->city_id);
+    }
+
+    public function getEventStatusAttribute()
+    {
+        $event_status = "";
+        if (Carbon::today() < $this->event_start_datetime) {
+            $event_status = "Before Event";
+        } elseif (Carbon::today() > $this->event_end_datetime) {
+            $event_status = "After Event";
+        } else {
+            $event_status = "Event Running";
+        }
+        return $this->attributes['event_status'] = $event_status;
     }
 
     public function archeryEventCategories()
@@ -256,7 +270,8 @@ class ArcheryEvent extends Model
                     'event_status' => $data->status,
                     'event_slug' => $data->event_slug,
                     'event_url' => $event_url,
-                    'need_verify' => $data->need_verify
+                    'need_verify' => $data->need_verify,
+                    'event_status' => $data->event_status,
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
