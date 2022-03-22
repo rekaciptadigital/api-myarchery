@@ -69,7 +69,7 @@ use App\BLoC\Web\ArcheryCategoryDetail\DeleteArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryCategoryDetail\EditArcheryCategoryDetail;
 use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
 use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
-use App\BLoC\Web\BudRest\SetBudRest; 
+use App\BLoC\Web\BudRest\SetBudRest;
 use App\BLoC\Web\BudRest\GetBudRest;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
@@ -83,7 +83,10 @@ use App\BLoC\Web\ArcheryEventMoreInformation\DeleteArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEventMoreInformation\AddArcheryEventMoreInformation;
 use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
+use App\BLoC\Web\ArcheryEvent\AddArcheryEventV2;
+use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
+use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
 use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
 use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
@@ -168,7 +171,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryScoring", GetArcheryScoring::class);
         $this->registerService("getArcheryEventGlobal", GetArcheryEventGlobal::class);
         $this->registerService("getArcheryEventMasterTeamCategory", GetArcheryEventMasterTeamCategory::class);
-        $this->registerService("setBudRest", SetBudRest::class); 
+        $this->registerService("setBudRest", SetBudRest::class);
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
@@ -201,9 +204,14 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
+
+        // Api v2
+        // ========================== event =================================
+        $this->registerService("createArcheryEventV2", CreateArcheryEventV2::class);
+        $this->registerService("updateArcheryEventV2", updateArcheryEventV2::class);
     }
-    
-    
+
+
     private function registerService($serviceName, $className)
     {
         $this->app->singleton($serviceName, function () use ($className) {
