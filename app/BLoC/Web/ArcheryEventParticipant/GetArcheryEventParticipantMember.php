@@ -35,23 +35,25 @@ class GetArcheryEventParticipantMember extends Retrieval
             ->where('archery_event_participants.event_category_id', $category_id);
 
         $participant_query->when($status, function ($query) use ($status) {
-            if ($status == 2) {
-                return $query->where("archery_event_participants.status", 2)
-                    ->orWhere(function ($q) {
-                        $q->where("transaction_logs.status", 4)
-                            ->where("transaction_logs.expired_time", "<=", time());
-                    });
-            }
+            if (!is_null($status) && $status != 0) {
+                if ($status == 2) {
+                    return $query->where("archery_event_participants.status", 2)
+                        ->orWhere(function ($q) {
+                            $q->where("transaction_logs.status", 4)
+                                ->where("transaction_logs.expired_time", "<=", time());
+                        });
+                }
 
-            if ($status == 4) {
-                return $query->where("archery_event_participants.status", 4)
-                    ->orWhere(function ($q) {
-                        $q->where("transaction_logs.status", 4)
-                            ->where("transaction_logs.expired_time", ">=", time());
-                    });
-            }
+                if ($status == 4) {
+                    return $query->where("archery_event_participants.status", 4)
+                        ->orWhere(function ($q) {
+                            $q->where("transaction_logs.status", 4)
+                                ->where("transaction_logs.expired_time", ">=", time());
+                        });
+                }
 
-            return $query->where('archery_event_participants.status', $status);
+                return $query->where('archery_event_participants.status', $status);
+            }
         });
 
         $participant_collection =  $participant_query->orderBy('archery_event_participants.created_at', 'DESC')->get();
