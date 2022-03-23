@@ -52,25 +52,21 @@ class GetArcheryEventParticipantMember extends Retrieval
         //     })
         //     ->orderBy('archery_event_participants.created_at', 'DESC')->get();
 
-        $participant_query = ArcheryEventParticipant::where("event_category_id");
+        $participant_query = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
+            ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+            ->where('archery_event_participants.event_category_id', $category_id);
 
         $participant_query->when($status, function ($query) use ($status) {
             if ($status == 2) {
-                return $query->select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
-                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '<=', time());
+                return $query->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '<=', time());
             }
 
             if ($status == 4) {
-                return $query->select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
-                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '>=', time());
+                return $query->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '>=', time());
             }
 
             if ($status == 1) {
-                return $query->select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
-                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                    ->where('archery_event_participants.status', 1);
+                return $query->where('archery_event_participants.status', 1);
             }
         });
 
