@@ -159,7 +159,8 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("tgl lahir anda belum di set");
             }
             // cek apakah usia user memenuhi syarat categori event
-            if ($user->age < $event_category_detail->min_age) {
+            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+            if ($check_date["y"] < $event_category_detail->min_age) {
                 throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
             }
         }
