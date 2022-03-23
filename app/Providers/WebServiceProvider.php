@@ -85,6 +85,7 @@ use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
+use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
 use App\BLoC\Web\ArcheryEvent\AddArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
@@ -214,6 +215,7 @@ class WebServiceProvider extends ServiceProvider
 
         // =========================== Category =============================
         $this->registerService("createOrUpdateArcheryCategoryDetailV2", CreateOrUpdateArcheryCategoryDetailV2::class);
+        $this->registerService("deleteCategoryDetailV2", DeleteCategoryDetailV2::class);
     }
 
 

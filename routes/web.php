@@ -247,6 +247,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
         $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateArcheryCategoryDetailV2']);
+            $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteCategoryDetailV2']);
         });
     });
 });
