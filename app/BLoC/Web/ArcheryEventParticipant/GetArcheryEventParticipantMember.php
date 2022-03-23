@@ -28,65 +28,38 @@ class GetArcheryEventParticipantMember extends Retrieval
 
 
 
-        $participant_query = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
+        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->where('archery_event_participants.event_category_id', $category_id);
-
-        $participant_query->when($status, function ($query) use ($status) {
-            if (!is_null($status) && $status != 0) {
-                if ($status == 2) {
-                    return $query->where("archery_event_participants.status", 2)
-                        ->orWhere(function ($query) use ($status) {
+            ->where('archery_event_participants.event_category_id', $category_id)
+            ->where(function ($query) use ($status) {
+                if (!is_null($status) && $status != 0) {
+                    $query->where('archery_event_participants.status', $status);
+                    if ($status == 2) {
+                        $query->orWhere(function ($query) use ($status) {
                             $query->where("transaction_logs.status", 4);
                             $query->where("transaction_logs.expired_time", "<=", time());
                         });
-                }
-
-                if ($status == 1) {
-                    return $query->where("archery_event_participants.status", 1)
-                        ->orWhere(function ($query) use ($status) {
+                    }
+                    if ($status == 1) {
+                        $query->orWhere(function ($query) use ($status) {
                             $query->where("archery_event_participants.status", 1);
                         });
+                    }
+                    if ($status == 4) {
+                        $query->where("transaction_logs.expired_time", ">=", time());
+                    }
                 }
-
-                if ($status == 4) {
-                    return $query->where("archery_event_participants.status", 4)
-                        ->orWhere(function ($query) use ($status) {
-                            $query->where("transaction_logs.expired_time", ">=", time());
-                        });
-                }
-            }
-        });
-        // ->where(function ($query) use ($status) {
-        //     if (!is_null($status) && $status != 0) {
-        //         $query->where('archery_event_participants.status', $status);
-        //         if ($status == 2) {
-        //             $query->orWhere(function ($query) use ($status) {
-        //                 $query->where("transaction_logs.status", 4);
-        //                 $query->where("transaction_logs.expired_time", "<=", time());
-        //             });
-        //         }
-        //         if ($status == 1) {
-        //             $query->orWhere(function ($query) use ($status) {
-        //                 $query->where("archery_event_participants.status", 1);
-        //             });
-        //         }
-        //         if ($status == 4) {
-        //             $query->where("transaction_logs.expired_time", ">=", time());
-        //         }
-        //     }
-        // })
-        // ->orderBy('archery_event_participants.created_at', 'DESC')->get();
-        $participant_collection = $participant_query->orderBy('archery_event_participants.created_at', 'DESC')->get();
+            })
+            ->orderBy('archery_event_participants.created_at', 'DESC')->get();
         $participant_ids = [];
         $participants = [];
-        foreach ($participant_collection as $key => $value) {
+        foreach ($participant as $key => $value) {
             $participants[$value->id] = $value;
             $participant_ids[] = $value->id;
         }
 
         $members = [];
-        if ($participant_collection)
+        if ($participant)
             $members = ArcheryEventParticipantMember::whereIn("archery_event_participant_id", $participant_ids)->get();
 
         $list = [];
