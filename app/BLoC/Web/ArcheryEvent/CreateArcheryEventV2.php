@@ -82,7 +82,7 @@ class CreateArcheryEventV2 extends Transactional
                 }
             }
 
-            return $archery_event;
+            return ArcheryEvent::detailEventById($archery_event->id);
         } else {
             throw new BLoCException("untuk saat ini yang dibuka hanya full day");
         }
@@ -99,7 +99,7 @@ class CreateArcheryEventV2 extends Transactional
             "event_location" => "required",
             "event_city" => "required",
             "event_location_type" => "required|in:Indoor,Outdoor,Both",
-            "event_start_register" => "required",
+            "event_start_register" => "required|after_or_equal:today",
             "event_end_register" => "required",
             "event_start" => "required|after:event_end_register",
             "event_end" => "required|after:event_start",

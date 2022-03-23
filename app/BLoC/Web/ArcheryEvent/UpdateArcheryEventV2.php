@@ -79,18 +79,7 @@ class UpdateArcheryEventV2 extends Transactional
         $event->admin_id = $admin->id;
         $event->save();
 
-        $more_informations = $parameters->get('more_information', []);
-        if (count($more_informations) > 0) {
-            foreach ($more_informations as $more_information) {
-                $event_more_information = new ArcheryEventMoreInformation();
-                $event_more_information->event_id = $event->id;
-                $event_more_information->title = $more_information['title'];
-                $event_more_information->description = $more_information['description'];
-                $event_more_information->save();
-            }
-        }
-
-        return $event;
+        return ArcheryEvent::detailEventById($event->id);
     }
 
     protected function validation($parameters)
