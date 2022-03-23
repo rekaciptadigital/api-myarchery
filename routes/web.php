@@ -245,6 +245,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
         });
+        $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateArcheryCategoryDetailV2']);
+            $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteCategoryDetailV2']);
+        });
     });
 });
 
