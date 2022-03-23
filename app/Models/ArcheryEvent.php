@@ -223,7 +223,8 @@ class ArcheryEvent extends Model
                     "closed_register" => true,
                     "early_bird" => $value->early_bird,
                     "end_date_early_bird" => $value->end_date_early_bird,
-                    "is_early_bird" => $value->is_early_bird
+                    "is_early_bird" => $value->is_early_bird,
+                    "label" => $value->label_category
                 ];
             }
         }

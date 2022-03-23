@@ -160,6 +160,7 @@ class AddEventOrder extends Transactional
             }
             $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
+            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             if ($check_date["y"] < $event_category_detail->min_age) {
                 throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
             }
