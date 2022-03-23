@@ -87,7 +87,6 @@ class GetArcheryEventParticipantMember extends Retrieval
     {
         return [
             'id' => 'required|exists:archery_events,id',
-            "status" => "in:1,2,4,5"
         ];
     }
 }
