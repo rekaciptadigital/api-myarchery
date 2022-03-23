@@ -60,6 +60,18 @@ class GetArcheryEventParticipantMember extends Retrieval
                     ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
                     ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '<=', time());
             }
+
+            if ($status == 4) {
+                return $query->select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
+                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
+                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '>=', time());
+            }
+
+            if ($status == 1) {
+                return $query->select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
+                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
+                    ->where('archery_event_participants.status', 1);
+            }
         });
 
         $participant_collect = $participant_query->orderBy('archery_event_participants.created_at', 'DESC')->get();
