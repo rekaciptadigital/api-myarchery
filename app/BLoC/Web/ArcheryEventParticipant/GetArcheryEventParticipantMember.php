@@ -38,10 +38,9 @@ class GetArcheryEventParticipantMember extends Retrieval
             if (!is_null($status) && $status != 0) {
                 if ($status == 2) {
                     return $query->where("archery_event_participants.status", 2)
-                        ->orWhere(function ($q) {
-                            $q->where("transaction_logs.status", 4)
-                                ->where("transaction_logs.expired_time", "<=", time());
-                        });
+                        ->orWhere("archery_event_participants.status", 4)
+                        ->where("transaction_logs.status", 4)
+                        ->where("transaction_logs.expired_time", "<=", time());
                 }
 
                 if ($status == 4) {
@@ -50,6 +49,10 @@ class GetArcheryEventParticipantMember extends Retrieval
                             $q->where("transaction_logs.status", 4)
                                 ->where("transaction_logs.expired_time", ">=", time());
                         });
+                }
+
+                if ($status == 1) {
+                    return $query->where("archery_event_participants.status", 1);
                 }
 
                 return $query->where('archery_event_participants.status', $status);
