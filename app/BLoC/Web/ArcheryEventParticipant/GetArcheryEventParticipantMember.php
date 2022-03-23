@@ -36,7 +36,7 @@ class GetArcheryEventParticipantMember extends Retrieval
 
         $participant_query->when($status, function ($query) use ($status) {
             if ($status == 2) {
-                return $query->where("archery_event_participants.status", 1)
+                return $query->where("archery_event_participants.status", 2)
                     ->orWhere(function ($q) {
                         $q->where("transaction_logs.status", 4)
                             ->where("transaction_logs.expired_time", "<=", time());
