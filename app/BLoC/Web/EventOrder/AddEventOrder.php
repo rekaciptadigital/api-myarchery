@@ -406,6 +406,7 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         $time_now = time();
 
+        // cek total pendaftar yang masih pending dan sukses
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
             ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->where('archery_event_participants.club_id', $club_member->club_id)
