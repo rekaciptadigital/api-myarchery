@@ -93,7 +93,7 @@ class CreateArcheryEventV2 extends Transactional
         return [
             "event_type" => "required|in:Full_day,Marathon",
             "event_competition" => "required|in:Tournament,Games",
-            "status" => "required|integer|in:1,0",
+            // "status" => "required|integer|in:1,0",
             "event_banner" => "required",
             "event_name" => "required",
             "event_location" => "required",
