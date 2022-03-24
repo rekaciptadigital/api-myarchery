@@ -103,7 +103,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
-use App\BLoC\Web\Member\getMemberAccessCategories;
+use App\BLoC\Web\Member\GetMemberAccessCategories;
 
 class WebServiceProvider extends ServiceProvider
 {
