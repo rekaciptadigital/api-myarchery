@@ -101,6 +101,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 
 class WebServiceProvider extends ServiceProvider
@@ -216,6 +217,9 @@ class WebServiceProvider extends ServiceProvider
         // =========================== Category =============================
         $this->registerService("createOrUpdateArcheryCategoryDetailV2", CreateOrUpdateArcheryCategoryDetailV2::class);
         $this->registerService("deleteCategoryDetailV2", DeleteCategoryDetailV2::class);
+
+        // =========================== Member ==============================
+        $this->registerService("listMemberV2", ListMemberV2::class);
     }
 
 
