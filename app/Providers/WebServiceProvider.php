@@ -103,6 +103,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\Member\getMemberAccessCategories;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -220,6 +221,7 @@ class WebServiceProvider extends ServiceProvider
 
         // =========================== Member ==============================
         $this->registerService("listMemberV2", ListMemberV2::class);
+        $this->registerService("getMemberAccessCategories", GetMemberAccessCategories::class);
     }
 
 

@@ -11,6 +11,7 @@ use App\Models\TransactionLog;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Auth;
 
 class ListMemberV2 extends Retrieval
 {
@@ -21,18 +22,26 @@ class ListMemberV2 extends Retrieval
 
     protected function process($parameters)
     {
+        $admin = Auth::user();
         $event_id = $parameters->get("event_id");
         $competition_category_id = $parameters->get("competition_category_id");
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
+        $type = $parameters->get("type");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("Event tidak tersedia");
         }
-
-        $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
+        if($type){
+            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)
+            ->where(function ($query) use ($type){
+                $query->where("type",$type);
+            });
+        }else{
+            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
+        }
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
