@@ -88,7 +88,7 @@ class UpdateArcheryEventV2 extends Transactional
             "event_id" => "required",
             "event_type" => "in:Full_day,Marathon",
             "event_competition" => "in:Tournament,Games",
-            "status" => "integer|in:1,0",
+            // "status" => "integer|in:1,0",
             "event_banner" => "string",
             "event_name" => "string",
             "event_location" => "string",
