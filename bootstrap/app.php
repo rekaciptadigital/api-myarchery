@@ -31,7 +31,7 @@ $app->configure('auth');
 $app->configure('database');
 
 class_alias('Illuminate\Support\Facades\App', 'App');
-class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
+//class_alias('tibonilab\Pdf\PdfFacade', 'PDF');
 class_alias('Maatwebsite\Excel\Facades\Excel', 'Excel');
 
 
@@ -107,6 +107,7 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
 class_alias('Barryvdh\Snappy\Facades\SnappyPdf', 'PDFv2');
 $app->register(Barryvdh\Snappy\LumenServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------
