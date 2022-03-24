@@ -87,6 +87,11 @@ class AddEventOrder extends Transactional
             throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
 
+
+        if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
+            throw new BLoCException("club harus diisi");
+        }
+
         // cek apakah user sudah tergabung dalam club atau belum
         if ($parameters->get('club_id') != 0) {
             $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
@@ -153,8 +158,10 @@ class AddEventOrder extends Transactional
             if ($user->age == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
             }
+            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
-            if ($user->age < $event_category_detail->min_age) {
+            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+            if ($check_date["y"] < $event_category_detail->min_age) {
                 throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
             }
         }
@@ -491,6 +498,7 @@ class AddEventOrder extends Transactional
         return [
             "event_category_id" => "required",
             "club_id" => "required",
+            "with_club" => "required"
         ];
     }
 

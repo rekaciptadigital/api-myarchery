@@ -2,6 +2,7 @@
 
 namespace App\BLoC\App\UserAuth;
 
+use App\Models\User;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +17,13 @@ class UserLogin extends Transactional
     protected function process($parameters)
     {
         $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt($parameters->all());
+        $error_message = "Password salah";
         if (!$token) {
-            throw new BLoCException(__('response.invalid_credential'));
+            $user = User::where("email", $parameters->get("email"))->first();
+            if (!$user) {
+                $error_message = "Email anda belum terdaftar";
+            }
+            throw new BLoCException($error_message);
         }
         return [
             'access_token' => $token,

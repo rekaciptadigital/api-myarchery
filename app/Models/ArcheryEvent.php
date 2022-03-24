@@ -9,15 +9,29 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMoreInformation;
 use App\Models\City;
 use App\Models\ArcheryEventParticipant;
+use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories', 'detail_city'];
+    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status'];
     protected $guarded = ['id'];
 
     public function getDetailCityAttribute()
     {
         return $this->attributes['detail_city'] = City::find($this->city_id);
+    }
+
+    public function getEventStatusAttribute()
+    {
+        $event_status = "";
+        if (Carbon::today() < $this->event_start_datetime) {
+            $event_status = "Before Event";
+        } elseif (Carbon::today() > $this->event_end_datetime) {
+            $event_status = "After Event";
+        } else {
+            $event_status = "Event Running";
+        }
+        return $this->attributes['event_status'] = $event_status;
     }
 
     public function archeryEventCategories()
@@ -209,7 +223,8 @@ class ArcheryEvent extends Model
                     "closed_register" => true,
                     "early_bird" => $value->early_bird,
                     "end_date_early_bird" => $value->end_date_early_bird,
-                    "is_early_bird" => $value->is_early_bird
+                    "is_early_bird" => $value->is_early_bird,
+                    "label" => $value->label_category
                 ];
             }
         }
@@ -256,16 +271,24 @@ class ArcheryEvent extends Model
                     'event_status' => $data->status,
                     'event_slug' => $data->event_slug,
                     'event_url' => $event_url,
-                    'need_verify' => $data->need_verify
+                    'need_verify' => $data->need_verify,
+                    'event_status' => $data->event_status,
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
-                $detail['admins'] = $admins_data;;
+                $detail['admins'] = $admins_data;
             }
         }
         $end = $detail['public_information']["event_end_register"];
         $detail["closed_register"] = strtotime($end) < strtotime('now') ? true : false;
         $detail["total_participant"] = ArcheryEventParticipant::where("event_id", $id)->where("status", 1)->count();
+        $end_date_early_bird = null;
+        $category_with_early_bird = ArcheryEventCategoryDetail::where("end_date_early_bird", "!=", null)->where("early_bird", ">", 0)->first();
+        if ($category_with_early_bird) {
+            $end_date_early_bird = $category_with_early_bird->end_date_early_bird;
+        }
+
+        $detail["end_date_early_bird"] = $end_date_early_bird;
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")

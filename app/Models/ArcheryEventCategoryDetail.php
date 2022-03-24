@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcherySerieCity;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
-use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +14,7 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event', 'is_early_bird'];
+    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event', 'is_early_bird', 'label_category'];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
@@ -116,14 +115,33 @@ class ArcheryEventCategoryDetail extends Model
         return $this->attributes['category_team'] = $type;
     }
 
+    public function getLabelCategoryAttribute()
+    {
+        $label = "";
+        $category =  ArcheryEventCategoryDetail::select(
+            "archery_master_age_categories.label as label_age_categories",
+            "archery_master_competition_categories.label as label_competition_categories",
+            "archery_master_distances.label as label_distance",
+            "archery_master_team_categories.label as label_team"
+        )->join('archery_master_age_categories', 'archery_master_age_categories.id', '=', 'archery_event_category_details.age_category_id')
+            ->join('archery_master_competition_categories', 'archery_master_competition_categories.id', '=', 'archery_event_category_details.competition_category_id')
+            ->join('archery_master_distances', 'archery_master_distances.id', '=', 'archery_event_category_details.distance_id')
+            ->join('archery_master_team_categories', 'archery_master_team_categories.id', '=', 'archery_event_category_details.team_category_id')
+            ->where("archery_event_category_details.id", $this->id)
+            ->first();
+
+        if ($category) {
+            $label = $category->label_competition_categories . " - " . $category->label_age_categories . " - " . $category->label_distance . " - " . $category->label_team;
+        }
+        return $this->attributes['label_category'] = $label;
+    }
+
     public function getIsEarlyBirdAttribute()
     {
         $is_early_bird = 0;
-        if ($this->early_bird > 0) {
+        if (($this->early_bird > 0) && ($this->end_date_early_bird != null)) {
             $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
             $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
-            // // return $new_format_early_bird_end_datetime;
-            // return Carbon::today();
 
             if (Carbon::today() <= $new_format_early_bird_end_datetime) {
                 $is_early_bird = 1;
