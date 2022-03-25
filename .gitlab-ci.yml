@@ -29,7 +29,7 @@ update_staging:
     script:
         - echo "Updating Staging"
         - ssh -p22 root@103.31.38.37 "GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git checkout develop && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git fetch origin develop && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery-stg git reset --hard FETCH_HEAD && GIT_DIR=/var/www/api-archery-stg/.git GIT_WORK_TREE=/var/www/api-archery git pull origin develop"
-        - ssh -p22 root@103.31.38.37 "cd /var/www/api-archery-stg && php artisan migrate"
+        - ssh -p22 root@103.31.38.37 "cd /root && php artisan migrate"
         - echo "Removing vendor folder"
         - ssh -p22 root@103.31.38.37 "rm -rf /var/www/api-archery-stg/vendor"
         - echo "Updating component"
