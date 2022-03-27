@@ -172,7 +172,7 @@ class ArcheryMemberCertificate extends Model
                     'id' => $member_certificate_id,
                     'member_id' => $value->id,
                     'certificate_template_id' => $template->id,
-                ));
+                ))->save();
 
                 $path = "asset/certificate/event_".$event_id;
                 if (!file_exists(public_path()."/".$path)) {
