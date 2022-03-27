@@ -187,7 +187,12 @@ class ArcheryMemberCertificate extends Model
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/".$user_id;
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users";
+                if (!file_exists(public_path()."/".$path)) {
+                    mkdir(public_path()."/".$path, 0775);
+                }
+
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users".$user_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
