@@ -156,6 +156,7 @@ class ArcheryMemberCertificate extends Model
                     "item" => $item,
                     "category" => $category,
                     "template" => $template->html_template,
+                    "template_id" => $template->id,
                     "type" => $type_certificate,
                     "type_label" => $type_certificate_label
                 ];
@@ -171,7 +172,7 @@ class ArcheryMemberCertificate extends Model
                 $member_certificate = $this->firstOrNew(array(
                     'id' => $member_certificate_id,
                     'member_id' => $value->id,
-                    'certificate_template_id' => $template->id,
+                    'certificate_template_id' => $user_certificate["template_id"],
                 ))->save();
 
                 $path = "asset/certificate/event_".$event_id;
