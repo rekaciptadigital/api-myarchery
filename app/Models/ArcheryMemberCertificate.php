@@ -12,10 +12,7 @@ use App\Models\ArcheryEventParticipantMember;
 class ArcheryMemberCertificate extends Model
 {
     protected $fillable = [
-        'id',
-        'member_id',
-        'certificate_template_id',
-       ];
+        'id'];
 
     protected $replace_item_by_certificate_type = [
                 "{%member_name%}" => "",
