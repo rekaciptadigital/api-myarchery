@@ -154,6 +154,7 @@ class ArcheryMemberCertificate extends Model
                 
                 $user_certificates[] = [
                     "item" => $item,
+                    "member_certificate_id" => $member_certificate_id,
                     "category" => $category,
                     "template" => $template->html_template,
                     "template_id" => $template->id,
@@ -169,10 +170,10 @@ class ArcheryMemberCertificate extends Model
                     $html_template = str_replace($i, $item_detail,$html_template);
                 }
 
-                $member_certificate = $this->find($member_certificate_id);
+                $member_certificate = $this->find($user_certificate["member_certificate_id"]);
                 if(!$member_certificate){
                     $member_certificate = $this->create(array(
-                        'id' => $member_certificate_id,
+                        'id' => $user_certificate["member_certificate_id"],
                         'member_id' => $value->id,
                         'certificate_template_id' => $user_certificate["template_id"],
                     ));
