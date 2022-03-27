@@ -61,12 +61,12 @@ class ArcheryMemberCertificate extends Model
                 if($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")){
                     
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("winner")){
-                    if(!$elimination_member || $elimination_member->elimination_ranked > 3) continue;
+                    if(!$elimination_member || $elimination_member->elimination_ranked < 1 || $elimination_member->elimination_ranked > 3) continue;
                     $item["{%ranked%}"] = $elimination_member->elimination_ranked;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("elimination")){
                     if(!$elimination_member) continue;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")){
-                    if(!$elimination_member || $elimination_member->position_qualification > 3) continue;
+                    if(!$elimination_member || $elimination_member->position_qualification < 1 || $elimination_member->position_qualification > 3) continue;
                     $item["{%ranked%}"] = $elimination_member->position_qualification;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("team_qualification_winner")){
                     if($value->club_id == 0) continue;
