@@ -12,7 +12,10 @@ use App\Models\ArcheryEventParticipantMember;
 class ArcheryMemberCertificate extends Model
 {
     protected $fillable = [
-        'id'];
+        'id',
+        'member_id',
+        'certificate_template_id',
+       ];
 
     protected $replace_item_by_certificate_type = [
                 "{%member_name%}" => "",
@@ -166,12 +169,15 @@ class ArcheryMemberCertificate extends Model
                     $html_template = str_replace($i, $item_detail,$html_template);
                 }
 
-                $member_certificate = $this->firstOrNew(array(
-                    'id' => $member_certificate_id,
-                    'member_id' => $value->id,
-                    'certificate_template_id' => $user_certificate["template_id"],
-                ))->save();
-
+                $member_certificate = $this->find($member_certificate_id);
+                if(!$member_certificate){
+                    $member_certificate = $this->create(array(
+                        'id' => $member_certificate_id,
+                        'member_id' => $value->id,
+                        'certificate_template_id' => $user_certificate["template_id"],
+                    ));
+                }
+                
                 $path = "asset/certificate/event_".$event_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
