@@ -70,7 +70,7 @@ class ListMemberV2 extends Retrieval
         $detail_member = [];
         if ($participant_collection->count() > 0) {
             foreach ($participant_collection as $participant) {
-                dd($participant);
+               
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
                 if (!$member) {
                     throw new BLoCException("member not found");
