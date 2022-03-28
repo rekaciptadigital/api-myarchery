@@ -59,8 +59,47 @@ class ListMemberTeamV2 extends Retrieval
         });
 
         $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
+        //dd($participant_collection);
+        
+        $detail_member = [];
+        
+        foreach ($participant_collection as $participant) {
+            
+            $club = ArcheryClub::find($participant->club_id);
+            $club_name = $club ? $club->name : "";
 
-        return $participant_collection;
+            $transaction_log = TransactionLog::find($participant->transaction_log_id);
+            $status_payment = "";
+            if ($transaction_log) {
+                if ($transaction_log->status == 1) {
+                    $status_payment = "Lunas";
+                }
+
+                if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
+                    $status_payment = "Belum Lunas";
+                }
+
+                if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
+                    $status_payment = "Expired";
+                }
+            } else {
+                $status_payment = "Gratis";
+            }
+            
+            $detail_member[]=["participant_id"=> $participant->id,
+                            "user_id" => $participant->user_id,
+                            "name"=> $participant->name,
+                            "email"=>$participant->email,
+                            "club_name"=> $club_name,
+                            "phone_number"=>$participant->phone_number,
+                            "competition_category"=> $participant->competition_category_id,
+                            "status_payment"=>$status_payment,
+                            "age_category"=> $participant->age_category_id];
+            
+            }
+        
+
+        return $detail_member;
     }
 
     protected function validation($parameters)
