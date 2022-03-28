@@ -253,6 +253,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberV2']);
             $router->get('/access-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberAccessCategories']);
         });
+
+        $router->group(['prefix' => 'qualification-time', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQualificationTimeV2']);
+        });
     });
 });
 

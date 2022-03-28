@@ -29,7 +29,6 @@ class ListMemberV2 extends Retrieval
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
         $type = $parameters->get("type");
-        $name = $parameters->get("name");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -43,11 +42,6 @@ class ListMemberV2 extends Retrieval
         }else{
             $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
         }
-            
-        // filter by name
-        $participant_query->when($name, function ($query) use ($name) {
-            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
-        });
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
@@ -71,10 +65,12 @@ class ListMemberV2 extends Retrieval
 
         $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
 
+
         $output = [];
         $detail_member = [];
         if ($participant_collection->count() > 0) {
             foreach ($participant_collection as $participant) {
+                dd($participant);
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
                 if (!$member) {
                     throw new BLoCException("member not found");
