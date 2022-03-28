@@ -34,13 +34,17 @@ class AddArcheryEventCertificateTemplates extends Transactional
 
       $archery_event_certificate_templates->event_id = $event_id;
       $archery_event_certificate_templates->html_template =  $parameters->get('html_template');
-      Common::removeDir(public_path()."/asset/certificate/event_".$event_id."/".$type_certificate);
+      Common::removeDir(public_path()."/asset/certificate/event_".$event_id."/".$type_certificate."/users");
       if ($parameters->get('background_img')) {
         $path = "asset/certificate/event_".$event_id;
         if (!file_exists(public_path()."/".$path)) {
           mkdir(public_path()."/".$path, 0775);
         }
         $path = "asset/certificate/event_".$event_id."/".$type_certificate;
+        if (!file_exists(public_path()."/".$path)) {
+          mkdir(public_path()."/".$path, 0775);
+        }
+        $path = "asset/certificate/event_".$event_id."/".$type_certificate."/asset";
         if (!file_exists(public_path()."/".$path)) {
           mkdir(public_path()."/".$path, 0775);
         }

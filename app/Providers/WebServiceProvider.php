@@ -101,6 +101,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
@@ -222,6 +223,9 @@ class WebServiceProvider extends ServiceProvider
         // =========================== Member ==============================
         $this->registerService("listMemberV2", ListMemberV2::class);
         $this->registerService("getMemberAccessCategories", GetMemberAccessCategories::class);
+
+        // =========================== Qualification-time ===================================
+        $this->registerService("createQualificationTimeV2", CreateQualificationTimeV2::class);
     }
 
 

@@ -61,12 +61,12 @@ class ArcheryMemberCertificate extends Model
                 if($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")){
                     
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("winner")){
-                    if(!$elimination_member || $elimination_member->elimination_ranked > 3) continue;
+                    if(!$elimination_member || $elimination_member->elimination_ranked < 1 || $elimination_member->elimination_ranked > 3) continue;
                     $item["{%ranked%}"] = $elimination_member->elimination_ranked;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("elimination")){
                     if(!$elimination_member) continue;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")){
-                    if(!$elimination_member || $elimination_member->position_qualification > 3) continue;
+                    if(!$elimination_member || $elimination_member->position_qualification < 1 || $elimination_member->position_qualification > 3) continue;
                     $item["{%ranked%}"] = $elimination_member->position_qualification;
                 }elseif($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("team_qualification_winner")){
                     if($value->club_id == 0) continue;
@@ -154,8 +154,10 @@ class ArcheryMemberCertificate extends Model
                 
                 $user_certificates[] = [
                     "item" => $item,
+                    "member_certificate_id" => $member_certificate_id,
                     "category" => $category,
                     "template" => $template->html_template,
+                    "template_id" => $template->id,
                     "type" => $type_certificate,
                     "type_label" => $type_certificate_label
                 ];
@@ -168,12 +170,15 @@ class ArcheryMemberCertificate extends Model
                     $html_template = str_replace($i, $item_detail,$html_template);
                 }
 
-                $member_certificate = $this->firstOrNew(array(
-                    'id' => $member_certificate_id,
-                    'member_id' => $value->id,
-                    'certificate_template_id' => $template->id,
-                ));
-
+                $member_certificate = $this->find($user_certificate["member_certificate_id"]);
+                if(!$member_certificate){
+                    $member_certificate = $this->create(array(
+                        'id' => $user_certificate["member_certificate_id"],
+                        'member_id' => $value->id,
+                        'certificate_template_id' => $user_certificate["template_id"],
+                    ));
+                }
+                
                 $path = "asset/certificate/event_".$event_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
@@ -182,7 +187,12 @@ class ArcheryMemberCertificate extends Model
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/".$user_id;
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users";
+                if (!file_exists(public_path()."/".$path)) {
+                    mkdir(public_path()."/".$path, 0775);
+                }
+
+                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users/".$user_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
