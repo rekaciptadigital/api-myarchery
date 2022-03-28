@@ -28,26 +28,15 @@ class ListMemberV2 extends Retrieval
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
-        $type = $parameters->get("type");
-        $name = $parameters->get("name");
+        
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("Event tidak tersedia");
         }
-        if($type){
-            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)
-            ->where(function ($query) use ($type){
-                $query->where("type",$type);
-            });
-        }else{
-            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
-        }
-            
-        // filter by name
-        $participant_query->when($name, function ($query) use ($name) {
-            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
-        });
+       
+        $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
+        
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
@@ -71,10 +60,12 @@ class ListMemberV2 extends Retrieval
 
         $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
 
+
         $output = [];
         $detail_member = [];
         if ($participant_collection->count() > 0) {
             foreach ($participant_collection as $participant) {
+               
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
                 if (!$member) {
                     throw new BLoCException("member not found");
@@ -117,6 +108,7 @@ class ListMemberV2 extends Retrieval
                 $detail_member["phone_number"] = $user->phone_number;
                 $detail_member["competition_category"] = $competition_category_label;
                 $detail_member["status_payment"] = $status_payment;
+                $detail_member["age_category"] = $participant->age_category_id;
 
                 array_push($output, $detail_member);
             }
