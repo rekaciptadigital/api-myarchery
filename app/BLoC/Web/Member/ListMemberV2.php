@@ -65,6 +65,7 @@ class ListMemberV2 extends Retrieval
 
         $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
 
+
         $output = [];
         $detail_member = [];
         if ($participant_collection->count() > 0) {
