@@ -105,6 +105,7 @@ use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
+use App\BLoC\Web\Member\ListMemberTeamV2;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -223,6 +224,7 @@ class WebServiceProvider extends ServiceProvider
         // =========================== Member ==============================
         $this->registerService("listMemberV2", ListMemberV2::class);
         $this->registerService("getMemberAccessCategories", GetMemberAccessCategories::class);
+        $this->registerService("listMemberTeamV2", ListMemberTeamV2::class);
 
         // =========================== Qualification-time ===================================
         $this->registerService("createQualificationTimeV2", CreateQualificationTimeV2::class);
