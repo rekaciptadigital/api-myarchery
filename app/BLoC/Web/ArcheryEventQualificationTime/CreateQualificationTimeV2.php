@@ -22,7 +22,29 @@ class CreateQualificationTimeV2 extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $event_id = $parameters->get("event_id");
         $qualification_times = $parameters->get('qualification_time', []);
+
+        $event = ArcheryEvent::find($event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
+
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException("forbiden");
+        }
+
+        $date_time_event_start_register = strtotime($event->registration_start_datetime);
+        $today = strtotime("now");
+
+        // validasi hanya bisa set jadwal sebelum dibuka pendaftaran
+        if ($today > $date_time_event_start_register) {
+            throw new BLoCException("hanya dapat diatur sebelum pendaftaran dibuka");
+        }
+
+        $date_time_event_start_datetime = strtotime($event->event_start_datetime);
+        $date_time_event_end_datetime = strtotime($event->event_end_datetime);
+
         foreach ($qualification_times as $qualification_time) {
             $category_detail_id = $qualification_time['category_detail_id'];
 
@@ -31,25 +53,13 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("kategori tidak ditemukan");
             }
 
-            $event = ArcheryEvent::find($category->event_id);
-            if (!$event) {
-                throw new BLoCException("event tidak ditemukan");
+            if ($category->is_show != 1) {
+                throw new BLoCException("is_show harus 1");
             }
 
-            if ($event->admin_id != $admin->id) {
-                throw new BLoCException("forbiden");
+            if ($category->event_id != $event_id) {
+                throw new BLoCException("category tidak valid");
             }
-
-            $date_time_event_start_register = strtotime($event->registration_start_datetime);
-            $date_time_event_end_register = strtotime($event->registration_end_datetime);
-            $today = strtotime("now");
-
-            if (($today < $date_time_event_start_register) && ($today > $date_time_event_end_register)) {
-                throw new BLoCException("hanya dapat diatur sebelum berlangsungnya event");
-            }
-
-            $date_time_event_start_datetime = strtotime($event->event_start_datetime);
-            $date_time_event_end_datetime = strtotime($event->event_end_datetime);
 
             $qualification_time_event_start_datetime = strtotime($qualification_time['event_start_datetime']);
             $qualification_time_event_end_datetime = strtotime($qualification_time['event_end_datetime']);
@@ -86,12 +96,13 @@ class CreateQualificationTimeV2 extends Transactional
             }
         }
 
-        return "ok";
+        return "success";
     }
 
     protected function validation($parameters)
     {
         return [
+            "event_id" => "required",
             "qualification_time" => "required|array|min:1",
         ];
     }
