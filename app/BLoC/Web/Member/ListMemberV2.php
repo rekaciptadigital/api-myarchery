@@ -117,6 +117,7 @@ class ListMemberV2 extends Retrieval
                 $detail_member["phone_number"] = $user->phone_number;
                 $detail_member["competition_category"] = $competition_category_label;
                 $detail_member["status_payment"] = $status_payment;
+                $detail_member["age_category"] = $participant->age_category_id;
 
                 array_push($output, $detail_member);
             }
