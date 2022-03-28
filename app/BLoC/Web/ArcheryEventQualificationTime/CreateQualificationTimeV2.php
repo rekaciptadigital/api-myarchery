@@ -53,6 +53,10 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("kategori tidak ditemukan");
             }
 
+            if ($category->is_show != 1) {
+                throw new BLoCException("is_show harus 1");
+            }
+
             if ($category->event_id != $event_id) {
                 throw new BLoCException("category tidak valid");
             }
