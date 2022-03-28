@@ -98,6 +98,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 $category_detail->team_category_id  = $team_category->id;
                 $category_detail->quota = $category['quota'];
                 $category_detail->fee = $category['fee'];
+                $category_detail->is_show = $category["is_show"];
                 $category_detail->early_bird = $category["early_bird"];
                 $category_detail->end_date_early_bird = $end_early_bird;
                 $category_detail->save();
@@ -119,6 +120,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 $archery_category_detail->team_category_id  = $team_category->id;
                 $archery_category_detail->quota = $category['quota'];
                 $archery_category_detail->fee = $category['fee'];
+                $archery_category_detail->is_show = $category["is_show"];
                 $archery_category_detail->early_bird = $category["early_bird"];
                 $archery_category_detail->end_date_early_bird = $end_early_bird;
                 $archery_category_detail->save();

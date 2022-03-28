@@ -29,7 +29,7 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event = new ArcheryEvent();
             $archery_event->event_type = $event_type;
             $archery_event->event_competition = $parameters->get('event_competition');
-            $archery_event->status = $parameters->get('status');
+            $archery_event->status = 0;
 
             // Upload Poster
             if ($parameters->get("event_banner")) {
@@ -93,7 +93,7 @@ class CreateArcheryEventV2 extends Transactional
         return [
             "event_type" => "required|in:Full_day,Marathon",
             "event_competition" => "required|in:Tournament,Games",
-            "status" => "required|integer|in:1,0",
+            // "status" => "required|integer|in:1,0",
             "event_banner" => "required",
             "event_name" => "required",
             "event_location" => "required",

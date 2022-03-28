@@ -19,25 +19,34 @@ class DeleteCategoryDetailV2 extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $find = ArcheryEventCategoryDetail::find($parameters->get('category_id'));
-        if ($find) {
-            $event = ArcheryEvent::find($find->event_id);
-            if (!$event) {
-                throw new BLoCException("event tidak ditemukan");
-            }
-            if ($event->admin_id != $admin->id) {
-                throw new BLoCException("forbiden");
-            }
+        $event_id = $parameters->get("event_id");
+        $event = ArcheryEvent::find($event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
 
-            $check = ArcheryEventParticipant::where('event_category_id', $find->id)->first();
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException("forbiden");
+        }
 
-            if ($check) {
-                throw new BLoCException("sudah ada partisipan");
+        $category_ids = $parameters->get("category_ids");
+        foreach ($category_ids as $category_id) {
+            $find = ArcheryEventCategoryDetail::find($category_id);
+            if ($find) {
+
+                if ($find->event_id != $event_id) {
+                    throw new BLoCException("event dan category tidak sama");
+                }
+
+                $check = ArcheryEventParticipant::where('event_category_id', $find->id)->first();
+                if ($check) {
+                    throw new BLoCException("sudah ada partisipan");
+                }
+
+                $find->delete();
+            } else {
+                throw new BLoCException("category tidak ditemukan");
             }
-
-            $find->delete();
-        } else {
-            throw new BLoCException("category tidak ditemukan");
         }
 
         return "success";
@@ -46,7 +55,8 @@ class DeleteCategoryDetailV2 extends Transactional
     protected function validation($parameters)
     {
         return [
-            "category_id" => "required"
+            "event_id" => "required",
+            "category_ids" => "required|array|min:1"
         ];
     }
 }
