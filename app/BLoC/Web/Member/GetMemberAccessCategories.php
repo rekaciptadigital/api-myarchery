@@ -10,6 +10,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class GetMemberAccessCategories extends Retrieval
@@ -30,19 +31,20 @@ class GetMemberAccessCategories extends Retrieval
         if(!$participant){
             throw new BLoCException("participant not found");
         }
-        //dd($participant->event_id);
-        $age = floor((time() - strtotime($participant->date_of_birth)) / 31556926);
-        if($age == 52){
-            
-        }
         
-        $categories = ArcheryEventCategoryDetail::select('archery_event_category_details.*')
+        $age = floor((time() - strtotime($participant->date_of_birth)) / 31556926);
+        //dd($participant->gender);
+        $categories = ArcheryEventCategoryDetail::select('archery_event_category_details.*',DB::RAW('substring(archery_event_category_details.team_category_id,10,6) as category_gender'))
         ->leftJoin("archery_master_age_categories","archery_master_age_categories.id","archery_event_category_details.age_category_id")
         ->where("archery_event_category_details.event_id", $participant->event_id)
-        ->whereRaw("substring(archery_event_category_details.team_category_id,1,8) = 'individu' ")
+        ->having("category_gender","=",$participant->gender)
         ->get();
+
         
-        
+        if($categories->isEmpty()){
+            throw new BLoCException("categories were not found");
+        }
+
         $list_category=null;
 
         foreach($categories as $category){
