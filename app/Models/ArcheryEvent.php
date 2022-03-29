@@ -77,6 +77,7 @@ class ArcheryEvent extends Model
     protected function getCategories($id, $type = "")
     {
         $categories = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.is_show",
             "archery_event_category_details.id",
             "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
@@ -224,7 +225,8 @@ class ArcheryEvent extends Model
                     "early_bird" => $value->early_bird,
                     "end_date_early_bird" => $value->end_date_early_bird,
                     "is_early_bird" => $value->is_early_bird,
-                    "label" => $value->label_category
+                    "label" => $value->label_category,
+                    "is_show" => $value->is_show
                 ];
             }
         }
