@@ -87,6 +87,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                     ->where("distance_id", $distance_category->id)
                     ->where("team_category_id", $team_category->id)
                     ->where("id", "!=", $category["category_id"])
+                    ->where("event_id", $event->id)
                     ->get();
 
                 if ($is_exist->count() > 0) {
@@ -107,6 +108,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                     ->where("competition_category_id", $competitio_category->id)
                     ->where("distance_id", $distance_category->id)
                     ->where("team_category_id", $team_category->id)
+                    ->where("event_id", $event->id)
                     ->get();
 
                 if ($is_exist->count() > 0) {
