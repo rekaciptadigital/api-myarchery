@@ -23,6 +23,9 @@ class ListMemberTeamV2 extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
+        $page = $parameters->get('page')? $parameters->get('page') : 1;
+        $offset = ($page - 1) * $limit;
         $event_id = $parameters->get("event_id");
         $competition_category_id = $parameters->get("competition_category_id");
         $distance_id = $parameters->get("distance_id");
@@ -58,7 +61,7 @@ class ListMemberTeamV2 extends Retrieval
             return $query->where("age_category_id", $age_category_id);
         });
 
-        $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
+        $participant_collection = $participant_query->orderBy('id', 'DESC')->limit($limit)->offset($offset)->get();
         //dd($participant_collection);
         
         $detail_member = [];
@@ -97,7 +100,6 @@ class ListMemberTeamV2 extends Retrieval
                             "age_category"=> $participant->age_category_id];
             
             }
-        
 
         return $detail_member;
     }
