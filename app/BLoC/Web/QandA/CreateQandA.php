@@ -31,8 +31,8 @@ class CreateQandA extends Retrieval
         $q_and_a = new QandA();
         $q_and_a->event_id = $event_id;
         $q_and_a->sort = $parameters->get("sort", 0);
-        $q_and_a->title = $parameters->get("title");
-        $q_and_a->description = $parameters->get("description");
+        $q_and_a->question = $parameters->get("question");
+        $q_and_a->answer = $parameters->get("answer");
         $q_and_a->save();
 
         return $q_and_a;
@@ -42,8 +42,8 @@ class CreateQandA extends Retrieval
     {
         return [
             "event_id" => "required|integer",
-            "title" => "required",
-            "description" => "required"
+            "question" => "required",
+            "answer" => "required"
         ];
     }
 }
