@@ -55,5 +55,9 @@ $router->group(['prefix' => 'general'], function () use ($router) {
         $router->group(['prefix' => 'q-and-a'], function () use ($router) {
             $router->get('/get-by-event_id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandAByEventId']);
         });
+
+        $router->group(['prefix' => 'category-details'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByEventId']);
+        });
     });
 });

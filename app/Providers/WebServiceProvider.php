@@ -49,6 +49,7 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\QandA\GetQandAByEventId;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
@@ -236,6 +237,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createQandA", CreateQandA::class);
         $this->registerService("deleteQandA", DeleteQandA::class);
         $this->registerService("getQandAByEventId", GetQandAByEventId::class);
+
+        // ================================ category details ===================================
+        $this->registerService("getListCategoryByEventId", GetListCategoryByEventId::class);
     }
 
 
