@@ -31,7 +31,7 @@ class ListMemberV2 extends Retrieval
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
-        
+        $name = $parameters->get("name");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -44,6 +44,11 @@ class ListMemberV2 extends Retrieval
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
             return $query->where("competition_category_id", $competition_category_id);
+        });
+
+        // filter by name
+        $participant_query->when($name, function ($query) use ($name) {
+            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
         });
 
         // filter by distance_id
