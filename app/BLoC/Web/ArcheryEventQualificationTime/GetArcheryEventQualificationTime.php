@@ -21,8 +21,10 @@ class GetArcheryEventQualificationTime extends Retrieval
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
         $category_detail_id = $parameters->get('category_detail_id');
+        $type = $parameters->get("type");
 
-        $archery_category_detail = ArcheryEventQualificationTime::getQualificationById($event_id, $category_detail_id);
+        $archery_category_detail = ArcheryEventQualificationTime::getQualificationById($event_id, $category_detail_id, $type);
+
 
         $output = [];
 
@@ -47,6 +49,7 @@ class GetArcheryEventQualificationTime extends Retrieval
     {
         return [
             "event_id" => "required",
+            "type" => "in:Individual,Team"
         ];
     }
 }
