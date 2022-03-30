@@ -33,7 +33,27 @@ class GetListCategoryByEventId extends Retrieval
         });
 
         $list_category_collection = $list_category_query->get();
-        return $list_category_collection;
+
+        $output = [];
+        $response = [];
+
+        if ($list_category_collection->count() > 0) {
+            foreach ($list_category_collection as $category) {
+                $response["id"] = $category->id;
+                $response["event_id"] = $category->event_id;
+                $response["age_category_id"] = $category->age_category_id;
+                $response["competition_category_id"] = $category->competition_category_id;
+                $response["distance_id"] = $category->distance_id;
+                $response["team_category_id"] = $category->team_category_id;
+                $response["is_show"] = $category->is_show;
+                $response["category_team"] = $category->category_team;
+                $response["gender_category"] = $category->gender_category;
+                $response["label_category"] = $category->label_category;
+
+                array_push($output, $response);
+            }
+        }
+        return $output;
     }
 
     protected function validation($parameters)
