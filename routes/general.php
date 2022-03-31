@@ -59,5 +59,9 @@ $router->group(['prefix' => 'general'], function () use ($router) {
         $router->group(['prefix' => 'category-details'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByEventId']);
         });
+
+        $router->group(['prefix' => 'events'], function () use ($router) {
+            $router->get('/by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailEventBySlugV2']);
+        });
     });
 });

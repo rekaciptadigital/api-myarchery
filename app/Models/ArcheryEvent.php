@@ -13,12 +13,49 @@ use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status'];
+    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status', 'detail_admin', 'more_information'];
     protected $guarded = ['id'];
 
     public function getDetailCityAttribute()
     {
         return $this->attributes['detail_city'] = City::find($this->city_id);
+    }
+
+    public function getDetailAdminAttribute()
+    {
+        $response = [];
+        $admin = Admin::find($this->admin_id);
+        
+        if ($admin) {
+            $response["id"] = $admin->id;
+            $response["name"] = $admin->name;
+            $response["email"] = $admin->email;
+            $response["avatar"] = $admin->avatar;
+            $response["phone_number"] = $admin->phone_number;
+        }
+
+        return $this->attributes['detail_admin'] = $response;
+    }
+
+    public function getMoreInformationAttribute()
+    {
+        $output = [];
+        $response = [];
+
+        $more_informations = ArcheryEventMoreInformation::where('event_id', $this->id)->get();
+
+        if ($more_informations->count() > 0) {
+            foreach ($more_informations as $information) {
+                $response["id"] = $information->id;
+                $response["event_id"] = $information->event_id;
+                $response["title"] = $information->title;
+                $response["description"] = $information->description;
+
+                array_push($output, $response);
+            }
+        }
+
+        return $this->attributes['more_information'] = $output;
     }
 
     public function getEventStatusAttribute()
