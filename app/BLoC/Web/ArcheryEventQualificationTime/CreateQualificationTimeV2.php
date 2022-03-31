@@ -75,35 +75,47 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("harus di set pada rentang tanggal event");
             }
 
-            $archery_event_qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail_id)->first();
-            if (!$archery_event_qualification_time) {
-                $archery_event_qualification_time = new ArcheryEventQualificationTime();
-                $archery_event_qualification_time->category_detail_id = $category_detail_id;
-                $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
-                $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
-                $archery_event_qualification_time->save();
-            } else {
-                $count_participant = ArcheryEventParticipant::where('event_category_id', $qualification_time['category_detail_id'])->first();
-
-                if (empty($count_participant)) {
-                    $archery_event_qualification_time->category_detail_id = $category_detail_id;
-                    $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
-                    $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
-                    $archery_event_qualification_time->save();
-                } else {
-                    throw new BLoCException("tidak bisa ganti jadwal karena sudah ada peserta");
-                }
-            }
-
             $key_qualification_id = array_key_exists("qualification_time_id", $qualification_time);
             $kaey_deleted = array_key_exists("deleted", $qualification_time);
-            if (($key_qualification_id && $kaey_deleted) && $kaey_deleted == 1) {
+            if ($key_qualification_id) {
                 $jadwal = ArcheryEventQualificationTime::find($qualification_time["qualification_time_id"]);
                 if (!$jadwal) {
                     throw new BLoCException("qualification time tidak di temukan");
                 }
 
-                $jadwal->delete();
+                if ($kaey_deleted && $kaey_deleted == 1) {
+                    $jadwal->delete();
+                } else {
+                    $count_participant = ArcheryEventParticipant::where('event_category_id', $qualification_time['category_detail_id'])->first();
+                    $is_exist = ArcheryEventQualificationTime::where("category_detail_id", $category_detail_id)
+                        ->where("id", "!=", $qualification_time["qualification_time_id"])
+                        ->first();
+
+                    if ($is_exist) {
+                        throw new BLoCException("jadwal untuk category ini sudah diatur");
+                    }
+
+                    if (empty($count_participant)) {
+                        $jadwal->category_detail_id = $category_detail_id;
+                        $jadwal->event_start_datetime =  $qualification_time['event_start_datetime'];
+                        $jadwal->event_end_datetime =  $qualification_time['event_end_datetime'];
+                        $jadwal->save();
+                    } else {
+                        throw new BLoCException("tidak bisa ganti jadwal karena sudah ada peserta");
+                    }
+                }
+            } else {
+                $is_exist = ArcheryEventQualificationTime::where("category_detail_id", $category_detail_id)
+                    ->first();
+
+                if ($is_exist) {
+                    throw new BLoCException("jadwal untuk category ini sudah diatur");
+                }
+                $archery_event_qualification_time = new ArcheryEventQualificationTime();
+                $archery_event_qualification_time->category_detail_id = $category_detail_id;
+                $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
+                $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
+                $archery_event_qualification_time->save();
             }
         }
 
