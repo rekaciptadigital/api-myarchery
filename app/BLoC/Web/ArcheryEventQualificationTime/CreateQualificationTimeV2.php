@@ -34,16 +34,14 @@ class CreateQualificationTimeV2 extends Transactional
             throw new BLoCException("forbiden");
         }
 
-        $date_time_event_start_register = strtotime($event->registration_start_datetime);
         $today = strtotime("now");
-
-        // validasi hanya bisa set jadwal sebelum dibuka pendaftaran
-        if ($today > $date_time_event_start_register) {
-            throw new BLoCException("hanya dapat diatur sebelum pendaftaran dibuka");
-        }
-
         $date_time_event_start_datetime = strtotime($event->event_start_datetime);
         $date_time_event_end_datetime = strtotime($event->event_end_datetime);
+
+        // validasi hanya bisa set jadwal sebelum event mulai
+        if ($today > $date_time_event_start_datetime) {
+            throw new BLoCException("hanya dapat diatur sebelum event dimulai");
+        }
 
         foreach ($qualification_times as $qualification_time) {
             $category_detail_id = $qualification_time['category_detail_id'];
@@ -80,7 +78,7 @@ class CreateQualificationTimeV2 extends Transactional
             $archery_event_qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail_id)->first();
             if (!$archery_event_qualification_time) {
                 $archery_event_qualification_time = new ArcheryEventQualificationTime();
-                $archery_event_qualification_time->category_detail_id = $qualification_time['category_detail_id'];
+                $archery_event_qualification_time->category_detail_id = $category_detail_id;
                 $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
                 $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
                 $archery_event_qualification_time->save();
@@ -88,7 +86,7 @@ class CreateQualificationTimeV2 extends Transactional
                 $count_participant = ArcheryEventParticipant::where('event_category_id', $qualification_time['category_detail_id'])->first();
 
                 if (empty($count_participant)) {
-                    $archery_event_qualification_time->category_detail_id = $qualification_time['category_detail_id'];
+                    $archery_event_qualification_time->category_detail_id = $category_detail_id;
                     $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
                     $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
                     $archery_event_qualification_time->save();
