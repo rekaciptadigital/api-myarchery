@@ -57,6 +57,14 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 throw new BLoCException("Team category tidak ditemukan");
             }
 
+            $date_time_event_start_datetime = strtotime($event->event_start_datetime);
+            $today = strtotime("now");
+
+            // validasi hanya bisa set category sebelum event mulai
+            if ($today > $date_time_event_start_datetime) {
+                throw new BLoCException("hanya dapat diatur sebelum event dimulai");
+            }
+
             $date_time_event_start_register = strtotime($event->registration_start_datetime);
             $date_time_event_end_register = strtotime($event->registration_end_datetime);
 
