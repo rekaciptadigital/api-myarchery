@@ -29,15 +29,15 @@ class ArcheryEventParticipant extends Model
     return $archery_participant;
   }
 
-  
+
   public static function getTotalPartisipantByEventByCategory($category_detail_id)
   {
     $count_participant = ArcheryEventParticipant::select(DB::raw("count(if(archery_event_participants.status=1,1,if(FROM_UNIXTIME(transaction_logs.expired_time)>=now(),1,NULL))) as total "))
-                        ->where('event_category_id', $category_detail_id)
-                        ->leftJoin('transaction_logs','transaction_logs.id','archery_event_participants.transaction_log_id')
-                        ->get();
-    foreach(array($count_participant) as $key => $count){
-      $total=$count[0]['total'];
+      ->where('event_category_id', $category_detail_id)
+      ->leftJoin('transaction_logs', 'transaction_logs.id', 'archery_event_participants.transaction_log_id')
+      ->get();
+    foreach (array($count_participant) as $key => $count) {
+      $total = $count[0]['total'];
     }
 
     return $total;
@@ -45,29 +45,29 @@ class ArcheryEventParticipant extends Model
 
   public static function getTotalPartisipantEventByStatus($category_detail_id, $status = 0)
   {
-    return ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status","transaction_logs.expired_time")
-        ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-        ->where('archery_event_participants.event_category_id', $category_detail_id)
-        ->where(function ($query) use ($status){
-            if (!is_null($status) && $status != 0) {
-                $query->where('archery_event_participants.status', $status);
-                if($status == 2){
-                    $query->orWhere(function ($query) use ($status){
-                       $query->where("transaction_logs.status",4);
-                       $query->where("transaction_logs.expired_time","<=",time());
-                    });
-                }
-                if($status == 1){
-                    $query->orWhere(function ($query) use ($status){
-                       $query->where("archery_event_participants.status",1);
-                    });
-                }
-                if($status == 4){
-                    $query->where("transaction_logs.expired_time",">=",time());
-                }
-            }
-        })
-        ->count();
+    return ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.order_id", "archery_event_participants.status", "transaction_logs.expired_time")
+      ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+      ->where('archery_event_participants.event_category_id', $category_detail_id)
+      ->where(function ($query) use ($status) {
+        if (!is_null($status) && $status != 0) {
+          $query->where('archery_event_participants.status', $status);
+          if ($status == 2) {
+            $query->orWhere(function ($query) use ($status) {
+              $query->where("transaction_logs.status", 4);
+              $query->where("transaction_logs.expired_time", "<=", time());
+            });
+          }
+          if ($status == 1) {
+            $query->orWhere(function ($query) use ($status) {
+              $query->where("archery_event_participants.status", 1);
+            });
+          }
+          if ($status == 4) {
+            $query->where("transaction_logs.expired_time", ">=", time());
+          }
+        }
+      })
+      ->count();
   }
 
   public static function countEventUserBooking($event_category_detail_id)
@@ -75,14 +75,14 @@ class ArcheryEventParticipant extends Model
     $time_now = time();
 
     return ArcheryEventParticipant::leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->where("event_category_id", $event_category_detail_id)
-            ->where(function ($query) use ($time_now) {
-                $query->where("archery_event_participants.status", 1);
-                $query->orWhere(function ($q) use ($time_now) {
-                    $q->where("archery_event_participants.status", 4);
-                    $q->where("transaction_logs.expired_time", ">", $time_now);
-                });
-            })->count();
+      ->where("event_category_id", $event_category_detail_id)
+      ->where(function ($query) use ($time_now) {
+        $query->where("archery_event_participants.status", 1);
+        $query->orWhere(function ($q) use ($time_now) {
+          $q->where("archery_event_participants.status", 4);
+          $q->where("transaction_logs.expired_time", ">", $time_now);
+        });
+      })->count();
   }
 
   public static function insertParticipant(

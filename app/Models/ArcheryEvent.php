@@ -316,7 +316,7 @@ class ArcheryEvent extends Model
                     'event_slug' => $data->event_slug,
                     'event_url' => $event_url,
                     'need_verify' => $data->need_verify,
-                    'event_status' => $data->event_status,
+                    'event_tracking' => $data->event_status,
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
