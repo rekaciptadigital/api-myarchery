@@ -185,6 +185,7 @@ class PaymentGateWay
             $status = 1;
         } else if ($transaction == 'pending') {
             $status = 4;
+            $transaction_log->expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
         } else if ($transaction == 'expire') {
             $status = 2;
         }
@@ -243,7 +244,7 @@ class PaymentGateWay
             ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($event_category_detail->id, $user->gender), $participant->id);
             ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
             $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
-            Redis::hset($key,$event_category_detail->id,$event_category_detail->id);
+            Redis::hset($key, $event_category_detail->id, $event_category_detail->id);
             ArcheryEventQualificationScheduleFullDay::create([
                 'qalification_time_id' => $qualification_time->id,
                 'participant_member_id' => $participant_member->id,
