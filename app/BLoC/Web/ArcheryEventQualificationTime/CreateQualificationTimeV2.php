@@ -92,7 +92,20 @@ class CreateQualificationTimeV2 extends Transactional
                     $archery_event_qualification_time->event_start_datetime =  $qualification_time['event_start_datetime'];
                     $archery_event_qualification_time->event_end_datetime =  $qualification_time['event_end_datetime'];
                     $archery_event_qualification_time->save();
+                } else {
+                    throw new BLoCException("tidak bisa ganti jadwal karena sudah ada peserta");
                 }
+            }
+
+            $key_qualification_id = array_key_exists("qualification_time_id", $qualification_time);
+            $kaey_deleted = array_key_exists("deleted", $qualification_time);
+            if (($key_qualification_id && $kaey_deleted) && $kaey_deleted == 1) {
+                $jadwal = ArcheryEventQualificationTime::find($qualification_time["qualification_time_id"]);
+                if (!$jadwal) {
+                    throw new BLoCException("qualification time tidak di temukan");
+                }
+
+                $jadwal->delete();
             }
         }
 
