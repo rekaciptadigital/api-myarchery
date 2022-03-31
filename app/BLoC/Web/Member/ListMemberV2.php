@@ -94,17 +94,21 @@ class ListMemberV2 extends Retrieval
                 if ($transaction_log) {
                     if ($transaction_log->status == 1) {
                         $status_payment = "Lunas";
+                        $order_payment=1;
                     }
 
                     if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
                         $status_payment = "Belum Lunas";
+                        $order_payment=2;
                     }
 
                     if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
                         $status_payment = "Expired";
+                        $order_payment=3;
                     }
                 } else {
                     $status_payment = "Gratis";
+                    $order_payment=4;
                 }
 
                 $detail_member["member_id"] = $member->id;
@@ -117,10 +121,13 @@ class ListMemberV2 extends Retrieval
                 $detail_member["competition_category"] = $competition_category_label;
                 $detail_member["status_payment"] = $status_payment;
                 $detail_member["age_category"] = $participant->age_category_id;
+                $detail_member["order_payment"] = $order_payment;
 
                 array_push($output, $detail_member);
             }
         }
+        $order_payment = array_column($output, 'order_payment');
+        array_multisort($order_payment, SORT_ASC, $output);
 
         return $output;
     }

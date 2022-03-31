@@ -81,17 +81,21 @@ class ListMemberTeamV2 extends Retrieval
             if ($transaction_log) {
                 if ($transaction_log->status == 1) {
                     $status_payment = "Lunas";
+                    $order_payment=1;
                 }
 
                 if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
                     $status_payment = "Belum Lunas";
+                    $order_payment=2;
                 }
 
                 if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
                     $status_payment = "Expired";
+                    $order_payment=3;
                 }
             } else {
                 $status_payment = "Gratis";
+                $order_payment=4;
             }
             
             $detail_member[]=["participant_id"=> $participant->id,
@@ -102,9 +106,13 @@ class ListMemberTeamV2 extends Retrieval
                             "phone_number"=>$participant->phone_number,
                             "competition_category"=> $participant->competition_category_id,
                             "status_payment"=>$status_payment,
-                            "age_category"=> $participant->age_category_id];
+                            "age_category"=> $participant->age_category_id,
+                            "order_payment"=>$order_payment];
             
             }
+
+        $order_payment = array_column($detail_member, 'order_payment');
+        array_multisort($order_payment, SORT_ASC, $detail_member);
 
         return $detail_member;
     }
