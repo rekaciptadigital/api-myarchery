@@ -144,7 +144,7 @@ class ArcheryEventCategoryDetail extends Model
         $class = "";
         $category =  ArcheryEventCategoryDetail::select(
             "archery_master_age_categories.label as label_age_categories",
-            "archery_master_distances.label as label_distance",
+            "archery_master_distances.label as label_distance"
         )->join('archery_master_age_categories', 'archery_master_age_categories.id', '=', 'archery_event_category_details.age_category_id')
             ->join('archery_master_distances', 'archery_master_distances.id', '=', 'archery_event_category_details.distance_id')
             ->where("archery_event_category_details.id", $this->id)
