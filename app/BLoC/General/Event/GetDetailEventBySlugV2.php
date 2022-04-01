@@ -3,7 +3,6 @@
 namespace App\BLoC\General\Event;
 
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 

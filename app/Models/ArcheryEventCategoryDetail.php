@@ -14,7 +14,10 @@ class ArcheryEventCategoryDetail extends Model
 {
     protected $table = 'archery_event_category_details';
     protected $guarded = ['id'];
-    protected $appends = ['category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event', 'is_early_bird', 'label_category'];
+    protected $appends = [
+        'category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event',
+        'is_early_bird', 'label_category', 'class_category'
+    ];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
@@ -134,6 +137,23 @@ class ArcheryEventCategoryDetail extends Model
             $label = $category->label_competition_categories . " - " . $category->label_age_categories . " - " . $category->label_distance . " - " . $category->label_team;
         }
         return $this->attributes['label_category'] = $label;
+    }
+
+    public function getClassCategoryAttribute()
+    {
+        $class = "";
+        $category =  ArcheryEventCategoryDetail::select(
+            "archery_master_age_categories.label as label_age_categories",
+            "archery_master_distances.label as label_distance",
+        )->join('archery_master_age_categories', 'archery_master_age_categories.id', '=', 'archery_event_category_details.age_category_id')
+            ->join('archery_master_distances', 'archery_master_distances.id', '=', 'archery_event_category_details.distance_id')
+            ->where("archery_event_category_details.id", $this->id)
+            ->first();
+
+        if ($category) {
+            $class = $category->label_age_categories . " - " . $category->label_distance;
+        }
+        return $this->attributes['class_category'] = $class;
     }
 
     public function getIsEarlyBirdAttribute()
