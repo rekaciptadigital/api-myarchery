@@ -15,7 +15,7 @@ class ArcheryEvent extends Model
 {
     protected $appends = [
         'event_url', 'flat_categories', 'detail_city', 'event_status',
-        'detail_admin', 'more_information', 'individu_price', 'mix_team_price', "team_price", "event_price"
+        'detail_admin', 'more_information', "event_price"
     ];
     protected $guarded = ['id'];
 
