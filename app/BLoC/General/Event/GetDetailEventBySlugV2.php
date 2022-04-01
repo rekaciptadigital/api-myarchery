@@ -3,6 +3,7 @@
 namespace App\BLoC\General\Event;
 
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -47,6 +48,7 @@ class GetDetailEventBySlugV2 extends Retrieval
             $response["detail_city"] = $event->detail_city;
             $response["event_status"] = $event->event_status;
             $response["more_information"] = $event->more_information;
+            $response["event_price"] = $event->event_price;
         }
 
         return $response;

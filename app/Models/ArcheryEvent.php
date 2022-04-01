@@ -13,8 +13,62 @@ use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status', 'detail_admin', 'more_information'];
+    protected $appends = [
+        'event_url', 'flat_categories', 'detail_city', 'event_status',
+        'detail_admin', 'more_information', 'individu_price', 'mix_team_price', "team_price", "event_price"
+    ];
     protected $guarded = ['id'];
+
+    public function getEventPriceAttribute()
+    {
+        $response = [];
+        $mix = null;
+        $team = null;
+        $individu = null;
+
+        $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type")
+            ->where("event_id", $this->id)
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->get();
+
+
+        if ($category->count() > 0) {
+            foreach ($category as $c) {
+                if (($c->type == "Individual") && $individu === null) {
+                    $individu = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } elseif (($c->team_category_id === "mix_team") && $mix === null) {
+                    $mix = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } elseif ((($c->type === "Team") && ($c->team_category_id !== "mix_team")) && $team === null) {
+                    $team = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        $response = [
+            "team" => $team,
+            "individu" => $individu,
+            "mix" => $mix,
+        ];
+
+        return $this->attributes['event_price'] = $response;
+    }
 
     public function getDetailCityAttribute()
     {
@@ -25,7 +79,7 @@ class ArcheryEvent extends Model
     {
         $response = [];
         $admin = Admin::find($this->admin_id);
-        
+
         if ($admin) {
             $response["id"] = $admin->id;
             $response["name"] = $admin->name;
