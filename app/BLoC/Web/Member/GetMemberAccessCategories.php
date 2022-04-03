@@ -24,49 +24,46 @@ class GetMemberAccessCategories extends Retrieval
     {
         $admin = Auth::user();
         $participant_id = $parameters->get("participant_id");
-        
-        $participant = ArcheryEventParticipant::where("archery_event_participants.id", $participant_id)
-        ->leftJoin("users","users.id","archery_event_participants.user_id")->first();
 
-        if(!$participant){
+        $participant = ArcheryEventParticipant::where("archery_event_participants.id", $participant_id)
+            ->leftJoin("users", "users.id", "archery_event_participants.user_id")->first();
+
+        if (!$participant) {
             throw new BLoCException("participant not found");
         }
-        
+
         $age = floor((time() - strtotime($participant->date_of_birth)) / 31556926);
         //dd($participant->gender);
-        $categories = ArcheryEventCategoryDetail::select('archery_event_category_details.*',DB::RAW('substring(archery_event_category_details.team_category_id,10,6) as category_gender'))
-        ->leftJoin("archery_master_age_categories","archery_master_age_categories.id","archery_event_category_details.age_category_id")
-        ->where("archery_event_category_details.event_id", $participant->event_id)
-        ->having("category_gender","=",$participant->gender)
-        ->get();
+        $categories = ArcheryEventCategoryDetail::select('archery_event_category_details.*', DB::RAW('substring(archery_event_category_details.team_category_id,10,6) as category_gender'))
+            ->leftJoin("archery_master_age_categories", "archery_master_age_categories.id", "archery_event_category_details.age_category_id")
+            ->where("archery_event_category_details.event_id", $participant->event_id)
+            ->having("category_gender", "=", $participant->gender)
+            ->get();
 
-        
-        if($categories->isEmpty()){
+
+        if ($categories->isEmpty()) {
             throw new BLoCException("categories were not found");
         }
 
-        $list_category=null;
+        $list_category = null;
 
-        foreach($categories as $category){
-            if($age ==52){
-                $list_category[]=$category;
-            }
-            else if($category->max_age ==0 && $category->min_age ==0  )
-                $list_category[]=$category;
-            else if($category->max_age ==0){
-                if($category->min_age <=$age){
-                    $list_category[]=$category;
+        foreach ($categories as $category) {
+            if ($age == 52) {
+                $list_category[] = $category;
+            } else if ($category->max_age == 0 && $category->min_age == 0)
+                $list_category[] = $category;
+            else if ($category->max_age == 0) {
+                if ($category->min_age <= $age) {
+                    $list_category[] = $category;
                 }
-            }else if($category->max_age !=0){
-                if($category->max_age >=$age){
-                    $list_category[]=$category;
+            } else if ($category->max_age != 0) {
+                if ($category->max_age >= $age) {
+                    $list_category[] = $category;
                 }
             }
         }
 
         return $list_category;
-
-        
     }
 
     protected function validation($parameters)

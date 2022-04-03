@@ -13,12 +13,103 @@ use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
 {
-    protected $appends = ['event_url', 'flat_categories', 'detail_city', 'event_status'];
+    protected $appends = [
+        'event_url', 'flat_categories', 'detail_city', 'event_status',
+        'detail_admin', 'more_information', "event_price"
+    ];
     protected $guarded = ['id'];
+
+    public function getEventPriceAttribute()
+    {
+        $response = [];
+        $mix = null;
+        $team = null;
+        $individu = null;
+
+        $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type")
+            ->where("event_id", $this->id)
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->get();
+
+
+        if ($category->count() > 0) {
+            foreach ($category as $c) {
+                if (($c->type == "Individual") && $individu === null) {
+                    $individu = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } elseif (($c->team_category_id === "mix_team") && $mix === null) {
+                    $mix = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } elseif ((($c->type === "Team") && ($c->team_category_id !== "mix_team")) && $team === null) {
+                    $team = [
+                        "price" => $c->fee,
+                        "early_bird" => $c->early_bird,
+                        "end_date_early_bird" => $c->end_date_early_bird,
+                        "is_early_bird" => $c->is_early_bird
+                    ];
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        $response = [
+            "team" => $team,
+            "individu" => $individu,
+            "mix" => $mix,
+        ];
+
+        return $this->attributes['event_price'] = $response;
+    }
 
     public function getDetailCityAttribute()
     {
         return $this->attributes['detail_city'] = City::find($this->city_id);
+    }
+
+    public function getDetailAdminAttribute()
+    {
+        $response = [];
+        $admin = Admin::find($this->admin_id);
+
+        if ($admin) {
+            $response["id"] = $admin->id;
+            $response["name"] = $admin->name;
+            $response["email"] = $admin->email;
+            $response["avatar"] = $admin->avatar;
+            $response["phone_number"] = $admin->phone_number;
+        }
+
+        return $this->attributes['detail_admin'] = $response;
+    }
+
+    public function getMoreInformationAttribute()
+    {
+        $output = [];
+        $response = [];
+
+        $more_informations = ArcheryEventMoreInformation::where('event_id', $this->id)->get();
+
+        if ($more_informations->count() > 0) {
+            foreach ($more_informations as $information) {
+                $response["id"] = $information->id;
+                $response["event_id"] = $information->event_id;
+                $response["title"] = $information->title;
+                $response["description"] = $information->description;
+
+                array_push($output, $response);
+            }
+        }
+
+        return $this->attributes['more_information'] = $output;
     }
 
     public function getEventStatusAttribute()
@@ -74,9 +165,10 @@ class ArcheryEvent extends Model
         return $this->belongsTo(Admin::class, 'admin_id', 'id');
     }
 
-    protected function getCategories($id, $type = "")
+    protected function getCategories($id, $type = "", $is_show = null)
     {
         $categories = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.is_show",
             "archery_event_category_details.id",
             "archery_event_category_details.session_in_qualification",
             "archery_event_category_details.quota",
@@ -107,6 +199,11 @@ class ArcheryEvent extends Model
             ->where(function ($query) use ($type) {
                 if (!empty($type)) {
                     $query->where("archery_master_team_categories.type", $type);
+                }
+            })
+            ->where(function ($query) use ($is_show) {
+                if ($is_show !== null) {
+                    $query->where("archery_event_category_details.is_show", $is_show);
                 }
             })
             ->get();
@@ -156,7 +253,7 @@ class ArcheryEvent extends Model
         }
     }
 
-    protected function detailEventById($id)
+    protected function detailEventById($id, $is_show = null)
     {
 
         $datas = ArcheryEvent::select(
@@ -190,7 +287,7 @@ class ArcheryEvent extends Model
             }
         }
 
-        $event_categories = $this->getCategories($id);
+        $event_categories = $this->getCategories($id, "", $is_show);
 
         $eventcategories_data = [];
         if ($event_categories) {
@@ -224,7 +321,8 @@ class ArcheryEvent extends Model
                     "early_bird" => $value->early_bird,
                     "end_date_early_bird" => $value->end_date_early_bird,
                     "is_early_bird" => $value->is_early_bird,
-                    "label" => $value->label_category
+                    "label" => $value->label_category,
+                    "is_show" => $value->is_show
                 ];
             }
         }
@@ -272,7 +370,7 @@ class ArcheryEvent extends Model
                     'event_slug' => $data->event_slug,
                     'event_url' => $event_url,
                     'need_verify' => $data->need_verify,
-                    'event_status' => $data->event_status,
+                    'event_tracking' => $data->event_status,
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
@@ -413,78 +511,6 @@ class ArcheryEvent extends Model
         }
 
         return $output;
-    }
-
-
-    protected function detailEventBySlug($id)
-    {
-        $data = ArcheryEvent::select('*', 'cities.id as cities_id', 'cities.name as cities_name', 'provinces.id as province_id', 'provinces.name as provinces_name')
-            ->leftJoin("cities", "cities.id", "=", "archery_events.city_id")
-            ->leftJoin("provinces", "provinces.id", "=", "cities.province_id")
-            ->where('archery_events.id', $id)->first();
-
-        if ($data) {
-            $detail['event_type'] = $data->event_type;
-            $detail['event_competition'] = $data->event_competition;
-            $detail['public_information'] = [
-                'event_name' => $data->event_name,
-                'event_banner' => $data->poster,
-                'event_description' => $data->description,
-                'event_location' => $data->location,
-                'event_city' => [
-                    'city_id' => $data->cities_id,
-                    'name_city' => $data->cities_name,
-                    'province_id' => $data->province_id,
-                    'province_name' => $data->provinces_name
-                ],
-                'event_location_type' => $data->location_type,
-                'event_start_register' => $data->registration_start_datetime,
-                'event_end_register' => $data->registration_end_datetime,
-                'event_start' => $data->event_start_datetime,
-                'event_end' => $data->event_end_datetime,
-                'event_status' => $data->status
-            ];
-        }
-
-        $more_informations = ArcheryEventMoreInformation::where('event_id', $id)->get();
-        if ($more_informations) {
-            foreach ($more_informations as $key => $value) {
-                $detail['more_information'][] = [
-                    'event_id' => $value->event_id,
-                    'title' => $value->title,
-                    'description' => $value->description,
-                ];
-            }
-        }
-
-        $event_categories = $this->getCategories($id);
-        if ($event_categories) {
-            foreach ($event_categories as $key => $value) {
-                $detail['event_categories'][] = [
-                    'category_details_id' => $value->key,
-                    'age_category_id' => [
-                        'id' => $value->id_age,
-                        'label' => $value->label_age
-                    ],
-                    'competition_category_id' => [
-                        'id' => $value->id_competition_categories,
-                        'label' => $value->label_competition_categories
-                    ],
-                    'distance_id' => [
-                        'id' => $value->id_distances,
-                        'label' => $value->label_distances
-                    ],
-                    'team_category_id' => [
-                        'id' => $value->id_team_categories,
-                        'label' => $value->label_team_categories
-                    ],
-                    'quota' => $value->quota,
-                    'fee' => $value->fee,
-                ];
-            }
-        }
-
-        return $detail;
     }
 
     public function getDetailEventById($event_id)

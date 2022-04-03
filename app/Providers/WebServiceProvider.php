@@ -49,6 +49,9 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
+use App\BLoC\General\Event\GetDetailEventBySlugV2;
+use App\BLoC\General\QandA\GetQandAByEventId;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualification;
@@ -101,9 +104,13 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
+use App\BLoC\Web\QandA\CreateQandA;
+use App\BLoC\Web\QandA\DeleteQandA;
+use App\BLoC\Web\Member\ListMemberTeamV2;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -222,6 +229,21 @@ class WebServiceProvider extends ServiceProvider
         // =========================== Member ==============================
         $this->registerService("listMemberV2", ListMemberV2::class);
         $this->registerService("getMemberAccessCategories", GetMemberAccessCategories::class);
+        $this->registerService("listMemberTeamV2", ListMemberTeamV2::class);
+
+        // =========================== Qualification-time ===================================
+        $this->registerService("createQualificationTimeV2", CreateQualificationTimeV2::class);
+
+        // =============================== Q and A ============================================
+        $this->registerService("createQandA", CreateQandA::class);
+        $this->registerService("deleteQandA", DeleteQandA::class);
+        $this->registerService("getQandAByEventId", GetQandAByEventId::class);
+
+        // ================================ category details ===================================
+        $this->registerService("getListCategoryByEventId", GetListCategoryByEventId::class);
+
+        // ================================= Events ==========================================
+        $this->registerService("getDetailEventBySlugV2", GetDetailEventBySlugV2::class);
     }
 
 

@@ -57,6 +57,14 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 throw new BLoCException("Team category tidak ditemukan");
             }
 
+            $date_time_event_start_datetime = strtotime($event->event_start_datetime);
+            $today = strtotime("now");
+
+            // validasi hanya bisa set category sebelum event mulai
+            if ($today > $date_time_event_start_datetime) {
+                throw new BLoCException("hanya dapat diatur sebelum event dimulai");
+            }
+
             $date_time_event_start_register = strtotime($event->registration_start_datetime);
             $date_time_event_end_register = strtotime($event->registration_end_datetime);
 
@@ -87,6 +95,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                     ->where("distance_id", $distance_category->id)
                     ->where("team_category_id", $team_category->id)
                     ->where("id", "!=", $category["category_id"])
+                    ->where("event_id", $event->id)
                     ->get();
 
                 if ($is_exist->count() > 0) {
@@ -98,6 +107,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 $category_detail->team_category_id  = $team_category->id;
                 $category_detail->quota = $category['quota'];
                 $category_detail->fee = $category['fee'];
+                $category_detail->is_show = $category["is_show"];
                 $category_detail->early_bird = $category["early_bird"];
                 $category_detail->end_date_early_bird = $end_early_bird;
                 $category_detail->save();
@@ -106,6 +116,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                     ->where("competition_category_id", $competitio_category->id)
                     ->where("distance_id", $distance_category->id)
                     ->where("team_category_id", $team_category->id)
+                    ->where("event_id", $event->id)
                     ->get();
 
                 if ($is_exist->count() > 0) {
@@ -119,6 +130,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 $archery_category_detail->team_category_id  = $team_category->id;
                 $archery_category_detail->quota = $category['quota'];
                 $archery_category_detail->fee = $category['fee'];
+                $archery_category_detail->is_show = $category["is_show"];
                 $archery_category_detail->early_bird = $category["early_bird"];
                 $archery_category_detail->end_date_early_bird = $end_early_bird;
                 $archery_category_detail->save();

@@ -23,35 +23,32 @@ class ListMemberV2 extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
+        $page = $parameters->get('page')? $parameters->get('page') : 1;
+        $offset = ($page - 1) * $limit;
         $event_id = $parameters->get("event_id");
         $competition_category_id = $parameters->get("competition_category_id");
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
-        $type = $parameters->get("type");
         $name = $parameters->get("name");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("Event tidak tersedia");
         }
-        if($type){
-            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)
-            ->where(function ($query) use ($type){
-                $query->where("type",$type);
-            });
-        }else{
-            $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
-        }
-            
-        // filter by name
-        $participant_query->when($name, function ($query) use ($name) {
-            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
-        });
+       
+        $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
+        
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
             return $query->where("competition_category_id", $competition_category_id);
+        });
+
+        // filter by name
+        $participant_query->when($name, function ($query) use ($name) {
+            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
         });
 
         // filter by distance_id
@@ -69,12 +66,14 @@ class ListMemberV2 extends Retrieval
             return $query->where("age_category_id", $age_category_id);
         });
 
-        $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
+        $participant_collection = $participant_query->orderBy('id', 'DESC')->limit($limit)->offset($offset)->get();
+
 
         $output = [];
         $detail_member = [];
         if ($participant_collection->count() > 0) {
             foreach ($participant_collection as $participant) {
+               
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
                 if (!$member) {
                     throw new BLoCException("member not found");
@@ -95,17 +94,21 @@ class ListMemberV2 extends Retrieval
                 if ($transaction_log) {
                     if ($transaction_log->status == 1) {
                         $status_payment = "Lunas";
+                        $order_payment=1;
                     }
 
                     if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
                         $status_payment = "Belum Lunas";
+                        $order_payment=2;
                     }
 
                     if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
                         $status_payment = "Expired";
+                        $order_payment=3;
                     }
                 } else {
                     $status_payment = "Gratis";
+                    $order_payment=4;
                 }
 
                 $detail_member["member_id"] = $member->id;
@@ -117,10 +120,14 @@ class ListMemberV2 extends Retrieval
                 $detail_member["phone_number"] = $user->phone_number;
                 $detail_member["competition_category"] = $competition_category_label;
                 $detail_member["status_payment"] = $status_payment;
+                $detail_member["age_category"] = $participant->age_category_id;
+                $detail_member["order_payment"] = $order_payment;
 
                 array_push($output, $detail_member);
             }
         }
+        $order_payment = array_column($output, 'order_payment');
+        array_multisort($order_payment, SORT_ASC, $output);
 
         return $output;
     }

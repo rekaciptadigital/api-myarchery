@@ -11,10 +11,6 @@
 |
 */
 
-use App\Models\City;
-use App\Models\Provinces;
-use Illuminate\Http\Request;
-
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
@@ -48,18 +44,24 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
-        // $router->get('/get-province', function(){
-        //     return Provinces::all();
-        // });
-        // $router->get('/get-city', function(Request $request){
-        //     if($request->province_id){
-        //         return City::where('province_id', $request->province_id)->get();
-        //     }
-        //     return City::all();
-        // });
-
         $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
         $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
         $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);
+    });
+});
+
+$router->group(['prefix' => 'general'], function () use ($router) {
+    $router->group(['prefix' => 'v2'], function () use ($router) {
+        $router->group(['prefix' => 'q-and-a'], function () use ($router) {
+            $router->get('/get-by-event_id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandAByEventId']);
+        });
+
+        $router->group(['prefix' => 'category-details'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByEventId']);
+        });
+
+        $router->group(['prefix' => 'events'], function () use ($router) {
+            $router->get('/by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailEventBySlugV2']);
+        });
     });
 });
