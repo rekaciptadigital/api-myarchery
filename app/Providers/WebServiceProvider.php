@@ -106,6 +106,7 @@ use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\Member\ListMemberTeamV2;
+use App\BLoC\Web\Image\Image;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -228,6 +229,9 @@ class WebServiceProvider extends ServiceProvider
 
         // =========================== Qualification-time ===================================
         $this->registerService("createQualificationTimeV2", CreateQualificationTimeV2::class);
+
+        // =========================== Image===================================
+        $this->registerService("image", Image::class);
     }
 
 

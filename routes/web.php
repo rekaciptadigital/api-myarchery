@@ -93,6 +93,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
         });
 
+        
 
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -258,6 +259,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'qualification-time', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQualificationTimeV2']);
         });
+
+        $router->group(['prefix' => 'image', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:image']);
+             });
+
     });
 });
 
