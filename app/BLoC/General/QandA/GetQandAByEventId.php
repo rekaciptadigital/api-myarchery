@@ -37,8 +37,8 @@ class GetQandAByEventId extends Retrieval
     {
         return [
             "event_id" => "required|integer",
-            "page" => "min:1",
-            "limit" => "min:10"
+            "page" => "numeric|min:1",
+            "limit" => "numeric|min:10"
         ];
     }
 }
