@@ -107,6 +107,7 @@ use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\BudRest\GetBudRestV2;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\QandA\CreateQandA;
 use App\BLoC\Web\QandA\DeleteQandA;
@@ -244,6 +245,9 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================= Events ==========================================
         $this->registerService("getDetailEventBySlugV2", GetDetailEventBySlugV2::class);
+
+        // ================================== Bud Rest =======================================
+        $this->registerService("getBudRestV2", GetBudRestV2::class);
     }
 
 
