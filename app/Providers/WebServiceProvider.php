@@ -110,6 +110,8 @@ use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\QandA\CreateQandA;
 use App\BLoC\Web\QandA\DeleteQandA;
+use App\BLoC\Web\QandA\GetQandADetail;
+use App\BLoC\Web\QandA\EditQandA;
 use App\BLoC\Web\Member\ListMemberTeamV2;
 
 class WebServiceProvider extends ServiceProvider
@@ -238,6 +240,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createQandA", CreateQandA::class);
         $this->registerService("deleteQandA", DeleteQandA::class);
         $this->registerService("getQandAByEventId", GetQandAByEventId::class);
+        $this->registerService("getQandADetail", GetQandADetail::class);
+        $this->registerService("editQandA", EditQandA::class);
 
         // ================================ category details ===================================
         $this->registerService("getListCategoryByEventId", GetListCategoryByEventId::class);
