@@ -56,7 +56,7 @@ class GetBudRestV2 extends Transactional
                         "bud_rest_start" => $bud_rest->bud_rest_start,
                         "bud_rest_end" => $bud_rest->bud_rest_end,
                         "target_face" => $bud_rest->target_face,
-                        "type" => $bud_rest->target_face,
+                        "type" => $bud_rest->type,
                     ];
                 }
 

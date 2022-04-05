@@ -113,6 +113,7 @@ use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\QandA\CreateQandA;
 use App\BLoC\Web\QandA\DeleteQandA;
 use App\BLoC\Web\Member\ListMemberTeamV2;
+use App\BLoC\Web\ScheduleFullDay\GetScheduleFullDay;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -250,6 +251,9 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Bud Rest =======================================
         $this->registerService("getBudRestV2", GetBudRestV2::class);
         $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
+
+        // ================================== Schedule full day ================================
+        $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
     }
 
 
