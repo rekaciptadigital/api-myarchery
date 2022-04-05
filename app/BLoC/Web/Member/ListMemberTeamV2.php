@@ -23,12 +23,16 @@ class ListMemberTeamV2 extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
+        $page = $parameters->get('page')? $parameters->get('page') : 1;
+        $offset = ($page - 1) * $limit;
         $event_id = $parameters->get("event_id");
         $competition_category_id = $parameters->get("competition_category_id");
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
         $type = $parameters->get("type");
+        $name = $parameters->get("name");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -37,6 +41,10 @@ class ListMemberTeamV2 extends Retrieval
         
         $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "team");
         
+        // filter by name
+        $participant_query->when($name, function ($query) use ($name) {
+            return $query->whereRaw("archery_event_participants.name LIKE ?", ["%" . $name . "%"]);
+        });
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
@@ -58,7 +66,7 @@ class ListMemberTeamV2 extends Retrieval
             return $query->where("age_category_id", $age_category_id);
         });
 
-        $participant_collection = $participant_query->orderBy('id', 'DESC')->get();
+        $participant_collection = $participant_query->orderBy('id', 'DESC')->limit($limit)->offset($offset)->get();
         //dd($participant_collection);
         
         $detail_member = [];
@@ -73,17 +81,21 @@ class ListMemberTeamV2 extends Retrieval
             if ($transaction_log) {
                 if ($transaction_log->status == 1) {
                     $status_payment = "Lunas";
+                    $order_payment=1;
                 }
 
                 if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
                     $status_payment = "Belum Lunas";
+                    $order_payment=2;
                 }
 
                 if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
                     $status_payment = "Expired";
+                    $order_payment=3;
                 }
             } else {
                 $status_payment = "Gratis";
+                $order_payment=4;
             }
             
             $detail_member[]=["participant_id"=> $participant->id,
@@ -94,10 +106,13 @@ class ListMemberTeamV2 extends Retrieval
                             "phone_number"=>$participant->phone_number,
                             "competition_category"=> $participant->competition_category_id,
                             "status_payment"=>$status_payment,
-                            "age_category"=> $participant->age_category_id];
+                            "age_category"=> $participant->age_category_id,
+                            "order_payment"=>$order_payment];
             
             }
-        
+
+        $order_payment = array_column($detail_member, 'order_payment');
+        array_multisort($order_payment, SORT_ASC, $detail_member);
 
         return $detail_member;
     }
