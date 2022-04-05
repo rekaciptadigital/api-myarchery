@@ -35,7 +35,6 @@ class GetBudRestV2 extends Transactional
 
         $list_schedule = ArcheryEventQualificationTime::select("archery_event_qualification_time.*")
             ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
-            ->whereDate("archery_event_qualification_time.event_start_datetime", $date)
             ->where("archery_event_category_details.event_id", $event_id)
             ->get();
 
@@ -82,7 +81,6 @@ class GetBudRestV2 extends Transactional
     protected function validation($parameters)
     {
         return [
-            'date' => 'required',
             "event_id" => "required"
         ];
     }
