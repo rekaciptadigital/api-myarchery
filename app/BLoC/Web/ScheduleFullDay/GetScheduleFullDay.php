@@ -41,6 +41,7 @@ class GetScheduleFullDay extends Retrieval
 
         $output = [];
         $output["date"] = $date;
+        $output["category_budrest"] = null;
 
         if ($schedule_member_collection->count() > 0) {
             foreach ($schedule_member_collection as $schedule) {
@@ -49,7 +50,9 @@ class GetScheduleFullDay extends Retrieval
                     throw new BLoCException("category tidak tersedia");
                 }
 
-                $output[$category->label_category][] = [
+                $output["category_budrest"][$category->id][] = [
+                    "category_id" => $category->id,
+                    "label_category" => $category->label_category,
                     "bud_rest_number" => $schedule->bud_rest_number . "" . $schedule->target_face,
                     "name" => $schedule->name,
                     "club_name" => $schedule->club_name
