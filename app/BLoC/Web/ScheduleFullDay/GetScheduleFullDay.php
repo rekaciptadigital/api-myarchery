@@ -5,6 +5,7 @@ namespace App\BLoC\Web\ScheduleFullDay;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -66,10 +67,18 @@ class GetScheduleFullDay extends Retrieval
                     throw new BLoCException("category tidak tersedia");
                 }
 
+                $total_target_face = 0;
+                $budrest = BudRest::where("archery_event_category_id", $category->id)->first();
+                if ($budrest) {
+                    $total_target_face = $budrest->target_face;
+                }
+
+                $output["category_budrest"]["total_target_face"] = $total_target_face;
                 $output["category_budrest"][$category->id][] = [
                     "category_id" => $category->id,
                     "label_category" => $category->label_category,
                     "bud_rest_number" => $schedule->bud_rest_number . "" . $schedule->target_face,
+                    "total_target_face" => $total_target_face,
                     "name" => $schedule->name,
                     "club_name" => $schedule->club_name
                 ];
