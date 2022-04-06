@@ -39,6 +39,9 @@ class DownloadEliminationScoreSheet extends Retrieval
 
             $elimination_matches_id=$data->id;
             $elimination_member= ArcheryEventEliminationMember::find($data->elimination_member_id);
+            if(!$elimination_member){
+                throw new BLoCException("data not found");
+            }
             $participant_member_id=$elimination_member->member_id;
 
             $scoring= ArcheryScoring::where('participant_member_id',$participant_member_id)
