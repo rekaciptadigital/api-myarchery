@@ -51,7 +51,7 @@ class GetScheduleFullDay extends Retrieval
             return $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
         });
 
-        $schedule_member_collection = $schedule_member_query->get();
+        $schedule_member_collection = $schedule_member_query->orDerBy("archery_event_qualification_schedule_full_day.bud_rest_number")->get();
 
         $output = [];
         $output["date"] = $date;
