@@ -5,6 +5,7 @@ namespace App\BLoC\Web\BudRest;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventParticipant;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
@@ -41,6 +42,11 @@ class CreateOrUpdateBudRestV2 extends Transactional
 
                 if (!$category) {
                     throw new BLoCException('category tidak ditemukan');
+                }
+
+                $total_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category_id);
+                if ($total_participant === 0) {
+                    throw new BLoCException("tidak bisa set bantalan dikarenakan total peserta 0");
                 }
 
                 if ($category->event_id != $event_id) {
