@@ -2,10 +2,12 @@
 
 namespace App\BLoC\Web\ScheduleFullDay;
 
+use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Auth;
 
 class GetScheduleFullDay extends Retrieval
 {
@@ -19,6 +21,17 @@ class GetScheduleFullDay extends Retrieval
         // param
         $date = $parameters->get("date");
         $name = $parameters->get("name");
+        $event_id = $parameters->get("event_id");
+        $admin = Auth::user();
+
+        $event = ArcheryEvent::find($event_id);
+        if (!$event) {
+            throw new BLoCException("event tidak ditemukan");
+        }
+
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException('you are not owner this event');
+        }
 
         $schedule_member_query = ArcheryEventQualificationScheduleFullDay::select(
             "archery_event_qualification_schedule_full_day.*",
@@ -31,6 +44,7 @@ class GetScheduleFullDay extends Retrieval
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->where("archery_event_participants.event_id", $event_id)
             ->whereDate("event_start_datetime", $date);
 
         $schedule_member_query->when($name, function ($query) use ($name) {
