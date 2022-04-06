@@ -21,7 +21,6 @@ class GetBudRestV2 extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $date = $parameters->get("date");
         $event_id = $parameters->get("event_id");
 
         $event = ArcheryEvent::find($event_id);
@@ -35,7 +34,9 @@ class GetBudRestV2 extends Transactional
 
         $list_schedule = ArcheryEventQualificationTime::select("archery_event_qualification_time.*")
             ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
             ->where("archery_event_category_details.event_id", $event_id)
+            ->where("archery_master_team_categories.type", "Individual")
             ->get();
 
         $output = [];
