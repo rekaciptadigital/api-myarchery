@@ -46,7 +46,7 @@ class CreateOrUpdateBudRestV2 extends Transactional
 
                 $total_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category_id);
                 if ($total_participant === 0) {
-                    continue;
+                    throw new BLoCException("tidak bisa set bantalan dikarenakan total peserta 0");
                 }
 
                 if ($category->event_id != $event_id) {
