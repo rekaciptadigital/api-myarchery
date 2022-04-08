@@ -66,7 +66,7 @@ class CreateOrUpdateBudRestV2 extends Transactional
                 }
 
                 $budrest = Budrest::where('archery_event_category_id', $category_id)->first();
-
+                $is_generate_member = true;
                 if (!$budrest) {
                     $budrest = new Budrest();
                     $budrest->archery_event_category_id = $category_id;
@@ -76,6 +76,13 @@ class CreateOrUpdateBudRestV2 extends Transactional
                     $budrest->type =  $cb['type'];
                     $budrest->save();
                 } else {
+                    if (
+                        $cb['bud_rest_start'] === $budrest->bud_rest_start
+                        && $cb['bud_rest_end'] === $budrest->bud_rest_end
+                        && $cb['target_face'] === $budrest->target_face
+                    ) {
+                        $is_generate_member = false;
+                    }
                     $check_qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_id)->first();
 
                     if (is_null($check_qualification_time->event_start_datetime)) {
@@ -94,7 +101,10 @@ class CreateOrUpdateBudRestV2 extends Transactional
                     $budrest->save();
                 }
 
-                BudRest::setMemberBudrest($category_id);
+
+                if ($is_generate_member) {
+                    BudRest::setMemberBudrest($category_id);
+                }
             }
 
             $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
