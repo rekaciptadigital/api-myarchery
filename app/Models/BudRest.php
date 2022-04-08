@@ -160,10 +160,35 @@ class BudRest extends Model
             $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
                 ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
                 ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-                ->where("qalification_time_id", $time->id)->orderBy("archery_event_participants.club_id", "DESC")->get();
+                ->where("qalification_time_id", $time->id)->get()->groupBy("club_id");
+
+            foreach ($schedules as $key => $value) {
+                $value["total"] = $value->count();
+            }
+
+            $after_sort = $schedules->sortByDesc("total")->values()->all();
+            $member = [];
+
+            foreach ($after_sort as $key => $value) {
+                foreach ($value as $key2 => $value2) {
+                    if ($key2 === "total") {
+                        continue;
+                    }
+                    $member[] = $value2;
+                }
+            }
+
+            $list_member = [];
+            foreach ($member as $a => $value) {
+                if ($a === "total") {
+                    continue;
+                }
+                $list_member[] = $value;
+            }
 
             $data_count = count($schedules);
-            $check_budrest = ceil($data_count / $bud_rest->target_face);
+            // $check_budrest = ceil($data_count / $bud_rest->target_face);
+            $check_budrest = $bud_rest_end;
             $data_budrest = [];
             $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
             for ($i = 0; $i < $check_budrest; $i++) {
@@ -181,9 +206,9 @@ class BudRest extends Model
             for ($z = 0; $z < $bud_rest->target_face; $z++) {
                 $brs = $bud_rest_start;
                 for ($y = 0; $y < count($data_budrest); $y++) {
-                    if (!isset($schedules[$index]))
+                    if (!isset($list_member[$index]))
                         break;
-                    ArcheryEventQualificationScheduleFullDay::where("id", $schedules[$index]->id)->update([
+                    ArcheryEventQualificationScheduleFullDay::where("id", $list_member[$index]->id)->update([
                         "bud_rest_number" => $brs,
                         "target_face" => $data_budrest[$y][$z]
                     ]);

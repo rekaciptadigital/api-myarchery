@@ -18,6 +18,48 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 
+// $router->get("coba", function () {
+//     // return ArcheryEventParticipant::all();
+//     $data = ArcheryEventParticipant::all()->groupBy("club_id");
+//     $array = $data->toArray();
+//     $participant = ArcheryEventParticipant::select('club_id', DB::raw('count(*) as total'))
+//         ->groupBy('club_id')
+//         ->get();
+
+//     // return $data;
+//     // return $array;
+
+//     foreach ($data as $key => $value) {
+//         $value["total"] = $value->count();
+//     }
+
+//     // return ArcheryEventParticipant::groupBy("club_id")->get();
+
+//     $after_sort = $data->sortByDesc("total")->values()->all();
+//     $member = [];
+
+//     // return $after_sort;
+//     // return $after_sort;
+//     foreach ($after_sort as $key => $value) {
+//         foreach ($value as $key2 => $value2) {
+//             if ($key2 === "total") {
+//                 continue;
+//             }
+//             $member[] = $value2;
+//         }
+//     }
+
+//     // return $member;
+//     $list_member = [];
+//     foreach ($member as $a => $value) {
+//         if ($a === "total") {
+//             continue;
+//         }
+//         $list_member[] = $value;
+//     }
+//     return $list_member;
+// });
+
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
     $data2 = User::where('verify_status', 1)->orderBy("address_city_id", "DESC")->get();
