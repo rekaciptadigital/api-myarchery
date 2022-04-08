@@ -109,6 +109,7 @@ use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
 use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
 use App\BLoC\Web\BudRest\GetBudRestV2;
+use App\BLoC\Web\BudRest\GetListBudRestV2;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\QandA\CreateQandA;
 use App\BLoC\Web\QandA\DeleteQandA;
@@ -251,6 +252,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Bud Rest =======================================
         $this->registerService("getBudRestV2", GetBudRestV2::class);
         $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
+        $this->registerService("getListBudRestV2", GetListBudRestV2::class);
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
