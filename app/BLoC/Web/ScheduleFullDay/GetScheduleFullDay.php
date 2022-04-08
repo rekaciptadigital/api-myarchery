@@ -75,6 +75,7 @@ class GetScheduleFullDay extends Retrieval
 
                 $output["category_budrest"]["total_target_face"] = $total_target_face;
                 $output["category_budrest"][$category->id][] = [
+                    "schedule_full_day_id" => $schedule->id,
                     "category_id" => $category->id,
                     "label_category" => $category->label_category,
                     "bud_rest_number" => $schedule->bud_rest_number . "" . $schedule->target_face,
