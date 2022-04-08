@@ -379,7 +379,8 @@ class ArcheryEvent extends Model
         }
         $end = $detail['public_information']["event_end_register"];
         $detail["closed_register"] = strtotime($end) < strtotime('now') ? true : false;
-        $detail["total_participant"] = ArcheryEventParticipant::where("event_id", $id)->where("status", 1)->count();
+        $detail["total_participant_team"] = ArcheryEventParticipant::where("event_id", $id)->where("status", 1)->where("type", "team")->count();
+        $detail["total_participant_individual"] = ArcheryEventParticipant::where("event_id", $id)->where("type", "individual")->where("status", 1)->count();
         $end_date_early_bird = null;
         $category_with_early_bird = ArcheryEventCategoryDetail::where("end_date_early_bird", "!=", null)->where("early_bird", ">", 0)->first();
         if ($category_with_early_bird) {
