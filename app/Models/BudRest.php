@@ -143,7 +143,7 @@ class BudRest extends Model
 
     public static function setMemberBudrest($category_id)
     {
-        $tp = ["A", "B", "C", "D", "E", "F"];
+        $tp = ["A", "C", "C", "D", "E", "F"];
         // ArcheryEventQualificationScheduleFullDay
         $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
         if (!$bud_rest) {

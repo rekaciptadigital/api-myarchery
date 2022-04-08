@@ -45,8 +45,9 @@ class GetScheduleFullDay extends Retrieval
             throw new BLoCException("jadwal peserta tidak ditemukan");
         }
 
-        $bud_rest = substr($bud_rest_number, 0, -1);
-        $target_face = substr($bud_rest_number, -1);
+        $brn = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $bud_rest_number);
+        $bud_rest = $brn[0];
+        $target_face = $brn[1];
 
         $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $bud_rest)
             ->where("target_face", $target_face)->firs();
