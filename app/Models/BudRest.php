@@ -188,10 +188,10 @@ class BudRest extends Model
 
             $data_count = count($schedules);
             // $check_budrest = ceil($data_count / $bud_rest->target_face);
-            $check_budrest = $bud_rest_end;
+            // $check_budrest = $bud_rest_end;
             $data_budrest = [];
             $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
-            for ($i = 0; $i < $check_budrest; $i++) {
+            for ($i = $bud_rest_start; $i <= $bud_rest_end; $i++) {
                 $tf = [];
                 $tmp_tp = $m_target_face;
                 for ($x = 0; $x < $bud_rest->target_face; $x++) {
