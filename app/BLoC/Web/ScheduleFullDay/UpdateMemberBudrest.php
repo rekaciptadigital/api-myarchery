@@ -38,7 +38,7 @@ class UpdateMemberBudrest extends Retrieval
         $schedule_full_day1 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
-            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_idss")
+            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where("archery_event_qualification_schedule_full_day.id", $schedule_full_day_id)
             ->where("archery_event_category_details.event_id", $event_id)
@@ -55,14 +55,15 @@ class UpdateMemberBudrest extends Retrieval
 
 
         // cek apakah terdapat peserta di budrest tujuan
-        $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
+        $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
             ->where("archery_event_category_details.event_id", $event_id)
             ->where("bud_rest_number", $bud_rest)
-            ->where("target_face", $target_face)->firs();
+            ->where("target_face", $target_face)
+            ->first();
 
         if ($schedule_full_day_2) {
-            // hapus data member budrest
+            // set ulang data member budrest
             $schedule_full_day_2->bud_rest_number = 0;
             $schedule_full_day_2->target_face = "";
             $schedule_full_day_2->save();
