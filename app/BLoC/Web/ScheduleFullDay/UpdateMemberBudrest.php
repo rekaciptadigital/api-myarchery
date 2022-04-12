@@ -63,15 +63,21 @@ class UpdateMemberBudrest extends Retrieval
             ->first();
 
         if ($schedule_full_day_2) {
+            // cek apakah id schedule_full_day_1 dan 2 sama 
+            if ($schedule_full_day1->id === $schedule_full_day_2->id) {
+                throw new BLoCException("tidak dapat mengubah ke nomor bantalan yang sama");
+            }
             // set ulang data member budrest
-            $schedule_full_day_2->bud_rest_number = 0;
-            $schedule_full_day_2->target_face = "";
-            $schedule_full_day_2->save();
+            $schedule_full_day_2->update([
+                "bud_rest_number" => 0,
+                "target_face" => "",
+            ]);
         }
 
-        $schedule_full_day1->bud_rest_number = $bud_rest;
-        $schedule_full_day1->target_face = $target_face;
-        $schedule_full_day1->save();
+        $schedule_full_day1->update([
+            "bud_rest_number" => $bud_rest,
+            "target_face" => $target_face,
+        ]);
 
         return $schedule_full_day1;
     }
