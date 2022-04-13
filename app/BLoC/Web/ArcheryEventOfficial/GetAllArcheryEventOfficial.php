@@ -32,7 +32,18 @@ class GetAllArcheryEventOfficial extends Retrieval
         }
 
         //hitung jumlah tersedia disini
+        $archery_event_official_detail =  ArcheryEventOfficialDetail::where('event_id', $parameters->get('event_id'))->first();
 
+        if($archery_event_official_detail){
+            
+            if($archery_event_official_detail->individual_quota !=0){
+                $quota= $archery_event_official_detail->individual_quota;
+            }else{
+                $quota= $archery_event_official_detail->club_quota;
+            }
+        }
+        
+        $official_count = ArcheryEventOfficial::countEventOfficialBooking($archery_event_official_detail->id);
 
         $official_member = ArcheryEventOfficial::select('users.name as user_name','archery_clubs.name as club_name','users.email as email', 'users.phone_number as phone_number')
                             ->where('archery_event_official_detail.event_id', $parameters->get('event_id'))
@@ -50,9 +61,9 @@ class GetAllArcheryEventOfficial extends Retrieval
             throw new BLoCException("data not found");
         }
 
-        foreach($official_member as $member){
-            $data['data']=$member;
-        }
+        $data=["kuota_event"=>$quota,
+            "sisa_kuota"=>$quota-$official_count,
+            "member"=>$official_member];
         
         return $data;
     }
