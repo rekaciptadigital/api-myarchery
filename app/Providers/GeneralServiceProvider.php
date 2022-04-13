@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\BLoC\General\GetEventClubRanked;
 
 class GeneralServiceProvider extends ServiceProvider
 {

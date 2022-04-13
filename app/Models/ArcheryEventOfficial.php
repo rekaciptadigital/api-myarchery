@@ -24,13 +24,15 @@ class ArcheryEventOfficial extends Model
     protected $table = 'archery_event_official';
     protected $guarded = ['id'];
 
-    public static function insertOrderOfficial($user_id, $club_id, $relation_id, $label, $event_official_detail_id, $status = 4)
+    public static function insertOrderOfficial($user_id, $club_id, $team_category_id, $age_category_id, $competition_category_id, $distance_id,$event_official_detail_id, $status = 4)
     {
         return self::create([
             'user_id' => $user_id,
             'club_id' => $club_id,
-            'relation_with_participant' => $relation_id,
-            'relation_with_participant_label' =>  $label,
+            'team_category_id' => $team_category_id,
+            'age_category_id' =>  $age_category_id,
+            'competition_category_id' => $competition_category_id,
+            'distance_id' =>  $distance_id,
             'transaction_log_id' => 0,
             'event_official_detail_id' => $event_official_detail_id,
             'status' => $status

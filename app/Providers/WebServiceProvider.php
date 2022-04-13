@@ -116,6 +116,10 @@ use App\BLoC\Web\QandA\GetQandADetail;
 use App\BLoC\Web\QandA\EditQandA;
 use App\BLoC\Web\Member\ListMemberTeamV2;
 use App\BLoC\Web\ScheduleFullDay\GetScheduleFullDay;
+use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
+use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
+use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
+use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -258,6 +262,12 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
+
+        // ================================== Official v2 ================================
+        $this->registerService("addArcheryEventOfficialDetail", AddArcheryEventOfficialDetail::class);
+        $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
+        $this->registerService("editArcheryEventOfficialDetail", EditArcheryEventOfficialDetail::class);
+        $this->registerService("getArcheryEventOfficialDetail", GetArcheryEventOfficialDetail::class);
     }
 
 
