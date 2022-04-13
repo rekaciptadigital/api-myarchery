@@ -68,28 +68,28 @@
           <tr>
             <td style="width:15%;">Athlete</td>
             <td style="width: 2%">:</td>
-            <td style="width: 50%">MOHD YATIM Haji Diris</td>
+            <td style="width: 50%">{{$peserta1_name}}</td>
             <td style="width: 15%"></td>
             <td style="width: 25%; text-align:center; border-left:1px solid black;background-color: #808080">Rank</td>
           </tr>
           <tr>
             <td>Country</td>
             <td>:</td>
-            <td>Ikm Jasin Barebow Archery Team (IJBAT)</td>
+            <td>{{$peserta1_club}}</td>
             <td></td>
-            <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;" rowspan="3">3</td>
+            <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;" rowspan="3">{{$peserta1_rank}}</td>
           </tr>
           <tr>
             <td style="">Category</td>
             <td>:</td>
-            <td>Barebow Open</td>
+            <td>{{$peserta1_category}}</td>
             <td style="width:200px;"></td>
           </tr>
           <tr>
             <td style="">Target</td>
             <td>:</td>
-            <td>29</td>
-            <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET 29</td>
+            <td>-</td>
+            <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
           </tr>
         </table>
       </div>
@@ -98,28 +98,28 @@
           <tr>
             <td style="width:15%;">Athlete</td>
             <td style="width: 2%">:</td>
-            <td style="width: 50%">MOHD YATIM Haji Diris</td>
+            <td style="width: 50%">{{$peserta2_name}}</td>
             <td style="width: 15%"></td>
             <td style="width: 25%; text-align:center; border-left:1px solid black;background-color: #808080">Rank</td>
           </tr>
           <tr>
             <td>Country</td>
             <td>:</td>
-            <td>Ikm Jasin Barebow Archery Team (IJBAT)</td>
+            <td>{{$peserta2_club}}</td>
             <td></td>
-            <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;" rowspan="3">3</td>
+            <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;" rowspan="3">{{$peserta2_rank}}</td>
           </tr>
           <tr>
             <td style="">Category</td>
             <td>:</td>
-            <td>Barebow Open</td>
+            <td>{{$peserta2_category}}</td>
             <td style="width:200px;"></td>
           </tr>
           <tr>
             <td style="">Target</td>
             <td>:</td>
-            <td>29</td>
-            <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET 29</td>
+            <td>-</td>
+            <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
           </tr>
         </table>
       </div>
@@ -146,64 +146,24 @@
             </tr>
           </thead>
           <tbody>
+            <?php $i=1;$point=0; ?>
+            
+          @foreach($score1 as $score)
             <tr style="border: 1px solid black;">
-              <th>1</th>
+              <th>{{$i++}}</th>
+              <td><?php print_r($score['score'][0]); ?></td>
+              <td><?php print_r($score['score'][1]); ?></td>
+              <td><?php print_r($score['score'][2]); ?></td>
+              <td><?php print_r($score['total']); ?></td>
               <td></td>
               <td></td>
               <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td><?php print_r($score['point']);$point=$point+$score['point'];  ?></td>
             </tr>
-            <tr>
-              <th>2</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>3</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>4</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>5</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+            @endforeach
             <tr>
               <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-              <td></td>
+              <td>{{$point}}</td>
             </tr>
           </tbody>
         </table>
@@ -229,64 +189,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr style="border: 1px solid black;">
-              <th>1</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>2</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>3</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>4</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>5</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+          <?php $i=1;$point=0; ?>
+            
+            @foreach($score2 as $score)
+              <tr style="border: 1px solid black;">
+                <th>{{$i++}}</th>
+                <td><?php print_r($score['score'][0]); ?></td>
+                <td><?php print_r($score['score'][1]); ?></td>
+                <td><?php print_r($score['score'][2]); ?></td>
+                <td><?php print_r($score['total']); ?></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><?php print_r($score['point']);$point=$point+$score['point']; ?></td>
+              </tr>
+              @endforeach
             <tr>
               <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-              <td></td>
+              <td>{{$point}}</td>
             </tr>
           </tbody>
         </table>

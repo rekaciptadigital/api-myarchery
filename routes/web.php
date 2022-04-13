@@ -309,6 +309,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'q-and-a', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQandA']);
             $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteQandA']);
+            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandADetail']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editQandA']);
         });
 
         $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
