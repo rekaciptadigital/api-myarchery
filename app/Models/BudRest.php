@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEvent;
 use App\Models\ParticipantMemberTeam;
+use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Redis;
 use Mpdf\Mpdf;
 use Mpdf\QrCode\QrCode;
 use Mpdf\QrCode\Output;
@@ -16,16 +18,17 @@ class BudRest extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['archery_event_category_id', 'bud_rest_start', 'bud_rest_end', 'target_face', 'type'];
 
-    protected function downloadQualificationScoreSheet($category_id,$update_file = false){
-        
+    protected function downloadQualificationScoreSheet($category_id, $update_file = false)
+    {
+
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) {
             throw new BLoCException("event category tidak tersedia");
         }
-        $path = 'asset/score_sheet/'.$category->id.'/';
-        if(!$update_file){
-                if (file_exists(public_path()."/".$path."score_sheet_" . $category->id . ".pdf")) {
-                return ["url"=>$path."score_sheet_" . $category->id . ".pdf#oldData","member_not_have_budrest"=>[]];
+        $path = 'asset/score_sheet/' . $category->id . '/';
+        if (!$update_file) {
+            if (file_exists(public_path() . "/" . $path . "score_sheet_" . $category->id . ".pdf")) {
+                return ["url" => $path . "score_sheet_" . $category->id . ".pdf#oldData", "member_not_have_budrest" => []];
             }
         }
         $mpdf = new Mpdf([
@@ -63,47 +66,47 @@ class BudRest extends Model
             ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
             ->leftJoin('users', 'users.id', '=', 'archery_event_participants.user_id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
-            ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number","ASC")
-            ->orderBy("archery_event_qualification_schedule_full_day.target_face","ASC")
+            ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
+            ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
 
         // return $output;
 
         $array_pesrta_baru = [];
-        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id,$category->distance_id] : [
-            substr($category->distance_id,0,2),
-            substr($category->distance_id,2,2),
-            substr($category->distance_id,4,2)
+        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id, $category->distance_id] : [
+            substr($category->distance_id, 0, 2),
+            substr($category->distance_id, 2, 2),
+            substr($category->distance_id, 4, 2)
         ];
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             foreach ($participant_member_team as $pmt) {
                 $code_sesi['detail_member'] = $pmt;
-                $code_sesi['sesi'] = $distance[$i-1]."-".$i;
+                $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
                 $code_sesi['code'] = "1-" . $pmt->member_id . "-" . $i;
                 array_push($array_pesrta_baru, $code_sesi);
             }
         }
 
         $output['data_member'] = $array_pesrta_baru;
-        if (!file_exists(public_path()."/".$path)) {
-            mkdir(public_path()."/".$path, 0777);
+        if (!file_exists(public_path() . "/" . $path)) {
+            mkdir(public_path() . "/" . $path, 0777);
         }
         $member_not_have_budrest = [];
         foreach ($output['data_member'] as $m) {
-            if($m["detail_member"]["bud_rest_number"] == 0){
+            if ($m["detail_member"]["bud_rest_number"] == 0) {
                 $member_not_have_budrest[] = $m["detail_member"]["member_id"];
             }
             // return $m;
             $qrCode = new QrCode($m['code']);
             $output_qrcode = new Output\Png();
             // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-            $qrCode_name_file = "qr_code_".$m['code'].".png";
+            $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
             $full_path = $path . $qrCode_name_file;
             $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-            file_put_contents(public_path().'/'.$full_path, $data_qr_code);
+            file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
 
             // return $type;
-            $data_get_qr_code = file_get_contents(public_path()."/".$full_path);
+            $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
             // return $data_get_qr_code;
             $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
             // return $base64;
@@ -117,23 +120,104 @@ class BudRest extends Model
             $mpdf->WriteHTML($html);
         }
 
-        $full_path = $path."score_sheet_" . $category->id . ".pdf";
-        $mpdf->Output(public_path()."/".$full_path, "F");
-        return ["url" => $full_path,"member_not_have_budrest"=>$member_not_have_budrest];
+        $full_path = $path . "score_sheet_" . $category->id . ".pdf";
+        $mpdf->Output(public_path() . "/" . $full_path, "F");
+        return ["url" => $full_path, "member_not_have_budrest" => $member_not_have_budrest];
     }
 
-    protected function rrmdir($dir) {
+    protected function rrmdir($dir)
+    {
         if (is_dir($dir)) {
-          $objects = scandir($dir);
-          foreach ($objects as $object) {
-            if ($object != "." && $object != "..") {
-              if (filetype($dir."/".$object) == "dir") 
-                 rrmdir($dir."/".$object); 
-              else unlink   ($dir."/".$object);
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir . "/" . $object) == "dir")
+                        rrmdir($dir . "/" . $object);
+                    else unlink($dir . "/" . $object);
+                }
             }
-          }
-          reset($objects);
-          rmdir($dir);
+            reset($objects);
+            rmdir($dir);
         }
-       }
+    }
+
+    public static function setMemberBudrest($category_id)
+    {
+        $tp = ["A", "C", "B", "D", "E", "F"];
+        // ArcheryEventQualificationScheduleFullDay
+        $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
+        if (!$bud_rest) {
+            throw new BLoCException("Bud rest belum di set");
+        }
+
+        $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->get();
+        $bud_rest_start = $bud_rest->bud_rest_start;
+        $bud_rest_end = $bud_rest->bud_rest_end;
+
+        $target_face = 1;
+        $count = 0;
+        foreach ($qualification_time as $time) {
+            $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
+                ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
+                ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+                ->where("qalification_time_id", $time->id)->get()->groupBy("club_id");
+
+            foreach ($schedules as $key => $value) {
+                $value["total"] = $value->count();
+            }
+
+            $after_sort = $schedules->sortByDesc("total")->values()->all();
+            $member = [];
+
+            foreach ($after_sort as $key => $value) {
+                foreach ($value as $key2 => $value2) {
+                    if ($key2 === "total") {
+                        continue;
+                    }
+                    $member[] = $value2;
+                }
+            }
+
+            $list_member = [];
+            foreach ($member as $a => $value) {
+                if ($a === "total") {
+                    continue;
+                }
+                $list_member[] = $value;
+            }
+
+            $data_count = count($schedules);
+            // $check_budrest = ceil($data_count / $bud_rest->target_face);
+            // $check_budrest = $bud_rest_end;
+            $data_budrest = [];
+            $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
+            for ($i = $bud_rest_start; $i <= $bud_rest_end; $i++) {
+                $tf = [];
+                $tmp_tp = $m_target_face;
+                for ($x = 0; $x < $bud_rest->target_face; $x++) {
+                    // $tmp_i = rand(0,count($tmp_tp)-1);
+                    $tf[] = $tmp_tp[$x];
+                    // unset($tmp_tp[$tmp_i]); 
+                    // $tmp_tp = array_values($tmp_tp);
+                }
+                $data_budrest[] = $tf;
+            }
+            $index = 0;
+            for ($z = 0; $z < $bud_rest->target_face; $z++) {
+                $brs = $bud_rest_start;
+                for ($y = 0; $y < count($data_budrest); $y++) {
+                    if (!isset($list_member[$index]))
+                        break;
+                    ArcheryEventQualificationScheduleFullDay::where("id", $list_member[$index]->id)->update([
+                        "bud_rest_number" => $brs,
+                        "target_face" => $data_budrest[$y][$z]
+                    ]);
+                    $count = $count + 1;
+                    $brs = $brs + 1;
+                    $index++;
+                }
+            }
+        }
+        return;
+    }
 }

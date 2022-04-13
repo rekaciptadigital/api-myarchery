@@ -18,6 +18,48 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 
+// $router->get("coba", function () {
+//     // return ArcheryEventParticipant::all();
+//     $data = ArcheryEventParticipant::all()->groupBy("club_id");
+//     $array = $data->toArray();
+//     $participant = ArcheryEventParticipant::select('club_id', DB::raw('count(*) as total'))
+//         ->groupBy('club_id')
+//         ->get();
+
+//     // return $data;
+//     // return $array;
+
+//     foreach ($data as $key => $value) {
+//         $value["total"] = $value->count();
+//     }
+
+//     // return ArcheryEventParticipant::groupBy("club_id")->get();
+
+//     $after_sort = $data->sortByDesc("total")->values()->all();
+//     $member = [];
+
+//     // return $after_sort;
+//     // return $after_sort;
+//     foreach ($after_sort as $key => $value) {
+//         foreach ($value as $key2 => $value2) {
+//             if ($key2 === "total") {
+//                 continue;
+//             }
+//             $member[] = $value2;
+//         }
+//     }
+
+//     // return $member;
+//     $list_member = [];
+//     foreach ($member as $a => $value) {
+//         if ($a === "total") {
+//             continue;
+//         }
+//         $list_member[] = $value;
+//     }
+//     return $list_member;
+// });
+
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
     $data2 = User::where('verify_status', 1)->orderBy("address_city_id", "DESC")->get();
@@ -243,6 +285,13 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
         });
+
+        $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);
+            $router->get('/get-list-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListBudRestV2']);
+        });
+
         $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateArcheryCategoryDetailV2']);
             $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteCategoryDetailV2']);
@@ -260,6 +309,13 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'q-and-a', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQandA']);
             $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteQandA']);
+            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandADetail']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editQandA']);
+        });
+
+        $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScheduleFullDay']);
+            $router->put('/change_bud_rest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMemberBudrest']);
         });
     });
 });

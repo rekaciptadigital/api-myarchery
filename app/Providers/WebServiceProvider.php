@@ -107,10 +107,17 @@ use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
+use App\BLoC\Web\BudRest\GetBudRestV2;
+use App\BLoC\Web\BudRest\GetListBudRestV2;
 use App\BLoC\Web\Member\GetMemberAccessCategories;
 use App\BLoC\Web\QandA\CreateQandA;
 use App\BLoC\Web\QandA\DeleteQandA;
+use App\BLoC\Web\QandA\GetQandADetail;
+use App\BLoC\Web\QandA\EditQandA;
 use App\BLoC\Web\Member\ListMemberTeamV2;
+use App\BLoC\Web\ScheduleFullDay\GetScheduleFullDay;
+use App\BLoC\Web\ScheduleFullDay\UpdateMemberBudrest;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -238,12 +245,23 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createQandA", CreateQandA::class);
         $this->registerService("deleteQandA", DeleteQandA::class);
         $this->registerService("getQandAByEventId", GetQandAByEventId::class);
+        $this->registerService("getQandADetail", GetQandADetail::class);
+        $this->registerService("editQandA", EditQandA::class);
 
         // ================================ category details ===================================
         $this->registerService("getListCategoryByEventId", GetListCategoryByEventId::class);
 
         // ================================= Events ==========================================
         $this->registerService("getDetailEventBySlugV2", GetDetailEventBySlugV2::class);
+
+        // ================================== Bud Rest =======================================
+        $this->registerService("getBudRestV2", GetBudRestV2::class);
+        $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
+        $this->registerService("getListBudRestV2", GetListBudRestV2::class);
+
+        // ================================== Schedule full day ================================
+        $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
+        $this->registerService("updateMemberBudrest", UpdateMemberBudrest::class);
     }
 
 
