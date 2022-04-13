@@ -173,6 +173,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->group(['prefix' => 'official'], function () use ($router) {
                 $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventOfficial']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventOfficialDetail']);
+                $router->get('/get-all-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllArcheryEventOfficial']);
+                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventOfficialDetail']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventOfficialDetail']);
             });
 
             $router->group(['prefix' => 'qualification-time'], function () use ($router) {
