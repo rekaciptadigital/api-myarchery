@@ -106,40 +106,66 @@ class AddOrderOfficial extends Retrieval
                 }
             }
         }
-        
 
         
         // hitung jumlah official pada category yang didaftarkan user
         $official_count = ArcheryEventOfficial::countEventOfficialBooking($archery_event_official_detail->id);
-        
+        $official_count_club = ArcheryEventOfficial::countEventOfficialBooking($archery_event_official_detail->id, $club_id);
+            
         if($archery_event_official_detail->individual_quota !=0){
             $quota= $archery_event_official_detail->individual_quota;
+
+            if ($official_count >= $quota) {
+                $msg = "quota official sudah penuh";
+                // check kalo ada pembayaran yang pending
+                $official_count_pending = ArcheryEventOfficial::join("transaction_logs", "transaction_logs.id", "=", "archery_event_official.transaction_log_id")
+                    ->join('archery_event_official_detail', 'archery_event_official_detail.id', '=', 'archery_event_official.event_official_detail_id')
+                    ->where("event_official_detail_id", $archery_event_official_detail->id)
+                    ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", $time_now)
+                    ->where("archery_event_official_detail.event_id", $archery_event_official_detail->event_id)->count();
+    
+                if ($official_count_pending > 0) {
+                    $msg = "untuk sementara  " . $msg . ", silahkan coba beberapa saat lagi";
+                } else {
+                    $msg = $msg . ", silahkan daftar di event lain";
+                }
+                throw new BLoCException($msg);
+            }else{
+                $remaining_quota= $quota - $official_count;
+                if(count($participant_data)>=$remaining_quota){
+                    throw new BLoCException("sisa kuota pendaftaran tidak mencukupi");
+                }
+            }
+
         }else{
             $quota= $archery_event_official_detail->club_quota;
+
+            if($official_count_club >= $quota){
+                $msg = "quota official sudah penuh";
+                // check kalo ada pembayaran yang pending
+                $official_count_pending = ArcheryEventOfficial::join("transaction_logs", "transaction_logs.id", "=", "archery_event_official.transaction_log_id")
+                    ->join('archery_event_official_detail', 'archery_event_official_detail.id', '=', 'archery_event_official.event_official_detail_id')
+                    ->where("event_official_detail_id", $archery_event_official_detail->id)
+                    ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", $time_now)
+                    ->where("archery_event_official_detail.event_id", $archery_event_official_detail->event_id)
+                    ->where("archery_event_official.club_id", $club_id)->count();
+    
+                if ($official_count_pending > 0) {
+                    $msg = "untuk sementara  " . $msg . ", silahkan coba beberapa saat lagi";
+                } else {
+                    $msg = $msg . ", silahkan daftar di event lain";
+                }
+                throw new BLoCException($msg);
+            }else{
+                $remaining_quota= $quota - $official_count_club;
+                if(count($participant_data)>=$remaining_quota){
+                    throw new BLoCException("sisa kuota pendaftaran tidak mencukupi");
+                }
+            }
+
         }
 
-        if ($official_count >= $quota) {
-            $msg = "quota official sudah penuh";
-            // check kalo ada pembayaran yang pending
-            $official_count_pending = ArcheryEventOfficial::join("transaction_logs", "transaction_logs.id", "=", "archery_event_official.transaction_log_id")
-                ->join('archery_event_official_detail', 'archery_event_official_detail.id', '=', 'archery_event_official.event_official_detail_id')
-                ->where("event_official_detail_id", $archery_event_official_detail->id)
-                ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", $time_now)
-                ->where("archery_event_official_detail.event_id", $archery_event_official_detail->event_id)->count();
 
-            if ($official_count_pending > 0) {
-                $msg = "untuk sementara  " . $msg . ", silahkan coba beberapa saat lagi";
-            } else {
-                $msg = $msg . ", silahkan daftar di event lain";
-            }
-            throw new BLoCException($msg);
-        }else{
-            $remaining_quota= $quota - $official_count;
-            if(count($participant_data)>=$remaining_quota){
-                throw new BLoCException("sisa kuota pendaftaran tidak mencukupi");
-            }
-        }
-        
 
         $team_category_id = $parameters->get('team_category_id');
         $age_category_id = $parameters->get('age_category_id');

@@ -37,9 +37,12 @@ class GetAllArcheryEventOfficial extends Retrieval
         if($archery_event_official_detail){
             
             if($archery_event_official_detail->individual_quota !=0){
-                $quota= $archery_event_official_detail->individual_quota;
+                $quota_total= $archery_event_official_detail->individual_quota;
             }else{
                 $quota= $archery_event_official_detail->club_quota;
+                $count = ArcheryEventOfficial::count(DB::raw('DISTINCT club_id'));
+                $quota_total=$quota*$count;
+
             }
         }
         
@@ -52,7 +55,7 @@ class GetAllArcheryEventOfficial extends Retrieval
                             ->leftJoin('archery_event_official_detail','archery_event_official_detail.id','=','archery_event_official.event_official_detail_id')
                             ->where(function ($query) use ($name) {
                                 if(!empty($name)){
-                                    $query->where("users.name",$name);
+                                    $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
                                 }
                             })
                             ->get();
@@ -61,8 +64,8 @@ class GetAllArcheryEventOfficial extends Retrieval
             throw new BLoCException("data not found");
         }
 
-        $data=["kuota_event"=>$quota,
-            "sisa_kuota"=>$quota-$official_count,
+        $data=["kuota_event"=>$quota_total,
+            "sisa_kuota"=>$quota_total-$official_count,
             "member"=>$official_member];
         
         return $data;
