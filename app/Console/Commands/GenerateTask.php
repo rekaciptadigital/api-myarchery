@@ -9,6 +9,7 @@ use App\Models\ArcheryEventSerie;
 use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcherySeriesCategory;
+use App\Models\ArcheryMemberCertificate;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantNumber;
@@ -51,6 +52,8 @@ class GenerateTask extends Command
      */
     public function handle()
     {
+        ArcheryMemberCertificate::prepareUserCertificate(21, 10);
+        exit;
         $cat_id = $this->argument('param');
 
         $points = ArcherySeriesUserPoint::get();
