@@ -71,9 +71,11 @@ class ListMemberV2 extends Retrieval
 
         $output = [];
         $detail_member = [];
+        
         if ($participant_collection->count() > 0) {
+            $num=0;
             foreach ($participant_collection as $participant) {
-               
+                $num+=1;
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
                 if (!$member) {
                     throw new BLoCException("member not found");
@@ -110,7 +112,7 @@ class ListMemberV2 extends Retrieval
                     $status_payment = "Gratis";
                     $order_payment=4;
                 }
-
+                $detail_member["no"] = $num;
                 $detail_member["member_id"] = $member->id;
                 $detail_member["participant_id"] = $participant->id;
                 $detail_member["user_id"] = $user->id;
@@ -128,8 +130,12 @@ class ListMemberV2 extends Retrieval
         }
         $order_payment = array_column($output, 'order_payment');
         array_multisort($order_payment, SORT_ASC, $output);
+        $data=[
+            "total_data"=>count($output),
+            "data"=>$output
+        ];
 
-        return $output;
+        return $data;
     }
 
     protected function validation($parameters)
