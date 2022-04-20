@@ -77,7 +77,7 @@ class ArcheryEventOfficial extends Model
                 'status' => $archery_event_official->status,
                 'status_label' => self::getStatusLabel($archery_event_official->status),
                 'team_category_id' => $archery_event_official->team_category_id,
-                'category-label'=>$archery_event_official->team_category_id."-".$archery_event_official->age_category_id."-".$archery_event_official->competition_category_id."-".$archery_event_official->distance_id."m"
+                'category_label'=>$archery_event_official->team_category_id."-".$archery_event_official->age_category_id."-".$archery_event_official->competition_category_id."-".$archery_event_official->distance_id."m"
             ];
         }
         return $data;
