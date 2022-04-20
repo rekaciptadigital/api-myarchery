@@ -107,6 +107,7 @@ use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2;
 use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
 use App\BLoC\Web\BudRest\GetBudRestV2;
 use App\BLoC\Web\BudRest\GetListBudRestV2;
@@ -262,6 +263,9 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
         $this->registerService("updateMemberBudrest", UpdateMemberBudrest::class);
+
+        // ================================== Scorer Qualification ===============================
+        $this->registerService("getParticipantScoreQualificationV2", GetParticipantScoreQualificationV2::class);
     }
 
 
