@@ -88,7 +88,7 @@ class GetEventOrderV2 extends Retrieval
         if ($data_event->count() > 0) {
             foreach ($data_event as $aeo) {
                 $data['detail_order'] =[
-                    "id"=>$aeo->event_id,
+                    "id"=>$aeo->id,
                     "type"=>"event"
                 ];
                 $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
