@@ -43,7 +43,7 @@ class UpdateUserAvatar extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            "avatar" => 'string'
+            "avatar" => 'required|string'
         ];
     }
 }

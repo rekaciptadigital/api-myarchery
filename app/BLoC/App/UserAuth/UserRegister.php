@@ -45,7 +45,8 @@ class UserRegister extends Transactional
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'date_of_birth' => 'required|date',
-            'gender' => 'required|in:male,female'
+            'gender' => 'required|in:male,female',
+            'avatar' => 'required|string'
         ];
     }
 }
