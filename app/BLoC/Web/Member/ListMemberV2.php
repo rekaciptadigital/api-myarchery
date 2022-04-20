@@ -12,6 +12,7 @@ use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ListMemberV2 extends Retrieval
 {
@@ -33,17 +34,19 @@ class ListMemberV2 extends Retrieval
         $age_category_id = $parameters->get("age_category_id");
         $name = $parameters->get("name");
 
+        $perPage=7;
+
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("Event tidak tersedia");
         }
        
-        $participant_query = ArcheryEventParticipant::where("event_id", $event_id)->where("type", "individual");
+        $participant_query = ArcheryEventParticipant::where("archery_event_participants.event_id", $event_id)->where("archery_event_participants.type", "individual");
         
 
         // filter by competition_id
         $participant_query->when($competition_category_id, function ($query) use ($competition_category_id) {
-            return $query->where("competition_category_id", $competition_category_id);
+            return $query->where("archery_event_participants.competition_category_id", $competition_category_id);
         });
 
         // filter by name
@@ -53,88 +56,33 @@ class ListMemberV2 extends Retrieval
 
         // filter by distance_id
         $participant_query->when($distance_id, function ($query) use ($distance_id) {
-            return $query->where("distance_id", $distance_id);
+            return $query->where("archery_event_participants.distance_id", $distance_id);
         });
 
         // filter by team_category_id
         $participant_query->when($team_category_id, function ($query) use ($team_category_id) {
-            return $query->where("team_category_id", $team_category_id);
+            return $query->where("archery_event_participants.team_category_id", $team_category_id);
         });
 
         // filter by age_category_id
         $participant_query->when($age_category_id, function ($query) use ($age_category_id) {
-            return $query->where("age_category_id", $age_category_id);
+            return $query->where("archery_event_participants.age_category_id", $age_category_id);
         });
 
-        $participant_collection = $participant_query->orderBy('id', 'DESC')->limit($limit)->offset($offset)->get();
+        $participant_collection = $participant_query->orderBy('archery_event_participants.id', 'DESC')
+                                ->leftJoin('archery_event_participant_members','archery_event_participant_members.archery_event_participant_id','=','archery_event_participants.id')
+                                ->leftJoin('archery_clubs','archery_clubs.id','=','archery_event_participants.club_id')
+                                ->leftJoin('transaction_logs','transaction_logs.id','=','archery_event_participants.transaction_log_id')
+                                ->select('archery_event_participant_members.id as member_id','archery_event_participants.id as participant_id',
+                                'archery_event_participants.user_id','archery_event_participants.name','archery_event_participants.email',
+                                'archery_clubs.name as club_name','archery_event_participants.phone_number','archery_event_participants.competition_category_id',
+                                DB::RAW('case when transaction_logs.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" else "Gratis" END AS status_payment '),
+                                'archery_event_participants.age_category_id',
+                                DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 else 4 END AS order_payment '))
+                                ->paginate(7);
 
-
-        $output = [];
-        $detail_member = [];
-        
-        if ($participant_collection->count() > 0) {
-            $num=0;
-            foreach ($participant_collection as $participant) {
-                $num+=1;
-                $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
-                if (!$member) {
-                    throw new BLoCException("member not found");
-                }
-
-                $user = User::find($member->user_id);
-                if (!$user) {
-                    throw new BLoCException("user not found");
-                }
-
-                $club = ArcheryClub::find($participant->club_id);
-                $club_name = $club ? $club->name : "";
-
-                $competition_category = ArcheryMasterCompetitionCategory::find($participant->competition_category_id);
-                $competition_category_label = $competition_category ? $competition_category->label : "";
-                $transaction_log = TransactionLog::find($participant->transaction_log_id);
-                $status_payment = "";
-                if ($transaction_log) {
-                    if ($transaction_log->status == 1) {
-                        $status_payment = "Lunas";
-                        $order_payment=1;
-                    }
-
-                    if (($transaction_log->status == 4) && ($transaction_log->expired_time >= time())) {
-                        $status_payment = "Belum Lunas";
-                        $order_payment=2;
-                    }
-
-                    if (($transaction_log->status == 2) || ($transaction_log->status == 4) && ($transaction_log->expired_time <= time())) {
-                        $status_payment = "Expired";
-                        $order_payment=3;
-                    }
-                } else {
-                    $status_payment = "Gratis";
-                    $order_payment=4;
-                }
-                $detail_member["no"] = $num;
-                $detail_member["member_id"] = $member->id;
-                $detail_member["participant_id"] = $participant->id;
-                $detail_member["user_id"] = $user->id;
-                $detail_member["name"] = $user->name;
-                $detail_member["email"] = $user->email;
-                $detail_member["club_name"] = $club_name;
-                $detail_member["phone_number"] = $user->phone_number;
-                $detail_member["competition_category"] = $competition_category_label;
-                $detail_member["status_payment"] = $status_payment;
-                $detail_member["age_category"] = $participant->age_category_id;
-                $detail_member["order_payment"] = $order_payment;
-
-                array_push($output, $detail_member);
-            }
-        }
-        $order_payment = array_column($output, 'order_payment');
-        array_multisort($order_payment, SORT_ASC, $output);
-        $data=[
-            "total_data"=>count($output),
-            "data"=>$output
-        ];
-
+        $data=$this->paginate($participant_collection);
+    
         return $data;
     }
 
@@ -143,5 +91,13 @@ class ListMemberV2 extends Retrieval
         return [
             'event_id' => 'required|exists:archery_events,id',
         ];
+    }
+    protected function paginate($models){
+        $data = $models;
+        foreach ($data as $key=>$val) {
+            $number = ($data->currentpage()-1) * $data->perpage() + $key + 1;
+            $val->No = $number;
+        }
+        return $data;
     }
 }
