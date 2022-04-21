@@ -575,9 +575,11 @@ class ArcheryScoring extends Model
             $archery_event_score[] = $score;
         }
 
-        usort($archery_event_score, function ($a, $b) {
-            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-        });
+        if (!$orderByBudrestNumber) {
+            usort($archery_event_score, function ($a, $b) {
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            });
+        } 
 
         return $archery_event_score;
     }
