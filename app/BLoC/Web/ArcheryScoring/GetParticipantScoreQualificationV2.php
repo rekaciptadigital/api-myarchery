@@ -39,7 +39,6 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         $score_type = 1;
         $admin = Auth::user();
         $name = $parameters->get("name");
-        $club_name = $parameters->get("club_name");
         $event_category_id = $parameters->get('event_category_id');
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category_detail) {
@@ -64,10 +63,22 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             throw new BLoCException("category harus individual");
         }
 
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, true, $name);
-        return $qualification_rank;
+        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, true, $name);
+        $qualification_rank = ArcheryScoring::getScoringRank($category_detail->distance_id, $category_detail->team_category_id, $category_detail->competition_category_id, $category_detail->age_category_id, $category_detail->gender_category, $score_type, $event->id);
 
-        return [];
+        $response = [];
+
+        foreach ($qualification_member as $key1 => $value1) {
+            foreach ($qualification_rank as $key2 => $value2) {
+                if ($value1["member"]["id"] === $value2["member"]["id"]) {
+                    $value1["rank"] = $key2 + 1;
+                    array_push($response, $value1);
+                    break;
+                }
+            }
+        }
+
+        return $response;
     }
 
 
