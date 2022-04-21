@@ -45,7 +45,7 @@ class GetScheduleFullDay extends Retrieval
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-            ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
             ->where("archery_event_participants.event_id", $event_id)
             ->whereDate("event_start_datetime", $date);
 

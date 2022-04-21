@@ -107,6 +107,7 @@ use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2;
 use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
 use App\BLoC\Web\BudRest\GetBudRestV2;
 use App\BLoC\Web\BudRest\GetListBudRestV2;
@@ -118,6 +119,10 @@ use App\BLoC\Web\QandA\EditQandA;
 use App\BLoC\Web\Member\ListMemberTeamV2;
 use App\BLoC\Web\ScheduleFullDay\GetScheduleFullDay;
 use App\BLoC\Web\ScheduleFullDay\UpdateMemberBudrest;
+use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
+use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
+use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
+use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -262,6 +267,16 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
         $this->registerService("updateMemberBudrest", UpdateMemberBudrest::class);
+
+        // ================================== Scorer Qualification ===============================
+        $this->registerService("getParticipantScoreQualificationV2", GetParticipantScoreQualificationV2::class);
+
+        
+        // ================================== Official v2 ================================
+        $this->registerService("addArcheryEventOfficialDetail", AddArcheryEventOfficialDetail::class);
+        $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
+        $this->registerService("editArcheryEventOfficialDetail", EditArcheryEventOfficialDetail::class);
+        $this->registerService("getArcheryEventOfficialDetail", GetArcheryEventOfficialDetail::class);
     }
 
 

@@ -151,6 +151,7 @@ class PaymentGateWay
         $time_now = time();
         $status = $transaction_log->status == 4 && $transaction_log->expired_time <= $time_now ? 2 : $transaction_log->status;
         return (object)[
+            "order_date" =>$transaction_log->created_at,
             "order_id" => $transaction_log->order_id,
             "total" => $transaction_log->amount,
             "status_id" => $status,

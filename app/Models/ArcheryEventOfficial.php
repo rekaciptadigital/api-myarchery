@@ -24,20 +24,22 @@ class ArcheryEventOfficial extends Model
     protected $table = 'archery_event_official';
     protected $guarded = ['id'];
 
-    public static function insertOrderOfficial($user_id, $club_id, $relation_id, $label, $event_official_detail_id, $status = 4)
+    public static function insertOrderOfficial($user_id, $club_id, $team_category_id, $age_category_id, $competition_category_id, $distance_id,$archery_event_official_detail, $status = 4)
     {
         return self::create([
             'user_id' => $user_id,
             'club_id' => $club_id,
-            'relation_with_participant' => $relation_id,
-            'relation_with_participant_label' =>  $label,
+            'team_category_id' => $team_category_id,
+            'age_category_id' =>  $age_category_id,
+            'competition_category_id' => $competition_category_id,
+            'distance_id' =>  $distance_id,
             'transaction_log_id' => 0,
-            'event_official_detail_id' => $event_official_detail_id,
+            'event_official_detail_id' => $archery_event_official_detail,
             'status' => $status
         ]);
     }
 
-    public static function countEventOfficialBooking($archery_event_official_detail_id)
+    public static function countEventOfficialBooking($archery_event_official_detail_id,$club_id="")
     {
         $time_now = time();
 
@@ -49,6 +51,11 @@ class ArcheryEventOfficial extends Model
                     $q->where("archery_event_official.status", 4);
                     $q->where("transaction_logs.expired_time", ">", $time_now);
                 });
+            })
+            ->where(function ($query) use ($club_id) {
+                if (!empty($event_name)) {
+                    $query->where('archery_events.event_name', 'like', '%' . $event_name . '%');
+                }
             })->count();
     }
 
@@ -68,7 +75,9 @@ class ArcheryEventOfficial extends Model
                 'relation_with_participant' => $archery_event_official->relation_with_participant,
                 'relation_with_participant_label' => $archery_event_official->relation_with_participant_label,
                 'status' => $archery_event_official->status,
-                'status_label' => self::getStatusLabel($archery_event_official->status)
+                'status_label' => self::getStatusLabel($archery_event_official->status),
+                'team_category_id' => $archery_event_official->team_category_id,
+                'category_label'=>$archery_event_official->team_category_id."-".$archery_event_official->age_category_id."-".$archery_event_official->competition_category_id."-".$archery_event_official->distance_id."m"
             ];
         }
         return $data;
