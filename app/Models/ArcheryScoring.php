@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventParticipantMember;
+use DAI\Utils\Exceptions\BLoCException;
 
 class ArcheryScoring extends Model
 {
@@ -471,13 +472,21 @@ class ArcheryScoring extends Model
             $sessions["shoot_off"] = json_decode($shot_off->scoring_detail);
         }
 
+        $participant = ArcheryEventParticipantMember::select("archery_event_participants.*")
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+            ->where("archery_event_participant_members.id", $participant_member_id)
+            ->first();
+
+        if (!$participant) {
+            throw new BLoCException("PARTICIPANT TIDAK ADA");
+        }
         $output = [
             "sessions" => $sessions,
             "total" => $total + $total_shot_off,
             "total_x" => $total_per_points["x"],
             "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
-            "total_tmp" => $this->getTotalTmp($total_per_points, $total),
+            "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
         ];
         return $output;
     }
@@ -580,6 +589,7 @@ class ArcheryScoring extends Model
             "users.gender",
             "archery_event_participants.id as participant_id",
             "archery_event_participants.event_id",
+            "archery_event_participants.is_present",
             "archery_clubs.name as club_name",
             "archery_clubs.id as club_id",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
@@ -630,7 +640,8 @@ class ArcheryScoring extends Model
             "archery_event_participant_members.gender",
             "archery_clubs.name as club_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
-            "archery_event_qualification_schedule_full_day.target_face"
+            "archery_event_qualification_schedule_full_day.target_face",
+            "archery_event_participants.is_present"
         )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participants.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")->where('archery_event_participants.status', 1)->where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
             $archery_event_participant->where('archery_event_participants.team_category_id', $team_category_id);

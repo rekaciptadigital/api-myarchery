@@ -123,6 +123,7 @@ use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
 use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
+use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -271,12 +272,15 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Scorer Qualification ===============================
         $this->registerService("getParticipantScoreQualificationV2", GetParticipantScoreQualificationV2::class);
 
-        
+
         // ================================== Official v2 ================================
         $this->registerService("addArcheryEventOfficialDetail", AddArcheryEventOfficialDetail::class);
         $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
         $this->registerService("editArcheryEventOfficialDetail", EditArcheryEventOfficialDetail::class);
         $this->registerService("getArcheryEventOfficialDetail", GetArcheryEventOfficialDetail::class);
+
+        // ================================== participant v2 ==============================
+        $this->registerService("changeIsPresent", ChangeIsPresent::class);
     }
 
 
