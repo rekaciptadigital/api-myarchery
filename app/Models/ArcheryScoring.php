@@ -632,7 +632,7 @@ class ArcheryScoring extends Model
         return $archery_event_score;
     }
 
-    protected function getScoringRank($distance_id, $team_category_id, $competition_category_id, $age_category_id, $gender, $score_type, $event_id, $elimination_template)
+    protected function getScoringRank($distance_id, $team_category_id, $competition_category_id, $age_category_id, $gender, $score_type, $event_id, $elimination_template = 0)
     {
         $archery_event_participant = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -674,7 +674,7 @@ class ArcheryScoring extends Model
 
         $newArray = [];
 
-        if (count($archery_event_score) > $elimination_template) {
+        if (($elimination_template > 0) && (count($archery_event_score) > $elimination_template)) {
             if (($archery_event_score[$elimination_template - 1]["total"] > 0) && ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"])) {
                 $total = $archery_event_score[$elimination_template - 1]["total"];
                 foreach ($archery_event_score as $key => $value) {

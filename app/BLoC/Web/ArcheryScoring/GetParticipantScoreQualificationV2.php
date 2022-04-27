@@ -88,7 +88,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "elimination_template" => "required"
+            
         ];
     }
 }
