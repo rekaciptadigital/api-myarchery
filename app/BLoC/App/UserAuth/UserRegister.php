@@ -2,9 +2,7 @@
 
 namespace App\BLoC\App\UserAuth;
 
-use App\Models\ArcheryClub;
 use App\Models\User;
-use App\Models\UserArcheryInfo;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

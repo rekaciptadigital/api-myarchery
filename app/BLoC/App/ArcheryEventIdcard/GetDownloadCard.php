@@ -7,10 +7,8 @@ use App\Models\ArcheryEventIdcardTemplate;
 use App\Libraries\PdfLibrary;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryClub;
-use Illuminate\Support\Facades\DB;
 
 class GetDownloadCard extends Retrieval
 {
