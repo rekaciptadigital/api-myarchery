@@ -283,6 +283,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
         });
+
+        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+        });
     });
 });
 
