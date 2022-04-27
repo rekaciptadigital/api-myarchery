@@ -674,7 +674,7 @@ class ArcheryScoring extends Model
 
         $newArray = [];
 
-        if (count($archery_event_score) > $elimination_template) {
+        if (($elimination_template > 0) && (count($archery_event_score) > $elimination_template)) {
             if (($archery_event_score[$elimination_template - 1]["total"] > 0) && ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"])) {
                 $total = $archery_event_score[$elimination_template - 1]["total"];
                 foreach ($archery_event_score as $key => $value) {
