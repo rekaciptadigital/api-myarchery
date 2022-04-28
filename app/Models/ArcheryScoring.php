@@ -92,10 +92,21 @@ class ArcheryScoring extends Model
             "m" => 0,
         ];
     }
-    protected function makeScoringFormat(object $scoring)
+    protected function makeScoringFormat(object $scoring, $session = null)
     {
         $scores = [];
         if (empty((array)$scoring)) {
+            if ($session !== null && $session == 11) {
+                $scores = [];
+                for ($i = 0; $i < 5; $i++) {
+                    $res = [
+                        "score" => "",
+                        "distance_from_x" => ""
+                    ];
+                    array_push($scores, $res);
+                }
+                return $scores;
+            }
             $scores = [
                 "1" => ["", "", "", "", "", ""],
                 "2" => ["", "", "", "", "", ""],
@@ -469,7 +480,7 @@ class ArcheryScoring extends Model
         $shot_off = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $participant_member_id)->first();
         if ($shot_off) {
             $total_shot_off = $shot_off->total;
-            $sessions["shoot_off"] = json_decode($shot_off->scoring_detail);
+            $sessions["11"] = json_decode($shot_off->scoring_detail);
         }
 
         $participant = ArcheryEventParticipantMember::select("archery_event_participants.*")
