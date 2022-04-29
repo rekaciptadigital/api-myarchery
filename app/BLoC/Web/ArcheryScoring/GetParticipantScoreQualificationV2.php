@@ -63,7 +63,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             throw new BLoCException("category harus individual");
         }
 
-        
+
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, true, $name);
         $qualification_rank = ArcheryScoring::getScoringRank($category_detail->distance_id, $category_detail->team_category_id, $category_detail->competition_category_id, $category_detail->age_category_id, $category_detail->gender_category, $score_type, $event->id, $parameters->get("elimination_template"));
 
@@ -73,9 +73,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             foreach ($qualification_rank as $key2 => $value2) {
                 if ($value1["member"]["id"] === $value2["member"]["id"]) {
                     $value1["rank"] = $key2 + 1;
-                    if (isset($value2["have_shoot_off"]) && $value2["have_shoot_off"] === 1) {
-                        $value1["have_shoot_off"] = 1;
-                    }
+                    $value1["have_shoot_off"] = $value2["have_shoot_off"];
                     array_push($response, $value1);
                     break;
                 }
@@ -88,8 +86,6 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     protected function validation($parameters)
     {
-        return [
-            
-        ];
+        return [];
     }
 }

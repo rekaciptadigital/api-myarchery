@@ -91,6 +91,7 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException('event telah selesai');
         }
 
+
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
@@ -112,7 +113,6 @@ class AddParticipantMemberScore extends Transactional
 
         if ($get_score) {
             $scoring = ArcheryScoring::find($get_score->id);
-            return $scoring;
         } else {
             $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, 1, $event->id, $parameters->get("elimination_template"));
 
@@ -140,6 +140,12 @@ class AddParticipantMemberScore extends Transactional
         }
 
         $scoring->save();
+
+        $member = ArcheryEventParticipantMember::find($participant_member_id);
+        if (!$member) {
+            throw new BLoCException("member nan");
+        }
+        $member->update(["have_shoot_off" => 2]);
         return $scoring;
     }
 
