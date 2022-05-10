@@ -114,9 +114,7 @@ class AddParticipantMemberScore extends Transactional
         if ($get_score) {
             $scoring = ArcheryScoring::find($get_score->id);
         } else {
-            $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, 1, $event->id, $parameters->get("elimination_template"));
-
-            if (!array_key_exists("flag_shoot_off", $qualification_rank)) {
+            if ($participant_member->have_shoot_off === 0) {
                 throw new BLoCException("tidak dapat melakukan shoot 0ff");
             }
             $scoring = new ArcheryScoring;
