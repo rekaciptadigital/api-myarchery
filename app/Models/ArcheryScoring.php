@@ -718,7 +718,7 @@ class ArcheryScoring extends Model
             $newValue = [];
             if (count($archery_event_score) > $elimination_template) {
                 // cek apakah semua peserta telah melakukan shoot atau belum
-                if ($archery_event_score[count($archery_event_score) - 1]["total"] > 0) {
+                if (($archery_event_score[$elimination_template - 1]["total"] > 0) && ($archery_event_score[$elimination_template]["total"] > 0)) {
                     // cek apakah terdapat total point yang sama
                     if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
                         $total = $archery_event_score[$elimination_template - 1]["total"];
