@@ -123,6 +123,7 @@ use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
 use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
+use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 
 class WebServiceProvider extends ServiceProvider
@@ -281,6 +282,9 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================== participant v2 ==============================
         $this->registerService("changeIsPresent", ChangeIsPresent::class);
+
+        // ================================== event-elimination v2 ==========================
+        $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
     }
 
 

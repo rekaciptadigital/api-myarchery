@@ -593,7 +593,7 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null)
+    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false)
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -623,6 +623,10 @@ class ArcheryScoring extends Model
         if ($orderByBudrestNumber) {
             $participants_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
                 ->orderBy("archery_event_qualification_schedule_full_day.target_face");
+        }
+
+        if ($is_present) {
+            $participants_query->where("archery_event_participants.is_present", 1);
         }
 
         $participants_collection = $participants_query->get();

@@ -287,6 +287,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
         });
+
+        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+        });
     });
 });
 
