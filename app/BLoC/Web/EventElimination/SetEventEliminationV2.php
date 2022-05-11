@@ -78,7 +78,7 @@ class SetEventEliminationV2 extends Transactional
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id)
             ->where(function ($query) {
-                return $query->where("archery_scorings.scoring_session", 2)->orWhere("archery_scorings.scoring_session", 11);
+                return $query->where("archery_scorings.type", 2)->orWhere("archery_scorings.scoring_session", 11);
             })->get();
 
         if ($participants_collection->count() > 0) {
@@ -90,7 +90,6 @@ class SetEventEliminationV2 extends Transactional
             $elimination = new ArcheryEventElimination;
         }
 
-        // return "ok";
         $elimination->event_category_id = $event_category_id;
         $elimination->count_participant = $elimination_member_count;
         $elimination->elimination_type = $match_type;
@@ -99,8 +98,6 @@ class SetEventEliminationV2 extends Transactional
         $elimination->save();
 
         foreach ($template as $key => $value) {
-            // print_r(json_encode($value));
-            // return "ok";
             foreach ($value["seeds"] as $k => $v) {
                 foreach ($v["teams"] as $i => $team) {
                     $elimination_member_id = 0;
