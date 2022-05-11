@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libraries\EliminationFormat;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Database\Eloquent\Model;
 
 class ArcheryEventEliminationSchedule extends Model
@@ -54,9 +55,16 @@ class ArcheryEventEliminationSchedule extends Model
         if ($elimination_member_count == 16) {
             return EliminationFormat::MakeTemplate16($members);
         }
+
         if ($elimination_member_count == 8) {
             return EliminationFormat::MakeTemplate8($members);
         }
+
+        if ($elimination_member_count == 32) {
+            return EliminationFormat::MakeTemplate32($members);
+        }
+
+        throw new BLoCException("template belum disiapkan di backend");
     }
 
     protected function getTemplate($member_matches = [], $elimination_member_count = 16)

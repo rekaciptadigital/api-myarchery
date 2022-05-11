@@ -86,6 +86,7 @@ class GetListCategoryByEventId extends Retrieval
                 $response["early_bird_fee"] = $category->early_bird;
                 $response["is_early_bird"] = $category->is_early_bird;
                 $response["total_participant"] = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
+                $response["default_elimination_count"] = $category->default_elimination_count;
 
                 array_push($output, $response);
             }
