@@ -11,6 +11,10 @@
 |
 */
 
+use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryScoring;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
@@ -64,6 +68,32 @@ $router->post('accept', function (Request $request) {
     ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city_code), $user->id, $city_code);
     $user->save();
     return redirect('kioheswbgcgoiwagfp');
+});
+
+$router->get("fresh", function (Request $request) {
+    $archery_scooring = ArcheryScoring::select("archery_scorings.*")->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
+        ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+        ->where("archery_event_participants.event_id", 22)->get();
+
+    if ($archery_scooring->count() > 0) {
+        foreach ($archery_scooring as $key => $value) {
+            $value->delete();
+        }
+    }
+
+    $elimination = ArcheryEventElimination::select("archery_event_eliminations.*")->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_eliminations.event_category_id")
+        ->where("archery_event_category_details.event_id", 22)->get();
+
+    if ($elimination->count() > 0) {
+        foreach ($elimination as $key => $value) {
+            $elimination_match = ArcheryEventEliminationMatch::where("event_elimination_id", $value->id)->get();
+            foreach ($elimination_match as $em) {
+                $em->delete();
+            }
+            $value->delete();
+        }
+    }
+    return "ok";
 });
 
 $router->post('reject', function (Request $request) {

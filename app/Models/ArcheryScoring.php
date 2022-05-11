@@ -702,6 +702,11 @@ class ArcheryScoring extends Model
 
         foreach ($participants as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type);
+            if (!$event_elimination) {
+                $value->update([
+                    "have_shoot_off" => 0
+                ]);
+            }
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $archery_event_score[] = $score;
