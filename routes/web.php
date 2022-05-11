@@ -320,6 +320,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+            $router->get('/get-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:GetEventEliminationCountParticipant']);
         });
     });
 });

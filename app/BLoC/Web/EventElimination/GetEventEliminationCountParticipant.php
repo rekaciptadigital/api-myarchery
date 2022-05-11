@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\EventElimination;
 
-use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventElimination;
 use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
