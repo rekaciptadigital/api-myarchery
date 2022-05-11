@@ -25,7 +25,7 @@ class GetEventEliminationCountParticipant extends Transactional
             throw new BLoCException("kategori tidak ada");
         }
 
-        $respose = [];
+        $respose = null;
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
         if ($elimination) {
             $respose = [
