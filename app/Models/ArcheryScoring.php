@@ -683,6 +683,8 @@ class ArcheryScoring extends Model
 
         $participants = $archery_event_participant->get();
 
+        $participant_is_present = $archery_event_participant->where("archery_event_participants.is_present", 1)->get();
+
         $check_is_exist_have_shoot_off = $archery_event_participant->where("archery_event_participant_members.have_shoot_off", 2)->first();
 
         $category = ArcheryEventCategoryDetail::where("team_category_id", $team_category_id)
@@ -702,11 +704,6 @@ class ArcheryScoring extends Model
 
         foreach ($participants as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type);
-            if (!$event_elimination) {
-                $value->update([
-                    "have_shoot_off" => 0
-                ]);
-            }
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $archery_event_score[] = $score;
@@ -721,89 +718,38 @@ class ArcheryScoring extends Model
             $elimination_template = $event_elimination->count_participant;
             $newArray = [];
             $newValue = [];
-            if (count($archery_event_score) > $elimination_template) {
-                // cek apakah semua peserta telah melakukan shoot atau belum
-                if (($archery_event_score[$elimination_template - 1]["total"] > 0) && ($archery_event_score[$elimination_template]["total"] > 0)) {
-                    // cek apakah terdapat total point yang sama
-                    if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
-                        $total = $archery_event_score[$elimination_template - 1]["total"];
-                        foreach ($archery_event_score as $key => $value) {
-                            $member = ArcheryEventParticipantMember::find($value["member"]->id);
-                            if (!$member) {
-                                throw new BLoCException("member nan");
-                            }
-
-                            if ($value["total"] === $total) {
-                                $member->update(["have_shoot_off" => 1]);
-                            } elseif (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
-                                $member->update(["have_shoot_off" => 0]);
-                            }
-                            $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
-                            $newValue["member"] = $value["member"];
-                            $newValue["have_shoot_off"] = $member->have_shoot_off;
-                            array_push($newArray, $newValue);
+            // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
+            if (count($participant_is_present) > $elimination_template) {
+                // cek apakah terdapat total point yang sama
+                if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
+                    $total = $archery_event_score[$elimination_template - 1]["total"];
+                    foreach ($archery_event_score as $key => $value) {
+                        $member = ArcheryEventParticipantMember::find($value["member"]->id);
+                        if (!$member) {
+                            throw new BLoCException("member nan");
                         }
-                        $newArray["flag_shoot_off"] = 1;
-                        usort($newArray, function ($a, $b) {
-                            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-                        });
-                        return $newArray;
+
+                        if ($value["total"] === $total) {
+                            $member->update(["have_shoot_off" => 1]);
+                        }
+
+                        if (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
+                            $member->update(["have_shoot_off" => 0]);
+                        }
+                        
+                        $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                        $newValue["member"] = $value["member"];
+                        $newValue["have_shoot_off"] = $member->have_shoot_off;
+                        array_push($newArray, $newValue);
                     }
+                    usort($newArray, function ($a, $b) {
+                        return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                    });
+                    return $newArray;
                 }
-            } else {
-                foreach ($archery_event_score as $key => $value) {
-                    $member = ArcheryEventParticipantMember::find($value["member"]->id);
-                    if (!$member) {
-                        throw new BLoCException("member nan");
-                    }
-                    $member->update(["have_shoot_off" => 0]);
-                    $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
-                    $newValue["member"] = $value["member"];
-                    $newValue["have_shoot_off"] = $member->have_shoot_off;
-                    array_push($newArray, $newValue);
-                }
-                $newArray["flag_shoot_off"] = 1;
-                usort($newArray, function ($a, $b) {
-                    return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-                });
-                return $newArray;
             }
         }
 
-        // if ($event_elimination && (count($archery_event_score) > $event_elimination->count_participant)) {
-        //     if (($archery_event_score[$elimination_template - 1]["total"] > 0) && ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"])) {
-        //         $newArray = [];
-        //         $newValue = [];
-        //         $total = $archery_event_score[$elimination_template - 1]["total"];
-        //         foreach ($archery_event_score as $key => $value) {
-        //             $newValue = $value;
-        //             if ($value["total"] === $total) {
-        //                 $member = ArcheryEventParticipantMember::find($value["member"]->id);
-        //                 if (!$member) {
-        //                     throw new BLoCException("member nan");
-        //                 }
-
-        //                 $member->update(["have_shoot_off" => 1]);
-        //                 $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
-        //                 $newValue["member"] = $value["member"];
-        //                 $newValue["have_shoot_off"] = $member->have_shoot_off;
-        //             }
-        //             array_push($newArray, $newValue);
-        //         }
-        //         $newArray["flag_shoot_off"] = 1;
-        //         usort($newArray, function ($a, $b) {
-        //             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-        //         });
-        //         return $newArray;
-        //     }
-        // }
-
-        foreach ($archery_event_score as $key => $value) {
-            if ($value["have_shoot_off"] === 1) {
-                $archery_event_score["flag_shoot_off"] = 1;
-                break;
-            }
-        }
         return $archery_event_score;
     }
 

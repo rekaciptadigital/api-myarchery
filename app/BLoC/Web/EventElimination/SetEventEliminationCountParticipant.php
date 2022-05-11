@@ -2,13 +2,11 @@
 
 namespace App\BLoC\Web\EventElimination;
 
-use App\Models\ArcheryEventElimination;
 use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventEliminationMatch;
 use DAI\Utils\Exceptions\BLoCException;
 
-class GetEventEliminationCountParticipant extends Transactional
+class SetEventEliminationCountParticipant extends Transactional
 {
     public function getDescription()
     {
@@ -24,22 +22,18 @@ class GetEventEliminationCountParticipant extends Transactional
             throw new BLoCException("kategori tidak ada");
         }
 
-        $respose = null;
-        $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
-        if ($elimination) {
-            $respose = [
-                "elimination_id" => $elimination->id,
-                "count_participant" => $elimination->count_participant
-            ];
-        }
+        $category->update([
+            "default_elimination_count" => $parameters->get("count_elimination_participant")
+        ]);
 
-        return $respose;
+        return "success";
     }
 
     protected function validation($parameters)
     {
         return [
             'event_category_id' => 'required|exists:archery_event_category_details,id',
+            "count_elimination_participant" => "required|in:0,8,16,32,64,128"
         ];
     }
 }

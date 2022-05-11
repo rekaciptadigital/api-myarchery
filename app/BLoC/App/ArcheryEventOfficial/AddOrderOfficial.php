@@ -32,7 +32,6 @@ class AddOrderOfficial extends Retrieval
         $team_category_id = $parameters->get('team_category_id');
         $age_category_id = $parameters->get('age_category_id');
         $competition_category_id = $parameters->get('competition_category_id');
-        $team_name = $parameters->get('team_name');
         $participant_data = $parameters->get('participant_data');
 
         $time_now = time();
@@ -68,7 +67,7 @@ class AddOrderOfficial extends Retrieval
 
 
         // cek apakah terdapat official detail tersedia
-        $archery_event_official_detail =  ArcheryEventOfficialDetail::where('event_id', $event_id)->first();
+        $archery_event_official_detail =  ArcheryEventOfficialDetail::where('event_id', $event_id)->where("status", 1)->first();
         if (!$archery_event_official_detail) {
             throw new BLoCException("kategori official pada event ini belum di atur");
         }

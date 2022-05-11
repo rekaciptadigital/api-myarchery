@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\EventElimination;
 
-use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationSchedule;
@@ -14,7 +13,6 @@ use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventMasterCompetitionCategory;
 use App\Models\ArcheryEventParticipantMember;
-use Illuminate\Support\Carbon;
 
 class SetEventEliminationV2 extends Transactional
 {
@@ -33,19 +31,7 @@ class SetEventEliminationV2 extends Transactional
         }
 
         $score_type = 1; // 1 for type qualification
-        $event_id = $category->event_id;
 
-        $event = ArcheryEvent::find($event_id);
-        if (!$event) {
-            throw new BLoCException("event tidak ditemukan");
-        }
-
-        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
-        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
-
-        if ($new_format_event_end_datetime < Carbon::today()) {
-            throw new BLoCException('event telah selesai');
-        }
 
         $competition_category = ArcheryEventMasterCompetitionCategory::find($category->competition_category_id);
         if (!$competition_category) {
@@ -54,7 +40,10 @@ class SetEventEliminationV2 extends Transactional
 
         $match_type = $parameters->match_type;
         $scoring_type = $competition_category->scooring_accumulation_type; // 1 for point, 2 for acumalition score
-        $elimination_member_count = $parameters->get("elimination_member_count");
+        $elimination_member_count = $category->default_elimination_count;
+        if ($elimination_member_count === 0) {
+            throw new BLoCException("jumlah peserta elimination belum ditentukan");
+        }
 
         $session = [];
         for ($i = 0; $i < $category->session_in_qualification; $i++) {
@@ -62,6 +51,21 @@ class SetEventEliminationV2 extends Transactional
         }
 
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
+
+        // cek apakah total peserta yang ikut eliminasi > elimination_member_count
+        if (count($qualification_rank) < $elimination_member_count) {
+            throw new BLoCException("jumlah peserta lebih sedikit dari jumlah eliminasi");
+        }
+
+        // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
+        if (count($qualification_rank) > 0) {
+            foreach ($qualification_rank as $key => $value) {
+                if ($value["total"] === 0) {
+                    throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi");
+                }
+            }
+        }
+
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 
         // cek apakah ada yang telah melakukan shoot di eliminasi
@@ -118,7 +122,6 @@ class SetEventEliminationV2 extends Transactional
                         $elimination_member_id = $elimination_member->id;
                     }
 
-                    // print_r(json_encode($elimination_member));
                     $elimination_match = ArcheryEventEliminationMatch::where("elimination_member_id", $elimination_member_id)
                         ->where("event_elimination_id", $elimination->id)
                         ->first();
@@ -148,7 +151,6 @@ class SetEventEliminationV2 extends Transactional
     protected function validation($parameters)
     {
         return [
-            'elimination_member_count' => 'required',
             'match_type' => 'required',
             'event_category_id' => 'required|exists:archery_event_category_details,id',
         ];
