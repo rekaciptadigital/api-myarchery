@@ -14,7 +14,6 @@ use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventMasterCompetitionCategory;
 use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventParticipantNumber;
 use Illuminate\Support\Carbon;
 
 class SetEventEliminationV2 extends Transactional
