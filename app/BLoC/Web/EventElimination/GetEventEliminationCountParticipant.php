@@ -6,6 +6,7 @@ use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventElimination;
 use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventEliminationMatch;
 use DAI\Utils\Exceptions\BLoCException;
 
 class GetEventEliminationCountParticipant extends Transactional
@@ -24,25 +25,21 @@ class GetEventEliminationCountParticipant extends Transactional
             throw new BLoCException("kategori tidak ada");
         }
 
-        $event_id = $category->event_id;
-
-        $event = ArcheryEvent::find($event_id);
-        if (!$event) {
-            throw new BLoCException("event tidak ditemukan");
-        }
-
+        $respose = [];
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
-        if (!$elimination) {
-            return [];
+        if ($elimination) {
+            $respose = [
+                "elimination_id" => $elimination->id,
+                "count_participant" => $elimination->count_participant
+            ];
         }
 
+        return $respose;
     }
 
     protected function validation($parameters)
     {
         return [
-            'elimination_member_count' => 'required',
-            'match_type' => 'required',
             'event_category_id' => 'required|exists:archery_event_category_details,id',
         ];
     }
