@@ -5,8 +5,6 @@ namespace App\BLoC\Web\ArcheryScoring;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryMasterTeamCategory;
-use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
