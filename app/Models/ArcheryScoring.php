@@ -714,8 +714,8 @@ class ArcheryScoring extends Model
         });
 
         // cek apakah template telah di set atau belum
-        if ($event_elimination) {
-            $elimination_template = $event_elimination->count_participant;
+        if (!$event_elimination) {
+            $elimination_template = $category->default_elimination_count;
             $newArray = [];
             $newValue = [];
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
@@ -736,7 +736,7 @@ class ArcheryScoring extends Model
                         if (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
                             $member->update(["have_shoot_off" => 0]);
                         }
-                        
+
                         $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
                         $newValue["member"] = $value["member"];
                         $newValue["have_shoot_off"] = $member->have_shoot_off;
@@ -747,6 +747,27 @@ class ArcheryScoring extends Model
                     });
                     return $newArray;
                 }
+            } else {
+                foreach ($archery_event_score as $key => $value) {
+                    $member = ArcheryEventParticipantMember::find($value["member"]->id);
+                    if (!$member) {
+                        throw new BLoCException("member nan");
+                    }
+
+                    if ($member->have_shoot_off === 1) {
+                        $member->update(["have_shoot_off" => 0]);
+                    }
+
+
+                    $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                    $newValue["member"] = $value["member"];
+                    $newValue["have_shoot_off"] = $member->have_shoot_off;
+                    array_push($newArray, $newValue);
+                }
+                usort($newArray, function ($a, $b) {
+                    return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                });
+                return $newArray;
             }
         }
 

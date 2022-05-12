@@ -15,6 +15,7 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
@@ -106,6 +107,25 @@ $router->post('reject', function (Request $request) {
     // $city = City::find($user->address_city_id);
     // ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
     return redirect('kioheswbgcgoiwagfp');
+});
+
+$router->get("mas_adit", function () {
+    $series1 =  User::join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
+        ->where("archery_event_participants.event_id", 21)->where("archery_event_participants.status", 1)
+        ->where("archery_event_participants.type", "individual")
+        ->where("users.address_province_id", 31)->distinct()
+        ->get()->count();
+
+    $series2 =  User::join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
+        ->where("archery_event_participants.event_id", 22)->where("archery_event_participants.status", 1)
+        ->where("archery_event_participants.type", "individual")
+        ->where("users.address_province_id", 31)->distinct()
+        ->get()->count();
+
+    return [
+        "series_1" => $series1,
+        "series_2" => $series2
+    ];
 });
 
 $router->group(['prefix' => 'web'], function () use ($router) {

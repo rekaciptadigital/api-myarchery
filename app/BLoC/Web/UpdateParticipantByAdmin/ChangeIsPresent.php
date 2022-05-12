@@ -36,10 +36,10 @@ class ChangeIsPresent extends Transactional
             throw new BLoCException("participant tidak ditemukan");
         }
 
-        $event_elimination = ArcheryEventElimination::where("event_category_id", $participant->event_category_id)->first();
-        if ($event_elimination) {
-            throw new BLoCException("proses ditolak karena jumlah peserta eliminasi telah ditentukan");
-        }
+        // $event_elimination = ArcheryEventElimination::where("event_category_id", $participant->event_category_id)->first();
+        // if ($event_elimination) {
+        //     throw new BLoCException("proses ditolak karena jumlah peserta eliminasi telah ditentukan");
+        // }
 
         $participant->update([
             "is_present" => $parameters->get("is_present")
