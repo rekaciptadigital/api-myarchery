@@ -92,9 +92,18 @@ $router->get("mas_adit", function () {
         ->where("users.address_province_id", 31)->distinct()
         ->get()->count();
 
+    $irisan =  User::join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
+        ->where("archery_event_participants.event_id", 21)
+        ->where("archery_event_participants.event_id", 22)
+        ->where("archery_event_participants.status", 1)
+        ->where("archery_event_participants.type", "individual")
+        ->where("users.address_province_id", 31)->distinct()
+        ->get()->count();
+
     return [
         "series_1" => $series1,
-        "series_2" => $series2
+        "series_2" => $series2,
+        "irisan" => $irisan
     ];
 });
 
