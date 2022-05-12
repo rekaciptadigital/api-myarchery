@@ -110,21 +110,31 @@ $router->post('reject', function (Request $request) {
 });
 
 $router->get("mas_adit", function () {
-    $series1 =  User::join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
+    $series1 =  User::select("users.*")->join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
         ->where("archery_event_participants.event_id", 21)->where("archery_event_participants.status", 1)
         ->where("archery_event_participants.type", "individual")
         ->where("users.address_province_id", 31)->distinct()
-        ->get()->count();
+        ->get();
 
-    $series2 =  User::join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
+    $series2 =  User::select("users.*")->join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
         ->where("archery_event_participants.event_id", 22)->where("archery_event_participants.status", 1)
         ->where("archery_event_participants.type", "individual")
         ->where("users.address_province_id", 31)->distinct()
-        ->get()->count();
+        ->get();
+
+    $irisan = [];
+    foreach ($series1 as $key1 => $value1) {
+        foreach ($series2 as $key2 => $value2) {
+            if ($value1->id === $value2->id) {
+                array_push($irisan, $value1);
+            }
+        }
+    }
 
     return [
-        "series_1" => $series1,
-        "series_2" => $series2
+        "series_1" => $series1->count(),
+        "series_2" => $series2->count(),
+        "irisan" => count($irisan)
     ];
 });
 

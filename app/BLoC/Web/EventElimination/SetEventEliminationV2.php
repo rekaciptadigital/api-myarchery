@@ -45,6 +45,7 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("jumlah peserta elimination belum ditentukan");
         }
 
+
         $session = [];
         for ($i = 0; $i < $category->session_in_qualification; $i++) {
             $session[] = $i + 1;
@@ -52,16 +53,18 @@ class SetEventEliminationV2 extends Transactional
 
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
 
+
         // cek apakah total peserta yang ikut eliminasi > elimination_member_count
-        if (count($qualification_rank) < $elimination_member_count) {
-            throw new BLoCException("jumlah peserta lebih sedikit dari jumlah eliminasi");
-        }
+        // if (count($qualification_rank) < $elimination_member_count) {
+        //     throw new BLoCException("jumlah peserta lebih sedikit dari jumlah eliminasi");
+        // }
+
 
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
             foreach ($qualification_rank as $key => $value) {
-                if ($value["total"] === 0) {
-                    throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi");
+                if ($value["sessions"][count($session)]["total"] === 0) {
+                    throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
                 }
             }
         }
@@ -92,7 +95,7 @@ class SetEventEliminationV2 extends Transactional
         }
 
         $participant_collection_have_shoot_off = $participants_query->where("archery_event_participant_members.have_shoot_off", 1)->get();
-        if ($participant_collection_have_shoot_off->count > 0) {
+        if ($participant_collection_have_shoot_off->count() > 0) {
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
 
