@@ -64,7 +64,11 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::MakeTemplate32($members);
         }
 
-        throw new BLoCException("template belum disiapkan di backend");
+        if ($elimination_member_count == 0) {
+            throw new BLoCException("tentukan eliminasi untuk melihat bagan");
+        }
+
+        throw new BLoCException("template eliminasi tidak valid");
     }
 
     protected function getTemplate($member_matches = [], $elimination_member_count = 16)
