@@ -71,30 +71,42 @@ class SetEventEliminationV2 extends Transactional
 
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 
-        // cek apakah ada yang telah melakukan shoot di eliminasi
-        $participants_query = ArcheryEventParticipantMember::select(
-            "archery_event_participant_members.id",
-            "archery_event_participant_members.user_id",
-            "archery_event_participants.id as participant_id",
-            "archery_event_participants.event_id",
-            "archery_event_participants.is_present",
-            "archery_scorings.scoring_session",
-            "archery_scorings.type",
-            "archery_event_participant_members.have_shoot_off"
+        $query = ArcheryScoring::select(
+            "archery_event_participant_members.*",
         )
-            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->join("archery_scorings", "archery_scorings.participant_member_id", "=", "archery_event_participant_members.id")
+            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id);
 
-        $participant_collection_score_elimination = $participants_query->where("archery_scorings.type", 2)->get();
+        // cek apakah ada yang telah melakukan shoot di eliminasi
+        $participant_collection_have_shoot_off = ArcheryScoring::select(
+            "archery_event_participant_members.*",
+        )
+            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+            ->where('archery_event_participants.status', 1)
+            ->where('archery_event_participants.event_category_id', $event_category_id)
+            ->where("archery_event_participant_members.have_shoot_off", 1)
+            ->distinct()
+            ->get();
+
+        $participant_collection_score_elimination = ArcheryScoring::select(
+            "archery_event_participant_members.*",
+        )
+            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+            ->where('archery_event_participants.status', 1)
+            ->where('archery_event_participants.event_category_id', $event_category_id)
+            ->where("archery_scorings.type", 2)
+            ->distinct()
+            ->get();
 
 
         if ($participant_collection_score_elimination->count() > 0) {
             throw new BLoCException("sudah ada yang melakukan eliminasi");
         }
 
-        $participant_collection_have_shoot_off = $participants_query->where("archery_event_participant_members.have_shoot_off", 1)->get();
         if ($participant_collection_have_shoot_off->count() > 0) {
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
