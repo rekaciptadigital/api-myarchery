@@ -81,18 +81,18 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
-        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
-        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
-
-        if ($new_format_event_end_datetime < Carbon::today()) {
-            throw new BLoCException('event telah selesai');
-        }
 
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
         }
+
+        $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
+        if ($event_elimination) {
+            throw new BLoCException("tidak bisa input skor karena eliminasi telah ditentukan");
+        }
+
         if ($session != 11) {
             throw new BLoCException("sesi shoot off tidak valid");
         }
@@ -275,17 +275,16 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
-        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
-        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
-
-        if ($new_format_event_end_datetime < Carbon::today()) {
-            throw new BLoCException('event telah selesai');
-        }
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
         }
+        $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
+        if ($event_elimination) {
+            throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
+        }
+        
         if ($category->session_in_qualification < $session)
             throw new BLoCException("sesi tidak tersedia");
 
