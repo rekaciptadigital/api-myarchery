@@ -742,7 +742,7 @@ class ArcheryScoring extends Model
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
             if ($elimination_template > 0 && $participant_is_present->count() > $elimination_template) {
                 // cek apakah terdapat total point yang sama
-                if ($archery_event_score[$elimination_template - 1]["total"] > 0 && $archery_event_score[$elimination_template]["total"] > 0) {
+                if ($archery_event_score[$elimination_template - 1]["sessions"][$category->session_in_qualification]["total"] > 0 && $archery_event_score[$elimination_template]["sessions"][$category->session_in_qualification]["total"] > 0) {
                     if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
                         $total = $archery_event_score[$elimination_template - 1]["total"];
                         foreach ($archery_event_score as $key => $value) {

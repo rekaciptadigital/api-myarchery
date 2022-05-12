@@ -71,14 +71,6 @@ class SetEventEliminationV2 extends Transactional
 
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 
-        $query = ArcheryScoring::select(
-            "archery_event_participant_members.*",
-        )
-            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
-            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-            ->where('archery_event_participants.status', 1)
-            ->where('archery_event_participants.event_category_id', $event_category_id);
-
         // cek apakah ada yang telah melakukan shoot di eliminasi
         $participant_collection_have_shoot_off = ArcheryScoring::select(
             "archery_event_participant_members.*",
