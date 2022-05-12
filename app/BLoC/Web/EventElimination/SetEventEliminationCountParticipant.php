@@ -4,6 +4,7 @@ namespace App\BLoC\Web\EventElimination;
 
 use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -21,6 +22,11 @@ class SetEventEliminationCountParticipant extends Transactional
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak ada");
+        }
+
+        $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
+        if ($event_elimination) {
+            throw new BLoCException("tidak bisa mengubah peserta eliminasi karena eliminasi telah ditentukan");
         }
 
         $participants_collection = ArcheryEventParticipantMember::select(
