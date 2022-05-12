@@ -683,10 +683,6 @@ class ArcheryScoring extends Model
 
         $participants = $archery_event_participant->get();
 
-        $participant_is_present = $archery_event_participant->where("archery_event_participants.is_present", 1)->get();
-
-        $check_is_exist_have_shoot_off = $archery_event_participant->where("archery_event_participant_members.have_shoot_off", 2)->first();
-
         $category = ArcheryEventCategoryDetail::where("team_category_id", $team_category_id)
             ->where("distance_id", $distance_id)
             ->where("competition_category_id", $competition_category_id)
@@ -697,6 +693,31 @@ class ArcheryScoring extends Model
         if (!$category) {
             throw new BLoCException("CATEGORY NOT FOUND");
         }
+
+        $check_is_exist_have_shoot_off = ArcheryEventParticipantMember::select(
+            "archery_event_participant_members.id",
+            "archery_event_participant_members.name",
+            "archery_event_participant_members.have_shoot_off",
+            "archery_event_participants.is_present"
+        )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->where('archery_event_participants.status', 1)
+            ->where('archery_event_participants.event_id', $event_id)
+            ->where('archery_event_participants.event_category_id', $category->id)
+            ->where("archery_event_participants.is_present", 1)
+            ->where("archery_event_participant_members.have_shoot_off", 2)
+            ->first();
+
+        $participant_is_present = ArcheryEventParticipantMember::select(
+            "archery_event_participant_members.id",
+            "archery_event_participant_members.name",
+            "archery_event_participant_members.have_shoot_off",
+            "archery_event_participants.is_present"
+        )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->where('archery_event_participants.status', 1)
+            ->where('archery_event_participants.event_id', $event_id)
+            ->where('archery_event_participants.event_category_id', $category->id)
+            ->where("archery_event_participants.is_present", 1)
+            ->get();
 
         $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
 
@@ -719,7 +740,7 @@ class ArcheryScoring extends Model
             $newArray = [];
             $newValue = [];
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
-            if ($elimination_template > 0 && count($participant_is_present) > $elimination_template) {
+            if ($elimination_template > 0 && $participant_is_present->count() > $elimination_template) {
                 // cek apakah terdapat total point yang sama
                 if ($archery_event_score[$elimination_template - 1]["total"] > 0 && $archery_event_score[$elimination_template]["total"] > 0) {
                     if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
@@ -732,9 +753,7 @@ class ArcheryScoring extends Model
 
                             if ($value["total"] === $total) {
                                 $member->update(["have_shoot_off" => 1]);
-                            }
-
-                            if (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
+                            } elseif (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
                                 $member->update(["have_shoot_off" => 0]);
                             }
 
