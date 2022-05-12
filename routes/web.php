@@ -96,7 +96,7 @@ $router->get("mas_adit", function () {
     foreach ($series1 as $key1 => $value1) {
         foreach ($series2 as $key2 => $value2) {
             if ($value1->id === $value2->id) {
-                array_push($irisan, $value2);
+                array_push($irisan, $value1);
             }
         }
     }
