@@ -759,6 +759,8 @@ class ArcheryScoring extends Model
                                 $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
                                 if (!$scooring_session_11_member) {
                                     $member->update(["have_shoot_off" => 1]);
+                                } else {
+                                    $member->update(["have_shoot_off" => 2]);
                                 }
                             } else {
                                 $member->update(["have_shoot_off" => 0]);
