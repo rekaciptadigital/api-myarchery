@@ -29,9 +29,9 @@ class FindParticipantScoreBySchedule extends Retrieval
         $type = $parameters->type ? $parameters->type : 1;
         if ($code) {
             $code = explode("-", $parameters->code);
-            $type = $code[0];
+            $type_code = $code[0];
             $session = $code[2];
-            if ($type == 1) {
+            if ($type_code == 1) {
                 if (isset($session) && $session == 11) {
                     return $this->shootOffQualification($parameters);
                 }
@@ -66,7 +66,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->where("type", $type)
             ->first();
         $output = (object)array();
-        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) [], $session);
+        $s = isset($score) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) array(), $session);
         $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
         $output->score = $s;
         $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
