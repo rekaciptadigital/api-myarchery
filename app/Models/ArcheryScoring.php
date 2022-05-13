@@ -95,6 +95,7 @@ class ArcheryScoring extends Model
     protected function makeScoringFormat(object $scoring, $session = null)
     {
         $scores = [];
+        // print_r(json_encode($scoring));
         if (empty((array)$scoring)) {
             if ($session !== null && $session == 11) {
                 $scores = [];
@@ -117,7 +118,21 @@ class ArcheryScoring extends Model
             ];
             return $scores;
         }
+        // throw new BLoCException($session);
+        if ($session == 11) {
+            foreach ($scoring as $key => $value) {
+                // print_r(json_encode($value));
+                // $score = [];
+                // foreach ($value as $k => $v) {
+                //     $score[] = (string)$v->id;
+                // }
+                $scores[$key] = $value;
+            }
+            return $scores;
+        }
+
         foreach ($scoring as $key => $value) {
+            // throw new BLoCException("ok");
             $score = [];
             foreach ($value as $k => $v) {
                 $score[] = (string)$v->id;

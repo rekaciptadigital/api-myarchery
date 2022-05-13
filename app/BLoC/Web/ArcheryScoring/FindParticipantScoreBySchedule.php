@@ -66,7 +66,9 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->where("type", $type)
             ->first();
         $output = (object)array();
-        $s = isset($score) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) array(), $session);
+        // return (object) json_decode($score->scoring_detail);
+        // return "ok";
+        $s = isset($score) ? ArcheryScoring::makeScoringFormat((object)\json_decode($score->scoring_detail), $session) : ArcheryScoring::makeScoringFormat((object) array(), $session);
         $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
         $output->score = $s;
         $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
