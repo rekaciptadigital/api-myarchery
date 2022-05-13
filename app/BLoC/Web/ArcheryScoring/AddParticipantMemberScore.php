@@ -61,12 +61,6 @@ class AddParticipantMemberScore extends Transactional
         $participant_member_id = $code[1];
         $session = $code[2];
 
-        if ($session == 11) {
-            Validator::make($parameters->all(), [
-                "elimination_template" => "required"
-            ])->validate();
-        }
-
         $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id", "archery_event_participants.event_id")
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->where("archery_event_participants.status", 1)
