@@ -4,6 +4,7 @@ namespace App\BLoC\General\CategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventParticipant;
 use App\Models\QandA;
 use DAI\Utils\Abstracts\Retrieval;
@@ -70,6 +71,11 @@ class GetListCategoryByEventId extends Retrieval
 
         if ($list_category_collection->count() > 0) {
             foreach ($list_category_collection as $category) {
+                $event_elimination_lock = 0;
+                $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
+                if ($event_elimination) {
+                    $event_elimination_lock = 1;
+                }
                 $response["id"] = $category->id;
                 $response["event_id"] = $category->event_id;
                 $response["age_category_id"] = $category->age_category_id;
@@ -87,6 +93,7 @@ class GetListCategoryByEventId extends Retrieval
                 $response["is_early_bird"] = $category->is_early_bird;
                 $response["total_participant"] = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
                 $response["default_elimination_count"] = $category->default_elimination_count;
+                $response["elimination_lock"] = $event_elimination_lock;
 
                 array_push($output, $response);
             }

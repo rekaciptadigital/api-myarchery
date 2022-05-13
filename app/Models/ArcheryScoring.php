@@ -510,11 +510,12 @@ class ArcheryScoring extends Model
         $total_fix = $total + $total_shot_off;
         $output = [
             "sessions" => $sessions,
-            "total" => $total_fix,
+            "total_shot_off" => $total_shot_off,
+            "total" => $total,
             "total_x" => $total_per_points["x"],
             "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
-            "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total_fix) : 0,
+            "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
         ];
         return $output;
     }
@@ -693,18 +694,18 @@ class ArcheryScoring extends Model
             throw new BLoCException("CATEGORY NOT FOUND");
         }
 
-        $check_is_exist_have_shoot_off = ArcheryEventParticipantMember::select(
-            "archery_event_participant_members.id",
-            "archery_event_participant_members.name",
-            "archery_event_participant_members.have_shoot_off",
-            "archery_event_participants.is_present"
-        )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->where('archery_event_participants.status', 1)
-            ->where('archery_event_participants.event_id', $event_id)
-            ->where('archery_event_participants.event_category_id', $category->id)
-            ->where("archery_event_participants.is_present", 1)
-            ->where("archery_event_participant_members.have_shoot_off", 2)
-            ->first();
+        // $check_is_exist_have_shoot_off = ArcheryEventParticipantMember::select(
+        //     "archery_event_participant_members.id",
+        //     "archery_event_participant_members.name",
+        //     "archery_event_participant_members.have_shoot_off",
+        //     "archery_event_participants.is_present"
+        // )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+        //     ->where('archery_event_participants.status', 1)
+        //     ->where('archery_event_participants.event_id', $event_id)
+        //     ->where('archery_event_participants.event_category_id', $category->id)
+        //     ->where("archery_event_participants.is_present", 1)
+        //     ->where("archery_event_participant_members.have_shoot_off", 2)
+        //     ->first();
 
         $participant_is_present = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -730,6 +731,9 @@ class ArcheryScoring extends Model
         }
 
         usort($archery_event_score, function ($a, $b) {
+            if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+            }
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
@@ -740,8 +744,9 @@ class ArcheryScoring extends Model
             $newValue = [];
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
             if ($elimination_template > 0 && $participant_is_present->count() > $elimination_template) {
-                // cek apakah terdapat total point yang sama
+                // cek apakah archer terakhir sesuai di yang sesuai template eliminasi udah melakukan shoot secara lengkap
                 if ($archery_event_score[$elimination_template - 1]["sessions"][$category->session_in_qualification]["total"] > 0 && $archery_event_score[$elimination_template]["sessions"][$category->session_in_qualification]["total"] > 0) {
+                    // cek apakah terdapat total point yang sama
                     if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
                         $total = $archery_event_score[$elimination_template - 1]["total"];
                         foreach ($archery_event_score as $key => $value) {
@@ -751,8 +756,11 @@ class ArcheryScoring extends Model
                             }
 
                             if ($value["total"] === $total) {
-                                $member->update(["have_shoot_off" => 1]);
-                            } elseif (!$check_is_exist_have_shoot_off && $value["member"]->have_shoot_off === 1) {
+                                $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
+                                if (!$scooring_session_11_member) {
+                                    $member->update(["have_shoot_off" => 1]);
+                                }
+                            } else {
                                 $member->update(["have_shoot_off" => 0]);
                             }
 
@@ -761,7 +769,10 @@ class ArcheryScoring extends Model
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
                             array_push($newArray, $newValue);
                         }
-                        usort($newArray, function ($a, $b) {
+                        usort($archery_event_score, function ($a, $b) {
+                            if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                                return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                            }
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -784,7 +795,10 @@ class ArcheryScoring extends Model
                     $newValue["have_shoot_off"] = $member->have_shoot_off;
                     array_push($newArray, $newValue);
                 }
-                usort($newArray, function ($a, $b) {
+                usort($archery_event_score, function ($a, $b) {
+                    if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                        return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                    }
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                 });
                 return $newArray;
