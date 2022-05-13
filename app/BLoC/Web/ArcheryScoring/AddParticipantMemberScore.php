@@ -291,7 +291,6 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("scoring sudah dikunci");
 
         $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
-        $check_scoring_count = 0;
         $event_score_id = $get_score ? $get_score->id : 0;
 
         if ($event_score_id) {
