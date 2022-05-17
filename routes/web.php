@@ -12,12 +12,14 @@
 */
 
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
@@ -77,6 +79,104 @@ $router->post('reject', function (Request $request) {
     // $city = City::find($user->address_city_id);
     // ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id);
     return redirect('kioheswbgcgoiwagfp');
+});
+
+$router->get("kioheswbgcgoiwagfp/{id}/edit", function ($id) {
+    try {
+        $user = User::find($id);
+        if (!$user) {
+            throw new Exception("user not found", 404);
+        }
+        $province = Provinces::orderBy("name")->get();
+
+        $city_user = City::where("id", $user->address_city_id)->first();
+        $province_user = Provinces::where("id", $user->address_province_id)->first();
+        // return $user;
+        // return $province;
+        return view("athlete_code.change_domicile", [
+            "user" => $user,
+            "province" => $province,
+            "province_user" => $province_user,
+            "city_user" => $city_user
+        ]);
+    } catch (\Throwable $th) {
+        return response()->json([
+            "status" => "error",
+            "message" => $th->getMessage()
+        ], $th->getCode());
+    }
+});
+
+$router->put("kioheswbgcgoiwagfp/{id}", function (Request $request, $id) {
+    DB::beginTransaction();
+    try {
+        $user = User::find($id);
+        if (!$user) {
+            throw new Exception("user not found", 404);
+        }
+
+        if ($user->verify_status != 1) {
+            throw new Exception("user status not verify", 400);
+        }
+
+        if ($request->input("province") && $request->input("city")) {
+            $province = Provinces::find($request->input("province"));
+            if (!$province) {
+                throw new Exception("province not found", 404);
+            }
+
+            $city = City::find($request->input("city"));
+            if (!$city) {
+                throw new Exception("city not found", 404);
+            }
+
+            $user->address_province_id = $province->id;
+            $user->address_city_id = $city->id;
+            $user->save();
+
+            $athlete_code = ArcheryUserAthleteCode::where("user_id", $user->id)->where("status", 1)->first();
+            if (!$athlete_code) {
+                throw new Exception("code not set for this user", 404);
+            }
+
+            $athlete_code->status = 0;
+            $athlete_code->save();
+
+            if ($city->prefix == null) {
+                throw new Exception("prefix not set", 404);
+            }
+
+            ArcheryUserAthleteCode::saveAthleteCode(ArcheryUserAthleteCode::makePrefix($city->prefix), $user->id, $city->prefix);
+            $date = new DateTime();
+            $member_list = ArcheryEventParticipant::select("archery_event_participant_members.*", "archery_event_participants.event_id")
+                ->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+                ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_participant_members.user_id", $user->id)
+                ->whereDate("archery_events.event_end_datetime", ">", $date)
+                ->get();
+
+            if ($member_list->count() > 0) {
+                foreach ($member_list as $key => $value) {
+                    $member = ArcheryEventParticipantMember::find($value->id);
+                    if (!$member) {
+                        throw new Exception("member not found", 404);
+                    }
+
+                    $member->city_id = $user->address_city_id;
+                    $member->save();
+                }
+            }
+        }
+        DB::commit();
+        return redirect("kioheswbgcgoiwagfp");
+    } catch (\Throwable $th) {
+        DB::rollBack();
+        return response()->json([
+            "status" => "error",
+            "message" => $th->getMessage()
+        ]);
+    }
 });
 
 $router->get("mas_adit", function () {
