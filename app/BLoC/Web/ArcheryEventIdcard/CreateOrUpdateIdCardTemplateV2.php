@@ -47,6 +47,7 @@ class CreateOrUpdateIdCardTemplateV2 extends Transactional
         return [
             'event_id' => 'required',
             'html_template' => 'required',
+            'editor_data' => 'required'
         ];
     }
 }

@@ -272,6 +272,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
     });
 
+    // ============================================ v2 =======================================================
+
     $router->group(['prefix' => 'v2'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
@@ -312,6 +314,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
+        });
+
+        $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
         });
     });
 });

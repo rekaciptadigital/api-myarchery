@@ -104,6 +104,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryEventIdcard\CreateOrUpdateIdCardTemplateV2;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
@@ -277,6 +278,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
         $this->registerService("editArcheryEventOfficialDetail", EditArcheryEventOfficialDetail::class);
         $this->registerService("getArcheryEventOfficialDetail", GetArcheryEventOfficialDetail::class);
+
+        // ================================== id card ============================================
+        $this->registerService("createOrUpdateIdCardTemplateV2", CreateOrUpdateIdCardTemplateV2::class);
     }
 
 
