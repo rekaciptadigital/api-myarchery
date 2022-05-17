@@ -9,6 +9,8 @@ class ArcheryEventIdcardTemplate extends Model
 {
     protected $table = 'archery_event_idcard_templates';
 
+    protected $guarded = ['id'];
+
     protected function getCategoryLabel($participant_id, $user_id)
     {
         $category = DB::table('archery_event_participants')

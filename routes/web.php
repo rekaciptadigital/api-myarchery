@@ -302,6 +302,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
     });
 
+    // ============================================ v2 =======================================================
+
     $router->group(['prefix' => 'v2'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
@@ -344,23 +346,26 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
         });
 
-        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
-            $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
-        });
+        $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
+            $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+            });
 
-        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
-            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
-            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
+            $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+                $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
+            });
         });
     });
-});
 
-$router->group(['prefix' => 'eo'], function () use ($router) {
-    $router->group(['prefix' => 'v1'], function () use ($router) {
-        $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+    $router->group(['prefix' => 'eo'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+            $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
 
-            $router->group(['prefix' => 'scoring'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+                $router->group(['prefix' => 'scoring'], function () use ($router) {
+                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+                });
             });
         });
     });
