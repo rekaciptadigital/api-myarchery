@@ -5,19 +5,14 @@ namespace App\BLoC\Web\EventElimination;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
-use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventEliminationSchedule;
 use DAI\Utils\Abstracts\Transactional;
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class SetEventElimination extends Transactional
 {
@@ -46,7 +41,7 @@ class SetEventElimination extends Transactional
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
         }
-    
+
         $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
         $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
 

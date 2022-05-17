@@ -124,6 +124,10 @@ use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
 use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
+use App\BLoC\Web\EventElimination\GetEventEliminationCountParticipant;
+use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
+use App\BLoC\Web\EventElimination\SetEventEliminationV2;
+use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -272,7 +276,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================== Scorer Qualification ===============================
         $this->registerService("getParticipantScoreQualificationV2", GetParticipantScoreQualificationV2::class);
 
-        
+
         // ================================== Official v2 ================================
         $this->registerService("addArcheryEventOfficialDetail", AddArcheryEventOfficialDetail::class);
         $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
@@ -281,6 +285,12 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================== id card ============================================
         $this->registerService("createOrUpdateIdCardTemplateV2", CreateOrUpdateIdCardTemplateV2::class);
+        // ================================== participant v2 ==============================
+        $this->registerService("changeIsPresent", ChangeIsPresent::class);
+
+        // ================================== event-elimination v2 ==========================
+        $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
+        $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
     }
 
 
