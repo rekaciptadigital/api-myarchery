@@ -111,13 +111,6 @@ $router->post('reject', function (Request $request) {
 });
 
 $router->get("mas_adit", function () {
-    $user = User::where("email", "auliyanuranggraeni22@gmail.com")->first();
-    if (!$user) {
-        throw new BLoCException("user nan");
-    }
-
-    $user->password = Hash::make("12345678");
-    $user->save();
     $series1 =  User::select("users.*")->join("archery_event_participants", "archery_event_participants.user_id", "=", "users.id")
         ->where("archery_event_participants.event_id", 21)->where("archery_event_participants.status", 1)
         ->where("archery_event_participants.type", "individual")
@@ -356,14 +349,16 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
-            $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
-            });
+            $router->get('/template-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTemplateIdCardByEventIdV2']);
+        });
 
-            $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
-                $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
-            });
+        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+        });
+
+        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
         });
     });
 
