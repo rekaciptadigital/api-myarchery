@@ -81,7 +81,7 @@ $router->post('reject', function (Request $request) {
     return redirect('kioheswbgcgoiwagfp');
 });
 
-$router->get("kioheswbgcgoiwagfp/{id}/edit", function ($id) {
+$router->get("kioheswbgcgoiwagfp/{id}", function ($id) {
     try {
         $user = User::find($id);
         if (!$user) {
@@ -134,13 +134,15 @@ $router->put("kioheswbgcgoiwagfp/{id}", function (Request $request, $id) {
             $user->address_city_id = $city->id;
             $user->save();
 
-            $athlete_code = ArcheryUserAthleteCode::where("user_id", $user->id)->where("status", 1)->first();
+            $athlete_code = ArcheryUserAthleteCode::where("user_id", $user->id)
+                ->where("status", 1)
+                ->update(["status" => 0]);
             if (!$athlete_code) {
                 throw new Exception("code not set for this user", 404);
             }
 
-            $athlete_code->status = 0;
-            $athlete_code->save();
+            // $athlete_code->status = 0;
+            // $athlete_code->save();
 
             if ($city->prefix == null) {
                 throw new Exception("prefix not set", 404);
@@ -169,7 +171,7 @@ $router->put("kioheswbgcgoiwagfp/{id}", function (Request $request, $id) {
             }
         }
         DB::commit();
-        return redirect("kioheswbgcgoiwagfp");
+        return redirect("kioheswbgcgoiwagfp/" . $user->id);
     } catch (\Throwable $th) {
         DB::rollBack();
         return response()->json([
