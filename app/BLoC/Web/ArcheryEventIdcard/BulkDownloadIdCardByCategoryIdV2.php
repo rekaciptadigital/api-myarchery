@@ -11,6 +11,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryClub;
+use App\Models\ArcheryEventOfficial;
 use App\Models\User;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
@@ -55,8 +56,17 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        $participants = ArcheryEventParticipant::where("event_category_id", $category->id)->where("status", 1)->get();
-        if ($participants->isEmpty()) {
+        $official = ArcheryEventOfficial::select("archery_event_official.*")
+            ->join("archery_event_official_detail", "archery_event_official_detail.id", "=", "archery_event_official.event_official_detail_id")
+            ->where("archery_event_official.status", 1)
+            ->where("archery_event_official.team_category_id", $team_category_id)
+            ->where("archery_event_official.age_category_id", $age_category_id)
+            ->where("archery_event_official.competition_category_id", $competition_category_id)
+            ->where("archery_event_official.distance_id", $distance_id)
+            ->where("archery_event_official_detail.event_id", $event_id)
+            ->get();
+
+        if ($official->count() == 0) {
             throw new BLoCException("tidak ada partisipan");
         }
 
@@ -75,7 +85,9 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $location_and_date_event = $archery_event->location_date_event;
 
         if ($type == 1) {
-            $final_doc = $this->generateArrayParticipant($participants, $categoryLabel, $location_and_date_event, $background, $html_template, $logo);
+            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo);
+        } elseif ($type == 2) {
+            // $final_doc = $this->generateArrayOfficial();
         }
 
         $category_file = str_replace(' ', '', $categoryLabel);
@@ -102,8 +114,12 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($participants, $categoryLabel, $location_and_date_event, $background, $html_template, $logo)
+    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo)
     {
+        $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
+        if ($participants->isEmpty()) {
+            throw new BLoCException("tidak ada partisipan");
+        }
         $final_doc = [];
         foreach ($participants as $participant) {
             $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
@@ -160,4 +176,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         }
         return $final_doc;
     }
+
+    // private function generateArrayOfficial($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo)
+    // {
+    // }
 }
