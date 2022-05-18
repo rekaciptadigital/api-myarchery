@@ -31,7 +31,7 @@ class CreateOrUpdateIdCardTemplateV2 extends Transactional
         }
 
         if ($parameters->get('background_url') != null) {
-            $bacground = Upload::setPath("asset/backgroud_id_card/")->setFileName("background_id_card_" . $event_id)->setBase64($parameters->get('background_url'))->save();
+            $bacground = Upload::setPath("asset/background_id_card/")->setFileName("background_id_card_" . $event_id)->setBase64($parameters->get('background_url'))->save();
         }
 
         $id_card_template = ArcheryEventIdcardTemplate::where("event_id", $event_id)->first();
