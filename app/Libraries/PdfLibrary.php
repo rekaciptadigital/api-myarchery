@@ -74,7 +74,7 @@ class PdfLibrary
         return $base64_pdf;
     }
 
-    public static function savePdf($mpdf = null)
+    public static function savePdf($mpdf = null, $paper_size = "A4", $orientation = "L")
     {
         if ($mpdf == null) {
             $mpdf = new \Mpdf\Mpdf([
@@ -83,8 +83,8 @@ class PdfLibrary
                 'margin_top' => 2,
                 'margin_bottom' => 2,
                 'mode' => 'utf-8',
-                'format' => 'A4-L',
-                'orientation' => 'L',
+                'format' => $paper_size . '-' . $orientation,
+                'orientation' => $orientation,
                 'bleedMargin' => 0,
                 'dpi'        => 110,
                 'tempDir' => public_path() . '/tmp/pdf'

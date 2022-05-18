@@ -15,7 +15,7 @@ class ArcheryEvent extends Model
 {
     protected $appends = [
         'event_url', 'flat_categories', 'detail_city', 'event_status',
-        'detail_admin', 'more_information', "event_price"
+        'detail_admin', 'more_information', "event_price", "location_date_event"
     ];
     protected $guarded = ['id'];
 
@@ -68,6 +68,19 @@ class ArcheryEvent extends Model
         ];
 
         return $this->attributes['event_price'] = $response;
+    }
+
+    public function getLocationDateEventAttribute()
+    {
+        $datetime_start = $this->event_start_datetime;
+        $full_date_start = explode(" ", $datetime_start)[0];
+        $date_start = explode("-", $full_date_start)[2];
+
+        $end_date = date('d F Y', strtotime($this->event_end_datetime));
+
+        $response = $this->location . "," . " " . $date_start . " - " . $end_date;
+
+        return $this->attributes['location_date_event'] = $response;
     }
 
     public function getDetailCityAttribute()

@@ -104,6 +104,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadIdCardByCategoryIdV2;
 use App\BLoC\Web\ArcheryEventIdcard\CreateOrUpdateIdCardTemplateV2;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
@@ -287,6 +288,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================== id card ============================================
         $this->registerService("createOrUpdateIdCardTemplateV2", CreateOrUpdateIdCardTemplateV2::class);
         $this->registerService("getTemplateIdCardByEventIdV2", GetTemplateIdCardByEventIdV2::class);
+        $this->registerService("bulkDownloadIdCardByCategoryIdV2", BulkDownloadIdCardByCategoryIdV2::class);
 
         // ================================== participant v2 ==============================
         $this->registerService("changeIsPresent", ChangeIsPresent::class);

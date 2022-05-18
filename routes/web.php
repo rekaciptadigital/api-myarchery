@@ -350,6 +350,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
             $router->get('/template-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTemplateIdCardByEventIdV2']);
+            $router->get('/template/download-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadIdCardByCategoryIdV2']);
         });
 
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {

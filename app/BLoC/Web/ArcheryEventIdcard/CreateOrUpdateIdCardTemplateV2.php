@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryEventIdcard;
 
+use App\Libraries\Upload;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventIdcardTemplate;
 use DAI\Utils\Abstracts\Transactional;
@@ -29,15 +30,22 @@ class CreateOrUpdateIdCardTemplateV2 extends Transactional
             throw new BLoCException("forbiden");
         }
 
-        $id_card_template = ArcheryEventIdcardTemplate::updateOrCreate(
-            ['event_id' =>  $event_id],
-            [
-                'html_template' => $parameters->get('html_template'),
-                'editor_data' => $parameters->get('editor_data'),
-                'background' => $parameters->get('background'),
+        if ($parameters->get('background') != null) {
+            $bacground = Upload::setPath("asset/backgroud_id_card/")->setFileName("background_id_card_" . $event_id)->setBase64($parameters->get('background'))->save();
+        }
 
-            ]
-        );
+        $id_card_template = ArcheryEventIdcardTemplate::where("event_id", $event_id)->first();
+        if (!$id_card_template) {
+            $id_card_template = new ArcheryEventIdcardTemplate;
+        }
+
+        $id_card_template->event_id = $event_id;
+        $id_card_template->html_template =  $parameters->get('html_template');
+        $id_card_template->editor_data = $parameters->get('editor_data');
+        if ($parameters->get("background") != null) {
+            $id_card_template->background = $bacground;
+        }
+        $id_card_template->save();
 
         return $id_card_template;
     }
