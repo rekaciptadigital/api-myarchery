@@ -597,6 +597,7 @@ class ArcheryScoring extends Model
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
+            "archery_event_participant_members.have_shoot_off",
             "users.name",
             "archery_event_participant_members.user_id",
             "users.gender",
@@ -636,12 +637,16 @@ class ArcheryScoring extends Model
             $score["club_id"] = $value->club_id;
             $score["club_name"] = $value->club_name;
             $score["member"] = $value;
+            $score["have_shoot_off"] = $value->have_shoot_off;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
             $archery_event_score[] = $score;
         }
 
         if (!$orderByBudrestNumber) {
             usort($archery_event_score, function ($a, $b) {
+                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                }
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
