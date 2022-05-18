@@ -30,8 +30,8 @@ class CreateOrUpdateIdCardTemplateV2 extends Transactional
             throw new BLoCException("forbiden");
         }
 
-        if ($parameters->get('background') != null) {
-            $bacground = Upload::setPath("asset/backgroud_id_card/")->setFileName("background_id_card_" . $event_id)->setBase64($parameters->get('background'))->save();
+        if ($parameters->get('background_url') != null) {
+            $bacground = Upload::setPath("asset/backgroud_id_card/")->setFileName("background_id_card_" . $event_id)->setBase64($parameters->get('background_url'))->save();
         }
 
         $id_card_template = ArcheryEventIdcardTemplate::where("event_id", $event_id)->first();
@@ -42,7 +42,7 @@ class CreateOrUpdateIdCardTemplateV2 extends Transactional
         $id_card_template->event_id = $event_id;
         $id_card_template->html_template =  $parameters->get('html_template');
         $id_card_template->editor_data = $parameters->get('editor_data');
-        if ($parameters->get("background") != null) {
+        if ($parameters->get("background_url") != null) {
             $id_card_template->background = $bacground;
         }
         $id_card_template->save();
