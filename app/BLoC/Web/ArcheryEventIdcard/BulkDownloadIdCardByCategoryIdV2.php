@@ -77,7 +77,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status);
         } elseif ($type == 2) {
             $status = "Official";
-            $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $location_and_date_event);
+            $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status);
         }
 
         $category_file = str_replace(' ', '', $categoryLabel);
@@ -144,7 +144,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 "name" => $user->name,
                 "location_and_date" => $location_and_date_event,
                 "category" => $categoryLabel,
-                "club" => $club
+                "club" => $club,
+                "status" => $status
             ];
 
             $path = 'asset/qr_code/';
@@ -161,8 +162,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
             $final_doc[] = str_replace(
-                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64],
+                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}', '{%status%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64, $status],
                 $html_template
             );
         }
@@ -205,12 +206,12 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 "location_and_date" => $location_and_date_event,
                 "category" => $categoryLabel,
                 "club" => $club,
+                'status' => $status
             ];
 
             $path = 'asset/qr_code/';
             $qrCode = new QrCode(json_encode($value_qr_code));
             $output_qrcode = new Output\Png();
-            // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
             $qrCode_name_file = "qr_code_" . $user->id . ".png";
             $full_path = $path . $qrCode_name_file;
             $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
@@ -221,8 +222,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
             $final_doc[] = str_replace(
-                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64],
+                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}', '{%status%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64, $status],
                 $html_template
             );
         }
