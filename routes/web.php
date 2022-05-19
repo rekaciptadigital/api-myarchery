@@ -15,7 +15,7 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
