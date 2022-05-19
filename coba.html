@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>My Archery Certificate</title>
+    <style>
+      @page {
+        margin: 0px;
+      }
+
+      body {
+        
+      background-image: url({%background%});
+  
+        background-image-resize: 6; /* properti custom mpdf, mirip background-size: cover */
+        position: relative;
+        margin: 0px;
+        padding: 0px;
+        font-family: "DejaVu Sans", sans-serif;
+      }
+
+      .field-text {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        text-align: center;
+      }
+
+      .qr-code-container {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 120px;
+      }
+
+      .qr-code-centering {
+        margin: 0 auto;
+        width: 25mm;
+        height: 25mm;
+        padding: 2mm;
+        background-color: white;
+      }
+
+      .qr-code-img {
+        margin: 0;
+      }
+
+      
+      #field-player_name {
+        top: 136px;
+        
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 45px;
+        font-weight: normal;
+      }
+      
+      #field-location_and_date {
+        top: 226px;
+        
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 36px;
+        font-weight: normal;
+      }
+      
+      #field-category {
+        top: 300px;
+        
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 36px;
+        font-weight: normal;
+      }
+      
+      #field-club_member {
+        top: 300px;
+        
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 36px;
+        font-weight: normal;
+      }
+      
+      #field-status_event {
+        top: 300px;
+        
+        font-family: 'DejaVu Sans', sans-serif;
+        font-size: 36px;
+        font-weight: normal;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="field-text" id="field-player_name">Juara {%player_name%}</div>
+    <div class="field-text" id="field-location_and_date">{%location_and_date%}</div>
+    <div class="field-text" id="field-category">{%category%}</div>
+    <div class="field-text" id="field-club_member">{%club_member%}</div>
+    <div class="field-text" id="field-status_event">{%status_event%}</div>
+    
+    <div class="qr-code-container">
+      <div class="qr-code-centering">
+        <barcode
+          class="qr-code-img"
+          code="{%certificate_verify_url%}"
+          type="QR"
+          error="M"
+          class="barcode"
+          size="1"
+          disableborder="1" />
+      </div>
+    </div>
+  </body>
+</html>

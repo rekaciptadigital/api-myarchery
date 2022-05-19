@@ -16,8 +16,6 @@ use App\Models\User;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use Illuminate\Support\Facades\Auth;
-use Mpdf\QrCode\QrCode;
-use Mpdf\QrCode\Output;
 
 class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 {
@@ -80,9 +78,24 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status);
         }
 
+        $editor_data = json_decode($idcard_event->editor_data);
+        $paper_size = $editor_data->paperSize;
         $category_file = str_replace(' ', '', $categoryLabel);
         $file_name = "asset/idcard/idcard_" . $category_file . "_" . $category->id . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, "A6", "P");
+        $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, $paper_size, "P");
+
+        $number = "MA-22-91-1-001";
+        $array_number = explode("-", $number);
+        $sequence = $array_number[count($array_number) - 1];
+        $prefix = $array_number[0] . "-" . $array_number[1] . "-" . $array_number[2] . "-" . $array_number[3];
+
+        $athlete = ArcheryEventParticipantNumber::where("prefix", $prefix)->where("sequence", (int)$sequence)->first();
+
+        // return $prefix;
+        // return $athlete;
+        // return (int)$sequence;
+
+
 
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
@@ -124,46 +137,24 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $number = ArcheryEventParticipantNumber::getNumber($participant->id);
+            $number = $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
             if (!$schedule) {
                 throw new BLoCException("schedule not found");
             }
 
-            $club = ArcheryClub::find($member->club);
+            $club = ArcheryClub::find($participant->club_id);
             if (!$club) {
                 $club = '';
             } else {
                 $club = $club->name;
             }
 
-            $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
-            $value_qr_code = [
-                "name" => $user->name,
-                "location_and_date" => $location_and_date_event,
-                "category" => $categoryLabel,
-                "club" => $club,
-                "status" => $status
-            ];
-
-            $path = 'asset/qr_code/';
-            $qrCode = new QrCode(json_encode($value_qr_code));
-            $output_qrcode = new Output\Png();
-            // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-            $qrCode_name_file = "qr_code_" . $user->id . ".png";
-            $full_path = $path . $qrCode_name_file;
-            $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-            file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-            // return $type;
-            $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-            // return $data_get_qr_code;
-            $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-
             $final_doc[] = str_replace(
-                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}', '{%status%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64, $status],
+                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $number, $status],
                 $html_template
             );
         }
@@ -192,6 +183,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
+            $data_qr = $o->id;
+
             $club = ArcheryClub::find($o->club_id);
             if (!$club) {
                 $club = '';
@@ -201,29 +194,9 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
-            $value_qr_code = [
-                "name" => $user->name,
-                "location_and_date" => $location_and_date_event,
-                "category" => $categoryLabel,
-                "club" => $club,
-                'status' => $status
-            ];
-
-            $path = 'asset/qr_code/';
-            $qrCode = new QrCode(json_encode($value_qr_code));
-            $output_qrcode = new Output\Png();
-            $qrCode_name_file = "qr_code_" . $user->id . ".png";
-            $full_path = $path . $qrCode_name_file;
-            $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-            file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-            // return $type;
-            $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-            // return $data_get_qr_code;
-            $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-
             $final_doc[] = str_replace(
-                ['{%member_name%}', '{%avatar%}', '{%event_category%}', '{%club%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%qr_code%}', '{%status%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $base64, $status],
+                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
                 $html_template
             );
         }
