@@ -11,6 +11,9 @@
 |
 */
 
+use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryUserAthleteCode;
@@ -20,6 +23,7 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
@@ -374,6 +378,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
     });
 
+    // ============================================ v2 =======================================================
+
     $router->group(['prefix' => 'v2'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
@@ -415,15 +421,31 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
         });
+
+        $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
+            $router->get('/template-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTemplateIdCardByEventIdV2']);
+            $router->get('/download-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadIdCardByCategoryIdV2']);
+            $router->get('/find-id-card-by-code', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findIdCardByMmeberOrOfficialId']);
+        });
+
+        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+        });
+
+        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
+        });
     });
-});
 
-$router->group(['prefix' => 'eo'], function () use ($router) {
-    $router->group(['prefix' => 'v1'], function () use ($router) {
-        $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+    $router->group(['prefix' => 'eo'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+            $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
 
-            $router->group(['prefix' => 'scoring'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+                $router->group(['prefix' => 'scoring'], function () use ($router) {
+                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+                });
             });
         });
     });
