@@ -72,10 +72,10 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status);
+            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type);
         } elseif ($type == 2) {
             $status = "Official";
-            $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status);
+            $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type);
         }
 
         $editor_data = json_decode($idcard_event->editor_data);
@@ -83,20 +83,6 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $category_file = str_replace(' ', '', $categoryLabel);
         $file_name = "asset/idcard/idcard_" . $category_file . "_" . $category->id . ".pdf";
         $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, $paper_size, "P");
-
-        $number = "MA-22-91-1-001";
-        $array_number = explode("-", $number);
-        $sequence = $array_number[count($array_number) - 1];
-        $prefix = $array_number[0] . "-" . $array_number[1] . "-" . $array_number[2] . "-" . $array_number[3];
-
-        $athlete = ArcheryEventParticipantNumber::where("prefix", $prefix)->where("sequence", (int)$sequence)->first();
-
-        // return $prefix;
-        // return $athlete;
-        // return (int)$sequence;
-
-
-
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
             "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
@@ -117,7 +103,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status)
+    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type)
     {
         $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
         if ($participants->isEmpty()) {
@@ -137,7 +123,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $number = $member->id;
+            $qr_code_data = $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
             if (!$schedule) {
                 throw new BLoCException("schedule not found");
@@ -154,14 +140,14 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $final_doc[] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $number, $status],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status],
                 $html_template
             );
         }
         return $final_doc;
     }
 
-    private function generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status)
+    private function generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type)
     {
         $official = ArcheryEventOfficial::select("archery_event_official.*")
             ->join("archery_event_official_detail", "archery_event_official_detail.id", "=", "archery_event_official.event_official_detail_id")
@@ -183,7 +169,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $data_qr = $o->id;
+            $data_qr = $type . "-" . $o->id;
 
             $club = ArcheryClub::find($o->club_id);
             if (!$club) {
