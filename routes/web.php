@@ -23,7 +23,6 @@ use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 $router->get('kioheswbgcgoiwagfp', function () {
     $data = User::where('verify_status', 3)->get();
