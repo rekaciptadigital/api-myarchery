@@ -72,7 +72,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type);
+            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         } elseif ($type == 2) {
             $status = "Official";
             $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type);
@@ -103,7 +103,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type)
+    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id)
     {
         $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
         if ($participants->isEmpty()) {
@@ -123,7 +123,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $qr_code_data = $type . "-" . $member->id;
+            $qr_code_data = $event_id . " " . $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
             if (!$schedule) {
                 throw new BLoCException("schedule not found");
@@ -169,7 +169,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $data_qr = $type . "-" . $o->id;
+            $data_qr = $event_id . " " . $type . "-" . $o->id;
 
             $club = ArcheryClub::find($o->club_id);
             if (!$club) {
