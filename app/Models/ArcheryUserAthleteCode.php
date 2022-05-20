@@ -15,7 +15,7 @@ class ArcheryUserAthleteCode extends Model
     public static function getAthleteCode($user_id,$type = "my_archery")
     {
         $number = "";
-        $data = self::where('user_id', $user_id)->first();
+        $data = self::where('user_id', $user_id)->where("status", 1)->first();
         if ($data) {
             $number = $data->prefix . "" . self::sequenceFormatNumber($data->sequence);
         }else{

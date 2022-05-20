@@ -32,9 +32,6 @@ class GetCity extends Retrieval
             return $query->where("province_id", $province_id);
         });
 
-        if(!$city){
-            throw new BLoCException('data not found');
-        }
         return $city->orderBy('name')->limit($limit)->offset($offset)->get();
     }
 
