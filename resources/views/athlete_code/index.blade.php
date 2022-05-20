@@ -186,6 +186,11 @@
                                 null
                             @endif
                         </td>
+                        <td>
+                            <form action="/kioheswbgcgoiwagfp/{{ $d2->id }}" method="get">
+                                <input type="submit" value="Change Domisili" class="btn btn-warning">
+                            </form>
+                        </td>
                     </tr>
                 @endforeach
             @else
