@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryEventIdcard;
 
+use App\Libraries\PdfLibrary;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
@@ -58,14 +59,18 @@ class FindIdCardByMmeberOrOfficialId extends Transactional
         $logo = !empty($id_card_template->logo_event) ? $id_card_template->logo_event : "https://i.ibb.co/pXx14Zr/logo-email-archery.png";
         $html_template = base64_decode($id_card_template->html_template);
 
+        $editor_data = json_decode($id_card_template->editor_data);
+        $paper_size = $editor_data->paperSize;
+        $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
+
         if ($type == 1) {
-            $final_doc = $this->findParticipantIdcard($member_id, $type, $background, $location_and_date_event, $logo, $html_template);
+            $doc = $this->findParticipantIdcard($member_id, $type, $background, $location_and_date_event, $logo, $html_template, $paper_size, $orientation);
         } elseif ($type == 2) {
-            $final_doc = $this->findOfficialIdCard($member_id, $type, $event_id, $background, $logo, $location_and_date_event, $html_template);
+            $doc = $this->findOfficialIdCard($member_id, $type, $event_id, $background, $logo, $location_and_date_event, $html_template, $paper_size, $orientation);
         }
 
         return [
-            "base_64_html_template" => $final_doc
+            "url" => $doc,
         ];
     }
 
@@ -77,7 +82,7 @@ class FindIdCardByMmeberOrOfficialId extends Transactional
         ];
     }
 
-    private function findParticipantIdcard($member_id, $type, $background, $location_and_date_event, $logo, $html_template)
+    private function findParticipantIdcard($member_id, $type, $background, $location_and_date_event, $logo, $html_template, $paper_size, $orientation)
     {
         $status = "Peserta";
         $member = ArcheryEventParticipantMember::find($member_id);
@@ -119,12 +124,15 @@ class FindIdCardByMmeberOrOfficialId extends Transactional
             $html_template
         );
 
-        $base64_template = base64_encode($final_doc);
 
-        return $base64_template;
+        $file_name = "idcard_m_" . $member->id . ".pdf";
+
+        $generate_idcard = PdfLibrary::setFinalDoc($final_doc)->setFileName($file_name)->generateIdcard2($paper_size, $orientation);
+
+        return $generate_idcard;
     }
 
-    private function findOfficialIdCard($member_id, $type, $event_id, $background, $logo, $location_and_date_event, $html_template)
+    private function findOfficialIdCard($member_id, $type, $event_id, $background, $logo, $location_and_date_event, $html_template, $paper_size, $orientation)
     {
         $status = "Official";
         $official = ArcheryEventOfficial::find($member_id);
@@ -167,8 +175,10 @@ class FindIdCardByMmeberOrOfficialId extends Transactional
             $html_template
         );
 
-        $base64_template = base64_encode($final_doc);
+        $file_name = "idcard_o_" . $official->id . "_" . ".pdf";
 
-        return $base64_template;
+        $generate_idcard = PdfLibrary::setFinalDoc($final_doc)->setFileName($file_name)->generateIdcard2($paper_size, $orientation);
+
+        return $generate_idcard;
     }
 }
