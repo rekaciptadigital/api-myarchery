@@ -74,6 +74,42 @@ class PdfLibrary
         return $base64_pdf;
     }
 
+    public static function generateIdcard2($paper_size, $orientation)
+    {
+        $mpdf = new \Mpdf\Mpdf([
+            'margin_left' => 10,
+            'margin_right' => 0,
+            'mode' => 'utf-8',
+            'format' => $paper_size . '-' . $orientation,
+            'orientation' => $orientation,
+            'bleedMargin' => 0,
+            'dpi'        => 110,
+            'tempDir' => public_path() . '/tmp/pdf'
+        ]);
+
+
+        if (env("APP_ENV") != "production")
+            $mpdf->SetWatermarkText('EXAMPLE');
+
+        $mpdf->SetDisplayPreferences('FullScreen');
+        if (!empty(self::$array_doc)) {
+            foreach (self::$array_doc as $data) {
+                $mpdf->WriteHTML($data);
+                if (next(self::$array_doc)) {
+                    $mpdf->AddPage();
+                }
+            }
+        } else {
+            $mpdf->WriteHTML(self::$final_doc);
+        }
+        $path = "asset/idcard/";
+        $full_path = $path . self::$file_name;
+        $pdf = $mpdf->Output($full_path, "F");
+        $base64_pdf = "data:application/pdf;base64," . base64_encode($pdf);
+
+        return env('APP_HOSTNAME') . $full_path;
+    }
+
     public static function savePdf($mpdf = null, $paper_size = "A4", $orientation = "L")
     {
         if ($mpdf == null) {
