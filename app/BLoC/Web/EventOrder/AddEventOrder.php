@@ -416,8 +416,7 @@ class AddEventOrder extends Transactional
                     $q->where("archery_event_participants.status", 4);
                     $q->where("transaction_logs.expired_time", ">", $time_now);
                 });
-            })
-            ->count();
+            })->count();
 
         if ($gender_category == 'mix') {
             if ($check_register_same_category >= 2) {
@@ -431,6 +430,10 @@ class AddEventOrder extends Transactional
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
                 else
                     throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
+
+                ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
+            } else {
+                ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
             }
         } else {
             if ($check_register_same_category >= 2) {

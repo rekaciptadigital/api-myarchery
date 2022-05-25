@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -41,6 +42,49 @@ class ArcheryEventParticipant extends Model
     }
 
     return $total;
+  }
+
+  public static function checkParticipantMixteamOrder($event_id, $age_category_id, $competition_category_id, $distance_id, $club_id, $count_participant_same_category)
+  {
+    $check_individu_category_detail_male = ArcheryEventCategoryDetail::where('event_id', $event_id)
+      ->where('age_category_id', $age_category_id)
+      ->where('competition_category_id', $competition_category_id)
+      ->where('distance_id', $distance_id)
+      ->where('team_category_id', "individu male")
+      ->first();
+
+    $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_id)
+      ->where('age_category_id', $age_category_id)
+      ->where('competition_category_id', $competition_category_id)
+      ->where('distance_id', $distance_id)
+      ->where('team_category_id', "individu female")
+      ->first();
+
+    if (!$check_individu_category_detail_male || !$check_individu_category_detail_female) {
+      throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
+    }
+
+    $check_participant_male = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+      ->where("archery_event_participants.status", 1)
+      ->where('archery_event_participants.event_category_id', $check_individu_category_detail_male->id)
+      ->where('archery_event_participants.club_id', $club_id)
+      ->count();
+
+    $check_participant_female = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+      ->where("archery_event_participants.status", 1)
+      ->where('archery_event_participants.event_category_id', $check_individu_category_detail_female->id)
+      ->where('archery_event_participants.club_id', $club_id)
+      ->count();
+
+    $message_error = "untuk pendaftaran ke " . ($count_participant_same_category + 1) . " minimal harus ada " . (($count_participant_same_category + 1) * 1) . " peserta laki-laki dan peserta perempuan tedaftar dengan club ini pada kategori individu";
+
+    if ($check_participant_male < (($count_participant_same_category + 1) * 1)) {
+      throw new BLoCException($message_error);
+    }
+
+    if ($check_participant_female < (($count_participant_same_category + 1) * 1)) {
+      throw new BLoCException($message_error);
+    }
   }
 
   public static function getTotalPartisipantEventByStatus($category_detail_id, $status = 0)
