@@ -136,13 +136,6 @@ class SetEventEliminationV2 extends Transactional
                         $elimination_member_id = $elimination_member->id;
                     }
 
-                    $elimination_match = ArcheryEventEliminationMatch::where("elimination_member_id", $elimination_member_id)
-                        ->where("event_elimination_id", $elimination->id)
-                        ->first();
-                    if ($elimination_match) {
-                        $elimination_match->delete();
-                    }
-
                     $match = new ArcheryEventEliminationMatch;
                     $match->event_elimination_id = $elimination->id;
                     $match->elimination_member_id = $elimination_member_id;
