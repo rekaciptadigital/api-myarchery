@@ -104,6 +104,10 @@ use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
 use App\BLoC\Web\UpdateParticipantByAdmin\Refund;
 use App\BLoC\Web\ArcheryEventIdcard\AddUpdateArcheryEventIdCard;
+use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadIdCardByCategoryIdV2;
+use App\BLoC\Web\ArcheryEventIdcard\CreateOrUpdateIdCardTemplateV2;
+use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
+use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
@@ -281,6 +285,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getAllArcheryEventOfficial", GetAllArcheryEventOfficial::class);
         $this->registerService("editArcheryEventOfficialDetail", EditArcheryEventOfficialDetail::class);
         $this->registerService("getArcheryEventOfficialDetail", GetArcheryEventOfficialDetail::class);
+
+        // ================================== id card ============================================
+        $this->registerService("createOrUpdateIdCardTemplateV2", CreateOrUpdateIdCardTemplateV2::class);
+        $this->registerService("getTemplateIdCardByEventIdV2", GetTemplateIdCardByEventIdV2::class);
+        $this->registerService("bulkDownloadIdCardByCategoryIdV2", BulkDownloadIdCardByCategoryIdV2::class);
+        $this->registerService("findIdCardByMmeberOrOfficialId", FindIdCardByMmeberOrOfficialId::class);
 
         // ================================== participant v2 ==============================
         $this->registerService("changeIsPresent", ChangeIsPresent::class);

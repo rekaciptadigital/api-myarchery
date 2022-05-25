@@ -29,7 +29,7 @@ class AddUpdateArcheryEventIdCard extends Transactional
             $archery_event_id_card->background  = $parameters->get('background');
             $archery_event_id_card->logo_event  = $parameters->get('logo_event');
             $archery_event_id_card->save();
-        }else{
+        } else {
             $archery_event_id_card = ArcheryEventIdcardTemplate::find($archery_event_id_card[0]['id']);
             $archery_event_id_card->event_id = $parameters->get('event_id');
             $archery_event_id_card->html_template = $parameters->get('html_template');
