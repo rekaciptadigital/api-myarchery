@@ -38,6 +38,10 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("COMPETITION NAN");
         }
 
+        if ($competition_category->scooring_accumulation_type == 0) {
+            throw new BLoCException("tipe scooring kategori belum ditentukan");
+        }
+
         $match_type = $parameters->match_type;
         $scoring_type = $competition_category->scooring_accumulation_type; // 1 for point, 2 for acumalition score
         $elimination_member_count = $category->default_elimination_count;

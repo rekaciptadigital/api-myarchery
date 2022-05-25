@@ -67,6 +67,11 @@ class GetEventEliminationTemplate extends Retrieval
             foreach ($fix_members as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
                 if ($value->name != null) {
+                    $archery_scooring = ArcheryScoring::where("participant_member_id", $value->member_id)->where("type", 2)->first();
+                    $admin_total = 0;
+                    if ($archery_scooring) {
+                        $admin_total = $archery_scooring->admin_total;
+                    }
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "name" => $value->name,
@@ -75,7 +80,8 @@ class GetEventEliminationTemplate extends Retrieval
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "result" => $value->result,
-                        "status" => $value->win == 1 ? "win" : "wait"
+                        "status" => $value->win == 1 ? "win" : "wait",
+                        "admin_total" => $admin_total
                     );
                 } else {
                     $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
