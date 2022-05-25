@@ -161,13 +161,6 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
-        $carbon_event_end_datetime = Carbon::parse($event->event_end_datetime);
-        $new_format_event_end_datetime = Carbon::create($carbon_event_end_datetime->year, $carbon_event_end_datetime->month, $carbon_event_end_datetime->day, 0, 0, 0);
-
-        if ($new_format_event_end_datetime < Carbon::today()) {
-            throw new BLoCException('event telah selesai');
-        }
-
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
             "archery_event_elimination_matches.*"
@@ -182,19 +175,24 @@ class AddParticipantMemberScore extends Transactional
 
         foreach ($get_member_match as $key => $value) //check valid members 
         {
-            if ($value->win == 1)
+            if ($value->win == 1) {
                 throw new BLoCException("match have winner");
+            }
 
-            if ($value->member_id != $members[0]["member_id"] && $value->member_id != $members[1]["member_id"])
+            if ($value->member_id != $members[0]["member_id"] && $value->member_id != $members[1]["member_id"]) {
                 $valid = 0;
+            }
         }
 
-        if (!$valid)
+        if (!$valid) {
             throw new BLoCException("member tidak valid");
-        if ($get_elimination->elimination_scoring_type == 1)
+        }
+        if ($get_elimination->elimination_scoring_type == 1) {
             $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0], $members[1], $save_permanent);
-        if ($get_elimination->elimination_scoring_type == 2)
+        }
+        if ($get_elimination->elimination_scoring_type == 2) {
             $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent);
+        }
         foreach ($get_member_match as $key => $value) //check valid members 
         {
             $participant_member_id = $value->member_id;
@@ -207,8 +205,9 @@ class AddParticipantMemberScore extends Transactional
             $item_value = "archery_event_elimination_matches";
             $item_id = $value->id;
             $participant_scoring = ArcheryScoring::where("type", 2)->where("item_id", $item_id)->first();
-            if (!$participant_scoring)
+            if (!$participant_scoring) {
                 $participant_scoring = new ArcheryScoring;
+            }
             $participant_scoring->participant_member_id = $participant_member_id;
             $participant_scoring->total = $total;
             $participant_scoring->scoring_session = $session;
@@ -278,7 +277,7 @@ class AddParticipantMemberScore extends Transactional
         if ($event_elimination) {
             throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
         }
-        
+
         if ($category->session_in_qualification < $session)
             throw new BLoCException("sesi tidak tersedia");
 
