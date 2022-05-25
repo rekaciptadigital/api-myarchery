@@ -137,6 +137,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 $club = $club->name;
             }
 
+            $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
             $final_doc[] = str_replace(
