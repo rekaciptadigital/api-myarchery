@@ -229,7 +229,6 @@ class FindParticipantScoreBySchedule extends Retrieval
                 }
             } else {
                 $s = \json_decode($member_score->scoring_detail);
-                $s->member_score->admin_total;
             }
 
             $output->participant = ArcheryEventParticipantMember::memberDetail($value->member_id);
