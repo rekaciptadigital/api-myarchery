@@ -80,9 +80,10 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         $editor_data = json_decode($idcard_event->editor_data);
         $paper_size = $editor_data->paperSize;
+        $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
         $category_file = str_replace(' ', '', $categoryLabel);
         $file_name = "asset/idcard/idcard_" . $category_file . "_" . $category->id . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, $paper_size, "P");
+        $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
             "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
@@ -136,11 +137,12 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 $club = $club->name;
             }
 
-            $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
+            $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
+            $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
             $final_doc[] = str_replace(
-                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status],
+                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number],
                 $html_template
             );
         }

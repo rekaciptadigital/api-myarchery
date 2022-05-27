@@ -9,9 +9,7 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventParticipantMember;
-use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\DB;
 use DAI\Utils\Abstracts\Retrieval;
 
 class FindParticipantScoreBySchedule extends Retrieval
@@ -27,29 +25,24 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     protected function process($parameters)
     {
-        $code = $parameters->code ? $parameters->code : "";
-        $type = $parameters->type ? $parameters->type : 1;
-        if ($code) {
-            $code = explode("-", $parameters->code);
-            $type_code = $code[0];
-            $session = $code[2];
-            if ($type_code == 1) {
-                if(isset($code[3]))
-                    return $this->qualificationFullDayByBudrest($parameters);
+        $code = $parameters->get("code");
 
-                if (isset($session) && $session == 11) {
-                    return $this->shootOffQualification($parameters);
-                }
-                return $this->qualificationFullDay($parameters);
+        $array_code = explode("-", $code);
+        $type_code = $array_code[0];
+        if ($type_code == 1) {
+            if (isset($array_code[3])) {
+                return $this->qualificationFullDayByBudrest($parameters);
             }
-        }
-
-        if ($type == 1) {
-            return $this->qualification($parameters);
-        }
-
-        if ($type == 2) {
-            return $this->elimination($parameters);
+            $session = $array_code[2];
+            if ($session == 11) {
+                return $this->shootOffQualification($parameters);
+            }
+            return $this->qualificationFullDay($parameters);
+        } elseif ($type_code == 2) {
+            $elimination_id = $array_code[1];
+            $match = $array_code[2];
+            $round = $array_code[3];
+            return $this->elimination($elimination_id, $match, $round);
         }
     }
 
@@ -95,12 +88,12 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->is_updated = 1;
             if (isset($score->is_lock))
                 $output->is_updated = $score->is_lock == 1 ? 0 : 1;
-            
+
             $response[] = $output;
         }
         return $response;
     }
-    
+
     private function shootOffQualification($parameters)
     {
         $code = explode("-", $parameters->code);
@@ -119,7 +112,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->where("type", $type)
             ->first();
         $output = (object)array();
-      
+
         $s = isset($score) ? ArcheryScoring::makeScoringFormat((object)\json_decode($score->scoring_detail), $session) : ArcheryScoring::makeScoringFormat((object) array(), $session);
         $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
         $output->score = $s;
@@ -194,14 +187,19 @@ class FindParticipantScoreBySchedule extends Retrieval
         return $output;
     }
 
-    private function elimination($parameters)
+    private function elimination($elimination_id, $match, $round)
     {
-        $elimination_id = $parameters->elimination_id;
-        $match = $parameters->match;
-        $round = $parameters->round;
+        $elimination = ArcheryEventElimination::find($elimination_id);
+        if (!$elimination) {
+            throw new BLoCException("elimination belum di set");
+        }
+
+        if ($elimination->elimination_scoring_type == 0) {
+            throw new BLoCException("elimination scooring type belum ditentukan");
+        }
+
         $scores = [];
 
-        $elimination = ArcheryEventElimination::find($elimination_id);
         $members = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
             "archery_event_elimination_matches.*"
@@ -209,26 +207,34 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->join("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->where("archery_event_elimination_matches.match", $match)
             ->where("archery_event_elimination_matches.round", $round)
-            ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)->get();
+            ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
+            ->get();
 
         foreach ($members as $key => $value) {
             $output = (object)array();
-            $score = (object)array();
             $member_score = ArcheryScoring::where("item_value", "archery_event_elimination_matches")
                 ->where("item_id", $value->id)
                 ->where("participant_member_id", $value->member_id)
                 ->first();
+            $admin_total = 0;
             if (!$member_score) {
-                if ($elimination->elimination_scoring_type == 1)
+                if ($elimination->elimination_scoring_type == 1) {
                     $s = ArcheryScoring::makeEliminationScoringTypePointFormat();
-                if ($elimination->elimination_scoring_type == 2)
+                    $s['admin_total'] = $admin_total;
+                }
+
+                if ($elimination->elimination_scoring_type == 2) {
                     $s = ArcheryScoring::makeEliminationScoringTypeTotalFormat();
+                    $s['admin_total'] = $admin_total;
+                }
             } else {
                 $s = \json_decode($member_score->scoring_detail);
+                $s->$member_score->admin_total;
             }
+
             $output->participant = ArcheryEventParticipantMember::memberDetail($value->member_id);
             $output->scores = $s;
-            $output->session = $round;
+            $output->round = $round;
             $output->is_updated = 1;
             $scores[] = $output;
         }
@@ -238,6 +244,8 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            "code" => "required"
+        ];
     }
 }
