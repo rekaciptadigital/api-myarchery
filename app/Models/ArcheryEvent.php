@@ -402,12 +402,14 @@ class ArcheryEvent extends Model
 
         $detail["end_date_early_bird"] = $end_date_early_bird;
         $official_status = 0;
+        $official_fee = 0;
         $official_detail = ArcheryEventOfficialDetail::where("event_id", $data->id_event)->where("status", 1)->first();
         if ($official_detail) {
             $official_status = 1;
-            $detai["official_fee"] = $official_detail->fee;
+            $official_fee = $official_detail->fee;
         }
         $detail["official_status"] = $official_status;
+        $detail["official_fee"] = $official_fee;
         return $detail;
     }
     protected function detailEventAll($limit, $offset, $event_name = "")
