@@ -30,6 +30,9 @@ class FindParticipantScoreBySchedule extends Retrieval
         $array_code = explode("-", $code);
         $type_code = $array_code[0];
         if ($type_code == 1) {
+            if (isset($array_code[3])) {
+                return $this->qualificationFullDayByBudrest($parameters);
+            }
             $session = $array_code[2];
             if ($session == 11) {
                 return $this->shootOffQualification($parameters);
