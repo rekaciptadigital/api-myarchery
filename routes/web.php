@@ -439,6 +439,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/set-admin-total', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setAdminTotal']);
+            $router->post('/set-save-permanent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setSavePermanentElimination']);
         });
     });
 
