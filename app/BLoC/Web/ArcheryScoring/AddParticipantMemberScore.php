@@ -145,7 +145,6 @@ class AddParticipantMemberScore extends Transactional
         $type = $parameters->type;
         $save_permanent = $parameters->save_permanent;
         $members = $parameters->members;
-        // return $members[0]["scores"]["admin_total"];
         $valid = 1;
         $get_elimination = ArcheryEventElimination::find($elimination_id);
         if (!$get_elimination) {
@@ -195,9 +194,7 @@ class AddParticipantMemberScore extends Transactional
             $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent);
         }
 
-        return $calculate;
 
-        // return $members[0]["scores"]["admin_total"];
         foreach ($get_member_match as $key => $value) //check valid members 
         {
             $participant_member_id = $value->member_id;
@@ -209,27 +206,9 @@ class AddParticipantMemberScore extends Transactional
             $type = 2;
             $item_value = "archery_event_elimination_matches";
             $item_id = $value->id;
-            // return isset($calculate[$participant_member_id]["scores"]["admin_total"]);
-            // return $calculate[$participant_member_id]["scores"]["admin_total"];
             $participant_scoring = ArcheryScoring::where("type", 2)->where("item_id", $item_id)->first();
             if (!$participant_scoring) {
-                $admin_total = $total;
                 $participant_scoring = new ArcheryScoring;
-            } else {
-                $admin_total = $participant_scoring->admin_total;
-                if ($participant_scoring->total != $total) {
-                    $admin_total = $total;
-                }
-
-                if (isset($calculate[$participant_member_id]["scores"]["admin_total"])) {
-                    if ($calculate[$participant_member_id]["scores"]["admin_total"] != $admin_total) {
-                        $admin_total = $calculate[$participant_member_id]["scores"]["admin_total"];
-                    }
-
-                    if ($participant_scoring->total != $total) {
-                        $admin_total = $total;
-                    }
-                }
             }
 
             $participant_scoring->participant_member_id = $participant_member_id;
@@ -240,10 +219,9 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->item_id = $item_id;
             $participant_scoring->scoring_log = \json_encode($value);
             $participant_scoring->scoring_detail = \json_encode($scoring);
-            $participant_scoring->admin_total = $admin_total;
             $participant_scoring->save();
             $elimination_match = ArcheryEventEliminationMatch::where("id", $value->id)->first();
-            $elimination_match->result = $admin_total;
+            $elimination_match->result = $result;
             if ($save_permanent == 1) {
                 $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant, $round, $match, $win);
                 if ($champion != 0) {
