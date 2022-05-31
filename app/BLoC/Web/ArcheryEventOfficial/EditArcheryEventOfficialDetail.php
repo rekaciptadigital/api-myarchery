@@ -26,49 +26,45 @@ class EditArcheryEventOfficialDetail extends Transactional
 
     protected function process($parameters)
     {
-        
-      $admin = Auth::user();
 
-      $individual=$parameters->get('individual_quota');
-      $club=$parameters->get('club_quota');
+        $admin = Auth::user();
 
-      $official_count = ArcheryEventOfficial::countEventOfficialBooking($parameters->get('id'));
-        
+        $individual = $parameters->get('individual_quota');
+        $club = $parameters->get('club_quota');
 
-    
-      
-      if($individual !=0){
-        $quota_total= $archery_event_official_detail->individual_quota;
-        if($individual<$official_count){
-            throw new BLoCException("nilai kuota tidak bisa diedit nilainya jika kurang dari total peserta yang sudah mendaftar");
-        }
-      }else{
-            $count=ArcheryEventOfficial::select(DB::raw("COUNT(club_id) as count"))
-                    ->groupBy("archery_event_official.club_id")
-                    ->orderBy("archery_event_official.club_id","DESC")
-                    ->limit(1)
-                    ->get();
-                    
+        $official_count = ArcheryEventOfficial::countEventOfficialBooking($parameters->get('id'));
+
+
+
+
+        if ($individual != 0) {
+            if ($individual < $official_count) {
+                throw new BLoCException("nilai kuota tidak bisa diedit nilainya jika kurang dari total peserta yang sudah mendaftar");
+            }
+        } else {
+            $count = ArcheryEventOfficial::select(DB::raw("COUNT(club_id) as count"))
+                ->groupBy("archery_event_official.club_id")
+                ->orderBy("archery_event_official.club_id", "DESC")
+                ->limit(1)
+                ->get();
+
             foreach (array($count) as $key => $counting) {
                 $total = $counting[0]['count'];
             }
-            if($club<$total){
+            if ($club < $total) {
                 throw new BLoCException("nilai kuota tidak bisa diedit nilainya jika kurang dari total peserta yang sudah mendaftar");
             }
-        
-      }
-      
-      $ArcheryEventOfficialDetail = ArcheryEventOfficialDetail::find($parameters->get('id'));
+        }
 
-      $ArcheryEventOfficialDetail->event_id = $parameters->get('event_id');
-      $ArcheryEventOfficialDetail->individual_quota =  $parameters->get('individual_quota');
-      $ArcheryEventOfficialDetail->club_quota = $parameters->get('club_quota');
-      $ArcheryEventOfficialDetail->fee = $parameters->get('fee');
-      $ArcheryEventOfficialDetail->save();
+        $ArcheryEventOfficialDetail = ArcheryEventOfficialDetail::find($parameters->get('id'));
 
-      return $ArcheryEventOfficialDetail;
-        
-        
+        $ArcheryEventOfficialDetail->event_id = $parameters->get('event_id');
+        $ArcheryEventOfficialDetail->individual_quota =  $parameters->get('individual_quota');
+        $ArcheryEventOfficialDetail->club_quota = $parameters->get('club_quota');
+        $ArcheryEventOfficialDetail->fee = $parameters->get('fee');
+        $ArcheryEventOfficialDetail->save();
+
+        return $ArcheryEventOfficialDetail;
     }
     protected function validation($parameters)
     {
@@ -78,5 +74,4 @@ class EditArcheryEventOfficialDetail extends Transactional
             ]
         ];
     }
-
 }

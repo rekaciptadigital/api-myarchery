@@ -127,10 +127,14 @@ use App\BLoC\Web\ArcheryEventOfficial\AddArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetAllArcheryEventOfficial;
 use App\BLoC\Web\ArcheryEventOfficial\EditArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
+use App\BLoC\Web\ArcheryScoring\SetAdminTotal;
+use App\BLoC\Web\ArcheryScoring\SetSavePermanentElimination;
 use App\BLoC\Web\EventElimination\GetEventEliminationCountParticipant;
+use App\BLoC\Web\EventElimination\SetBudRestElimination;
 use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
+use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -237,7 +241,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
 
-        // Api v2
+        // ============================ Api v2 =======================================
         // ========================== event =================================
         $this->registerService("createArcheryEventV2", CreateArcheryEventV2::class);
         $this->registerService("updateArcheryEventV2", updateArcheryEventV2::class);
@@ -294,10 +298,16 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================== participant v2 ==============================
         $this->registerService("changeIsPresent", ChangeIsPresent::class);
+        $this->registerService("insertParticipantByAdmin", InsertParticipantByAdmin::class);
 
         // ================================== event-elimination v2 ==========================
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
+        $this->registerService("setBudRestElimination", SetBudRestElimination::class);
+
+        // ================================ scorer-elimination v2 ==================================
+        $this->registerService("setAdminTotal", SetAdminTotal::class);
+        $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
     }
 
 
