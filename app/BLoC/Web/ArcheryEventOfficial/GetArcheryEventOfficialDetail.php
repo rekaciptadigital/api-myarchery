@@ -24,7 +24,7 @@ class GetArcheryEventOfficialDetail extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
-        
+
         $official = ArcheryEventOfficialDetail::find($parameters->get('id'));
 
         if (!$official) {

@@ -35,8 +35,6 @@ class AddArcheryEventOfficialDetail extends Transactional
       }
 
       $ArcheryEventOfficialDetail->event_id = $parameters->get('event_id');
-      $ArcheryEventOfficialDetail->individual_quota =  $parameters->get('individual_quota');
-      $ArcheryEventOfficialDetail->club_quota = $parameters->get('club_quota');
       $ArcheryEventOfficialDetail->fee = $parameters->get('fee');
       $ArcheryEventOfficialDetail->save();
 
