@@ -229,7 +229,6 @@ class FindParticipantScoreBySchedule extends Retrieval
                 }
             } else {
                 $s = \json_decode($member_score->scoring_detail);
-                return $s;
                 $s->admin_total = $member_score->admin_total;
                 $s->is_different = $member_score->admin_total != $member_score->total ? 1 : 0;
             }
