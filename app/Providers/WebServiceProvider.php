@@ -133,6 +133,7 @@ use App\BLoC\Web\EventElimination\GetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
+use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -296,6 +297,7 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================== participant v2 ==============================
         $this->registerService("changeIsPresent", ChangeIsPresent::class);
+        $this->registerService("insertParticipantByAdmin", InsertParticipantByAdmin::class);
 
         // ================================== event-elimination v2 ==========================
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
