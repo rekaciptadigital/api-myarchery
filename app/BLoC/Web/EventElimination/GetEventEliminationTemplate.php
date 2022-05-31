@@ -83,7 +83,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "club" => $value->club,
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
-                        "result" => $value->result,
+                        // "result" => $value->result,
                         "total_scoring" => $value->total_scoring,
                         "status" => $value->win == 1 ? "win" : "wait",
                         "admin_total" => $admin_total,
