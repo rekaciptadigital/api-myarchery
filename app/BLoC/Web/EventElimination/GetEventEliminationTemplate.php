@@ -50,6 +50,9 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.round",
             "archery_event_elimination_matches.match",
             "archery_event_elimination_matches.win",
+            "archery_event_elimination_matches.bud_rest",
+            "archery_event_elimination_matches.target_face",
+            "archery_scorings.total as total_scoring",
             "archery_event_elimination_schedules.date",
             "archery_event_elimination_schedules.start_time",
             "archery_event_elimination_schedules.end_time"
@@ -58,6 +61,7 @@ class GetEventEliminationTemplate extends Retrieval
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
             ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->leftJoin("archery_event_elimination_schedules", "archery_event_elimination_matches.elimination_schedule_id", "=", "archery_event_elimination_schedules.id")
+            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->get();
         $qualification_rank = [];
@@ -80,8 +84,11 @@ class GetEventEliminationTemplate extends Retrieval
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "result" => $value->result,
+                        "total_scoring" => $value->total_scoring,
                         "status" => $value->win == 1 ? "win" : "wait",
-                        "admin_total" => $admin_total
+                        "admin_total" => $admin_total,
+                        "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
+                        "is_different" => $admin_total != $value->total_scoring ? 1 : 0,
                     );
                 } else {
                     $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];

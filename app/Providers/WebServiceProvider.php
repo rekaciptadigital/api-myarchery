@@ -130,6 +130,7 @@ use App\BLoC\Web\ArcheryEventOfficial\GetArcheryEventOfficialDetail;
 use App\BLoC\Web\ArcheryScoring\SetAdminTotal;
 use App\BLoC\Web\ArcheryScoring\SetSavePermanentElimination;
 use App\BLoC\Web\EventElimination\GetEventEliminationCountParticipant;
+use App\BLoC\Web\EventElimination\SetBudRestElimination;
 use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
@@ -302,6 +303,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================== event-elimination v2 ==========================
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
+        $this->registerService("setBudRestElimination", SetBudRestElimination::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
