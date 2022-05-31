@@ -430,6 +430,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+            $router->post('/insert-by-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertParticipantByAdmin']);
         });
 
         $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -439,6 +440,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/set-admin-total', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setAdminTotal']);
+            $router->post('/set-save-permanent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setSavePermanentElimination']);
         });
     });
 
