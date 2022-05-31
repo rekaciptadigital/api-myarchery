@@ -11,7 +11,7 @@ use App\Models\TransactionLog;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-
+use Illuminate\Support\Facades\Auth;
 
 class GetDetailOrderOfficial extends Retrieval
 {
@@ -22,10 +22,15 @@ class GetDetailOrderOfficial extends Retrieval
 
     protected function process($parameters)
     {
+        $user = Auth::guard('app-api')->user();
         $event_official_id = $parameters->get('event_official_id');
         $event_official = ArcheryEventOfficial::find($event_official_id);
         if (!$event_official) {
             throw new BLoCException("data pesanan tidak ditemukan");
+        }
+
+        if ($event_official->user_id != $user->id) {
+            throw new BLoCException("forbiden");
         }
 
         $club = ArcheryClub::find($event_official->club_id);
