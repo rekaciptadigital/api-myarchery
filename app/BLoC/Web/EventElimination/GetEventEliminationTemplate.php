@@ -38,7 +38,7 @@ class GetEventEliminationTemplate extends Retrieval
             $session[] = $i + 1;
         }
 
-        $fix_members = ArcheryEventEliminationMatch::select(
+        $fix_members1 = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.position_qualification",
             "users.name",
             "archery_event_participant_members.id AS member_id",
@@ -52,22 +52,21 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.bud_rest",
             "archery_event_elimination_matches.target_face",
             "archery_scorings.total as total_scoring",
-            "archery_event_elimination_schedules.date",
-            "archery_event_elimination_schedules.start_time",
-            "archery_event_elimination_schedules.end_time"
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
             ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
-            ->leftJoin("archery_event_elimination_schedules", "archery_event_elimination_matches.elimination_schedule_id", "=", "archery_event_elimination_schedules.id")
             ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
+            ->orderBy("archery_event_elimination_matches.round")
+            ->orderBy("archery_event_elimination_matches.match")
+            ->orderBy("archery_event_elimination_matches.index")
             ->get();
         $qualification_rank = [];
         $updated = true;
-        if ($fix_members->count() > 0) {
+        if ($fix_members1->count() > 0) {
             $members = [];
-            foreach ($fix_members as $key => $value) {
+            foreach ($fix_members1 as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
                 if ($value->name != null) {
                     $archery_scooring = ArcheryScoring::where("participant_member_id", $value->member_id)->where("type", 2)->first();
@@ -94,9 +93,9 @@ class GetEventEliminationTemplate extends Retrieval
                 }
             }
 
-            $fix_members = $members;
+            $fix_members2 = $members;
             $updated = false;
-            $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members, $elimination_member_count);
+            $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
         } else {
             $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
