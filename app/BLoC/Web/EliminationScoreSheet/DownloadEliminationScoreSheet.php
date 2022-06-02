@@ -49,6 +49,10 @@ class DownloadEliminationScoreSheet extends Retrieval
                 ->where('item_id', $elimination_matches_id)
                 ->first();
 
+            if (!$scoring) {
+                throw new BLoCException("data scooring not found");
+            }
+
             $detail_member = ArcheryEventParticipantMember::select(
                 'archery_event_participant_members.name as name',
                 'archery_clubs.name as club_name',
