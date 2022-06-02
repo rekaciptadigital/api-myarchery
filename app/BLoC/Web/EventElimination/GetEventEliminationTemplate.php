@@ -19,7 +19,6 @@ class GetEventEliminationTemplate extends Retrieval
 
     protected function process($parameters)
     {
-        $elimination_member_count = $parameters->get('elimination_member_count');
         $event_category_id = $parameters->get("event_category_id");
 
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
@@ -67,7 +66,6 @@ class GetEventEliminationTemplate extends Retrieval
         $qualification_rank = [];
         $updated = true;
         if ($fix_members->count() > 0) {
-            return "blok 1";
             $members = [];
             foreach ($fix_members as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
@@ -100,7 +98,6 @@ class GetEventEliminationTemplate extends Retrieval
             $updated = false;
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members, $elimination_member_count);
         } else {
-            return "blok2";
             $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         }
