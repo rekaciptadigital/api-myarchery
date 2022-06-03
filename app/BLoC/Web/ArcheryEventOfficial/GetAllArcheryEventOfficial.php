@@ -40,25 +40,26 @@ class GetAllArcheryEventOfficial extends Retrieval
 
         $official_count = ArcheryEventOfficial::countEventOfficialBooking($archery_event_official_detail->id);
 
-        $official_member = ArcheryEventOfficial::select('users.name as user_name', 'archery_clubs.name as club_name', 'users.email as email', 'users.phone_number as phone_number')
+        $official_member_query = ArcheryEventOfficial::select('users.name as user_name', 'archery_clubs.name as club_name', 'users.email as email', 'users.phone_number as phone_number')
             ->where('archery_event_official_detail.event_id', $parameters->get('event_id'))
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_official.club_id')
             ->leftJoin('users', 'users.id', '=', 'archery_event_official.user_id')
             ->leftJoin('archery_event_official_detail', 'archery_event_official_detail.id', '=', 'archery_event_official.event_official_detail_id')
-            ->where('archery_event_official.status', 1)
-            ->where(function ($query) use ($name) {
-                if (!empty($name)) {
-                    $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
-                }
-            })
-            ->get();
+            ->where('archery_event_official.status', 1);
 
-        if ($official_member->isEmpty()) {
+        // search by name
+        $official_member_query->when($name, function ($query) use ($name) {
+            return $query->whereRaw("user_name LIKE ?", ["%" . $name . "%"]);
+        });
+
+        $official_member_collection = $official_member_query->get();
+
+        if ($official_member_collection->isEmpty()) {
             throw new BLoCException("data not found");
         }
 
         $sort_number = 1;
-        foreach ($official_member as $key => $value) {
+        foreach ($official_member_collection as $key => $value) {
             $value->sort_number = $sort_number;
             $sort_number++;
         }
@@ -66,7 +67,7 @@ class GetAllArcheryEventOfficial extends Retrieval
         $data = [
             "kuota_event" => $quota,
             "sisa_kuota" => $quota - $official_count,
-            "member" => $official_member
+            "member" => $official_member_collection
         ];
 
         return $data;
