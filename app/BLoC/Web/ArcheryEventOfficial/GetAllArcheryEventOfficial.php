@@ -54,14 +54,12 @@ class GetAllArcheryEventOfficial extends Retrieval
 
         $official_member_collection = $official_member_query->get();
 
-        if ($official_member_collection->isEmpty()) {
-            throw new BLoCException("data not found");
-        }
-
-        $sort_number = 1;
-        foreach ($official_member_collection as $key => $value) {
-            $value->sort_number = $sort_number;
-            $sort_number++;
+        if ($official_member_collection->count() > 0) {
+            $sort_number = 1;
+            foreach ($official_member_collection as $key => $value) {
+                $value->sort_number = $sort_number;
+                $sort_number++;
+            }
         }
 
         $data = [
