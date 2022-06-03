@@ -40,6 +40,8 @@ class SetAdminTotal extends Retrieval
             ->where("archery_event_elimination_members.member_id", $member_id)
             ->first();
 
+        // return $elimination_match->member_id;
+
         if (!$elimination_match) {
             throw new BLoCException("elimination match tidak valid");
         }

@@ -2,16 +2,11 @@
 
 namespace App\BLoC\Web\ArcheryEventOfficial;
 
-use App\Models\User;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventOfficialDetail;
-use App\Libraries\PdfLibrary;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
-use Mpdf\Output\Destination;
-use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryEventOfficial;
 
 class GetAllArcheryEventOfficial extends Retrieval
@@ -31,42 +26,46 @@ class GetAllArcheryEventOfficial extends Retrieval
             throw new BLoCException("event not found");
         }
 
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException("forbiden");
+        }
+
         //hitung jumlah tersedia disini
         $archery_event_official_detail =  ArcheryEventOfficialDetail::where('event_id', $parameters->get('event_id'))->first();
-
-        if ($archery_event_official_detail) {
-
-            if ($archery_event_official_detail->individual_quota != 0) {
-                $quota_total = $archery_event_official_detail->individual_quota;
-            } else {
-                $quota = $archery_event_official_detail->club_quota;
-                $count = ArcheryEventOfficial::count(DB::raw('DISTINCT club_id'));
-                $quota_total = $quota * $count;
-            }
+        if (!$archery_event_official_detail) {
+            throw new BLoCException("official tidak di set di event ini");
         }
+
+        $quota = $archery_event_official_detail->quota;
 
         $official_count = ArcheryEventOfficial::countEventOfficialBooking($archery_event_official_detail->id);
 
-        $official_member = ArcheryEventOfficial::select('users.name as user_name', 'archery_clubs.name as club_name', 'users.email as email', 'users.phone_number as phone_number')
+        $official_member_query = ArcheryEventOfficial::select('users.name as user_name', 'archery_clubs.name as club_name', 'users.email as email', 'users.phone_number as phone_number')
             ->where('archery_event_official_detail.event_id', $parameters->get('event_id'))
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_official.club_id')
             ->leftJoin('users', 'users.id', '=', 'archery_event_official.user_id')
             ->leftJoin('archery_event_official_detail', 'archery_event_official_detail.id', '=', 'archery_event_official.event_official_detail_id')
-            ->where(function ($query) use ($name) {
-                if (!empty($name)) {
-                    $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
-                }
-            })
-            ->get();
+            ->where('archery_event_official.status', 1);
 
-        if ($official_member->isEmpty()) {
-            throw new BLoCException("data not found");
+        // search by name
+        $official_member_query->when($name, function ($query) use ($name) {
+            return $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
+        });
+
+        $official_member_collection = $official_member_query->get();
+
+        if ($official_member_collection->count() > 0) {
+            $sort_number = 1;
+            foreach ($official_member_collection as $key => $value) {
+                $value->sort_number = $sort_number;
+                $sort_number++;
+            }
         }
 
         $data = [
-            "kuota_event" => $quota_total,
-            "sisa_kuota" => $quota_total - $official_count,
-            "member" => $official_member
+            "kuota_event" => $quota,
+            "sisa_kuota" => $quota - $official_count,
+            "member" => $official_member_collection
         ];
 
         return $data;
