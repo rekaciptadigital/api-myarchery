@@ -35,24 +35,22 @@ class ArcheryEventOfficial extends Model
         ]);
     }
 
-    public static function countEventOfficialBooking($archery_event_official_detail_id, $club_id = "")
+    public static function countEventOfficialBooking($archery_event_official_detail_id)
     {
         $time_now = time();
 
-        return ArcheryEventOfficial::leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_official.transaction_log_id")
+        return ArcheryEventOfficial::select("archery_event_official.*")
+            ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_official.transaction_log_id")
             ->where("event_official_detail_id", $archery_event_official_detail_id)
             ->where(function ($query) use ($time_now) {
                 $query->where("archery_event_official.status", 1);
                 $query->orWhere(function ($q) use ($time_now) {
-                    $q->where("archery_event_official.status", 4);
-                    $q->where("transaction_logs.expired_time", ">", $time_now);
+                    if ("transaction_logs.expired_time" != null) {
+                        $q->where("archery_event_official.status", 4);
+                        $q->where("transaction_logs.expired_time", ">", $time_now);
+                    }
                 });
-            })
-            ->where(function ($query) use ($club_id) {
-                if (!empty($event_name)) {
-                    $query->where('archery_events.event_name', 'like', '%' . $event_name . '%');
-                }
-            })->count();
+            })->get()->count();
     }
 
     protected static function getStatusLabel($status_id)
