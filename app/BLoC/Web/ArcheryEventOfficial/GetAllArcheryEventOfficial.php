@@ -49,7 +49,7 @@ class GetAllArcheryEventOfficial extends Retrieval
 
         // search by name
         $official_member_query->when($name, function ($query) use ($name) {
-            return $query->whereRaw("user_name LIKE ?", ["%" . $name . "%"]);
+            return $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
         });
 
         $official_member_collection = $official_member_query->get();
