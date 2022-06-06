@@ -375,6 +375,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
         });
+
+        $router->group(['prefix' => 'dashboard-dos', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventScheduleDashboardDos']);
+        });
     });
 
     // ============================================ v2 =======================================================
