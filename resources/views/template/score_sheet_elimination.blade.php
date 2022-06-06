@@ -171,8 +171,14 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><?php print_r($score['point']);
-                            $point = $point + $score['point']; ?></td>
+                            @if (isset($score['point']))
+                                <td>{{ $score['point'] }}</td>
+                                @php
+                                    $point = $point + $score['point'];
+                                @endphp
+                            @else
+                                <td></td>
+                            @endif
                         </tr>
                     @endforeach
                     <tr>
@@ -218,8 +224,14 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><?php print_r($score['point']);
-                            $point = $point + $score['point']; ?></td>
+                            @if (isset($score['point']))
+                                <td>{{ $score['point'] }}</td>
+                                @php
+                                    $point = $point + $score['point'];
+                                @endphp
+                            @else
+                                <td></td>
+                            @endif
                         </tr>
                     @endforeach
                     <tr>
