@@ -158,29 +158,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 1;
-                    $point = 0; ?>
-
-                    {{-- @foreach ($score1 as $score)
-                        <tr style="border: 1px solid black;">
-                            <th>{{ $i++ }}</th>
-                            <td><?php print_r($score['score'][0]); ?></td>
-                            <td><?php print_r($score['score'][1]); ?></td>
-                            <td><?php print_r($score['score'][2]); ?></td>
-                            <td><?php print_r($score['total']); ?></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            @if (isset($score['point']))
-                                <td>{{ $score['point'] }}</td>
-                                @php
-                                    $point = $point + $score['point'];
-                                @endphp
-                            @else
-                                <td></td>
-                            @endif
-                        </tr>
-                    @endforeach --}}
 
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
@@ -249,7 +226,6 @@
 
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        {{-- <td>{{ $point }}</td> --}}
                         <td></td>
                     </tr>
                 </tbody>
@@ -278,29 +254,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 1;
-                    $point = 0; ?>
 
-                    {{-- @foreach ($score2 as $score)
-                        <tr style="border: 1px solid black;">
-                            <th>{{ $i++ }}</th>
-                            <td><?php print_r($score['score'][0]); ?></td>
-                            <td><?php print_r($score['score'][1]); ?></td>
-                            <td><?php print_r($score['score'][2]); ?></td>
-                            <td><?php print_r($score['total']); ?></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            @if (isset($score['point']))
-                                <td>{{ $score['point'] }}</td>
-                                @php
-                                    $point = $point + $score['point'];
-                                @endphp
-                            @else
-                                <td></td>
-                            @endif
-                        </tr>
-                    @endforeach --}}
+
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
                         <th>1</th>
@@ -368,7 +323,6 @@
 
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        {{-- <td>{{ $point }}</td> --}}
                         <td></td>
                     </tr>
                 </tbody>
