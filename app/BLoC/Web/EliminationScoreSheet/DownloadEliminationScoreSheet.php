@@ -7,7 +7,6 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventCertificateTemplates;
-use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Mpdf\Mpdf;
@@ -89,11 +88,6 @@ class DownloadEliminationScoreSheet extends Retrieval
             'shrink_tables_to_fit' => 1.4,
             'tempDir' => public_path() . '/tmp/pdf'
         ]);
-
-        // return [
-        //     "score_1" => $scoring[0]['shot'],
-        //     "score_2" => $scoring[1]['shot']
-        // ];
 
         $html = view('template.score_sheet_elimination', [
             'peserta1_name' => $result['name_athlete'][0], 'peserta2_name' => $result['name_athlete'][1],

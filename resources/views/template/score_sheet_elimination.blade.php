@@ -161,7 +161,7 @@
                     <?php $i = 1;
                     $point = 0; ?>
 
-                    @foreach ($score1 as $score)
+                    {{-- @foreach ($score1 as $score)
                         <tr style="border: 1px solid black;">
                             <th>{{ $i++ }}</th>
                             <td><?php print_r($score['score'][0]); ?></td>
@@ -180,10 +180,77 @@
                                 <td></td>
                             @endif
                         </tr>
-                    @endforeach
+                    @endforeach --}}
+
+                    {{-- baris 1 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 2 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 3 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 4 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        <td>{{ $point }}</td>
+                        {{-- <td>{{ $point }}</td> --}}
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -214,7 +281,7 @@
                     <?php $i = 1;
                     $point = 0; ?>
 
-                    @foreach ($score2 as $score)
+                    {{-- @foreach ($score2 as $score)
                         <tr style="border: 1px solid black;">
                             <th>{{ $i++ }}</th>
                             <td><?php print_r($score['score'][0]); ?></td>
@@ -233,10 +300,76 @@
                                 <td></td>
                             @endif
                         </tr>
-                    @endforeach
+                    @endforeach --}}
+                    {{-- baris 1 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 2 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 3 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 4 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        <td>{{ $point }}</td>
+                        {{-- <td>{{ $point }}</td> --}}
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
