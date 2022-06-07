@@ -488,6 +488,8 @@ class ArcheryScoring extends Model
             $sessions[$score->scoring_session]["score"] = $score_rambahan;
             $sessions[$score->scoring_session]["total"] = $total_per_session;
             $sessions[$score->scoring_session]["scoring_id"] = $score->id;
+            $sessions[$score->scoring_session]["total_x"] = $sessions[$score->scoring_session]["total_per_point"]["x"];
+            $sessions[$score->scoring_session]["total_x_plus_ten"] = $sessions[$score->scoring_session]["total_per_point"]["x"] + $sessions[$score->scoring_session]["total_per_point"]["10"];
         }
 
         // cek apakah member tersebut melakukan shot off atau tidak
