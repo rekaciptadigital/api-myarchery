@@ -36,25 +36,11 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             throw new BLoCException("event tidak tersedia tersedia");
         }
 
-        $status = "";
-
-        $category = ArcheryEventCategoryDetail::find($category_id);
-
-        if (!$category) {
-            throw new BLoCException("category not found");
-        }
-
-        if ($category->event_id != $archery_event->id) {
-            throw new BLoCException("forbiden");
-        }
-
         if ($archery_event->admin_id != $admin->id) {
             throw new BLoCException("forbiden");
         }
 
         $final_doc = [];
-
-        $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
 
         $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $event_id)->first();
         if (!$idcard_event) {
@@ -68,7 +54,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
+            $final_doc = $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         } elseif ($type == 2) {
             $status = "Official";
             $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
@@ -77,9 +63,9 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $editor_data = json_decode($idcard_event->editor_data);
         $paper_size = $editor_data->paperSize;
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
-        $category_file = str_replace(' ', '', $categoryLabel);
-        $file_name = "asset/idcard/idcard_" . $category_file . "_" . $category->id . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc)->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
+        $category_file = $type == 1 ? str_replace(' ', '', $final_doc['label']) : $archery_event->event_name;
+        $file_name = $type == 1 ? "asset/idcard/idcard_" . $category_file . "_" . $final_doc["category_id"] . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        $generate_idcard = PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
             "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
@@ -88,24 +74,31 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
     protected function validation($parameters)
     {
-        if ($parameters->get("type") === 1) {
-            $validator = [
-                'event_id' => 'required',
-                'type' => 'required',
-                'category_id' => "required"
-            ];
-        } else {
-            $validator = [
-                'event_id' => 'required',
-                'type' => 'required'
-            ];
+        $validator = [
+            'event_id' => 'required',
+            'type' => 'required'
+        ];
+        if ($parameters->get("type") == 1) {
+            $validator["category_id"] = 'required';
         }
 
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id)
+    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id)
     {
+        $category = ArcheryEventCategoryDetail::find($category_id);
+
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+
+        if ($category->event_id != $event_id) {
+            throw new BLoCException("forbiden");
+        }
+
+        $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
+
         $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
         if ($participants->isEmpty()) {
             throw new BLoCException("tidak ada partisipan");
@@ -140,12 +133,14 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
-            $final_doc[] = str_replace(
+            $final_doc['doc'][] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}'],
                 [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number],
                 $html_template
             );
         }
+        $final_doc["label"] = $categoryLabel;
+        $final_doc["category_id"] = $category->id;
         return $final_doc;
     }
 
@@ -158,7 +153,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             ->get();
 
         if ($official->count() == 0) {
-            throw new BLoCException("tidak ada partisipan");
+            throw new BLoCException("tidak ada data official");
         }
 
         foreach ($official as $o) {
@@ -179,8 +174,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
             $final_doc[] = str_replace(
-                ['{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
-                [$user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
+                ['{%category%}', '{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
+                ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
                 $html_template
             );
         }
