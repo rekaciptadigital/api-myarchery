@@ -88,11 +88,18 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
     protected function validation($parameters)
     {
-        $validator = [
-            'event_id' => 'required',
-            'type' => 'required',
-            'category_id' => "required"
-        ];
+        if ($parameters->get("type") === 1) {
+            $validator = [
+                'event_id' => 'required',
+                'type' => 'required',
+                'category_id' => "required"
+            ];
+        } else {
+            $validator = [
+                'event_id' => 'required',
+                'type' => 'required'
+            ];
+        }
 
         return $validator;
     }
