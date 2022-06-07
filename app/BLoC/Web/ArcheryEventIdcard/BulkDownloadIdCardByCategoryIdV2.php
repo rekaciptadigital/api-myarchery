@@ -173,7 +173,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
-            $final_doc[] = str_replace(
+            $final_doc['doc'][] = str_replace(
                 ['{%category%}', '{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
                 ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
                 $html_template
