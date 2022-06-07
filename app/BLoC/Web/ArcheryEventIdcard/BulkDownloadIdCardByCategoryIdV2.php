@@ -27,10 +27,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $team_category_id = $parameters->get('team_category_id');
-        $age_category_id = $parameters->get('age_category_id');
-        $competition_category_id = $parameters->get('competition_category_id');
-        $distance_id = $parameters->get('distance_id');
+        $category_id = $parameters->get("category_id");
         $event_id = $parameters->get('event_id');
         $type = $parameters->get("type"); // 1 untuk peserta 2 untuk official
 
@@ -41,15 +38,14 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         $status = "";
 
-        $category = ArcheryEventCategoryDetail::where('team_category_id', $team_category_id)
-            ->where("age_category_id", $age_category_id)
-            ->where("competition_category_id", $competition_category_id)
-            ->where("distance_id", $distance_id)
-            ->where("event_id", $event_id)
-            ->first();
+        $category = ArcheryEventCategoryDetail::find($category_id);
 
         if (!$category) {
             throw new BLoCException("category not found");
+        }
+
+        if ($category->event_id != $archery_event->id) {
+            throw new BLoCException("forbiden");
         }
 
         if ($archery_event->admin_id != $admin->id) {
@@ -75,7 +71,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $final_doc = $this->generateArrayParticipant($category->id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         } elseif ($type == 2) {
             $status = "Official";
-            $final_doc = $this->generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type);
+            $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
         }
 
         $editor_data = json_decode($idcard_event->editor_data);
@@ -95,10 +91,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $validator = [
             'event_id' => 'required',
             'type' => 'required',
-            'team_category_id' => 'required',
-            'age_category_id' => 'required',
-            'competition_category_id' => 'required',
-            'distance_id' => 'required'
+            'category_id' => "required"
         ];
 
         return $validator;
@@ -149,15 +142,11 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $final_doc;
     }
 
-    private function generateArrayOfficial($team_category_id, $age_category_id, $competition_category_id, $distance_id, $event_id, $categoryLabel, $location_and_date_event, $background, $html_template, $logo, $status, $type)
+    private function generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type)
     {
         $official = ArcheryEventOfficial::select("archery_event_official.*")
             ->join("archery_event_official_detail", "archery_event_official_detail.id", "=", "archery_event_official.event_official_detail_id")
             ->where("archery_event_official.status", 1)
-            ->where("archery_event_official.team_category_id", $team_category_id)
-            ->where("archery_event_official.age_category_id", $age_category_id)
-            ->where("archery_event_official.competition_category_id", $competition_category_id)
-            ->where("archery_event_official.distance_id", $distance_id)
             ->where("archery_event_official_detail.event_id", $event_id)
             ->get();
 
@@ -183,8 +172,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
             $final_doc[] = str_replace(
-                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
+                ['{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
+                [$user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
                 $html_template
             );
         }
