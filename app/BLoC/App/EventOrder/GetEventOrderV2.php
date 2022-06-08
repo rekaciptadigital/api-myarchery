@@ -46,23 +46,15 @@ class GetEventOrderV2 extends Retrieval
         $col_archery_event_official = $archery_event_official->get();
         if ($col_archery_event_official->count() > 0) {
             foreach ($col_archery_event_official as $aeo) {
-                $data['detail_order'] =[
-                    "id"=>$aeo->id,
-                    "type"=>"official"
+                $data['detail_order'] = [
+                    "id" => $aeo->id,
+                    "type" => "official"
                 ];
                 $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
-                $data['detail_event']= ArcheryEvent::select('archery_events.*')->leftJoin('archery_event_official_detail','archery_events.id','=','archery_event_official_detail.event_id')
-                                ->where('archery_event_official_detail.id',$aeo->event_official_detail_id)->get();
+                $data['detail_event'] = ArcheryEvent::select('archery_events.*')->leftJoin('archery_event_official_detail', 'archery_events.id', '=', 'archery_event_official_detail.event_id')
+                    ->where('archery_event_official_detail.id', $aeo->event_official_detail_id)->get();
                 $data['participant'] = [];
-                $category_label = $aeo->team_category_id."-".$aeo->age_category_id."-".$aeo->competition_category_id."-".$aeo->distance_id."m";
-            
-                $data['category'] = [
-                    "team_category_id"=>$aeo->team_category_id,
-                    "age_category_id"=>$aeo->age_category_id,
-                    "competition_category_id"=>$aeo->competition_category_id,
-                    "distance_id"=>$aeo->distance_id,
-                    "label"=>$category_label
-                ];
+                $category_label = $aeo->team_category_id . "-" . $aeo->age_category_id . "-" . $aeo->competition_category_id . "-" . $aeo->distance_id . "m";
                 array_push($output, $data);
             }
         }
@@ -87,21 +79,21 @@ class GetEventOrderV2 extends Retrieval
 
         if ($data_event->count() > 0) {
             foreach ($data_event as $aeo) {
-                $data['detail_order'] =[
-                    "id"=>$aeo->id,
-                    "type"=>"event"
+                $data['detail_order'] = [
+                    "id" => $aeo->id,
+                    "type" => "event"
                 ];
                 $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
-                $detail_event= ArcheryEvent::find($aeo->event_id);
+                $detail_event = ArcheryEvent::find($aeo->event_id);
                 $data['participant'] = $aeo;
-                $category_label = $aeo->team_category_id."-".$aeo->age_category_id."-".$aeo->competition_category_id."-".$aeo->distance_id."m";
-            
+                $category_label = $aeo->team_category_id . "-" . $aeo->age_category_id . "-" . $aeo->competition_category_id . "-" . $aeo->distance_id . "m";
+
                 $data['category'] = [
-                    "team_category_id"=>$aeo->team_category_id,
-                    "age_category_id"=>$aeo->age_category_id,
-                    "competition_category_id"=>$aeo->competition_category_id,
-                    "distance_id"=>$aeo->distance_id,
-                    "label"=>$category_label
+                    "team_category_id" => $aeo->team_category_id,
+                    "age_category_id" => $aeo->age_category_id,
+                    "competition_category_id" => $aeo->competition_category_id,
+                    "distance_id" => $aeo->distance_id,
+                    "label" => $category_label
                 ];
                 array_push($output, $data);
             }

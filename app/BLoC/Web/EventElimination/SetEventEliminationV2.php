@@ -13,6 +13,7 @@ use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventMasterCompetitionCategory;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryMasterTeamCategory;
 
 class SetEventEliminationV2 extends Transactional
 {
@@ -28,6 +29,11 @@ class SetEventEliminationV2 extends Transactional
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak ada");
+        }
+
+        $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
+        if (!$team_category) {
+            throw new BLoCException("team category not found");
         }
 
         $score_type = 1; // 1 for type qualification
@@ -55,9 +61,33 @@ class SetEventEliminationV2 extends Transactional
             $session[] = $i + 1;
         }
 
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
 
+        // if (strtolower($team_category->type) == "team") {
+        //     if ($team_category->id == "mix_team") {
+        //         return ArcheryScoring::mixTeamBestOfThree($category);
+        //     } else {
+        //         return ArcheryScoring::teamBestOfThree($category_detail, $team_category, $session);
+        //     }
+        // }
 
+        if (strtolower($team_category->type) == "individual") {
+            return $this->getScoringRankIndividu($event_category_id, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
+        }
+
+        return [];
+    }
+
+    protected function validation($parameters)
+    {
+        return [
+            'match_type' => 'required',
+            'event_category_id' => 'required|exists:archery_event_category_details,id',
+        ];
+    }
+
+    private function getScoringRankIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
+    {
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true);
 
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
@@ -68,8 +98,6 @@ class SetEventEliminationV2 extends Transactional
             }
         }
 
-        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
-
         // cek apakah ada yang telah melakukan shoot di eliminasi
         $participant_collection_have_shoot_off = ArcheryScoring::select(
             "archery_event_participant_members.*",
@@ -77,7 +105,7 @@ class SetEventEliminationV2 extends Transactional
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where('archery_event_participants.status', 1)
-            ->where('archery_event_participants.event_category_id', $event_category_id)
+            ->where('archery_event_participants.event_category_id', $category_id)
             ->where("archery_event_participant_members.have_shoot_off", 1)
             ->distinct()
             ->get();
@@ -88,7 +116,7 @@ class SetEventEliminationV2 extends Transactional
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where('archery_event_participants.status', 1)
-            ->where('archery_event_participants.event_category_id', $event_category_id)
+            ->where('archery_event_participants.event_category_id', $category_id)
             ->where("archery_scorings.type", 2)
             ->distinct()
             ->get();
@@ -102,15 +130,17 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
 
-        $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
-        if (!$elimination) {
-            $elimination = new ArcheryEventElimination;
-        }
+        $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 
-        $elimination->event_category_id = $event_category_id;
+        $elimination = ArcheryEventElimination::where("event_category_id", $category_id)->first();
+        if ($elimination) {
+            throw new BLoCException("elimination sudah ditentukan");
+        }
+        $elimination = new ArcheryEventElimination;
+        $elimination->event_category_id = $category_id;
         $elimination->count_participant = $elimination_member_count;
         $elimination->elimination_type = $match_type;
-        $elimination->elimination_scoring_type = $scoring_type;
+        $elimination->elimination_scoring_type = $type_scoring;
         $elimination->gender = "none";
         $elimination->save();
 
@@ -150,15 +180,31 @@ class SetEventEliminationV2 extends Transactional
                 }
             }
         }
-        ArcherySeriesUserPoint::setMemberQualificationPoint($category->id);
+        ArcherySeriesUserPoint::setMemberQualificationPoint($category_id);
+
         return $template;
     }
 
-    protected function validation($parameters)
+    private function cleanEliminationMatch($category_id)
     {
-        return [
-            'match_type' => 'required',
-            'event_category_id' => 'required|exists:archery_event_category_details,id',
-        ];
+        $elimination = ArcheryEventElimination::where('event_category_id', $category_id)->first();
+        if (!$elimination) {
+            throw new BLoCException("elimination tidak ditemukan");
+        }
+
+        $list_match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination->id)->get();
+        foreach ($list_match as $value) {
+            if ($value->elimination_member_id != 0) {
+                $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
+                if (!$member) {
+                    throw new BLoCException("member tidak ditemukan");
+                }
+                $member->delete();
+            }
+            $value->delete();
+        }
+
+        $elimination->delete();
+        return "success";
     }
 }
