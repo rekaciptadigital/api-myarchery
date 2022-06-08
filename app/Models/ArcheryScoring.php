@@ -820,14 +820,15 @@ class ArcheryScoring extends Model
         for ($i = 0; $i < $individu_session_in_qualification; $i++) {
             $session[] = $i + 1;
         }
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($individu_category_id, 1, $session);
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($individu_category_id, 1, $session, false, null, true);
         $session = [];
         $participant_club = [];
         $sequence_club = [];
         $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")
             ->where("event_category_id", $team_category_id)
             ->where("status", 1)
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
+            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+            ->get();
         foreach ($participants as $key => $value) {
             $club_members = [];
             $total_per_point = self::ArcheryScoringDetailPoint();

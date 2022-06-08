@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use DAI\Utils\Exceptions\BLoCException;
+
 class EliminationFormat
 {
     static $match_potition = [
@@ -1171,5 +1173,171 @@ class EliminationFormat
         ]];
 
         return [$match_1, $match_2, $match_3, $match_4];
+    }
+
+    public static function MakeTemplate8Team($team_club = [])
+    {
+        $elimination_team_count = 8;
+        $team_coll = [];
+        $team_club = array_slice($team_club, 0, $elimination_team_count);
+        // error_log(\json_encode($members_coll[1]["member"]));
+        // print_r(json_encode($team_club));
+        // throw new BLoCException("ok");
+        for ($i = 0; $i < $elimination_team_count; $i++) {
+            if (isset($team_club[$i])) {
+                $arr = collect($team_club[$i]);
+                $arr["postition"] = $i + 1;
+                $arr["win"] = 0;
+                $team_coll[$i] = $arr;
+            } else
+                $team_coll[$i] = [];
+        }
+        $teams = [];
+        foreach (self::$match_potition[$elimination_team_count] as $key => $value) {
+            $team = [];
+            foreach ($value as $k => $v) {
+                $i = $v - 1;
+                $team[] = isset($team_coll[$i]) ? $team_coll[$i] : [];
+            }
+            $teams[] = $team;
+        }
+        $teams_2[0] = [[], []];
+        $teams_2[1] = [[], []];
+
+        $teams_3[0] = [[], []];
+
+        $teams_4[0] = [[], []];
+
+        // round 1 match 1
+        if (isset($teams[0][0]["participant_id"]) && !isset($teams[0][1]["participant_id"])) {
+            $teams_2[0][0] = collect($teams[0][0]);
+            $teams[0][0]["win"] = 1;
+            $teams_2[0][0]["win"] = 0;
+        }
+        if (isset($teams[0][0]["participant_id"]) && isset($teams[0][1]["participant_id"])) {
+            $teams_2[0][0]["status"] = "wait";
+        }
+        if (!isset($teams[0][0]["participant_id"]) && isset($teams[0][1]["participant_id"])) {
+            $teams[0][1]["win"] = 1;
+            $teams_2[0][0] = collect($teams[0][1]);
+            $teams_2[0][0]["win"] = 0;
+        }
+
+        // round 1 match 2
+        if (isset($teams[1][0]["participant_id"]) && !isset($teams[1][1]["participant_id"])) {
+            $teams[1][0]["win"] = 1;
+            $teams_2[0][1] = collect($teams[1][0]);
+            $teams_2[0][1]["win"] = 0;
+        }
+        if (!isset($teams[1][0]["participant_id"]) && isset($teams[1][1]["participant_id"])) {
+            $teams[1][1]["win"] = 1;
+            $teams_2[0][1] = collect($teams[1][1]);
+            $teams_2[0][1]["win"] = 0;
+        }
+        if (isset($teams[1][0]["participant_id"]) && isset($teams[1][1]["participant_id"])) {
+            $teams_2[0][1]["status"] = "wait";
+        }
+
+        // round 1 match 3
+        if (isset($teams[2][0]["participant_id"]) && !isset($teams[2][1]["participant_id"])) {
+            $teams[2][0]["win"] = 1;
+            $teams_2[1][0] = collect($teams[2][0]);
+            $teams_2[1][0]["win"] = 0;
+        }
+        if (!isset($teams[2][0]["participant_id"]) && isset($teams[2][1]["participant_id"])) {
+            $teams[2][1]["win"] = 1;
+            $teams_2[1][0] = collect($teams[2][1]);
+            $teams_2[1][0]["win"] = 0;
+        }
+        if (isset($teams[2][0]["participant_id"]) && isset($teams[2][1]["participant_id"])) {
+            $teams_2[1][0]["status"] = "wait";
+        }
+
+        // round 1 match 4
+        if (isset($teams[3][0]["participant_id"]) && !isset($teams[3][1]["participant_id"])) {
+            $teams[3][0]["win"] = 1;
+            $teams_2[1][1] = collect($teams[3][0]);
+        }
+        if (!isset($teams[3][0]["participant_id"]) && isset($teams[3][1]["participant_id"])) {
+            $teams[3][1]["win"] = 1;
+            $teams_2[1][1] = collect($teams[3][1]);
+            $teams_2[1][1]["win"] = 0;
+        }
+        if (isset($teams[3][0]["participant_id"]) && isset($teams[3][1]["participant_id"])) {
+            $teams_2[1][1]["status"] = "wait";
+        }
+
+        // round 2 match 1
+        if (isset($teams_2[0][0]["participant_id"]) && !isset($teams_2[0][1]["participant_id"]) && !isset($teams_2[0][1]["status"])) {
+            $teams_2[0][0]["win"] = 1;
+            $teams_3[0][0] = collect($teams_2[0][0]);
+            $teams_3[0][0]["win"] = 0;
+        }
+        if (!isset($teams_2[0][0]["status"]) && !isset($teams_2[0][0]["participant_id"]) && isset($teams_2[0][1]["participant_id"])) {
+            $teams_2[0][1]["win"] = 1;
+            $teams_3[0][0] = collect($teams_2[0][1]);
+            $teams_3[0][0]["win"] = 0;
+        }
+        if (isset($teams_2[0][0]["participant_id"]) && isset($teams_2[0][1]["participant_id"])) {
+            $teams_3[0][0]["status"] = "wait";
+        }
+
+        // round 2 match 2
+        if (isset($teams_2[1][0]["participant_id"]) && !isset($teams_2[1][1]["participant_id"]) && !isset($teams_2[1][1]["status"])) {
+            $teams_2[1][0]["win"] = 1;
+            $teams_3[0][1] = collect($teams_2[1][0]);
+            $teams_3[0][1]["win"] = 0;
+        }
+        if (!isset($teams_2[1][0]["status"]) && !isset($teams_2[1][0]["participant_id"]) && isset($teams_2[1][1]["participant_id"])) {
+            $teams_2[1][1]["win"] = 1;
+            $teams_3[0][1] = collect($teams_2[1][1]);
+            $teams_3[0][1]["win"] = 0;
+        }
+        if (isset($teams_2[1][0]["participant_id"]) && isset($teams_2[1][1]["participant_id"])) {
+            $teams_3[0][1]["status"] = "wait";
+        }
+
+        // round 3 match 1
+        if (isset($teams_3[0][0]["participant_id"]) && !isset($teams_3[0][1]["participant_id"]) && !isset($teams_3[0][1]["status"])) {
+            $teams_3[0][0]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][0]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
+            $teams_3[0][1]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][1]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
+            $teams_4[0][0]["status"] = "wait";
+        }
+
+        $match_1 = ["round" => "round 1", "seeds" => [
+            ["teams" => $teams[0]],
+            ["teams" => $teams[1]],
+            ["teams" => $teams[2]],
+            ["teams" => $teams[3]],
+        ]];
+
+        $match_2 = ["round" => "round 2", "seeds" => [
+            ["teams" => $teams_2[0]],
+            ["teams" => $teams_2[1]],
+        ]];
+        $match_3 = ["round" => "gold", "seeds" => [
+            ["teams" => $teams_3[0]],
+        ]];
+        $match_4 = ["round" => "bronze", "seeds" => [
+            ["teams" => $teams_4[0]],
+        ]];
+
+        return [$match_1, $match_2, $match_3, $match_4];
+    }
+
+    public static function MakeTemplate16Team($team = [])
+    {
+    }
+
+    public static function MakeTemplate32Team($team = [])
+    {
     }
 }

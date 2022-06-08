@@ -62,16 +62,16 @@ class SetEventEliminationV2 extends Transactional
         }
 
 
-        // if (strtolower($team_category->type) == "team") {
-        //     if ($team_category->id == "mix_team") {
-        //         return ArcheryScoring::mixTeamBestOfThree($category);
-        //     } else {
-        //         return ArcheryScoring::teamBestOfThree($category_detail, $team_category, $session);
-        //     }
-        // }
+        if (strtolower($team_category->type) == "team") {
+            if ($team_category->id == "mix_team") {
+                // return ArcheryScoring::mixTeamBestOfThree($category);
+            } else {
+                return $this->makeTemplateTeam($team_category->id, $category, $elimination_member_count);
+            }
+        }
 
         if (strtolower($team_category->type) == "individual") {
-            return $this->getScoringRankIndividu($event_category_id, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
+            return $this->makeTemplateIndividu($event_category_id, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
         }
 
         return [];
@@ -85,7 +85,7 @@ class SetEventEliminationV2 extends Transactional
         ];
     }
 
-    private function getScoringRankIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
+    private function makeTemplateIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
     {
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true);
 
@@ -206,5 +206,76 @@ class SetEventEliminationV2 extends Transactional
 
         $elimination->delete();
         return "success";
+    }
+
+    private function makeTemplateTeam($group, $category_team, $elimination_member_count)
+    {
+        if ($group == "mix_team") {
+        } else {
+            $team_cat = ($group) == "male_team" ? "individu male" : "individu female";
+            $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)
+                ->where("age_category_id", $category_team->age_category_id)
+                ->where("competition_category_id", $category_team->competition_category_id)
+                ->where("distance_id", $category_team->distance_id)
+                ->where("team_category_id", $team_cat)
+                ->first();
+
+            if (!$category_detail_individu) {
+                throw new BLoCException("category individu tidak ditemukan");
+            }
+
+            $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category_team->id);
+            $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
+        }
+
+        $elimination = ArcheryEventElimination::where("event_category_id", $category_id)->first();
+        if ($elimination) {
+            throw new BLoCException("elimination sudah ditentukan");
+        }
+        $elimination = new ArcheryEventElimination;
+        $elimination->event_category_id = $category_id;
+        $elimination->count_participant = $elimination_member_count;
+        $elimination->elimination_type = $match_type;
+        $elimination->elimination_scoring_type = $type_scoring;
+        $elimination->gender = "none";
+        $elimination->save();
+
+        foreach ($template as $key => $value) {
+            foreach ($value["seeds"] as $k => $v) {
+                foreach ($v["teams"] as $i => $team) {
+                    $elimination_member_id = 0;
+                    $member_id = isset($team["id"]) ? $team["id"] : 0;
+                    $thread = $k;
+                    $position_qualification = isset($team["postition"]) ? $team["postition"] : 0;
+                    if ($member_id != 0) {
+                        $em = ArcheryEventEliminationMember::where("member_id", $member_id)->first();
+                        if ($em) {
+                            $elimination_member = $em;
+                        } else {
+                            $elimination_member = new ArcheryEventEliminationMember;
+                            $elimination_member->thread = $thread;
+                            $elimination_member->member_id = $member_id;
+                            $elimination_member->position_qualification = $position_qualification;
+                            $elimination_member->save();
+                        }
+                        $elimination_member_id = $elimination_member->id;
+                    }
+
+                    $match = new ArcheryEventEliminationMatch;
+                    $match->event_elimination_id = $elimination->id;
+                    $match->elimination_member_id = $elimination_member_id;
+                    $match->elimination_schedule_id = 0;
+                    $match->round = $key + 1;
+                    $match->match = $k + 1;
+                    $match->index = $i;
+                    if (isset($team["win"]))
+                        $match->win = $team["win"];
+
+                    $match->gender = "none";
+                    $match->save();
+                }
+            }
+        }
+        return $template;
     }
 }

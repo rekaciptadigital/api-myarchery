@@ -74,15 +74,15 @@ class ArcheryEventEliminationSchedule extends Model
     protected function makeTemplateTeam($team = [], $elimination_team_count = 16)
     {
         if ($elimination_team_count == 16) {
-            return EliminationFormat::MakeTemplate16($team);
+            return EliminationFormat::MakeTemplate16Team($team);
         }
 
         if ($elimination_team_count == 8) {
-            return EliminationFormat::MakeTemplate8($team);
+            return EliminationFormat::MakeTemplate8Team($team);
         }
 
         if ($elimination_team_count == 32) {
-            return EliminationFormat::MakeTemplate32($team);
+            return EliminationFormat::MakeTemplate32Team($team);
         }
 
         if ($elimination_team_count == 0) {
