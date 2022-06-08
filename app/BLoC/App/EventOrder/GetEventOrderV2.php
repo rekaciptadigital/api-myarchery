@@ -54,7 +54,8 @@ class GetEventOrderV2 extends Retrieval
                 ];
                 $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
                 $data['detail_event'] = ArcheryEvent::select('archery_events.*')->leftJoin('archery_event_official_detail', 'archery_events.id', '=', 'archery_event_official_detail.event_id')
-                    ->where('archery_event_official_detail.id', $aeo->event_official_detail_id)->get();
+                    ->where('archery_event_official_detail.id', $aeo->event_official_detail_id)
+                    ->first();
                 $data['participant'] = [];
 
                 array_push($output, $data);
