@@ -144,8 +144,6 @@ class GetEventEliminationTemplate extends Retrieval
             $elimination_id = $elimination->id;
         }
 
-
-        $score_type = 1; // 1 for type qualification
         $session = [];
         for ($i = 0; $i < $category_team->session_in_qualification; $i++) {
             $session[] = $i + 1;
