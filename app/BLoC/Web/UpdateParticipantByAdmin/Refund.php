@@ -186,17 +186,16 @@ class Refund extends Transactional
 
         $member_number_prefix =  ArcheryEventParticipantMemberNumber::where("user_id", $participant_memmber->user_id)
             ->where("event_id", $participant->event_id)->first();
-        if (!$member_number_prefix) {
-            throw new BLoCException("member number tidak ditemukan");
+        if ($member_number_prefix) {
+            $member_number_prefix->delete();
+            // throw new BLoCException("member number tidak ditemukan");
         }
-        $member_number_prefix->delete();
 
         $participant_number = ArcheryEventParticipantNumber::where("participant_id", $participant->id)->first();
-        if (!$participant_number) {
-            throw new BLoCException("participant number tidak ditemukan");
+        if ($participant_number) {
+            $participant_number->delete();
+            // throw new BLoCException("participant number tidak ditemukan");
         }
-
-        $participant_number->delete();
 
         return $participant;
     }
