@@ -20,6 +20,7 @@ class CreateTableForEliminationGroup extends Migration
             $table->text("scoring_detail")->nullable();
             $table->text("scoring_log")->nullable();
             $table->integer("admin_total")->default(0);
+            $table->integer("result")->default(0);
             $table->unique(['participant_id', 'elimination_match_group_id'], "scoring_elimination_unique");
             $table->timestamps();
         });
@@ -44,21 +45,21 @@ class CreateTableForEliminationGroup extends Migration
             $table->increments('id');
             $table->integer("participant_id")->unique();
             $table->integer("thread")->index();
+            $table->integer("position");
             $table->timestamps();
         });
 
         Schema::create('archery_event_elimination_group_match', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer("elimination_group_id");
-            $table->integer("group_team_id");
-            $table->integer("round");
-            $table->integer("match");
-            $table->integer("win");
+            $table->integer("elimination_group_id")->index();
+            $table->integer("group_team_id")->index();
+            $table->integer("round")->index();
+            $table->integer("match")->index();
+            $table->integer("win")->default(0);
             $table->integer("index")->index();
             $table->integer("result");
             $table->integer("bud_rest");
             $table->integer("target_face");
-            $table->unique(['elimination_group_id', 'group_team_id', 'round', 'match'], "participant_member_elimination_unique");
             $table->timestamps();
         });
     }
@@ -70,6 +71,10 @@ class CreateTableForEliminationGroup extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('table_for_elimination_group');
+        Schema::dropIfExists('archery_scoring_elimination_group');
+        Schema::dropIfExists('archery_event_elimination_group');
+        Schema::dropIfExists('archery_event_elimination_group_member_team');
+        Schema::dropIfExists('archery_event_elimination_group_teams');
+        Schema::dropIfExists('archery_event_elimination_group_match');
     }
 }

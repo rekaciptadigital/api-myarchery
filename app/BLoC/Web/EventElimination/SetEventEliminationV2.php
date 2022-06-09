@@ -7,6 +7,10 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationSchedule;
 use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupMemberTeam;
+use App\Models\ArcheryEventEliminationGroupTeams;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcherySeriesUserPoint;
@@ -63,18 +67,14 @@ class SetEventEliminationV2 extends Transactional
 
 
         if (strtolower($team_category->type) == "team") {
-            if ($team_category->id == "mix_team") {
-                // return ArcheryScoring::mixTeamBestOfThree($category);
-            } else {
-                return $this->makeTemplateTeam($team_category->id, $category, $elimination_member_count);
-            }
+            return $this->makeTemplateTeam($team_category->id, $category, $elimination_member_count, $scoring_type);
         }
 
         if (strtolower($team_category->type) == "individual") {
             return $this->makeTemplateIndividu($event_category_id, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
         }
 
-        return [];
+        throw new BLoCException("gagal membuat template");
     }
 
     protected function validation($parameters)
@@ -197,7 +197,7 @@ class SetEventEliminationV2 extends Transactional
             if ($value->elimination_member_id != 0) {
                 $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
                 if (!$member) {
-                    throw new BLoCException("member tidak ditemukan");
+                    throw new BLoCException("member not found");
                 }
                 $member->delete();
             }
@@ -208,9 +208,11 @@ class SetEventEliminationV2 extends Transactional
         return "success";
     }
 
-    private function makeTemplateTeam($group, $category_team, $elimination_member_count)
+    private function makeTemplateTeam($group, $category_team, $elimination_member_count, $scoring_type)
     {
         if ($group == "mix_team") {
+            $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
+            $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         } else {
             $team_cat = ($group) == "male_team" ? "individu male" : "individu female";
             $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)
@@ -228,50 +230,59 @@ class SetEventEliminationV2 extends Transactional
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }
 
-        $elimination = ArcheryEventElimination::where("event_category_id", $category_id)->first();
-        if ($elimination) {
+        if (count($lis_team) > 0) {
+            foreach ($lis_team as $value1) {
+                if (count($value1["teams"]) > 0) {
+                    foreach ($value1["teams"] as $value2) {
+                        ArcheryEventEliminationGroupMemberTeam::create([
+                            "participant_id" => $value1["participant_id"],
+                            "member_id" => $value2["id"]
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
+        if ($elimination_group) {
             throw new BLoCException("elimination sudah ditentukan");
         }
-        $elimination = new ArcheryEventElimination;
-        $elimination->event_category_id = $category_id;
-        $elimination->count_participant = $elimination_member_count;
-        $elimination->elimination_type = $match_type;
-        $elimination->elimination_scoring_type = $type_scoring;
-        $elimination->gender = "none";
-        $elimination->save();
+        $elimination_group = new ArcheryEventEliminationGroup;
+        $elimination_group->category_id = $category_team->id;
+        $elimination_group->count_participant = $elimination_member_count;
+        $elimination_group->elimination_scoring_type = $scoring_type;
+        $elimination_group->save();
 
         foreach ($template as $key => $value) {
             foreach ($value["seeds"] as $k => $v) {
                 foreach ($v["teams"] as $i => $team) {
-                    $elimination_member_id = 0;
-                    $member_id = isset($team["id"]) ? $team["id"] : 0;
+                    $elimination_group_team_id = 0;
+                    $participant_id = isset($team["participant_id"]) ? $team["participant_id"] : 0;
                     $thread = $k;
-                    $position_qualification = isset($team["postition"]) ? $team["postition"] : 0;
-                    if ($member_id != 0) {
-                        $em = ArcheryEventEliminationMember::where("member_id", $member_id)->first();
+                    $position = isset($team["postition"]) ? $team["postition"] : 0;
+                    if ($participant_id != 0) {
+                        $em = ArcheryEventEliminationGroupTeams::where("participant_id", $participant_id)->first();
                         if ($em) {
-                            $elimination_member = $em;
+                            $elimination_team = $em;
                         } else {
-                            $elimination_member = new ArcheryEventEliminationMember;
-                            $elimination_member->thread = $thread;
-                            $elimination_member->member_id = $member_id;
-                            $elimination_member->position_qualification = $position_qualification;
-                            $elimination_member->save();
+                            $elimination_team = new ArcheryEventEliminationGroupTeams;
+                            $elimination_team->thread = $thread;
+                            $elimination_team->participant_id = $participant_id;
+                            $elimination_team->position = $position;
+                            $elimination_team->save();
                         }
-                        $elimination_member_id = $elimination_member->id;
+                        $elimination_group_team_id = $elimination_team->id;
                     }
 
-                    $match = new ArcheryEventEliminationMatch;
-                    $match->event_elimination_id = $elimination->id;
-                    $match->elimination_member_id = $elimination_member_id;
-                    $match->elimination_schedule_id = 0;
+                    $match = new ArcheryEventEliminationGroupMatch;
+                    $match->elimination_group_id = $elimination_group->id;
+                    $match->group_team_id = $elimination_group_team_id;
                     $match->round = $key + 1;
                     $match->match = $k + 1;
                     $match->index = $i;
-                    if (isset($team["win"]))
+                    if (isset($team["win"])) {
                         $match->win = $team["win"];
-
-                    $match->gender = "none";
+                    }
                     $match->save();
                 }
             }

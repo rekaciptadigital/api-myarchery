@@ -699,19 +699,6 @@ class ArcheryScoring extends Model
             throw new BLoCException("CATEGORY NOT FOUND");
         }
 
-        // $check_is_exist_have_shoot_off = ArcheryEventParticipantMember::select(
-        //     "archery_event_participant_members.id",
-        //     "archery_event_participant_members.name",
-        //     "archery_event_participant_members.have_shoot_off",
-        //     "archery_event_participants.is_present"
-        // )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-        //     ->where('archery_event_participants.status', 1)
-        //     ->where('archery_event_participants.event_id', $event_id)
-        //     ->where('archery_event_participants.event_category_id', $category->id)
-        //     ->where("archery_event_participants.is_present", 1)
-        //     ->where("archery_event_participant_members.have_shoot_off", 2)
-        //     ->first();
-
         $participant_is_present = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.name",
