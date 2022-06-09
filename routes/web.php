@@ -376,9 +376,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
         });
 
-        $router->group(['prefix' => 'dashboard-dos', 'middleware' => 'auth.admin'], function () use ($router) {
+        $router->group(['prefix' => 'dashboard-dos'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventScheduleDashboardDos']);
+            $router->get('/category-details', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByEventId']);
+            $router->get('/elimination-template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
             $router->get('/download-score-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadScoreQualification']);
+            //$router->get('/download-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationDashboardDos']);
         });
     });
 
