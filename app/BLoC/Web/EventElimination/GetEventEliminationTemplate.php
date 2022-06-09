@@ -44,6 +44,8 @@ class GetEventEliminationTemplate extends Retrieval
         if (strtolower($team_category->type) == "individual") {
             return $this->getTemplateIndividu($category);
         }
+
+        throw new BLoCException("gagal menampilkan template");
     }
 
     protected function validation($parameters)
@@ -124,7 +126,6 @@ class GetEventEliminationTemplate extends Retrieval
             $fix_members2 = $members;
             $updated = false;
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
-            return $template["rounds"];
         } else {
             $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true);
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
