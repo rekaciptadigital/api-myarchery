@@ -60,6 +60,7 @@ class GetEventEliminationTemplate extends Retrieval
             $elimination_id = $elimination->id;
         }
 
+
         $score_type = 1; // 1 for type qualification
         $session = [];
         for ($i = 0; $i < $category->session_in_qualification; $i++) {
@@ -136,12 +137,11 @@ class GetEventEliminationTemplate extends Retrieval
     private function getTemplateTeam($category_team)
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
-        if (!$elimination) {
-            throw new BLoCException("elimination tidak ditemukan");
+        $elimination_id = 0;
+        if ($elimination) {
+            $elimination_member_count = $elimination->count_participant;
+            $elimination_id = $elimination->id;
         }
-
-        $elimination_member_count = $elimination->count_participant;
-        $elimination_id = $elimination->id;
 
 
         $score_type = 1; // 1 for type qualification
@@ -212,7 +212,6 @@ class GetEventEliminationTemplate extends Retrieval
             $fix_team_2 = $teams;
             $updated = false;
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_team_2, $elimination_member_count);
-            return $template["rounds"];
         } else {
             if ($category_team->team_category_id == "mix_team") {
                 $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
