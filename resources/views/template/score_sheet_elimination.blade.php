@@ -55,9 +55,9 @@
                         <img src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt="" height="95" />
                     </td>
                     <td style="padding-left:0; padding-top:15px; vertical-align:top; width:65%; line-height: 1.6">
-                        <h1 style="font-size: 14pt;">KEJOHANAN MEMANAH TERBUKA PDAC - SULI ARCHERY 2</h1>
-                        <p>KELAB MEMANAH PD (PDA2019)</p>
-                        <p>LAPANG SASAR MEMANAH SMK KAMPUNG BARU SI RUSA, PORT DICKSON, NEGERI SEMBILAN, </p>
+                        <h1 style="font-size: 14pt;">{{ $event_name }}</h1>
+                        {{-- <p>KELAB MEMANAH PD (PDA2019)</p> --}}
+                        <p>{{ $location }}</p>
                     </td>
                     <td>
                         <img style="height: 150px"
