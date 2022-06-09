@@ -136,11 +136,13 @@ class GetEventEliminationTemplate extends Retrieval
     private function getTemplateTeam($category_team)
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
-        $elimination_id = 0;
-        if ($elimination) {
-            $elimination_member_count = $elimination->count_participant;
-            $elimination_id = $elimination->id;
+        if (!$elimination) {
+            throw new BLoCException("elimination tidak ditemukan");
         }
+
+        $elimination_member_count = $elimination->count_participant;
+        $elimination_id = $elimination->id;
+
 
         $score_type = 1; // 1 for type qualification
         $session = [];

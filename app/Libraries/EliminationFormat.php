@@ -177,6 +177,20 @@ class EliminationFormat
         return $matches;
     }
 
+    public static function Template32($members = [])
+    {
+        $matches = [];
+        foreach ($members as $key => $value) {
+            $m = [];
+            foreach ($value as $key => $value) {
+                $m[] = $value;
+            }
+            $matches[] = ["round" => "", "seeds" => $m];
+        }
+
+        return $matches;
+    }
+
     public static function EliminationChampion($count_member_match, $round, $match, $win)
     {
         return isset(self::$elimination_champion[$count_member_match][$round . "-" . $match . "-" . $win]) ? self::$elimination_champion[$count_member_match][$round . "-" . $match . "-" . $win] : 0;
