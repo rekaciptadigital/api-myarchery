@@ -100,6 +100,10 @@ class ArcheryEventEliminationSchedule extends Model
         if ($elimination_member_count == 8) {
             return EliminationFormat::Template8($member_matches);
         }
+
+        if ($elimination_member_count == 32) {
+            return EliminationFormat::Template32($member_matches);
+        }
     }
 
     protected function makeTemplate2($members = [], $elimination_member_count = 16, $match_type = 3, $event_category_id, $gender, $fix_members)
