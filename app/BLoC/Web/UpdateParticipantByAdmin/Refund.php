@@ -109,8 +109,7 @@ class Refund extends Transactional
     {
         return [
             "participant_id" => "required|integer",
-            "image_refund" => "required|string",
-            "reason_refund" => "required|"
+            "reason_refund" => "required"
         ];
     }
 
