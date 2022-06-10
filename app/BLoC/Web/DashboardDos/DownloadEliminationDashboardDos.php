@@ -69,9 +69,7 @@ class DownloadEliminationDashboardDos extends Retrieval
         $fileName   = $event->event_name . ' - Elimination - ' . $category_detail->label_category. ' - '. rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/dashboard_dos';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
-        $response = [
-            'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
-        ];
+        $response = url(env('APP_HOSTNAME') . $path . '/' . $fileName . '');
 
         return $response;
     }
