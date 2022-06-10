@@ -59,7 +59,7 @@ class InsertParticipantByAdmin extends Transactional
         $check = Carbon::today()->between($carbon_registration_start_date, $carbon_registration_end_date);
 
         if (!$check) {
-            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
+            // throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
 
         if ($event->admin_id != $admin->id) {
@@ -99,10 +99,10 @@ class InsertParticipantByAdmin extends Transactional
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
                 if ($check_date["y"] > $category->max_age) {
-                    throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
+                    // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
                 }
                 if ($check_date["y"] == $category->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                    throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
+                    // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
                 }
             }
 
