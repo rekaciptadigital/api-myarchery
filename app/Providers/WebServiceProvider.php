@@ -138,6 +138,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
 use App\BLoC\Web\DashboardDos\GetArcheryEventScheduleDashboardDos;
 use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
+use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -317,6 +318,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
         $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
+        $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
 
     }
 
