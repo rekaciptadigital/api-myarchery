@@ -139,31 +139,22 @@ class EliminationFormatPDF
         }
 
         for ($i = 0; $i < 1; $i++) {
-            if ($data_graph['rounds'][2]['seeds'][0]['teams'][$i]['status'] != 'bye') {
-                $round4[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['name'];
-                $round4result[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['result'];
-                $round4position[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['potition'];
-                $round4status[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['status'];
-            } else {
-                $round4result[] = '-';
-                $round4[] = 'bye';
-                $round4position[] = '-';
-                $round4status[] = 'wait';
-            }
-            if ($data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'] != 'bye') {
-                $round5[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['name'];
-                $round5result[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['result'];
-                $round5position[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['potition'];
-                $round5status[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'];
-            } else {
-                $round5result[] = '-';
-                $round5[] = 'bye';
-                $round5position[] = '-';
-                $round5status[] = 'wait';
+            for ($i = 0; $i <= 1; $i++) {
+                if ($data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'] != 'bye') {
+                    $round4[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['name'];
+                    $round4result[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['result'];
+                    $round4position[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['potition'];
+                    $round4status[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'];
+                } else {
+                    $round4result[] = '-';
+                    $round4[] = 'bye';
+                    $round4position[] = '-';
+                    $round4status[] = 'wait';
+                }
             }
         }
 
-        return array('$round1' => $round1, '$round1result' => $round1result, '$round2result' => $round2result, '$round3result' => $round3result, '$round4result' => $round4result, '$round5result' => $round5result, '$round2' => $round2, '$round3' => $round3, '$round4' => $round4, '$round5' => $round5, '$round1position' => $round1position, '$round2position' => $round2position, '$round3position' => $round3position, '$round4position' => $round4position, '$round5position' => $round5position, '$round1status' => $round1status, '$round2status' => $round2status, '$round3status' => $round3status, '$round4status' => $round4status, '$round5status' => $round5status);
+        return array('$round1' => $round1, '$round1result' => $round1result, '$round2result' => $round2result, '$round3result' => $round3result, '$round4result' => $round4result, '$round2' => $round2, '$round3' => $round3, '$round4' => $round4, '$round1position' => $round1position, '$round2position' => $round2position, '$round3position' => $round3position, '$round4position' => $round4position, '$round1status' => $round1status, '$round2status' => $round2status, '$round3status' => $round3status, '$round4status' => $round4status);
     }
 
     public static function getViewDataGraph16($data_graph, $first_loop = 8, $second_loop = 4, $third_loop = 2)
@@ -405,7 +396,7 @@ class EliminationFormatPDF
             'round3member1' => $data['$round3'][0],
             'round3member2' => $data['$round3'][1],
             'round4member1' => $data['$round4'][0],
-            'round4member2' => $data['$round5'][0],
+            'round4member2' => $data['$round4'][1],
 
             'round1member1result' => $data['$round1result'][0],
             'round1member2result' => $data['$round1result'][1],
@@ -422,7 +413,7 @@ class EliminationFormatPDF
             'round3member1result' => $data['$round3result'][0],
             'round3member2result' => $data['$round3result'][1],
             'round4member1result' => $data['$round4result'][0],
-            'round4member2result' => $data['$round5result'][0],
+            'round4member2result' => $data['$round4result'][1],
             
             'round1member1position' => $data['$round1position'][0],
             'round1member2position' => $data['$round1position'][1],
@@ -439,7 +430,7 @@ class EliminationFormatPDF
             'round3member1position' => $data['$round3position'][0],
             'round3member2position' => $data['$round3position'][1],
             'round4member1position' => $data['$round4position'][0],
-            'round4member2position' => $data['$round5position'][0],
+            'round4member2position' => $data['$round4position'][1],
             
             'round1member1status' => $data['$round1status'][0],
             'round1member2status' => $data['$round1status'][1],
@@ -456,7 +447,7 @@ class EliminationFormatPDF
             'round3member1status' => $data['$round3status'][0],
             'round3member2status' => $data['$round3status'][1],
             'round4member1status' => $data['$round4status'][0],
-            'round4member2status' => $data['$round5status'][0],
+            'round4member2status' => $data['$round4status'][1],
 
         ]);
     }
