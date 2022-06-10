@@ -40,6 +40,9 @@ class SetBudRestElimination extends Transactional
 
         // split budrest number dan target face
         $brn = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $budrest_number);
+        if (count($brn) != 2) {
+            throw new BLoCException("bantalan harus terdiri dari huruf dan angka");
+        }
         $bud_rest = $brn[0];
         $target_face = $brn[1];
 
@@ -81,13 +84,6 @@ class SetBudRestElimination extends Transactional
             throw new BLoCException("match invalid");
         }
 
-        // split budrest number dan target face
-        $brn = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $budrest_number);
-        if (count($brn) != 2) {
-            throw new BLoCException("bantalan harus terdiri dari huruf dan angka");
-        }
-        $bud_rest = $brn[0];
-        $target_face = $brn[1];
 
         foreach ($match as $key => $value) {
             $value->bud_rest = $bud_rest;
