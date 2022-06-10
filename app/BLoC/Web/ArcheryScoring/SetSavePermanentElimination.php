@@ -36,7 +36,7 @@ class SetSavePermanentElimination extends Retrieval
             "archery_scorings.admin_total"
         )
             ->join("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
-            ->join("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
+            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->where("round", $round)
             ->where("match", $match)
@@ -50,6 +50,9 @@ class SetSavePermanentElimination extends Retrieval
         }
         // lakukan perulangan
         foreach ($get_member_match as $key => $value) {
+            if ($value->admin_total == null) {
+                throw new BLoCException("skoring belum diinputkan");
+            }
             // didalam perulangan pastikan belum ada yang win = 1
             if ($value->win == 1) {
                 throw new BLoCException("match have winner");
