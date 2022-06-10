@@ -40,6 +40,8 @@ class SetSavePermanentElimination extends Retrieval
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->where("round", $round)
             ->where("match", $match)
+            ->orderBy("round")
+            ->orderBy("match")
             ->get();
 
         // cek valid atau tidaknya match tersebut
