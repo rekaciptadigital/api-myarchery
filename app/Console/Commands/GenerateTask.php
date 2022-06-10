@@ -26,7 +26,7 @@ class GenerateTask extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:task {param}';
+    protected $signature = 'generate:task {user_id} {event_id}';
 
     /**
      * The console command description.
@@ -52,15 +52,22 @@ class GenerateTask extends Command
      */
     public function handle()
     {
-        ArcheryMemberCertificate::prepareUserCertificate(21, 10);
-        exit;
-        $cat_id = $this->argument('param');
+        // ArcheryMemberCertificate::prepareUserCertificate(21, 10);
+        // exit;
 
-        $points = ArcherySeriesUserPoint::get();
+        //participant member number
 
-        foreach ($points as $key => $value) {
-            ArcherySeriesUserPoint::setPoint($value->member_id, $value->type, $value->position);
-        }
+        $user_id = $this->argument('user_id');
+        $event_id = $this->argument('event_id');
+
+        echo $user_id."\n";
+        echo $event_id."\n";
+
+        // $points = ArcherySeriesUserPoint::get();
+
+        // foreach ($points as $key => $value) {
+        //     ArcherySeriesUserPoint::setPoint($value->member_id, $value->type, $value->position);
+        // }
 
         // Common::removeDir(public_path()."/asset/certificate/event_21/5");
         // ClubRanked::getEventRanked(21);
@@ -110,23 +117,23 @@ class GenerateTask extends Command
     }
 
     private function downloadPointSeries($serie_id){
-        $categories = ArcherySeriesCategory::where("serie_id",$serie_id)->get();
-        $view = [];
-        foreach ($categories as $key => $value) {
-            $participant_ranked = ArcherySeriesUserPoint::getUserSeriePointByCategory($value->id); 
-            $datas = [];
-            $view[] = view('reports.serie_user_points', [
-                'datas' => $datas,
-                'category' => $value->getCategoryLabelAttribute()
-            ]);     
-        }
+        // $categories = ArcherySeriesCategory::where("serie_id",$serie_id)->get();
+        // $view = [];
+        // foreach ($categories as $key => $value) {
+        //     $participant_ranked = ArcherySeriesUserPoint::getUserSeriePointByCategory($value->id); 
+        //     $datas = [];
+        //     $view[] = view('reports.serie_user_points', [
+        //         'datas' => $datas,
+        //         'category' => $value->getCategoryLabelAttribute()
+        //     ]);     
+        // }
 
-        $filename = '/report-serie/'.$serie_id.'/ARCHERY_USER_POINT.xlsx';
+        // $filename = '/report-serie/'.$serie_id.'/ARCHERY_USER_POINT.xlsx';
     
-        $download= Excel::store($view, $filename, 'public');
-        $destinationPath = Storage::url($filename);
-        $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
+        // $download= Excel::store($view, $filename, 'public');
+        // $destinationPath = Storage::url($filename);
+        // $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
         
-        return;
+        // return;
     }
 }
