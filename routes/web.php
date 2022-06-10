@@ -381,7 +381,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/category-details', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListCategoryByEventId']);
             $router->get('/elimination-template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
             $router->get('/download-score-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadScoreQualification']);
-            //$router->get('/download-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationDashboardDos']);
+            $router->get('/download-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationDashboardDos']);
         });
     });
 
