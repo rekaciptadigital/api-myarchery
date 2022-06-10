@@ -94,7 +94,7 @@ class InsertParticipantByAdmin extends Transactional
             // cek jika memiliki syarat max umur
             if ($category->max_age != 0) {
                 if ($user->age == null) {
-                    throw new BLoCException("tgl lahir anda belum di set");
+                    throw new BLoCException("tgl lahir anda belum di set untuk email " . $value);
                 }
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
