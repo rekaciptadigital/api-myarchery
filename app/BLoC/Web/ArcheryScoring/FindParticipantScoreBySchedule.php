@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\ArcheryClub;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
@@ -44,13 +45,16 @@ class FindParticipantScoreBySchedule extends Retrieval
             }
             return $this->qualificationFullDay($parameters);
         } elseif ($type_code == 2) {
-            if (count($array_code) == 4) {
-            }
             $elimination_id = $array_code[1];
             $match = $array_code[2];
             $round = $array_code[3];
+            if (count($array_code) == 4) {
+                return $this->eliminationTeam($elimination_id, $match, $round);
+            }
+
             return $this->elimination($elimination_id, $match, $round);
         }
+        throw new BLoCException("gagal find score");
     }
 
     private function qualificationFullDayByBudrest($parameters)
@@ -259,6 +263,7 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     private function eliminationTeam($elimination_id, $match, $round)
     {
+        return "ok";
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
             throw new BLoCException("elimination belum di set");
@@ -290,6 +295,9 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$participant_detail) {
                 throw new BLoCException("participant not found");
             }
+            $team_detail["participant_id"] = $participant_detail->id;
+            $team_detail["team_name"] = $participant_detail->team_name;
+            $team_detail["club"] = ArcheryClub::find($participant_detail->club_id);
             $list_group_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $value->participant_id)->get();
             if ($list_group_team->count() > 0) {
                 foreach ($list_group_team as $gt) {
@@ -317,8 +325,8 @@ class FindParticipantScoreBySchedule extends Retrieval
                 $s->is_different = $participant_scoring->admin_total != $participant_scoring->result ? 1 : 0;
             }
             $output->participant = [];
-            $output->team_detail =
-                $output->list_member = $list_member;
+            $output->team_detail = $team_detail;
+            $output->list_member = $list_member;
             $output->scores = $s;
             $output->round = $round;
             $output->is_updated = 1;
