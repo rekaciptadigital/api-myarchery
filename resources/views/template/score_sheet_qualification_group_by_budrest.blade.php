@@ -35,6 +35,12 @@
 
 
 <body>
+    <table>
+    <tr>
+        <?php 
+            foreach ($data as $key => $m) {
+        ?>
+        <td>
             <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                     <tr style="height: 30px;">
@@ -65,10 +71,10 @@
                         </td>
                         <td style="border-bottom: 1pt solid black;width: 9px; text-align: center; height: 30px;">:</td>
                         <td style="border-bottom: 1pt solid black;width: 340px; height: 30px;text-align: left;float: left;"
-                            colspan="3">{{ $data['detail_member']['name'] }}</td>
+                            colspan="3">{{ $m['detail_member']['name'] }}</td>
                         <td style="width: 30px; text-align: center; height: 10px;"></td>
                         <td rowspan="2" style="padding:10px;background-color: #e3e2de; width: 100px; height: 30px;">
-                            <h3>{{ $data['detail_member']['bud_rest_number'] != 0 ? $data['detail_member']['bud_rest_number'] : '' }}{{ $data['detail_member']['target_face'] }}
+                            <h3>{{ $m['detail_member']['bud_rest_number'] != 0 ? $m['detail_member']['bud_rest_number'] : '' }}{{ $m['detail_member']['target_face'] }}
                             </h3>
                         </td>
                     </tr>
@@ -77,7 +83,7 @@
                         </td>
                         <td style="border-bottom: 1pt solid black;width: 9px; text-align: center; height: 30px;">:</td>
                         <td style="border-bottom: 1pt solid black;width: 340px; height: 30px;text-align: left;float: left;"
-                            colspan="3">{{ $data['detail_member']['club_name'] }}</td>
+                            colspan="3">{{ $m['detail_member']['club_name'] }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -86,7 +92,7 @@
                 <thead>
                     <tr style="height: 42px;">
                         <th style="font-size: 11px; width: 17px; height: 42px; text-align: left;">
-                            {{ $data['sesi'] }}</th>
+                            {{ $m['sesi'] }}</th>
                         <th class="border" style="height: 42px; width: 20px;">1</th>
                         <th class="border" style="height: 42px; width: 20px;">2</th>
                         <th class="border" style="height: 42px; width: 20px;">3</th>
@@ -206,7 +212,7 @@
                         <td class="border" style="height: 30px; width: 50px;">&nbsp;</td>
                     </tr>
                     <tr style="height: 60px;">
-                        <td class="border" style="width: 164px; height: 30px;" colspan="4">kode : {{ $data['code'] }}
+                        <td class="border" style="width: 164px; height: 30px;" colspan="4">kode : {{ $m['code'] }}
                         </td>
                         <td class="border" style="width: 50.2; height: 30px;"><strong>Total</strong></td>
                         <td class="border" style="width: 50.3px; height: 30px;">&nbsp;</td>
@@ -215,21 +221,25 @@
                     </tr>
                 </tbody>
             </table>
-            <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
-                <tbody>
-                    <tr>
-                        <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;">&nbsp;</td>
-                        <td rowspan="2" style="width: 23.1329%; height: 10px;">
-                            <img style="display: block;" src="{{ $qr }}" alt="" width="90" height="90" />
-                        </td>
-                        <td style="border-bottom: 1pt solid black;width: 37.705%; height: 100px;">&nbsp;</td>
-                    </tr>
-                    <tr style="height: 15px;">
-                        <td style="width: 39.1621%; height: 14px; text-align: center;">wasit</td>
-                        <td style="width: 37.705%; height: 14px; text-align: center;">peserta</td>
-                    </tr>
-                </tbody>
-            </table>
+        </td>
+        <?php } ?>
+    </tr>
+    </table>
+    <table style="height: 276px; width: 100%;" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+                <tr>
+                    <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;">&nbsp;</td>
+                    <td rowspan="2" style="width: 23.1329%; height: 10px;">
+                        <img style="display: block;" src="{{ $qr }}" alt="" width="90" height="90" />
+                    </td>
+                    <td style="border-bottom: 1pt solid black;width: 37.705%; height: 100px;">&nbsp;</td>
+                </tr>
+                <tr style="height: 15px;">
+                    <td style="width: 39.1621%; height: 14px; text-align: center;">wasit</td>
+                    <td style="width: 37.705%; height: 14px; text-align: center;">peserta</td>
+                </tr>
+            </tbody>
+        </table>
     <pagebreak />
 </body>
 

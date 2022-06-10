@@ -58,11 +58,6 @@ class SetEventEliminationV2 extends Transactional
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, true);
 
 
-        // cek apakah total peserta yang ikut eliminasi > elimination_member_count
-        // if (count($qualification_rank) < $elimination_member_count) {
-        //     throw new BLoCException("jumlah peserta lebih sedikit dari jumlah eliminasi");
-        // }
-
 
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {

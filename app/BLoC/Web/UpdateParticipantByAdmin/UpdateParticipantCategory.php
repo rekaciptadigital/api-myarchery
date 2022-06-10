@@ -77,10 +77,13 @@ class UpdateParticipantCategory extends Transactional
                 if ($ie->status == 1) {
                     throw new BLoCException("event dengan kategori ini sudah di ikuti");
                 }
-                $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
-                if ($ie_transaction_log) {
-                    if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
-                        throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran atau batalkan pesanan");
+
+                if ($ie->status == 4) {
+                    $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
+                    if ($ie_transaction_log) {
+                        if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
+                            throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran atau batalkan pesanan");
+                        }
                     }
                 }
             }

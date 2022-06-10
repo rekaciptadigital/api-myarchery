@@ -12,6 +12,7 @@ use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use DAI\Utils\Exceptions\BLoCException;
 
 class GetEventOrderV2 extends Retrieval
 {
@@ -26,6 +27,7 @@ class GetEventOrderV2 extends Retrieval
         $status = $parameters->get('status');
         $output = [];
 
+        // official
         $archery_event_official = ArcheryEventOfficial::where('user_id', $user_login->id)->orderBy('id', 'DESC');
         $archery_event_official->when($status, function ($query) use ($status) {
             if ($status == 'pending') {
@@ -46,27 +48,21 @@ class GetEventOrderV2 extends Retrieval
         $col_archery_event_official = $archery_event_official->get();
         if ($col_archery_event_official->count() > 0) {
             foreach ($col_archery_event_official as $aeo) {
-                $data['detail_order'] =[
-                    "id"=>$aeo->id,
-                    "type"=>"official"
+                $data['detail_order'] = [
+                    "id" => $aeo->id,
+                    "type" => "official"
                 ];
                 $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
-                $data['detail_event']= ArcheryEvent::select('archery_events.*')->leftJoin('archery_event_official_detail','archery_events.id','=','archery_event_official_detail.event_id')
-                                ->where('archery_event_official_detail.id',$aeo->event_official_detail_id)->get();
+                $data['detail_event'] = ArcheryEvent::select('archery_events.*')->leftJoin('archery_event_official_detail', 'archery_events.id', '=', 'archery_event_official_detail.event_id')
+                    ->where('archery_event_official_detail.id', $aeo->event_official_detail_id)
+                    ->first();
                 $data['participant'] = [];
-                $category_label = $aeo->team_category_id."-".$aeo->age_category_id."-".$aeo->competition_category_id."-".$aeo->distance_id."m";
-            
-                $data['category'] = [
-                    "team_category_id"=>$aeo->team_category_id,
-                    "age_category_id"=>$aeo->age_category_id,
-                    "competition_category_id"=>$aeo->competition_category_id,
-                    "distance_id"=>$aeo->distance_id,
-                    "label"=>$category_label
-                ];
+
                 array_push($output, $data);
             }
         }
 
+        // peserta
         $participants = ArcheryEventParticipant::where("user_id", $user_login->id);
         $participants->when($status, function ($query) use ($status) {
             if ($status == 'pending') {
@@ -86,22 +82,26 @@ class GetEventOrderV2 extends Retrieval
         $data_event = $participants->orderBy('archery_event_participants.id', 'desc')->get();
 
         if ($data_event->count() > 0) {
-            foreach ($data_event as $aeo) {
-                $data['detail_order'] =[
-                    "id"=>$aeo->id,
-                    "type"=>"event"
+            foreach ($data_event as $de) {
+                $data['detail_order'] = [
+                    "id" => $de->id,
+                    "type" => "event"
                 ];
-                $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($aeo->transaction_log_id);
-                $detail_event= ArcheryEvent::find($aeo->event_id);
-                $data['participant'] = $aeo;
-                $category_label = $aeo->team_category_id."-".$aeo->age_category_id."-".$aeo->competition_category_id."-".$aeo->distance_id."m";
-            
+                $data['transaction_log_info'] = TransactionLog::getTransactionInfoByid($de->transaction_log_id);
+                $detail_event = ArcheryEvent::find($de->event_id);
+                if (!$detail_event) {
+                    throw new BLoCException("event not found");
+                }
+                $data['participant'] = $de;
+                $data["detail_event"] = $detail_event;
+                $category_label = $de->team_category_id . "-" . $de->age_category_id . "-" . $de->competition_category_id . "-" . $de->distance_id . "m";
+
                 $data['category'] = [
-                    "team_category_id"=>$aeo->team_category_id,
-                    "age_category_id"=>$aeo->age_category_id,
-                    "competition_category_id"=>$aeo->competition_category_id,
-                    "distance_id"=>$aeo->distance_id,
-                    "label"=>$category_label
+                    "team_category_id" => $de->team_category_id,
+                    "age_category_id" => $de->age_category_id,
+                    "competition_category_id" => $de->competition_category_id,
+                    "distance_id" => $de->distance_id,
+                    "label" => $category_label
                 ];
                 array_push($output, $data);
             }
