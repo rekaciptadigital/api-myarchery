@@ -69,7 +69,7 @@ class InsertParticipantByAdmin extends Transactional
         foreach ($emails as $key => $value) {
             $user = User::where("email", $value)->first();
             if (!$user) {
-                throw new BLoCException("user not found");
+                throw new BLoCException("user with email " . $value . "not found");
             }
 
             // hitung jumlah participant pada category yang didaftarkan user
@@ -124,7 +124,7 @@ class InsertParticipantByAdmin extends Transactional
                 if (empty($user->gender))
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category . " dan user dengan email " . $value . " gender tidak sesuai");
             }
 
             // cek apakah user telah pernah mendaftar di categori tersebut
@@ -133,7 +133,7 @@ class InsertParticipantByAdmin extends Transactional
             if ($isExist->count() > 0) {
                 foreach ($isExist as $ie) {
                     if ($ie->status == 1) {
-                        throw new BLoCException("event dengan kategori ini sudah di ikuti");
+                        throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $value);
                     }
                 }
             }
