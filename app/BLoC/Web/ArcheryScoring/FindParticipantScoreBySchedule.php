@@ -9,6 +9,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventParticipantMember;
@@ -44,7 +45,6 @@ class FindParticipantScoreBySchedule extends Retrieval
             return $this->qualificationFullDay($parameters);
         } elseif ($type_code == 2) {
             if (count($array_code) == 4) {
-                
             }
             $elimination_id = $array_code[1];
             $match = $array_code[2];
@@ -285,6 +285,11 @@ class FindParticipantScoreBySchedule extends Retrieval
             $participant_scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $value->id)->first();
             $admin_total = 0;
             $list_member = [];
+            $team_detail = [];
+            $participant_detail = ArcheryEventParticipant::join("archery_clubs")($value->participant_id);
+            if (!$participant_detail) {
+                throw new BLoCException("participant not found");
+            }
             $list_group_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $value->participant_id)->get();
             if ($list_group_team->count() > 0) {
                 foreach ($list_group_team as $gt) {
@@ -311,8 +316,9 @@ class FindParticipantScoreBySchedule extends Retrieval
                 $s->admin_total = $participant_scoring->admin_total;
                 $s->is_different = $participant_scoring->admin_total != $participant_scoring->result ? 1 : 0;
             }
-            $output->participant_id = $value->participant_id;
-            $output->list_member = $list_member;
+            $output->participant = [];
+            $output->team_detail =
+                $output->list_member = $list_member;
             $output->scores = $s;
             $output->round = $round;
             $output->is_updated = 1;
