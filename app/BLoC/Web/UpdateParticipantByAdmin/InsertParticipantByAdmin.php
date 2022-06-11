@@ -59,7 +59,7 @@ class InsertParticipantByAdmin extends Transactional
         $check = Carbon::today()->between($carbon_registration_start_date, $carbon_registration_end_date);
 
         if (!$check) {
-            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
+            // throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
 
         if ($event->admin_id != $admin->id) {
@@ -69,7 +69,7 @@ class InsertParticipantByAdmin extends Transactional
         foreach ($emails as $key => $value) {
             $user = User::where("email", $value)->first();
             if (!$user) {
-                throw new BLoCException("user not found");
+                throw new BLoCException("user with email " . $value . "not found");
             }
 
             // hitung jumlah participant pada category yang didaftarkan user
@@ -94,15 +94,15 @@ class InsertParticipantByAdmin extends Transactional
             // cek jika memiliki syarat max umur
             if ($category->max_age != 0) {
                 if ($user->age == null) {
-                    throw new BLoCException("tgl lahir anda belum di set");
+                    throw new BLoCException("tgl lahir anda belum di set untuk email " . $value);
                 }
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
                 if ($check_date["y"] > $category->max_age) {
-                    throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
+                    // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
                 }
                 if ($check_date["y"] == $category->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                    throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
+                    // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $category->max_age . " tahun");
                 }
             }
 
@@ -124,7 +124,7 @@ class InsertParticipantByAdmin extends Transactional
                 if (empty($user->gender))
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category . " dan user dengan email " . $value . " gender tidak sesuai");
             }
 
             // cek apakah user telah pernah mendaftar di categori tersebut
@@ -133,7 +133,7 @@ class InsertParticipantByAdmin extends Transactional
             if ($isExist->count() > 0) {
                 foreach ($isExist as $ie) {
                     if ($ie->status == 1) {
-                        throw new BLoCException("event dengan kategori ini sudah di ikuti");
+                        throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $value);
                     }
                 }
             }

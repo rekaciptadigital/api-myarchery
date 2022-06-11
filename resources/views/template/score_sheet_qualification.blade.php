@@ -28,7 +28,6 @@
         .border {
             border: 1px solid black;
         }
-
     </style>
     <title>Document</title>
 </head>
