@@ -51,6 +51,7 @@ use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
+use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
@@ -135,6 +136,9 @@ use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
+use App\BLoC\Web\DashboardDos\GetArcheryEventScheduleDashboardDos;
+use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
+use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -241,6 +245,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
 
+        $this->registerService("getEventClubRanked", GetEventClubRanked::class);
+
         // ============================ Api v2 =======================================
         // ========================== event =================================
         $this->registerService("createArcheryEventV2", CreateArcheryEventV2::class);
@@ -308,6 +314,12 @@ class WebServiceProvider extends ServiceProvider
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
+
+        // ================================ dashboard dos ==================================
+        $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
+        $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
+        $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
+
     }
 
 
