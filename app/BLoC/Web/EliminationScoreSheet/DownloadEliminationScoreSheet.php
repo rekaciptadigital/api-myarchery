@@ -7,11 +7,13 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventCertificateTemplates;
+use App\Models\ArcheryEventElimination;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Mpdf\Mpdf;
-
+use Mpdf\QrCode\QrCode;
+use Mpdf\QrCode\Output;
 
 class DownloadEliminationScoreSheet extends Retrieval
 {
@@ -31,9 +33,29 @@ class DownloadEliminationScoreSheet extends Retrieval
             ->where('match', $match)
             ->get();
 
-        if (!$data_member) {
+        if ($data_member->count() == 0) {
             throw new BLoCException("data not found");
         }
+
+        $elimination = ArcheryEventElimination::find($data_member[0]->event_elimination_id);
+        if (!$elimination) {
+            throw new BLoCException("elimination not found");
+        }
+
+        $string_code = "2-" . $data_member[0]->event_elimination_id . "-" . $data_member[0]->match . "-" . $data_member[0]->round;
+        $path = 'asset/score_sheet/' . $elimination->event_category_id  . '/';
+        $qrCode = new QrCode($string_code);
+        $output_qrcode = new Output\Png();
+        // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
+        $qrCode_name_file = "qr_code_" . $$string_code . ".png";
+        $full_path = $path . $qrCode_name_file;
+        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+
+        // return $type;
+        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+        // return $data_get_qr_code;
+        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
         foreach ($data_member as $data) {
 
@@ -44,14 +66,14 @@ class DownloadEliminationScoreSheet extends Retrieval
             }
             $participant_member_id = $elimination_member->member_id;
 
-            $scoring = ArcheryScoring::where('participant_member_id', $participant_member_id)
-                ->where('item_value', 'archery_event_elimination_matches')
-                ->where('item_id', $elimination_matches_id)
-                ->first();
+            // $scoring = ArcheryScoring::where('participant_member_id', $participant_member_id)
+            //     ->where('item_value', 'archery_event_elimination_matches')
+            //     ->where('item_id', $elimination_matches_id)
+            //     ->first();
 
-            if (!$scoring) {
-                throw new BLoCException("data scooring not found");
-            }
+            // if (!$scoring) {
+            //     throw new BLoCException("data scooring not found");
+            // }
 
             $detail_member = ArcheryEventParticipantMember::select(
                 'archery_event_participant_members.name as name',
@@ -72,10 +94,10 @@ class DownloadEliminationScoreSheet extends Retrieval
             if ($category == "") throw new BLoCException("Kategori tidak ditemukan");
 
             $result['category'][] = $category;
-            $score[] = (array)json_decode($scoring->scoring_detail);
+            // $score[] = (array)json_decode($scoring->scoring_detail);
         }
 
-        $scoring = json_decode(json_encode($score), true);
+        // $scoring = json_decode(json_encode($score), true);
 
 
 
@@ -98,9 +120,9 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta1_club' => $result['club'][0], 'peserta2_club' => $result['club'][1],
             'peserta1_rank' => $result['rank'][0], 'peserta2_rank' => $result['rank'][1],
             'peserta1_category' => $result['category'][0], 'peserta2_category' => $result['category'][1],
-            'score1' => $scoring[0]['shot'],
-            'score2' => $scoring[1]['shot'],
-
+            // 'score1' => $scoring[0]['shot'],
+            // 'score2' => $scoring[1]['shot'],
+            "qr" => $base64
         ]);
         $mpdf->WriteHTML($html);
         $path = 'asset/score_sheet/';
