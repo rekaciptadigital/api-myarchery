@@ -26,6 +26,7 @@ class GetListCategoryByEventId extends Retrieval
         $age_category_id = $parameters->get("age_category_id");
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
+        $date_event = $parameters->get("date_event");
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -64,6 +65,12 @@ class GetListCategoryByEventId extends Retrieval
                 ->where("archery_master_team_categories.id", $team_category_id);
         });
 
+        // filter by date event
+        $list_category_query->when($date_event, function ($query) use ($date_event) {
+            return $query->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
+                ->whereDate("archery_event_qualification_time.event_start_datetime", $date_event);
+        });
+
         $list_category_collection = $list_category_query->get();
 
         $output = [];
@@ -94,6 +101,7 @@ class GetListCategoryByEventId extends Retrieval
                 $response["total_participant"] = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
                 $response["default_elimination_count"] = $category->default_elimination_count;
                 $response["elimination_lock"] = $event_elimination_lock;
+                $response["session_in_qualification"] = $category->session_in_qualification;
 
                 array_push($output, $response);
             }
