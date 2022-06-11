@@ -2,6 +2,8 @@
 
 namespace App\BLoC\Web\EliminationScoreSheet;
 
+use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
@@ -42,14 +44,35 @@ class DownloadEliminationScoreSheet extends Retrieval
             throw new BLoCException("elimination not found");
         }
 
+        $category = ArcheryEventCategoryDetail::find($elimination->event_category_id);
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+
+        $archery_event = ArcheryEvent::find($category->event_id);
+        if (!$archery_event) {
+            throw new BLoCException("event not found");
+        }
+
+        $event_name = $archery_event->event_name;
+        $location_event = $archery_event->location;
         $string_code = "2-" . $data_member[0]->event_elimination_id . "-" . $data_member[0]->match . "-" . $data_member[0]->round;
-        $path = 'asset/score_sheet/' . $elimination->event_category_id  . '/';
+
+        $path = 'asset/score_sheet/' . $category->id  . '/';
+        if (!file_exists(public_path() . "/" . $path)) {
+            mkdir(public_path() . "/" . $path, 0777);
+        }
         $qrCode = new QrCode($string_code);
+
         $output_qrcode = new Output\Png();
         // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-        $qrCode_name_file = "qr_code_" . $$string_code . ".png";
+
+        $qrCode_name_file = "qr_code_" . $string_code . ".png";
+
         $full_path = $path . $qrCode_name_file;
+
         $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+
         file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
 
         // return $type;
@@ -122,7 +145,9 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta1_category' => $result['category'][0], 'peserta2_category' => $result['category'][1],
             // 'score1' => $scoring[0]['shot'],
             // 'score2' => $scoring[1]['shot'],
-            "qr" => $base64
+            "qr" => $base64,
+            "event_name" => $event_name,
+            "location" => $location_event
         ]);
         $mpdf->WriteHTML($html);
         $path = 'asset/score_sheet/';
