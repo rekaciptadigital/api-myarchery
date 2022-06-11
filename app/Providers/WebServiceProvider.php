@@ -136,6 +136,9 @@ use App\BLoC\Web\EventElimination\SetEventEliminationCountParticipant;
 use App\BLoC\Web\EventElimination\SetEventEliminationV2;
 use App\BLoC\Web\UpdateParticipantByAdmin\ChangeIsPresent;
 use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
+use App\BLoC\Web\DashboardDos\GetArcheryEventScheduleDashboardDos;
+use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
+use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -311,6 +314,12 @@ class WebServiceProvider extends ServiceProvider
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
+
+        // ================================ dashboard dos ==================================
+        $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
+        $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
+        $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
+
     }
 
 

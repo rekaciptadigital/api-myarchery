@@ -4,7 +4,6 @@ namespace App\BLoC\Web\EliminationScoreSheet;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantMember;
@@ -73,9 +72,7 @@ class DownloadEliminationScoreSheet extends Retrieval
 
         file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
 
-        // return $type;
         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-        // return $data_get_qr_code;
         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
         foreach ($data_member as $data) {
@@ -106,8 +103,6 @@ class DownloadEliminationScoreSheet extends Retrieval
 
             $result['category'][] = $category;
         }
-
-
 
         $mpdf = new Mpdf([
             'margin_left' => 3,
