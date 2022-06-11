@@ -51,7 +51,7 @@
                         </td>
                         <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
                             <img style="display: block;"
-                                src="https://api.myarchery.id/asset/poster/poster_JAKARTA%20SERIES%20I%20ARCHERY%20COMPETITION%202022.png#1644059999"
+                                src=""
                                 alt="" height="90" />
                         </td>
                     </tr>

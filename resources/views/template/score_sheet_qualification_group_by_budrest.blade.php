@@ -36,11 +36,18 @@
 
 <body>
     <table>
-    <tr>
         <?php 
-            foreach ($data as $key => $m) {
+            foreach ($data as $group_member) {
         ?>
-        <td>
+        <tr>
+        <?php 
+            foreach ($group_member as $m) {
+        ?>
+        <td style="padding-left:30px;padding-right:30px;">
+            <br>
+            <br>
+            <br>
+            <br>
             <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                     <tr style="height: 30px;">
@@ -56,9 +63,9 @@
                             <p style="text-align: left;float: left;">{{ $category_label }}</p>
                         </td>
                         <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
-                            <img style="display: block;"
-                                src="https://api.myarchery.id/asset/poster/poster_JAKARTA%20SERIES%20I%20ARCHERY%20COMPETITION%202022.png#1644059999"
-                                alt="" height="90" />
+                            <!-- <img style="display: block;"
+                                src=""
+                                alt="" height="90" /> -->
                         </td>
                     </tr>
                 </tbody>
@@ -221,25 +228,33 @@
                     </tr>
                 </tbody>
             </table>
+            <br><br><br>
+            <br><br><br>
+            <table style="height: 276px; width: 100%;" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+                <tr style="height: 15px;">
+                    <td style="border-top: 1pt solid black;width: 30%; height: 14px; text-align: center;">wasit</td>
+                    <td style="width: 150px; height: 14px; text-align: center;">    </td>
+                    <td style="border-top: 1pt solid black;width: 30%; height: 14px; text-align: center;">peserta</td>
+                </tr>
+            </tbody>
+            </table>
         </td>
         <?php } ?>
     </tr>
+    <?php } ?>
     </table>
+    <br><br><br>
+    <br><br><br>
     <table style="height: 276px; width: 100%;" border="0" cellspacing="0" cellpadding="0">
             <tbody>
                 <tr>
-                    <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;">&nbsp;</td>
-                    <td rowspan="2" style="width: 23.1329%; height: 10px;">
+                    <td style="width: 23.1329%; height: 10px;">
                         <img style="display: block;" src="{{ $qr }}" alt="" width="90" height="90" />
                     </td>
-                    <td style="border-bottom: 1pt solid black;width: 37.705%; height: 100px;">&nbsp;</td>
-                </tr>
-                <tr style="height: 15px;">
-                    <td style="width: 39.1621%; height: 14px; text-align: center;">wasit</td>
-                    <td style="width: 37.705%; height: 14px; text-align: center;">peserta</td>
                 </tr>
             </tbody>
-        </table>
+            </table>
     <pagebreak />
 </body>
 
