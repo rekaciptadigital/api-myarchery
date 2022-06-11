@@ -55,12 +55,12 @@
                         <img src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt="" height="95" />
                     </td>
                     <td style="padding-left:0; padding-top:15px; vertical-align:top; width:65%; line-height: 1.6">
-                        <h1 style="font-size: 14pt;">KEJOHANAN MEMANAH TERBUKA PDAC - SULI ARCHERY 2</h1>
-                        <p>KELAB MEMANAH PD (PDA2019)</p>
-                        <p>LAPANG SASAR MEMANAH SMK KAMPUNG BARU SI RUSA, PORT DICKSON, NEGERI SEMBILAN, </p>
+                        <h1 style="font-size: 14pt;">{{ $event_name }}</h1>
+                        {{-- <p>KELAB MEMANAH PD (PDA2019)</p> --}}
+                        <p>{{ $location }}</p>
                     </td>
                     <td>
-                        <img style="height: 150px" src={{ $qr }} alt="" srcset="">
+                        <img style="height: 150px" src="{{ $qr }}" alt="" srcset="">
                     </td>
                 </tr>
             </tbody>
@@ -156,26 +156,75 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 1;
-                    $point = 0; ?>
 
-                    @foreach ($score1 as $score)
-                        <tr style="border: 1px solid black;">
-                            <th>{{ $i++ }}</th>
-                            <td><?php print_r($score['score'][0]); ?></td>
-                            <td><?php print_r($score['score'][1]); ?></td>
-                            <td><?php print_r($score['score'][2]); ?></td>
-                            <td><?php print_r($score['total']); ?></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><?php print_r($score['point']);
-                            $point = $point + $score['point']; ?></td>
-                        </tr>
-                    @endforeach
+                    {{-- baris 1 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 2 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 3 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 4 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        <td>{{ $point }}</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -203,26 +252,76 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 1;
-                    $point = 0; ?>
 
-                    @foreach ($score2 as $score)
-                        <tr style="border: 1px solid black;">
-                            <th>{{ $i++ }}</th>
-                            <td><?php print_r($score['score'][0]); ?></td>
-                            <td><?php print_r($score['score'][1]); ?></td>
-                            <td><?php print_r($score['score'][2]); ?></td>
-                            <td><?php print_r($score['total']); ?></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><?php print_r($score['point']);
-                            $point = $point + $score['point']; ?></td>
-                        </tr>
-                    @endforeach
+
+                    {{-- baris 1 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 2 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 3 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 4 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>1</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
                     <tr>
                         <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
-                        <td>{{ $point }}</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
