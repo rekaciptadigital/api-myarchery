@@ -154,7 +154,7 @@ class ArcheryMemberCertificate extends Model
                 $item["{%background%}"] = $template->background_url;
                 
                 $user_certificates[] = [
-                    "item" => $item,
+                    "item" => collect($item),
                     "member_certificate_id" => $member_certificate_id,
                     "category" => $category,
                     "template" => $html_template_with_masking,
@@ -200,6 +200,7 @@ class ArcheryMemberCertificate extends Model
                 }
                 
                 $category_arr = explode(" - ",$category);
+                
                 if(count($category_arr) > 3)
                 $category = trim($category_arr[0])." - ".trim($category_arr[1])." - ".trim($category_arr[2]);
                 $file_name = $path."/"."[".$member_certificate_id."]".$category."-".$user_certificate["type_label"].".pdf";
