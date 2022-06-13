@@ -48,10 +48,9 @@ class FindParticipantScoreBySchedule extends Retrieval
             $elimination_id = $array_code[1];
             $match = $array_code[2];
             $round = $array_code[3];
-            if (count($array_code) == 4) {
+            if (count($array_code) == 5) {
                 return $this->eliminationTeam($elimination_id, $match, $round);
             }
-
             return $this->elimination($elimination_id, $match, $round);
         }
         throw new BLoCException("gagal find score");
@@ -263,10 +262,9 @@ class FindParticipantScoreBySchedule extends Retrieval
 
     private function eliminationTeam($elimination_id, $match, $round)
     {
-        return "ok";
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
-            throw new BLoCException("elimination belum di set");
+            throw new BLoCException("data elimination tidak ditemukan");
         }
 
         if ($elimination->elimination_scoring_type == 0) {
@@ -291,7 +289,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $admin_total = 0;
             $list_member = [];
             $team_detail = [];
-            $participant_detail = ArcheryEventParticipant::join("archery_clubs")($value->participant_id);
+            $participant_detail = ArcheryEventParticipant::find($value->participant_id);
             if (!$participant_detail) {
                 throw new BLoCException("participant not found");
             }
