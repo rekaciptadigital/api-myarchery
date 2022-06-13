@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\EventElimination;
 
+use App\Models\ArcheryClub;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryEventEliminationSchedule;
 use App\Models\ArcheryEventEliminationMatch;
@@ -12,6 +13,7 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoringEliminationGroup;
@@ -192,6 +194,12 @@ class GetEventEliminationTemplate extends Retrieval
                             $list_member[] = $m;
                         }
                     }
+
+                    $sequence_club = [];
+                    $participant_team = ArcheryEventParticipant::find($value->participant_id);
+                    $club = ArcheryClub::find($participant_team->club_id);
+                    $sequence_club[$club->id] = isset($sequence_club[$club->id]) ? $sequence_club[$club->id] + 1 : 1;
+                    // return $participant_team;
                     $teams[$value->round][$value->match]["teams"][] = array(
                         "participant_id" => $value->participant_id,
                         "potition" => $value->position,
@@ -201,7 +209,8 @@ class GetEventEliminationTemplate extends Retrieval
                         "admin_total" => $admin_total,
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $admin_total != $value->result ? 1 : 0,
-                        "member_team" => $list_member
+                        "member_team" => $list_member,
+                        "team_name" => $club->name . " - " . $sequence_club[$club->id]
                     );
                 } else {
                     $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
