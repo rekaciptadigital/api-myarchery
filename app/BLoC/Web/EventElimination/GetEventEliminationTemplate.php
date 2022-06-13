@@ -101,7 +101,7 @@ class GetEventEliminationTemplate extends Retrieval
             $members = [];
             foreach ($fix_members1 as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
-                if ($value->name != null) {
+                if ($value->member_id != null) {
                     $archery_scooring = ArcheryScoring::where("item_id", $value->id)->first();
                     $admin_total = 0;
                     if ($archery_scooring) {
@@ -122,14 +122,13 @@ class GetEventEliminationTemplate extends Retrieval
                     );
                 } else {
                     $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
-                    if ($match[0]->group_team_id == 0 && $match[1]->win == 1) {
-                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
-                    } elseif ($match[1]->group_team_id == 0 && $match[0]->win == 1) {
-                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    if ($match[0]->elimination_member_id == 0 && $match[1]->win == 1) {
+                        $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } elseif ($match[1]->elimination_member_id == 0 && $match[0]->win == 1) {
+                        $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                     } else {
-                        $teams[$value->round][$value->match]["teams"][] = ["status" => "wait"];
+                        $members[$value->round][$value->match]["teams"][] = ["status" => "wait"];
                     }
-                    $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                 }
             }
 
@@ -229,7 +228,7 @@ class GetEventEliminationTemplate extends Retrieval
                             $team_name = $lt["team"];
                         }
                     }
-                    
+
                     $teams[$value->round][$value->match]["teams"][] = array(
                         "participant_id" => $value->participant_id,
                         "potition" => $value->position,
