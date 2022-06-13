@@ -121,6 +121,14 @@ class GetEventEliminationTemplate extends Retrieval
                         "is_different" => $admin_total != $value->total_scoring ? 1 : 0,
                     );
                 } else {
+                    $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
+                    if ($match[0]->group_team_id == 0 && $match[1]->win == 1) {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } elseif ($match[1]->group_team_id == 0 && $match[0]->win == 1) {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } else {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "wait"];
+                    }
                     $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                 }
             }
@@ -161,6 +169,7 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_group_match.bud_rest",
             "archery_event_elimination_group_match.target_face",
             "archery_scoring_elimination_group.result",
+            "archery_event_elimination_group_match.elimination_group_id"
         )
             ->leftJoin("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
             ->leftJoin("archery_scoring_elimination_group", "archery_scoring_elimination_group.elimination_match_group_id", "=", "archery_event_elimination_group_match.id")
@@ -171,6 +180,25 @@ class GetEventEliminationTemplate extends Retrieval
             ->get();
 
         $lis_team = [];
+
+        if ($category_team->team_category_id == "mix_team") {
+            $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
+        } else {
+            $team_cat = ($category_team->team_category_id) == "male_team" ? "individu male" : "individu female";
+            $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)
+                ->where("age_category_id", $category_team->age_category_id)
+                ->where("competition_category_id", $category_team->competition_category_id)
+                ->where("distance_id", $category_team->distance_id)
+                ->where("team_category_id", $team_cat)
+                ->first();
+
+            if (!$category_detail_individu) {
+                throw new BLoCException("category individu tidak ditemukan");
+            }
+
+            $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category_team->id);
+        }
+
         $updated = true;
         if ($fix_teams_1->count() > 0) {
             $teams = [];
@@ -195,11 +223,13 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
-                    $sequence_club = [];
-                    $participant_team = ArcheryEventParticipant::find($value->participant_id);
-                    $club = ArcheryClub::find($participant_team->club_id);
-                    $sequence_club[$club->id] = isset($sequence_club[$club->id]) ? $sequence_club[$club->id] + 1 : 1;
-                    // return $participant_team;
+                    $team_name = "";
+                    foreach ($lis_team as $lt) {
+                        if ($lt["participant_id"] == $value->participant_id) {
+                            $team_name = $lt["team"];
+                        }
+                    }
+                    
                     $teams[$value->round][$value->match]["teams"][] = array(
                         "participant_id" => $value->participant_id,
                         "potition" => $value->position,
@@ -210,10 +240,17 @@ class GetEventEliminationTemplate extends Retrieval
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $admin_total != $value->result ? 1 : 0,
                         "member_team" => $list_member,
-                        "team_name" => $club->name . " - " . $sequence_club[$club->id]
+                        "team_name" => $team_name
                     );
                 } else {
-                    $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    $match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
+                    if ($match[0]->group_team_id == 0 && $match[1]->win == 1) {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } elseif ($match[1]->group_team_id == 0 && $match[0]->win == 1) {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } else {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "wait"];
+                    }
                 }
             }
 
@@ -221,23 +258,6 @@ class GetEventEliminationTemplate extends Retrieval
             $updated = false;
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_team_2, $elimination_member_count);
         } else {
-            if ($category_team->team_category_id == "mix_team") {
-                $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
-            } else {
-                $team_cat = ($category_team->team_category_id) == "male_team" ? "individu male" : "individu female";
-                $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)
-                    ->where("age_category_id", $category_team->age_category_id)
-                    ->where("competition_category_id", $category_team->competition_category_id)
-                    ->where("distance_id", $category_team->distance_id)
-                    ->where("team_category_id", $team_cat)
-                    ->first();
-
-                if (!$category_detail_individu) {
-                    throw new BLoCException("category individu tidak ditemukan");
-                }
-
-                $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category_team->id);
-            }
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }
         $template["updated"] = $updated;
