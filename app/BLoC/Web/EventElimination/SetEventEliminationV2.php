@@ -233,6 +233,16 @@ class SetEventEliminationV2 extends Transactional
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }
 
+        $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
+        if ($elimination_group) {
+            throw new BLoCException("elimination sudah ditentukan");
+        }
+        $elimination_group = new ArcheryEventEliminationGroup;
+        $elimination_group->category_id = $category_team->id;
+        $elimination_group->count_participant = $elimination_member_count;
+        $elimination_group->elimination_scoring_type = $scoring_type;
+        $elimination_group->save();
+
         if (count($lis_team) > 0) {
             foreach ($lis_team as $value1) {
                 if (count($value1["teams"]) > 0) {
@@ -245,16 +255,6 @@ class SetEventEliminationV2 extends Transactional
                 }
             }
         }
-
-        $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
-        if ($elimination_group) {
-            throw new BLoCException("elimination sudah ditentukan");
-        }
-        $elimination_group = new ArcheryEventEliminationGroup;
-        $elimination_group->category_id = $category_team->id;
-        $elimination_group->count_participant = $elimination_member_count;
-        $elimination_group->elimination_scoring_type = $scoring_type;
-        $elimination_group->save();
 
         foreach ($template as $key => $value) {
             foreach ($value["seeds"] as $k => $v) {
