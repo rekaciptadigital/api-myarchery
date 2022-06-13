@@ -84,7 +84,6 @@ class SetBudRestElimination extends Transactional
             throw new BLoCException("match invalid");
         }
 
-
         foreach ($match as $key => $value) {
             $value->bud_rest = $bud_rest;
             $value->target_face = $target_face;

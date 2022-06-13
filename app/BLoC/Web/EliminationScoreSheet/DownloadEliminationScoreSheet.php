@@ -123,8 +123,6 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta1_club' => $result['club'][0], 'peserta2_club' => $result['club'][1],
             'peserta1_rank' => $result['rank'][0], 'peserta2_rank' => $result['rank'][1],
             'peserta1_category' => $result['category'][0], 'peserta2_category' => $result['category'][1],
-            // 'score1' => $scoring[0]['shot'],
-            // 'score2' => $scoring[1]['shot'],
             "qr" => $base64,
             "event_name" => $event_name,
             "location" => $location_event

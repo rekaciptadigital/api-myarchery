@@ -2,13 +2,19 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\ArcheryClub;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationMatch;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryScoringEliminationGroup;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 
@@ -42,8 +48,12 @@ class FindParticipantScoreBySchedule extends Retrieval
             $elimination_id = $array_code[1];
             $match = $array_code[2];
             $round = $array_code[3];
+            if (count($array_code) == 5) {
+                return $this->eliminationTeam($elimination_id, $match, $round);
+            }
             return $this->elimination($elimination_id, $match, $round);
         }
+        throw new BLoCException("gagal find score");
     }
 
     private function qualificationFullDayByBudrest($parameters)
@@ -248,5 +258,79 @@ class FindParticipantScoreBySchedule extends Retrieval
         return [
             "code" => "required"
         ];
+    }
+
+    private function eliminationTeam($elimination_id, $match, $round)
+    {
+        $elimination = ArcheryEventEliminationGroup::find($elimination_id);
+        if (!$elimination) {
+            throw new BLoCException("data elimination tidak ditemukan");
+        }
+
+        if ($elimination->elimination_scoring_type == 0) {
+            throw new BLoCException("elimination scooring type belum ditentukan");
+        }
+
+        $scores = [];
+
+        $get_participant_match = ArcheryEventEliminationGroupMatch::select(
+            "archery_event_elimination_group_teams.participant_id",
+            "archery_event_elimination_group_match.*"
+        )
+            ->join("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
+            ->where("archery_event_elimination_group_match.elimination_group_id", $elimination_id)
+            ->where("round", $round)
+            ->where("match", $match)
+            ->get();
+
+        foreach ($get_participant_match as $key => $value) {
+            $output = (object)array();
+            $participant_scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $value->id)->first();
+            $admin_total = 0;
+            $list_member = [];
+            $team_detail = [];
+            $participant_detail = ArcheryEventParticipant::find($value->participant_id);
+            if (!$participant_detail) {
+                throw new BLoCException("participant not found");
+            }
+            $team_detail["participant_id"] = $participant_detail->id;
+            $team_detail["team_name"] = $participant_detail->team_name;
+            $team_detail["club"] = ArcheryClub::find($participant_detail->club_id);
+            $list_group_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $value->participant_id)->get();
+            if ($list_group_team->count() > 0) {
+                foreach ($list_group_team as $gt) {
+                    $m = ArcheryEventParticipantMember::select("archery_event_participant_members.user_id as user_id", "archery_event_participant_members.id as member_id", "users.name")
+                        ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
+                        ->where("archery_event_participant_members.id", $gt->member_id)
+                        ->first();
+
+                    $list_member[] = $m;
+                }
+            }
+            if (!$participant_scoring) {
+                if ($elimination->elimination_scoring_type == 1) {
+                    $s = ArcheryScoringEliminationGroup::makeEliminationScoringTypePointFormat();
+                    $s['admin_total'] = $admin_total;
+                }
+
+                if ($elimination->elimination_scoring_type == 2) {
+                    $s = ArcheryScoringEliminationGroup::makeEliminationScoringTypeTotalFormat();
+                    $s['admin_total'] = $admin_total;
+                }
+            } else {
+                $s = \json_decode($participant_scoring->scoring_detail);
+                $s->admin_total = $participant_scoring->admin_total;
+                $s->is_different = $participant_scoring->admin_total != $participant_scoring->result ? 1 : 0;
+            }
+            $output->participant = [];
+            $output->team_detail = $team_detail;
+            $output->list_member = $list_member;
+            $output->scores = $s;
+            $output->round = $round;
+            $output->is_updated = 1;
+            $scores[] = $output;
+        }
+
+        return $scores;
     }
 }
