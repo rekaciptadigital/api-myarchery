@@ -26,13 +26,15 @@ class GetListDownloadCertificate extends Retrieval
   {
     $user = Auth::guard('app-api')->user();
 
-    $events = ArcheryEventParticipantMember::select("archery_event_participants.id",
+    $events = ArcheryEventParticipantMember::select(
                                                     "archery_event_participants.event_id"
                                                     )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
                     ->join("archery_events","archery_event_participants.event_id","=","archery_events.id")
                     ->where("archery_event_participants.type","individual")
                     ->where("archery_event_participant_members.user_id",$user["id"])
                     ->where("archery_event_participants.status",1)
+                    ->where("archery_event_participants.status",1)
+                    ->groupBy("archery_event_participants.event_id")
                     ->orderBy("archery_events.event_end_datetime","DESC")
                     ->get();
     
