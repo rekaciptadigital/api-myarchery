@@ -46,7 +46,7 @@ class ArcheryMemberCertificate extends Model
                     ->get();
         $user = User::find($user_id);
 
-        $item = $this->replace_item_by_certificate_type;
+        $item = collect($this->replace_item_by_certificate_type);
 
         $item["{%member_name%}"] = strtoupper($user->name);
         foreach ($members as $key => $value) {
@@ -54,9 +54,11 @@ class ArcheryMemberCertificate extends Model
             $category_detail = ArcheryEventCategoryDetail::find($value->event_category_id);
             $elimination_member = ArcheryEventEliminationMember::where("member_id",$value->id)->first();
             $item["{%category_name%}"] = $category;
-            
+            $files = [];
             foreach ($certificate_templates as $c => $template) {
                 $type_certificate = $template->type_certificate;
+                $html_template_with_masking = collect($template->html_template);
+
                 $type_certificate_label = ArcheryEventCertificateTemplates::getCertificateLabelByType($type_certificate);
                 if($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")){
                     
@@ -152,30 +154,21 @@ class ArcheryMemberCertificate extends Model
                 $item["{%certificate_verify_url%}"] = $validate_link;
                 $item["{%background%}"] = $template->background_url;
                 
-                $user_certificates[] = [
-                    "item" => $item,
-                    "member_certificate_id" => $member_certificate_id,
-                    "category" => $category,
-                    "template" => $template->html_template,
-                    "template_id" => $template->id,
-                    "type" => $type_certificate,
-                    "type_label" => $type_certificate_label
-                ];
-            };
-            $files = [];
+                
 
-            foreach ($user_certificates as $uc => $user_certificate) {
-                $html_template = base64_decode($user_certificate["template"]);
-                foreach ($user_certificate["item"] as $i => $item_detail) {
-                    $html_template = str_replace($i, $item_detail,$html_template);
+                $html_template_clean = "";
+                $html_template_clean = base64_decode($html_template_with_masking);
+                
+                foreach ($item as $i => $item_detail) {
+                    $html_template_clean = str_replace($i, $item_detail,$html_template_clean);
                 }
-
-                $member_certificate = $this->find($user_certificate["member_certificate_id"]);
+                
+                $member_certificate = $this->find($member_certificate_id);
                 if(!$member_certificate){
                     $member_certificate = $this->create(array(
-                        'id' => $user_certificate["member_certificate_id"],
+                        'id' => $member_certificate_id,
                         'member_id' => $value->id,
-                        'certificate_template_id' => $user_certificate["template_id"],
+                        'certificate_template_id' => $template_id,
                     ));
                 }
                 
@@ -183,33 +176,35 @@ class ArcheryMemberCertificate extends Model
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"];
+                $path = "asset/certificate/event_".$event_id."/".$type_certificate;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users";
+                $path = "asset/certificate/event_".$event_id."/".$type_certificate."/users";
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-
-                $path = "asset/certificate/event_".$event_id."/".$user_certificate["type"]."/users/".$user_id;
+                
+                $path = "asset/certificate/event_".$event_id."/".$type_certificate."/users/".$user_id;
                 if (!file_exists(public_path()."/".$path)) {
                     mkdir(public_path()."/".$path, 0775);
                 }
-
+                
                 $category_arr = explode(" - ",$category);
+                
                 if(count($category_arr) > 3)
-                    $category = trim($category_arr[0])." - ".trim($category_arr[1])." - ".trim($category_arr[2]);
-                $file_name = $path."/"."[".$member_certificate_id."]".$category."-".$user_certificate["type_label"].".pdf";
+                $category = trim($category_arr[0])." - ".trim($category_arr[1])." - ".trim($category_arr[2]);
+                $file_name = $path."/"."[".$member_certificate_id."]".$category."-".$type_certificate_label.".pdf";
                 if (!file_exists(public_path()."/".$file_name)) {
-                    PdfLibrary::setFinalDoc($html_template)->setFileName($file_name)->savePdf();
+                    PdfLibrary::setFinalDoc($html_template_clean)->setFileName($file_name)->savePdf();
                 }
                 
                 $files[] = [
-                    "name" => $user_certificate["type_label"],
+                    "name" => $type_certificate_label,
                     "url" =>  env('APP_HOSTNAME') . $file_name
                 ];
-            }
+            };
+            
             if(!empty($files)){
                 $user_certificate_by_categories[] = [
                     "category" => [
