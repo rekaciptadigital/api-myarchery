@@ -322,7 +322,6 @@ class FindParticipantScoreBySchedule extends Retrieval
                 $s->admin_total = $participant_scoring->admin_total;
                 $s->is_different = $participant_scoring->admin_total != $participant_scoring->result ? 1 : 0;
             }
-            $output->participant = [];
             $output->team_detail = $team_detail;
             $output->list_member = $list_member;
             $output->scores = $s;

@@ -459,7 +459,7 @@ class AddParticipantMemberScore extends Transactional
             }
 
             if ($value->participant_id != $participants[0]["participant_id"] && $value->participant_id != $participants[1]["participant_id"]) {
-                throw new BLoCException("member tidak valid");
+                throw new BLoCException("team tidak valid");
             }
         }
 
