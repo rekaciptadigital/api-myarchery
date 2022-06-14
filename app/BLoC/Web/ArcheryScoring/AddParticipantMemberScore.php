@@ -452,7 +452,7 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("match tidak valid");
         }
 
-        return $get_participant_match;
+        return $participants[0]["participant_id"];
 
         foreach ($get_participant_match as $key => $value) //check valid members 
         {
