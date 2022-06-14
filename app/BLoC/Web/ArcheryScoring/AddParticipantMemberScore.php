@@ -452,8 +452,6 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("match tidak valid");
         }
 
-        return $participants[1]["participant_id"];
-
         foreach ($get_participant_match as $key => $value) //check valid members 
         {
             if ($value->win == 1) {
@@ -461,8 +459,12 @@ class AddParticipantMemberScore extends Transactional
             }
 
             if ($value->participant_id != $participants[0]["participant_id"] && $value->participant_id != $participants[1]["participant_id"]) {
-                throw new BLoCException("team tidak valid");
+                $valid = 0;
             }
+        }
+
+        if (!$valid) {
+            throw new BLoCException("tim tidak valid");
         }
 
         if ($get_elimination_group->elimination_scoring_type == 1) {
