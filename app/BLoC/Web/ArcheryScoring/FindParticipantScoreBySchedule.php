@@ -95,6 +95,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $schedule = $value;
             $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
             $output->session = $session;
+            $output->schedule_id = $value->id;
             $output->is_updated = 1;
             if (isset($score->is_lock))
                 $output->is_updated = $score->is_lock == 1 ? 0 : 1;
@@ -169,6 +170,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
         $output->session = $session;
+        $output->schedule_id = $schedule->id;
         $output->is_updated = 1;
         if (isset($score->is_lock))
             $output->is_updated = $score->is_lock == 1 ? 0 : 1;
@@ -267,6 +269,11 @@ class FindParticipantScoreBySchedule extends Retrieval
             throw new BLoCException("data elimination tidak ditemukan");
         }
 
+        $category = ArcheryEventCategoryDetail::find($elimination->category_id);
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+
         if ($elimination->elimination_scoring_type == 0) {
             throw new BLoCException("elimination scooring type belum ditentukan");
         }
@@ -283,6 +290,24 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->where("match", $match)
             ->get();
 
+        if ($category->team_category_id == "mix_team") {
+            $lis_team = ArcheryScoring::mixTeamBestOfThree($category);
+        } else {
+            $team_cat = ($category->team_category_id) == "male_team" ? "individu male" : "individu female";
+            $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category->event_id)
+                ->where("age_category_id", $category->age_category_id)
+                ->where("competition_category_id", $category->competition_category_id)
+                ->where("distance_id", $category->distance_id)
+                ->where("team_category_id", $team_cat)
+                ->first();
+
+            if (!$category_detail_individu) {
+                throw new BLoCException("category individu tidak ditemukan");
+            }
+
+            $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category->id);
+        }
+
         foreach ($get_participant_match as $key => $value) {
             $output = (object)array();
             $participant_scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $value->id)->first();
@@ -293,9 +318,16 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$participant_detail) {
                 throw new BLoCException("participant not found");
             }
+            $team_name = "";
+            foreach ($lis_team as $lt) {
+                if ($lt["participant_id"] == $value->participant_id) {
+                    $team_name = $lt["team"];
+                }
+            }
             $team_detail["participant_id"] = $participant_detail->id;
-            $team_detail["team_name"] = $participant_detail->team_name;
+            $team_detail["team_name"] = $team_name;
             $team_detail["club"] = ArcheryClub::find($participant_detail->club_id);
+            // dapatkan member team
             $list_group_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $value->participant_id)->get();
             if ($list_group_team->count() > 0) {
                 foreach ($list_group_team as $gt) {
@@ -327,6 +359,14 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->scores = $s;
             $output->round = $round;
             $output->is_updated = 1;
+            $category_response = [];
+            if ($category) {
+                $category_response["age_category_id"] = $category->age_category_id;
+                $category_response["team_category_id"] = $category->team_category_id;
+                $category_response["competition_category_id"] = $category->competition_category_id;
+                $category_response["distance_id"] = $category->distance_id;
+            }
+            $output->category = $category_response;
             $scores[] = $output;
         }
 
