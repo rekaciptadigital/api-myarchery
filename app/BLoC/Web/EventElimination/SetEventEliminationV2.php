@@ -35,7 +35,6 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("kategori tidak ada");
         }
 
-        return $this->cleanEliminationMatch($event_category_id);
 
         $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
         if (!$team_category) {
