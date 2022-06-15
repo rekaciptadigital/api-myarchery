@@ -126,6 +126,8 @@ class GetEventEliminationTemplate extends Retrieval
                         $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                     } elseif ($match[1]->elimination_member_id == 0 && $match[0]->win == 1) {
                         $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } elseif (($match[1]->elimination_member_id == 0 && $match[0]->elimination_member_id == 0) && $value->round == 1) {
+                        $members[$value->round][$value->match]["teams"][] = ["status" => "wait"];
                     } else {
                         $members[$value->round][$value->match]["teams"][] = ["status" => "wait"];
                     }
@@ -246,6 +248,8 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($match[0]->group_team_id == 0 && $match[1]->win == 1) {
                         $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                     } elseif ($match[1]->group_team_id == 0 && $match[0]->win == 1) {
+                        $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
+                    } elseif (($match[0]->group_team_id == 0 && $match[1]->group_team_id == 0) && $value->round == 1) {
                         $teams[$value->round][$value->match]["teams"][] = ["status" => "bye"];
                     } else {
                         $teams[$value->round][$value->match]["teams"][] = ["status" => "wait"];

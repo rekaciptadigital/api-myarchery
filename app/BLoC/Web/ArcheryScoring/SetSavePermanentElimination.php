@@ -43,6 +43,8 @@ class SetSavePermanentElimination extends Retrieval
         } else {
             return $this->setSavePermanentEliminationIndividu($elimination_id, $round, $match);
         }
+
+        throw new BLoCException("failed save permanent");
     }
 
     private function setSavePermanentEliminationIndividu($elimination_id, $round, $match)
@@ -57,7 +59,8 @@ class SetSavePermanentElimination extends Retrieval
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
             "archery_event_elimination_matches.*",
-            "archery_scorings.admin_total"
+            "archery_scorings.admin_total",
+            "archery_scorings.scoring_detail"
         )
             ->join("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
@@ -73,6 +76,10 @@ class SetSavePermanentElimination extends Retrieval
             throw new BLoCException("match tidak valid");
         }
 
+        $total_1 = json_decode($get_member_match[0]->scoring_detail);
+        // return $total_1;
+        return $get_member_match[0];
+
         // lakukan perulangan
         foreach ($get_member_match as $key => $value) {
             if ($value->admin_total == null) {
@@ -85,16 +92,22 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         // bandingak admin_total keduanya untuk mendapatkan pemenang
-        if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
-            $win_member = $get_member_match[0]->id;
-        }
+        if ($get_member_match[0]->admin_total > 0 && $get_member_match[1]->admin_total > 0) {
+            if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
+                $win_member = $get_member_match[0]->id;
+            }
 
-        if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
-            $win_member = $get_member_match[1]->id;
-        }
+            if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
+                $win_member = $get_member_match[1]->id;
+            }
 
-        if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-            throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
+            if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
+                throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
+            }
+        } else {
+            if ($elimination->elimination_scoring_type == 2) {
+                $total_1 = json_decode($get_member_match[1]->scoring_detail);
+            }
         }
 
         // lakukan perulangan kembali untuk set status pemenang tiap match
@@ -150,7 +163,7 @@ class SetSavePermanentElimination extends Retrieval
             ->orderBy("match")
             ->get();
 
-            // return $get_member_match;
+        // return $get_member_match;
 
         // cek valid atau tidaknya match tersebut
         if ($get_member_match->count() != 2) {
