@@ -175,6 +175,7 @@ class GetEventEliminationTemplate extends Retrieval
         $fix_teams_1 = ArcheryEventEliminationGroupMatch::select(
             "archery_event_elimination_group_teams.position",
             "archery_event_elimination_group_teams.participant_id",
+            "archery_event_elimination_group_teams.team_name",
             "archery_event_elimination_group_match.id",
             "archery_event_elimination_group_match.round",
             "archery_event_elimination_group_match.match",
@@ -244,12 +245,7 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
-                    $team_name = "";
-                    foreach ($lis_team as $lt) {
-                        if ($lt["participant_id"] == $value->participant_id) {
-                            $team_name = $lt["team"];
-                        }
-                    }
+                    $team_name = $value->team_name;
 
                     $teams[$value->round][$value->match]["teams"][] = array(
                         "participant_id" => $value->participant_id,

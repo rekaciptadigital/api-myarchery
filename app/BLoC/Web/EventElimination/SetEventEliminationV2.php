@@ -265,6 +265,12 @@ class SetEventEliminationV2 extends Transactional
                     $thread = $k;
                     $position = isset($team["postition"]) ? $team["postition"] : 0;
                     if ($participant_id != 0) {
+                        $team_name = "";
+                        foreach ($lis_team as $lt) {
+                            if ($lt["participant_id"] == $participant_id) {
+                                $team_name = $lt["team"];
+                            }
+                        }
                         $em = ArcheryEventEliminationGroupTeams::where("participant_id", $participant_id)->first();
                         if ($em) {
                             $elimination_team = $em;
@@ -273,6 +279,7 @@ class SetEventEliminationV2 extends Transactional
                             $elimination_team->thread = $thread;
                             $elimination_team->participant_id = $participant_id;
                             $elimination_team->position = $position;
+                            $elimination_team->team_name = $team_name;
                             $elimination_team->save();
                         }
                         $elimination_group_team_id = $elimination_team->id;

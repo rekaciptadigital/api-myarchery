@@ -29,6 +29,8 @@ class ChangeTargetFaceDataType extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('archery_event_elimination_group_match', function (Blueprint $table) {
+            $table->dropColumn("target_face");
+        });
     }
 }

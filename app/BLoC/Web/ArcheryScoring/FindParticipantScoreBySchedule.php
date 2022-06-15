@@ -249,6 +249,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->scores = $s;
             $output->round = $round;
             $output->is_updated = 1;
+            $output->budrest_number = $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . $value->target_fave : "";
             $scores[] = $output;
         }
 
@@ -282,6 +283,7 @@ class FindParticipantScoreBySchedule extends Retrieval
 
         $get_participant_match = ArcheryEventEliminationGroupMatch::select(
             "archery_event_elimination_group_teams.participant_id",
+            "archery_event_elimination_group_teams.team_name",
             "archery_event_elimination_group_match.*"
         )
             ->join("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
@@ -318,12 +320,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$participant_detail) {
                 throw new BLoCException("participant not found");
             }
-            $team_name = "";
-            foreach ($lis_team as $lt) {
-                if ($lt["participant_id"] == $value->participant_id) {
-                    $team_name = $lt["team"];
-                }
-            }
+            $team_name = $value->team_name;
             $team_detail["participant_id"] = $participant_detail->id;
             $team_detail["team_name"] = $team_name;
             $team_detail["club"] = ArcheryClub::find($participant_detail->club_id);
@@ -368,6 +365,7 @@ class FindParticipantScoreBySchedule extends Retrieval
                 $category_response["distance_id"] = $category->distance_id;
             }
             $output->category = $category_response;
+            $output->budrest_number = $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . $value->target_face : "";
             $scores[] = $output;
         }
 
