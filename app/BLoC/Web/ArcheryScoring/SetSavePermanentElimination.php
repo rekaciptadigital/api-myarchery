@@ -69,6 +69,7 @@ class SetSavePermanentElimination extends Retrieval
             ->where("match", $match)
             ->orderBy("round")
             ->orderBy("match")
+            ->orderBy("index")
             ->get();
 
         // cek valid atau tidaknya match tersebut
@@ -76,13 +77,11 @@ class SetSavePermanentElimination extends Retrieval
             throw new BLoCException("match tidak valid");
         }
 
-        // $total_1 = json_decode($get_member_match[0]->scoring_detail);
-        // return $total_1->extra_shot;
-        // return $total_1->total;
-
-        // return $get_member_match;
-
         // lakukan perulangan
+
+        $scoring_detail_1 = json_decode($get_member_match[0]->scoring_detail);
+        $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
+
         foreach ($get_member_match as $key => $value) {
             if ($value->admin_total === null) {
                 throw new BLoCException("skoring belum diinputkan");
@@ -94,7 +93,7 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         // bandingak admin_total keduanya untuk mendapatkan pemenang
-        if ($get_member_match[0]->admin_total > 0 && $get_member_match[1]->admin_total > 0) {
+        if ($get_member_match[0]->admin_total > 0 || $get_member_match[1]->admin_total > 0) {
             if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
                 $win_member = $get_member_match[0]->id;
             }
@@ -107,71 +106,35 @@ class SetSavePermanentElimination extends Retrieval
                 throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
             }
         } else {
-            $scoring_detail_1 = json_decode($get_member_match[0]->scoring_detail);
-            $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
-            if ($elimination->elimination_scoring_type == 2) {
-                $total_1 = $scoring_detail_1->total;
-                $total_2 = $scoring_detail_2->total;
-                if ($total_1 > $total_2) {
-                    $win_member = $get_member_match[0]->id;
-                } elseif ($total_2 > $total_1) {
-                    $win_member = $get_member_match[1]->id;
-                } else {
-                    $total_shot_of_1 = 0;
-                    foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                        if ($value->score == "") {
-                            continue;
-                        }
-                        $total_shot_of_1 = $total_shot_of_1 + $value->score;
-                    }
-
-                    $total_shot_of_2 = 0;
-                    foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                        if ($value->score == "") {
-                            continue;
-                        }
-                        $total_shot_of_2 = $total_shot_of_2 + $value->score;
-                    }
-
-                    if ($total_shot_of_1 > $total_shot_of_2) {
-                        $win_member = $get_member_match[0]->id;
-                    } elseif ($total_shot_of_2 > $total_shot_of_1) {
-                        $win_member = $get_member_match[1]->id;
-                    } else {
-                        throw new BLoCException("hasil seri");
-                    }
-                }
+            $result_1 = $scoring_detail_1->result;
+            $result_2 = $scoring_detail_2->result;
+            if ($result_1 > $result_2) {
+                $win_member = $get_member_match[0]->id;
+            } elseif ($result_2 > $result_1) {
+                $win_member = $get_member_match[1]->id;
             } else {
-                $result_1 = $scoring_detail_1->result;
-                $result_2 = $scoring_detail_2->result;
-                if ($result_1 > $result_2) {
+                $result_shot_of_1 = 0;
+                foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                    if ($value->score == "") {
+                        continue;
+                    }
+                    $result_shot_of_1 = $result_shot_of_1 + $value->score;
+                }
+
+                $result_shot_of_2 = 0;
+                foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                    if ($value->score == "") {
+                        continue;
+                    }
+                    $result_shot_of_2 = $result_shot_of_2 + $value->score;
+                }
+
+                if ($result_shot_of_1 > $result_shot_of_2) {
                     $win_member = $get_member_match[0]->id;
-                } elseif ($result_2 > $result_1) {
+                } elseif ($result_shot_of_2 > $result_shot_of_1) {
                     $win_member = $get_member_match[1]->id;
                 } else {
-                    $result_shot_of_1 = 0;
-                    foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                        if ($value->score == "") {
-                            continue;
-                        }
-                        $result_shot_of_1 = $result_shot_of_1 + $value->score;
-                    }
-
-                    $result_shot_of_2 = 0;
-                    foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                        if ($value->score == "") {
-                            continue;
-                        }
-                        $result_shot_of_2 = $result_shot_of_2 + $value->score;
-                    }
-
-                    if ($result_shot_of_1 > $result_shot_of_2) {
-                        $win_member = $get_member_match[0]->id;
-                    } elseif ($result_shot_of_2 > $result_shot_of_1) {
-                        $win_member = $get_member_match[1]->id;
-                    } else {
-                        throw new BLoCException("hasil seri");
-                    }
+                    throw new BLoCException("hasil seri");
                 }
             }
         }
@@ -191,7 +154,7 @@ class SetSavePermanentElimination extends Retrieval
                 $value->win = $win;
             }
 
-            $value->result = $value->admin_total;
+            $value->result = json_decode($value->scoring_detail->result);
             $next = EliminationFormat::NextMatch($elimination->count_participant, $round, $match, $win);
             if (count($next) > 0) {
                 ArcheryEventEliminationMatch::where("round", $next["round"])
@@ -227,6 +190,7 @@ class SetSavePermanentElimination extends Retrieval
             ->where("match", $match)
             ->orderBy("round")
             ->orderBy("match")
+            ->orderBy("index")
             ->get();
 
         // return $get_member_match;
@@ -246,17 +210,54 @@ class SetSavePermanentElimination extends Retrieval
             }
         }
 
+        $scoring_detail_1 = json_decode($get_member_match[0]->scoring_detail);
+        $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
+
         // bandingak admin_total keduanya untuk mendapatkan pemenang
-        if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
-            $win_member = $get_member_match[0]->id;
-        }
+        if ($get_member_match[0]->admin_total > 0 || $get_member_match[1]->admin_total > 0) {
+            if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
+                $win_member = $get_member_match[0]->id;
+            }
 
-        if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
-            $win_member = $get_member_match[1]->id;
-        }
+            if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
+                $win_member = $get_member_match[1]->id;
+            }
 
-        if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-            throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
+            if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
+                throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
+            }
+        } else {
+            $result_1 = $scoring_detail_1->result;
+            $result_2 = $scoring_detail_2->result;
+            if ($result_1 > $result_2) {
+                $win_member = $get_member_match[0]->id;
+            } elseif ($result_2 > $result_1) {
+                $win_member = $get_member_match[1]->id;
+            } else {
+                $result_shot_of_1 = 0;
+                foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                    if ($value->score == "") {
+                        continue;
+                    }
+                    $result_shot_of_1 = $result_shot_of_1 + $value->score;
+                }
+
+                $result_shot_of_2 = 0;
+                foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                    if ($value->score == "") {
+                        continue;
+                    }
+                    $result_shot_of_2 = $result_shot_of_2 + $value->score;
+                }
+
+                if ($result_shot_of_1 > $result_shot_of_2) {
+                    $win_member = $get_member_match[0]->id;
+                } elseif ($result_shot_of_2 > $result_shot_of_1) {
+                    $win_member = $get_member_match[1]->id;
+                } else {
+                    throw new BLoCException("hasil seri");
+                }
+            }
         }
 
         // lakukan perulangan kembali untuk set status pemenang tiap match
@@ -273,7 +274,7 @@ class SetSavePermanentElimination extends Retrieval
                 $value->win = $win;
             }
 
-            $value->result = $value->admin_total;
+            $value->result = json_decode($value->scoring_detail->result);
             $next = EliminationFormat::NextMatch($elimination->count_participant, $round, $match, $win);
             if (count($next) > 0) {
                 ArcheryEventEliminationGroupMatch::where("round", $next["round"])
