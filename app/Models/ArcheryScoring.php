@@ -641,6 +641,7 @@ class ArcheryScoring extends Model
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
+            $score["rank"] = $key;
             $archery_event_score[] = $score;
         }
 
