@@ -109,6 +109,7 @@ class GetEventEliminationTemplate extends Retrieval
                     }
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
+                        "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
                         "club" => $value->club,
