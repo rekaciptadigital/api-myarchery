@@ -30,9 +30,9 @@ class UpdateMemberBudrest extends Retrieval
         }
 
         // cek pemilik event
-        if ($event->admin_id != $admin->id) {
-            throw new BLoCException('you are not owner this event');
-        }
+        // if ($event->admin_id != $admin->id) {
+        //     throw new BLoCException('you are not owner this event');
+        // }
 
         // dapatkan jadwal peserta
         $schedule_full_day1 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
