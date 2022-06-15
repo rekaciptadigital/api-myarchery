@@ -361,6 +361,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->is_updated = 1;
             $category_response = [];
             if ($category) {
+                $category_response["id"] = $category->id;
                 $category_response["age_category_id"] = $category->age_category_id;
                 $category_response["team_category_id"] = $category->team_category_id;
                 $category_response["competition_category_id"] = $category->competition_category_id;
