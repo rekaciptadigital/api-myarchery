@@ -77,8 +77,8 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         $total_1 = json_decode($get_member_match[0]->scoring_detail);
-        // return $total_1;
-        return $get_member_match[0];
+        return $total_1->extra_shot;
+        // return $total_1->total;
 
         // lakukan perulangan
         foreach ($get_member_match as $key => $value) {
@@ -105,8 +105,32 @@ class SetSavePermanentElimination extends Retrieval
                 throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
             }
         } else {
+            $scoring_detail_1 = json_decode($get_member_match[0]->scoring_detail);
+            $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
             if ($elimination->elimination_scoring_type == 2) {
-                $total_1 = json_decode($get_member_match[1]->scoring_detail);
+                $total_1 = $scoring_detail_1->total;
+                $total_2 = $scoring_detail_2->total;
+                if ($total_1 > $total_2) {
+                    $win_member = $get_member_match[0]->id;
+                } elseif ($total_2 > $total_1) {
+                    $win_member = $get_member_match[1]->id;
+                } else {
+                    $total_shot_of_1 = 0;
+                    foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                        if ($value->score == "") {
+                            continue;
+                        }
+                        $total_shot_of_1 = $total_shot_of_1 + $value->score;
+                    }
+
+                    $total_shot_of_2 = 0;
+                    foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                        if ($value->score == "") {
+                            continue;
+                        }
+                        $total_shot_of_2 = $total_shot_of_2 + $value->score;
+                    }
+                }
             }
         }
 
