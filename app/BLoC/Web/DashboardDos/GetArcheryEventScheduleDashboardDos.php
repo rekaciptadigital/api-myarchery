@@ -48,7 +48,7 @@ class GetArcheryEventScheduleDashboardDos extends Retrieval
 
             $output[] = [
                 'date' => $date->format('Y-m-d'),
-                'date_formatted' => $date->format('l, Y-m-d'),
+                'date_formatted' => dateFormatTranslate($date->format('l-d-F-Y')),
                 'status' => $this->getStatus($date->format('Y-m-d')),
                 'schedule' => $schedule
             ];
