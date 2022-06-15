@@ -641,7 +641,6 @@ class ArcheryScoring extends Model
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
-            $score["rank"] = $key;
             $archery_event_score[] = $score;
         }
 
@@ -652,6 +651,11 @@ class ArcheryScoring extends Model
                 }
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
+        }
+
+        // number of rank
+        foreach($archery_event_score as $key => $value) {
+            $archery_event_score[$key]["rank"] = $key + 1;
         }
 
         return $archery_event_score;
