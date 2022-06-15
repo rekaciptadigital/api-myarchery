@@ -100,16 +100,11 @@ class BudRest extends Model
             if ($m["detail_member"]["bud_rest_number"] == 0) {
                 $member_not_have_budrest[] = $m["detail_member"]["member_id"];
             }
-            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m; 
-            if(count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2){
+            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
+            if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
                 $i++;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
-<<<<<<< HEAD
-            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][] = $m;
-=======
-
->>>>>>> 07837a2d94f9f4fb2fcac15f83f47fc55cd1db92
         }
 
         foreach ($member_in_budrest as $key => $data) {
@@ -135,19 +130,7 @@ class BudRest extends Model
                     "event" => $output['event']
                 ]);
                 $mpdf->WriteHTML($html);
-<<<<<<< HEAD
             } else {
-                foreach ($data["members"] as $m) {
-                    $qrCode = new QrCode($m['code']);
-                    $output_qrcode = new Output\Png();
-                    // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-                    $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
-                    $full_path = $path . $qrCode_name_file;
-                    $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-                    file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-=======
-            }
-            else{
                 foreach ($data["members"] as $group_member) {
                     foreach ($group_member as $m) {
                         $qrCode = new QrCode($m['code']);
@@ -157,7 +140,6 @@ class BudRest extends Model
                         $full_path = $path . $qrCode_name_file;
                         $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
                         file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
->>>>>>> 07837a2d94f9f4fb2fcac15f83f47fc55cd1db92
 
                         // return $type;
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
