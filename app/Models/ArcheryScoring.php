@@ -464,7 +464,9 @@ class ArcheryScoring extends Model
                 "total_per_point" => $total_per_points,
                 "total" => 0,
                 "total_tmp" => 0,
-                "session" => $s
+                "session" => $s,
+                "total_x" => 0,
+                "total_x_plus_ten" => 0
             );
         }
         $total = 0;
