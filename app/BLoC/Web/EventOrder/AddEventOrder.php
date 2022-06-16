@@ -465,7 +465,7 @@ class AddEventOrder extends Transactional
                 ->where('team_category_id', "individu male")
                 ->first();
 
-            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->age_category_id)
+            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
                 ->where('age_category_id', $event_category_detail->age_category_id)
                 ->where('competition_category_id', $event_category_detail->competition_category_id)
                 ->where('distance_id', $event_category_detail->distance_id)
@@ -489,11 +489,11 @@ class AddEventOrder extends Transactional
                 ->count();
 
             if ($check_participant_male < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("kekurangan peserta laki-laki");
+                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
 
             if ($check_participant_female < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("kekurangan peserta perempuan");
+                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
         } else {
             if ($check_register_same_category >= 2) {
