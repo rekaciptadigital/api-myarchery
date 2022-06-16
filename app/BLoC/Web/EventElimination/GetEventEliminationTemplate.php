@@ -260,6 +260,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "member_team" => $list_member,
                         "team_name" => $team_name
                     );
+                    
                 } else {
                     $match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
                     if ($match[0]->group_team_id == 0 && $match[1]->win == 1) {
