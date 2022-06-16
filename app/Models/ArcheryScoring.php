@@ -654,7 +654,7 @@ class ArcheryScoring extends Model
         }
 
         // number of rank
-        foreach($archery_event_score as $key => $value) {
+        foreach ($archery_event_score as $key => $value) {
             $archery_event_score[$key]["rank"] = $key + 1;
         }
 
