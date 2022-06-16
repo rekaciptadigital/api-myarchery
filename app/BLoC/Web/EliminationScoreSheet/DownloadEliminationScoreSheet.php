@@ -181,7 +181,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             throw new BLoCException("data not found");
         }
 
-        $string_code = "2-" . $data_member[0]->event_elimination_id . "-" . $data_member[0]->match . "-" . $data_member[0]->round . "-t";
+        $string_code = "2-" . $elimination_id . "-" . $data_member[0]->match . "-" . $data_member[0]->round . "-t";
         $path = 'asset/score_sheet/' . $category_id  . '/';
         if (!file_exists(public_path() . "/" . $path)) {
             mkdir(public_path() . "/" . $path, 0777);
