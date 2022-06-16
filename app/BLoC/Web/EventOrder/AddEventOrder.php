@@ -489,11 +489,11 @@ class AddEventOrder extends Transactional
                 ->count();
 
             if ($check_participant_male < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("kekurangan peserta laki-laki");
+                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
 
             if ($check_participant_female < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("kekurangan peserta perempuan");
+                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
         } else {
             if ($check_register_same_category >= 2) {
