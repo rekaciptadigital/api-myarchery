@@ -181,7 +181,8 @@ class SetSavePermanentElimination extends Retrieval
         $get_member_match = ArcheryEventEliminationGroupMatch::select(
             "archery_event_elimination_group_teams.participant_id",
             "archery_event_elimination_group_match.*",
-            "archery_scoring_elimination_group.admin_total"
+            "archery_scoring_elimination_group.admin_total",
+            "archery_scoring_elimination_group.scoring_detail"
         )
             ->join("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
             ->leftJoin("archery_scoring_elimination_group", "archery_scoring_elimination_group.elimination_match_group_id", "=", "archery_event_elimination_group_match.id")
@@ -274,7 +275,7 @@ class SetSavePermanentElimination extends Retrieval
                 $value->win = $win;
             }
 
-            $value->result = json_decode($value->scoring_detail->result);
+            $value->result = json_decode($value->scoring_detail)->result;
             $next = EliminationFormat::NextMatch($elimination->count_participant, $round, $match, $win);
             if (count($next) > 0) {
                 ArcheryEventEliminationGroupMatch::where("round", $next["round"])
