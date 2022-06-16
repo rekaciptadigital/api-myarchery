@@ -309,8 +309,8 @@ class ArcheryScoringEliminationGroup extends Model
         $scoring_2["scores"]["eliminationt_score_type"] = 1;
 
         return [
-            $scoring_1["member_id"] => $scoring_1,
-            $scoring_2["member_id"] => $scoring_2,
+            $scoring_1["participant_id"] => $scoring_1,
+            $scoring_2["participant_id"] => $scoring_2,
         ];
     }
 }
