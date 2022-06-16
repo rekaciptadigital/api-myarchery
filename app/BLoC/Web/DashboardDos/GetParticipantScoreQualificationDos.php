@@ -176,6 +176,12 @@ class GetParticipantScoreQualificationDos extends Retrieval
         usort($participant_club, function ($a, $b) {
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
+
+         // number of rank
+         foreach($participant_club as $key => $value) {
+            $participant_club[$key]["rank"] = $key + 1;
+        }
+        
         return $participant_club;
     }
 
@@ -252,6 +258,11 @@ class GetParticipantScoreQualificationDos extends Retrieval
         usort($participant_club, function ($a, $b) {
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
+
+        // number of rank
+        foreach($participant_club as $key => $value) {
+            $participant_club[$key]["rank"] = $key + 1;
+        }
 
         return $participant_club;
     }
