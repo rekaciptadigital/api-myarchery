@@ -93,19 +93,16 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         // bandingak admin_total keduanya untuk mendapatkan pemenang
-        if ($get_member_match[0]->admin_total > 0 || $get_member_match[1]->admin_total > 0) {
-            if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
-                $win_member = $get_member_match[0]->id;
-            }
 
-            if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
-                $win_member = $get_member_match[1]->id;
-            }
+        if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
+            $win_member = $get_member_match[0]->id;
+        }
 
-            if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-                throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
-            }
-        } else {
+        if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
+            $win_member = $get_member_match[1]->id;
+        }
+
+        if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
             $result_1 = $scoring_detail_1->result;
             $result_2 = $scoring_detail_2->result;
             if ($result_1 > $result_2) {
@@ -215,19 +212,15 @@ class SetSavePermanentElimination extends Retrieval
         $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
 
         // bandingak admin_total keduanya untuk mendapatkan pemenang
-        if ($get_member_match[0]->admin_total > 0 || $get_member_match[1]->admin_total > 0) {
-            if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
-                $win_member = $get_member_match[0]->id;
-            }
+        if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
+            $win_member = $get_member_match[0]->id;
+        }
 
-            if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
-                $win_member = $get_member_match[1]->id;
-            }
+        if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
+            $win_member = $get_member_match[1]->id;
+        }
 
-            if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-                throw new BLoCException("hasil seri tidak dapat menentukan pemenang");
-            }
-        } else {
+        if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
             $result_1 = $scoring_detail_1->result;
             $result_2 = $scoring_detail_2->result;
             if ($result_1 > $result_2) {
