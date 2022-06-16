@@ -42,6 +42,7 @@ class ArcheryScoringEliminationGroup extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 1
         ],
 
@@ -62,6 +63,7 @@ class ArcheryScoringEliminationGroup extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 2
         ]
     ];

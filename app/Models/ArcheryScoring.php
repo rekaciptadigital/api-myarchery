@@ -45,6 +45,7 @@ class ArcheryScoring extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 1
         ],
 
@@ -65,6 +66,7 @@ class ArcheryScoring extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 2
         ]
     ];
@@ -387,15 +389,6 @@ class ArcheryScoring extends Model
     protected function makeEliminationScoringTypeTotalFormat()
     {
         $scores = $this->elimination_scores_format_by_type[2];
-        // foreach ($scoring as $key => $value) {
-        //     if($value->shot){
-        //         $score = [];
-        //         foreach ($value as $k => $v) {
-        //             $score[] = (string)$v->id;
-        //         }
-        //     $scores[$key] = $score;
-        //     }
-        // }
         return $scores;
     }
 
