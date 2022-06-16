@@ -465,7 +465,7 @@ class AddEventOrder extends Transactional
                 ->where('team_category_id', "individu male")
                 ->first();
 
-            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->age_category_id)
+            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
                 ->where('age_category_id', $event_category_detail->age_category_id)
                 ->where('competition_category_id', $event_category_detail->competition_category_id)
                 ->where('distance_id', $event_category_detail->distance_id)
