@@ -189,29 +189,6 @@ class SetEventEliminationV2 extends Transactional
         return $template;
     }
 
-    private function cleanEliminationMatch($category_id)
-    {
-        $elimination = ArcheryEventElimination::where('event_category_id', $category_id)->first();
-        if (!$elimination) {
-            throw new BLoCException("elimination tidak ditemukan");
-        }
-
-        $list_match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination->id)->get();
-        foreach ($list_match as $value) {
-            if ($value->elimination_member_id != 0) {
-                $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
-                if (!$member) {
-                    throw new BLoCException("member not found");
-                }
-                $member->delete();
-            }
-            $value->delete();
-        }
-
-        $elimination->delete();
-        return "success";
-    }
-
     private function makeTemplateTeam($group, $category_team, $elimination_member_count, $scoring_type)
     {
         if ($group == "mix_team") {
