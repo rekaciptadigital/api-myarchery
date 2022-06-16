@@ -419,21 +419,81 @@ class AddEventOrder extends Transactional
             })->count();
 
         if ($gender_category == 'mix') {
-            if ($check_register_same_category >= 2) {
-                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
-                    ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                    ->where('archery_event_participants.club_id', $club_member->club_id)
-                    ->where("archery_event_participants.status", 4)
-                    ->where("transaction_logs.expired_time", ">", $time_now)
-                    ->count();
-                if ($check_panding > 0)
-                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
-                else
-                    throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
+            // if ($check_register_same_category >= 2) {
+            //     $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+            //         ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+            //         ->where('archery_event_participants.club_id', $club_member->club_id)
+            //         ->where("archery_event_participants.status", 4)
+            //         ->where("transaction_logs.expired_time", ">", $time_now)
+            //         ->count();
 
-                ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
-            } else {
-                ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
+            //     if ($check_panding > 0) {
+            //         throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
+            //     } else {
+            //         throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
+            //     }
+            // } else {
+            //     ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
+            // }
+
+            $check_success_category_mix = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 1)
+                ->get()
+                ->count();
+
+            if ($check_success_category_mix > 2) {
+                throw new BLoCException("club anda sudah terdaftar 2 kali pada kategori ini");
+            }
+
+            $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $event_category_detail->id)
+                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
+                ->first();
+
+            if ($check_panding_mix) {
+                throw new BLoCException("terdapat pesanan yang belum di bayar oleh user dengan email " . $check_panding_mix->email);
+            }
+
+            $check_individu_category_detail_male = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->event_id)
+                ->where('age_category_id', $event_category_detail->age_category_id)
+                ->where('competition_category_id', $event_category_detail->competition_category_id)
+                ->where('distance_id', $event_category_detail->distance_id)
+                ->where('team_category_id', "individu male")
+                ->first();
+
+            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $event_category_detail->age_category_id)
+                ->where('age_category_id', $event_category_detail->age_category_id)
+                ->where('competition_category_id', $event_category_detail->competition_category_id)
+                ->where('distance_id', $event_category_detail->distance_id)
+                ->where('team_category_id', "individu female")
+                ->first();
+
+            if (!$check_individu_category_detail_male || !$check_individu_category_detail_female) {
+                throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
+            }
+
+            $check_participant_male = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+                ->where("archery_event_participants.status", 1)
+                ->where('archery_event_participants.event_category_id', $check_individu_category_detail_male->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->count();
+
+            $check_participant_female = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+                ->where("archery_event_participants.status", 1)
+                ->where('archery_event_participants.event_category_id', $check_individu_category_detail_female->id)
+                ->where('archery_event_participants.club_id', $club_member->club_id)
+                ->count();
+
+            if ($check_participant_male < (($check_success_category_mix + 1) * 1)) {
+                throw new BLoCException("kekurangan peserta laki-laki");
+            }
+
+            if ($check_participant_female < (($check_success_category_mix + 1) * 1)) {
+                throw new BLoCException("kekurangan peserta perempuan");
             }
         } else {
             if ($check_register_same_category >= 2) {
