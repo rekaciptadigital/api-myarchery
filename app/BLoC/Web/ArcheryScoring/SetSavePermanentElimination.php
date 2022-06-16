@@ -154,7 +154,7 @@ class SetSavePermanentElimination extends Retrieval
                 $value->win = $win;
             }
 
-            $value->result = json_decode($value->scoring_detail->result);
+            $value->result = json_decode($value->scoring_detail)->result;
             $next = EliminationFormat::NextMatch($elimination->count_participant, $round, $match, $win);
             if (count($next) > 0) {
                 ArcheryEventEliminationMatch::where("round", $next["round"])
