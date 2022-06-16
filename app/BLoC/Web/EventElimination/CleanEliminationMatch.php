@@ -69,10 +69,9 @@ class CleanEliminationMatch extends Retrieval
         foreach ($list_match as $value) {
             if ($value->elimination_member_id != 0) {
                 $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
-                if (!$member) {
-                    throw new BLoCException("member not found");
+                if ($member) {
+                    $member->delete();
                 }
-                $member->delete();
             }
             $scoring = ArcheryScoring::where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
             if ($scoring) {
@@ -97,10 +96,9 @@ class CleanEliminationMatch extends Retrieval
         foreach ($list_match as $value) {
             if ($value->elimination_member_id != 0) {
                 $member = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
-                if (!$member) {
-                    throw new BLoCException("tim not found");
+                if ($member) {
+                    $member->delete();
                 }
-                $member->delete();
             }
             $scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $value->id)->first();
             if ($scoring) {
