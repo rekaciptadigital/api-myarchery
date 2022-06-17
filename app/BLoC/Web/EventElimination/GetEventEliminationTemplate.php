@@ -105,7 +105,7 @@ class GetEventEliminationTemplate extends Retrieval
             foreach ($fix_members1 as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
                 if ($value->member_id != null) {
-                    $archery_scooring = ArcheryScoring::where("item_id", $value->id)->first();
+                    $archery_scooring = ArcheryScoring::where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
                     $admin_total = 0;
                     $is_different = 0;
                     $total_scoring = 0;
