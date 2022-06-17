@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\Web\ArcheryScoring;
+namespace App\BLoC\Web\DashboardDos;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
@@ -11,7 +11,7 @@ use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class GetParticipantScoreQualificationV2 extends Retrieval
+class GetParticipantScoreQualificationDos extends Retrieval
 {
     var $total_per_points = [
         "" => 0,
@@ -40,6 +40,8 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
+        $filter_session = $parameters->get('session');
+
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category_detail) {
             throw new BLoCException("category tidak ditemukan");
@@ -59,9 +61,21 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             throw new BLoCException("you are not owner this event");
         }
 
-        $session = [];
-        for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
-            $session[] = $i + 1;
+        if ($filter_session) {
+            $session = [];
+            for ($i=0; $i < $filter_session; $i++) { 
+                if ($filter_session == 2) {
+                    if ($i == 0) {
+                        continue;
+                    }
+                }
+                $session[] = $i+1;
+            }
+        } else {
+            $session = [];
+            for ($i=0; $i < $category_detail->session_in_qualification; $i++) { 
+                $session[] = $i+1;
+            }
         }
 
         if ($category_detail->category_team == "Individual") {
@@ -88,7 +102,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     private function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
-        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
+        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, $score_type, $event_id);
@@ -150,7 +164,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -163,13 +177,12 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        $new_array = [];
-        foreach ($participant_club as $key => $value) {
-            if (count($value["teams"]) == 3) {
-                array_push($new_array, $value);
-            }
+         // number of rank
+         foreach($participant_club as $key => $value) {
+            $participant_club[$key]["rank"] = $key + 1;
         }
-        return $new_array;
+        
+        return $participant_club;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -233,7 +246,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -246,12 +259,11 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        $new_array = [];
-        foreach ($participant_club as $key => $value) {
-            if (count($value["teams"]) == 2) {
-                array_push($new_array, $value);
-            }
+        // number of rank
+        foreach($participant_club as $key => $value) {
+            $participant_club[$key]["rank"] = $key + 1;
         }
-        return $new_array;
+
+        return $participant_club;
     }
 }
