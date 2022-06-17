@@ -164,7 +164,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         });
 
         $new_array = [];
-        foreach ($$participant_club as $key => $value) {
+        foreach ($participant_club as $key => $value) {
             if (count($value["teams"]) == 3) {
                 array_push($new_array, $value);
             }
@@ -247,7 +247,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         });
 
         $new_array = [];
-        foreach ($$participant_club as $key => $value) {
+        foreach ($participant_club as $key => $value) {
             if (count($value["teams"]) == 2) {
                 array_push($new_array, $value);
             }
