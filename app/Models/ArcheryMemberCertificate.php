@@ -168,7 +168,7 @@ class ArcheryMemberCertificate extends Model
                     $member_certificate = $this->create(array(
                         'id' => $member_certificate_id,
                         'member_id' => $value->id,
-                        'certificate_template_id' => $template_id,
+                        'certificate_template_id' => $template->id,
                     ));
                 }
                 
