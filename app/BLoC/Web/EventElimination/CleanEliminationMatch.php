@@ -99,8 +99,12 @@ class CleanEliminationMatch extends Retrieval
                 $member = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
                 if ($member) {
                     $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $member->participant_id)->get();
-                    foreach ($member_team as $key => $mt) {
-                        $mt->delete();
+                    if ($member_team->count() > 0) {
+                        foreach ($member_team as $key => $mt) {
+                            $mt->delete();
+                        }
+                    } else {
+                        throw new BLoCException("member tidak tersedia");
                     }
                     $member->delete();
                 }
