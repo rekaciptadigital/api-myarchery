@@ -37,7 +37,6 @@ class GetParticipantScoreQualificationDos extends Retrieval
     protected function process($parameters)
     {
         $score_type = 1;
-        $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
         $filter_session = $parameters->get('session');
@@ -55,10 +54,6 @@ class GetParticipantScoreQualificationDos extends Retrieval
         $event = ArcheryEvent::find($category_detail->event_id);
         if (!$event) {
             throw new BLoCException("CATEGORY INVALID");
-        }
-
-        if ($event->admin_id !== $admin->id) {
-            throw new BLoCException("you are not owner this event");
         }
 
         if ($filter_session) {
