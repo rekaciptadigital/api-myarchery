@@ -103,8 +103,6 @@ class CleanEliminationMatch extends Retrieval
                         foreach ($member_team as $key => $mt) {
                             $mt->delete();
                         }
-                    } else {
-                        throw new BLoCException("member tidak tersedia");
                     }
                     $member->delete();
                 }
