@@ -95,7 +95,7 @@ class CleanEliminationMatch extends Retrieval
 
         $list_match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination->id)->get();
         foreach ($list_match as $value) {
-            if ($value->elimination_member_id != 0) {
+            if ($value->group_team_id != 0) {
                 $member = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
                 if ($member) {
                     $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $member->participant_id)->get();
