@@ -854,7 +854,14 @@ class ArcheryScoring extends Model
         usort($participant_club, function ($a, $b) {
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
-        return $participant_club;
+
+        $new_array = [];
+        foreach ($$participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+        return $new_array;
     }
 
     protected function mixTeamBestOfThree($category_detail)
@@ -934,6 +941,12 @@ class ArcheryScoring extends Model
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        return $participant_club;
+        $new_array = [];
+        foreach ($$participant_club as $key => $value) {
+            if (count($value["teams"]) == 2) {
+                array_push($new_array, $value);
+            }
+        }
+        return $new_array;
     }
 }
