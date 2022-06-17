@@ -103,61 +103,60 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-            // $result_shot_of_1 = 0;
-            // foreach ($scoring_detail_1->extra_shot as $key => $value) {
-            //     if ($value->score == "") {
-            //         continue;
-            //     }
-            //     $result_shot_of_1 = $result_shot_of_1 + $value->score;
-            // }
+            $result_shot_of_1 = 0;
+            foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_1 = $result_shot_of_1 + $value->score;
+            }
 
-            // $result_shot_of_2 = 0;
-            // foreach ($scoring_detail_2->extra_shot as $key => $value) {
-            //     if ($value->score == "") {
-            //         continue;
-            //     }
-            //     $result_shot_of_2 = $result_shot_of_2 + $value->score;
-            // }
+            $result_shot_of_2 = 0;
+            foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_2 = $result_shot_of_2 + $value->score;
+            }
 
-            // if ($result_shot_of_1 > $result_shot_of_2) {
-            //     $win_member = $get_member_match[0]->id;
-            // } elseif ($result_shot_of_2 > $result_shot_of_1) {
-            //     $win_member = $get_member_match[1]->id;
-            // } else {
-            //     $result_distance_from_x_1 = 0;
-            //     foreach ($scoring_detail_1->extra_shot as $key => $value) {
-            //         if ($value->distance_from_x == "") {
-            //             continue;
-            //         }
-            //         $result_distance_from_x_1 = $result_distance_from_x_1 + $value->distance_from_x;
-            //     }
-
-            //     $result_distance_from_x_2 = 0;
-            //     foreach ($scoring_detail_2->extra_shot as $key => $value) {
-            //         if ($value->distance_from_x == "") {
-            //             continue;
-            //         }
-            //         $result_distance_from_x_2 = $result_distance_from_x_2 + $value->distance_from_x;
-            //     }
-
-            //     if ($result_distance_from_x_1 > $result_distance_from_x_2) {
-            //         $win_member = $get_member_match[0]->id;
-            //     } elseif ($result_distance_from_x_2 > $result_distance_from_x_1) {
-            //         $win_member = $get_member_match[1]->id;
-            //     } else {
-            //         throw new BLoCException("hasil seri");
-            //     }
-            // }
-            if ($scoring_detail_1->result > $scoring_detail_2->result) {
+            if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
-            }
-
-            if ($scoring_detail_2->result > $scoring_detail_1->result) {
+            } elseif ($result_shot_of_2 > $result_shot_of_1) {
                 $win_member = $get_member_match[1]->id;
-            }
+            } else {
+                $result_distance_from_x_1 = 0;
+                foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                        continue;
+                    }
 
-            if ($scoring_detail_1->result == $scoring_detail_2->result) {
-                throw new BLoCException("hasil seri");
+                    $distance_from_x = $value->distance_from_x;
+                    if ($value->distance_from_x == "x") {
+                        $distance_from_x = 10;
+                    }
+                    $result_distance_from_x_1 = $result_distance_from_x_1 + $distance_from_x;
+                }
+
+                $result_distance_from_x_2 = 0;
+                foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                        continue;
+                    }
+
+                    $distance_from_x = $value->distance_from_x;
+                    if ($value->distance_from_x == "x") {
+                        $distance_from_x = 10;
+                    }
+                    $result_distance_from_x_2 = $result_distance_from_x_2 + $distance_from_x;
+                }
+
+                if ($result_distance_from_x_1 < $result_distance_from_x_2) {
+                    $win_member = $get_member_match[0]->id;
+                } elseif ($result_distance_from_x_2 < $result_distance_from_x_1) {
+                    $win_member = $get_member_match[1]->id;
+                } else {
+                    throw new BLoCException("hasil seri");
+                }
             }
         }
 
@@ -250,61 +249,60 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-            // $result_shot_of_1 = 0;
-            // foreach ($scoring_detail_1->extra_shot as $key => $value) {
-            //     if ($value->score == "") {
-            //         continue;
-            //     }
-            //     $result_shot_of_1 = $result_shot_of_1 + $value->score;
-            // }
+            $result_shot_of_1 = 0;
+            foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_1 = $result_shot_of_1 + $value->score;
+            }
 
-            // $result_shot_of_2 = 0;
-            // foreach ($scoring_detail_2->extra_shot as $key => $value) {
-            //     if ($value->score == "") {
-            //         continue;
-            //     }
-            //     $result_shot_of_2 = $result_shot_of_2 + $value->score;
-            // }
+            $result_shot_of_2 = 0;
+            foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_2 = $result_shot_of_2 + $value->score;
+            }
 
-            // if ($result_shot_of_1 > $result_shot_of_2) {
-            //     $win_member = $get_member_match[0]->id;
-            // } elseif ($result_shot_of_2 > $result_shot_of_1) {
-            //     $win_member = $get_member_match[1]->id;
-            // } else {
-            //     $result_distance_from_x_1 = 0;
-            //     foreach ($scoring_detail_1->extra_shot as $key => $value) {
-            //         if ($value->distance_from_x == "") {
-            //             continue;
-            //         }
-            //         $result_distance_from_x_1 = $result_distance_from_x_1 + $value->distance_from_x;
-            //     }
-
-            //     $result_distance_from_x_2 = 0;
-            //     foreach ($scoring_detail_2->extra_shot as $key => $value) {
-            //         if ($value->distance_from_x == "") {
-            //             continue;
-            //         }
-            //         $result_distance_from_x_2 = $result_distance_from_x_2 + $value->distance_from_x;
-            //     }
-
-            //     if ($result_distance_from_x_1 > $result_distance_from_x_2) {
-            //         $win_member = $get_member_match[0]->id;
-            //     } elseif ($result_distance_from_x_2 > $result_distance_from_x_1) {
-            //         $win_member = $get_member_match[1]->id;
-            //     } else {
-            //         throw new BLoCException("hasil seri");
-            //     }
-            // }
-            if ($scoring_detail_1->result > $scoring_detail_2->result) {
+            if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
-            }
-
-            if ($scoring_detail_2->result > $scoring_detail_1->result) {
+            } elseif ($result_shot_of_2 > $result_shot_of_1) {
                 $win_member = $get_member_match[1]->id;
-            }
+            } else {
+                $result_distance_from_x_1 = 0;
+                foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                        continue;
+                    }
 
-            if ($scoring_detail_1->result == $scoring_detail_2->result) {
-                throw new BLoCException("hasil seri");
+                    $distance_from_x = $value->distance_from_x;
+                    if ($value->distance_from_x == "x") {
+                        $distance_from_x = 10;
+                    }
+                    $result_distance_from_x_1 = $result_distance_from_x_1 + $distance_from_x;
+                }
+
+                $result_distance_from_x_2 = 0;
+                foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                        continue;
+                    }
+
+                    $distance_from_x = $value->distance_from_x;
+                    if ($value->distance_from_x == "x") {
+                        $distance_from_x = 10;
+                    }
+                    $result_distance_from_x_2 = $result_distance_from_x_2 + $distance_from_x;
+                }
+
+                if ($result_distance_from_x_1 < $result_distance_from_x_2) {
+                    $win_member = $get_member_match[0]->id;
+                } elseif ($result_distance_from_x_2 < $result_distance_from_x_1) {
+                    $win_member = $get_member_match[1]->id;
+                } else {
+                    throw new BLoCException("hasil seri");
+                }
             }
         }
 
