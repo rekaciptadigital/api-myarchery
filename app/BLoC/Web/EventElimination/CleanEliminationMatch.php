@@ -7,6 +7,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
@@ -97,6 +98,10 @@ class CleanEliminationMatch extends Retrieval
             if ($value->elimination_member_id != 0) {
                 $member = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
                 if ($member) {
+                    $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $member->participant_id)->get();
+                    foreach ($member_team as $key => $mt) {
+                        $mt->delete();
+                    }
                     $member->delete();
                 }
             }
