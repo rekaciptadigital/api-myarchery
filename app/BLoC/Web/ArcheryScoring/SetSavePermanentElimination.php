@@ -103,36 +103,29 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-            $result_1 = $scoring_detail_1->result;
-            $result_2 = $scoring_detail_2->result;
-            if ($result_1 > $result_2) {
+            $result_shot_of_1 = 0;
+            foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_1 = $result_shot_of_1 + $value->score;
+            }
+
+            $result_shot_of_2 = 0;
+            foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
+                }
+                $result_shot_of_2 = $result_shot_of_2 + $value->score;
+            }
+
+            if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
-            } elseif ($result_2 > $result_1) {
+            } elseif ($result_shot_of_2 > $result_shot_of_1) {
                 $win_member = $get_member_match[1]->id;
             } else {
-                $result_shot_of_1 = 0;
-                foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                    if ($value->score == "") {
-                        continue;
-                    }
-                    $result_shot_of_1 = $result_shot_of_1 + $value->score;
-                }
-
-                $result_shot_of_2 = 0;
-                foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                    if ($value->score == "") {
-                        continue;
-                    }
-                    $result_shot_of_2 = $result_shot_of_2 + $value->score;
-                }
-
-                if ($result_shot_of_1 > $result_shot_of_2) {
-                    $win_member = $get_member_match[0]->id;
-                } elseif ($result_shot_of_2 > $result_shot_of_1) {
-                    $win_member = $get_member_match[1]->id;
-                } else {
-                    throw new BLoCException("hasil seri");
-                }
+                // todo:hitung distance from x
+                throw new BLoCException("hasil seri");
             }
         }
 
@@ -221,30 +214,30 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-                $result_shot_of_1 = 0;
-                foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                    if ($value->score == "") {
-                        continue;
-                    }
-                    $result_shot_of_1 = $result_shot_of_1 + $value->score;
+            $result_shot_of_1 = 0;
+            foreach ($scoring_detail_1->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
                 }
+                $result_shot_of_1 = $result_shot_of_1 + $value->score;
+            }
 
-                $result_shot_of_2 = 0;
-                foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                    if ($value->score == "") {
-                        continue;
-                    }
-                    $result_shot_of_2 = $result_shot_of_2 + $value->score;
+            $result_shot_of_2 = 0;
+            foreach ($scoring_detail_2->extra_shot as $key => $value) {
+                if ($value->score == "") {
+                    continue;
                 }
+                $result_shot_of_2 = $result_shot_of_2 + $value->score;
+            }
 
-                if ($result_shot_of_1 > $result_shot_of_2) {
-                    $win_member = $get_member_match[0]->id;
-                } elseif ($result_shot_of_2 > $result_shot_of_1) {
-                    $win_member = $get_member_match[1]->id;
-                } else {
-                    // todo: penegcakan jarak dari x ketika shoot opp sama
-                    throw new BLoCException("hasil seri");
-                }
+            if ($result_shot_of_1 > $result_shot_of_2) {
+                $win_member = $get_member_match[0]->id;
+            } elseif ($result_shot_of_2 > $result_shot_of_1) {
+                $win_member = $get_member_match[1]->id;
+            } else {
+                // todo: penegcakan jarak dari x ketika shoot opp sama
+                throw new BLoCException("hasil seri");
+            }
         }
 
         // lakukan perulangan kembali untuk set status pemenang tiap match
