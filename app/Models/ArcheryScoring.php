@@ -45,6 +45,7 @@ class ArcheryScoring extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 1
         ],
 
@@ -65,6 +66,7 @@ class ArcheryScoring extends Model
             ],
             "win" => 0,
             "total" => 0,
+            "result" => 0,
             "eliminationt_score_type" => 2
         ]
     ];
@@ -387,15 +389,6 @@ class ArcheryScoring extends Model
     protected function makeEliminationScoringTypeTotalFormat()
     {
         $scores = $this->elimination_scores_format_by_type[2];
-        // foreach ($scoring as $key => $value) {
-        //     if($value->shot){
-        //         $score = [];
-        //         foreach ($value as $k => $v) {
-        //             $score[] = (string)$v->id;
-        //         }
-        //     $scores[$key] = $score;
-        //     }
-        // }
         return $scores;
     }
 
@@ -844,7 +837,7 @@ class ArcheryScoring extends Model
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -856,7 +849,14 @@ class ArcheryScoring extends Model
         usort($participant_club, function ($a, $b) {
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
-        return $participant_club;
+
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+        return $new_array;
     }
 
     protected function mixTeamBestOfThree($category_detail)
@@ -923,7 +923,7 @@ class ArcheryScoring extends Model
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -936,6 +936,12 @@ class ArcheryScoring extends Model
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        return $participant_club;
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 2) {
+                array_push($new_array, $value);
+            }
+        }
+        return $new_array;
     }
 }
