@@ -101,6 +101,9 @@ class GetParticipantScoreQualificationDos extends Retrieval
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         if ($session[0] == 2) {
+            foreach($qualification_member as $key => $value) {
+                $qualification_member[$key]["rank"] = $key + 1;
+            }
             return $qualification_member;
         }
 
@@ -112,12 +115,17 @@ class GetParticipantScoreQualificationDos extends Retrieval
         foreach ($qualification_member as $key1 => $value1) {
             foreach ($qualification_rank as $key2 => $value2) {
                 if ($value1["member"]["id"] === $value2["member"]["id"]) {
-                    $value1["rank"] = $key2 + 1;
+                    // $value1["rank"] = $key2 + 1;
                     $value1["have_shoot_off"] = $value2["have_shoot_off"];
                     array_push($response, $value1);
                     break;
                 }
             }
+        }
+
+        // number of rank
+        foreach($response as $key => $value) {
+            $response[$key]["rank"] = $key + 1;
         }
 
         return $response;
