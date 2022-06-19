@@ -228,11 +228,17 @@ class ArcheryEventCategoryDetail extends Model
         foreach ($datas as $key => $team_categories) {
             foreach ($team_categories as $key => $category) {
                 $count_participant = ArcheryEventParticipant::countEventUserBooking($category->id);
-                $qualification_schedule = DB::table('archery_event_qualification_time')
-                    ->where('category_detail_id', $category->id)->first();
+                $is_open = true;
+                if ($team_categories->category_team == "Individual") {
+                    $qualification_schedule = DB::table('archery_event_qualification_time')
+                        ->where('category_detail_id', $category->id)->first();
+                    if (!$qualification_schedule) {
+                        $is_open = false;
+                    }
+                }
 
                 $category->id = $category->id;
-                $category->is_open = true;
+                $category->is_open = $is_open;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
 
