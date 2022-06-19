@@ -232,7 +232,7 @@ class ArcheryEventCategoryDetail extends Model
                     ->where('category_detail_id', $category->id)->first();
 
                 $category->id = $category->id;
-                $category->is_open = !$qualification_schedule ? false : true;
+                $category->is_open = true;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
 
