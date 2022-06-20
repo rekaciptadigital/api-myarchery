@@ -80,7 +80,7 @@
                 <tr>
                     <td style="">Category</td>
                     <td>:</td>
-                    <td>{{ $peserta1_category }}</td>
+                    <td>{{ $tim1_category }}</td>
                     <td style="width:200px;"></td>
                 </tr>
                 <tr>
@@ -114,7 +114,7 @@
                 <tr>
                     <td style="">Category</td>
                     <td>:</td>
-                    <td>{{ $peserta2_category }}</td>
+                    <td>{{ $tim2_category }}</td>
                     <td style="width:200px;"></td>
                 </tr>
                 <tr>
