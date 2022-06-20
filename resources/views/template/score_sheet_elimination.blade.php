@@ -52,7 +52,8 @@
             <tbody>
                 <tr style="height: 80px">
                     <td style="vertical-align: center">
-                        <img src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt="" height="95" />
+                        <img src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt=""
+                            height="95" />
                     </td>
                     <td style="padding-left:0; padding-top:15px; vertical-align:top; width:65%; line-height: 1.6">
                         <h1 style="font-size: 14pt;">{{ $event_name }}</h1>
@@ -172,7 +173,7 @@
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>2</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -185,7 +186,7 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>3</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -198,7 +199,7 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>4</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -211,7 +212,7 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>5</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -269,7 +270,7 @@
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>2</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -282,7 +283,7 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>3</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -295,7 +296,7 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>4</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -308,7 +309,7 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th>5</th>
                         <td></td>
                         <td></td>
                         <td></td>
