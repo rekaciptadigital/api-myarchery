@@ -271,7 +271,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             'tempDir' => public_path() . '/tmp/pdf'
         ]);
 
-        $html = view('template.score_sheet_elimination', [
+        $html = view('template.score_sheet_elimination_team', [
             'tim_1_name' => $result['name_athlete'][0],
             'tim_2_name' => $result['name_athlete'][1],
             'club_1' => $result['club'][0],
