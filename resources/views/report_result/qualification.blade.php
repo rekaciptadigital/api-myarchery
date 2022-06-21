@@ -34,8 +34,7 @@
                   <td style="width: 1%; height: 50px;" rowspan="2"></td>
                   <td style="width: 42%; height: 50px; ">
                       <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
-                          <strong><span style="font-size: 30px;">JAKARTA SERIES I ARCHERY COMPETITION</span><br />
-                          <span style="font-size: 30px;">2022</span></strong> <br /><br />
+                          <strong><span style="font-size: 30px;">JAKARTA SERIES I ARCHERY COMPETITION 2022</span></strong> <br /><br />
                           Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur<br />
                           3 Maret 2022 - 6 Maret 2022
                       </p>

@@ -49,6 +49,17 @@ class GetArcheryReportResult extends Retrieval
 
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
+        // ------------------------------------------ PRINT COVER ------------------------------------------ //
+        $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/cover-event.png").'" alt="" width="100%"></img>';
+        $logo_archery_cover = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="60%"></img>';
+        $pages[] = view('report_result/cover', [
+            'cover_event' => $logo_event_cover,
+            'logo_archery' => $logo_archery_cover,
+            'event_name' => 'JAKARTA SERIES I ARCHERY COMPETITION 2022',
+            'event_date' => '3 Maret 2022 - 6 Maret 2022',
+            'event_location' => 'Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur'
+        ]);
+        // ------------------------------------------ END PRINT COVER ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
             $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
