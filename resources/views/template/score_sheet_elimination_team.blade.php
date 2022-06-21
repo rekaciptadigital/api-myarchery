@@ -152,7 +152,7 @@
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
                         <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
-                            colspan="8">1/4</th>
+                            colspan="9">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -161,6 +161,7 @@
                         <th style="width: 10%;font-size:12pt">3</th>
                         <th style="width: 10%;font-size:12pt;">4</th>
                         <th style="width: 10%;font-size:12pt;">5</th>
+                        <th style="width: 10%;font-size:12pt;">6</th>
                         <th style="font-size:12pt">Set Total</th>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
                         <th style="width: 21%; font-size:12pt">Total Set Points</th>
@@ -170,7 +171,8 @@
 
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="width:7%; font-size:12pt">1</th>
+                        <th style="width:7%; font-size:13pt">1</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -185,7 +187,8 @@
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt;">2</th>
+                        <th style="font-size:13pt;">2</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -200,7 +203,8 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">3</th>
+                        <th style="font-size:13pt">3</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -215,7 +219,8 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">4</th>
+                        <th style="font-size:13pt">4</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -230,7 +235,8 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">5</th>
+                        <th style="font-size:13pt">5</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -243,7 +249,7 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="10" align="right" style="padding-right:5px;border:none; font-size:12pt">Total
+                        <td colspan="11" align="right" style="padding-right:5px;border:none;font-size:13pt;">Total
                         </td>
                         <td></td>
                     </tr>
@@ -261,7 +267,7 @@
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
                         <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
-                            colspan="8">1/4</th>
+                            colspan="9">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -270,6 +276,7 @@
                         <th style="width: 10%;font-size:12pt">3</th>
                         <th style="width: 10%;font-size:12pt;">4</th>
                         <th style="width: 10%;font-size:12pt;">5</th>
+                        <th style="width: 10%;font-size:12pt;">6</th>
                         <th style="font-size:12pt">Set Total</th>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
                         <th style="width: 21%; font-size:12pt">Total Set Points</th>
@@ -279,7 +286,8 @@
 
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="width:7%; font-size:12pt">1</th>
+                        <th style="width:7%; font-size:13pt">1</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -294,7 +302,8 @@
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt;">2</th>
+                        <th style="font-size:13pt;">2</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -309,7 +318,8 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">3</th>
+                        <th style="font-size:13pt">3</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -324,7 +334,8 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">4</th>
+                        <th style="font-size:13pt">4</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -339,7 +350,8 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th style="font-size:12pt">5</th>
+                        <th style="font-size:13pt">5</th>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -352,7 +364,7 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="10" align="right" style="padding-right:5px;border:none;font-size:12pt;">Total
+                        <td colspan="11" align="right" style="padding-right:5px;border:none;font-size:13pt;">Total
                         </td>
                         <td></td>
                     </tr>
