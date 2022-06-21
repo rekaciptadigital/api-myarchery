@@ -38,7 +38,9 @@ return [
         'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
         'timeout' => false,
-        'options' => [],
+        'options' => [
+            'enable-local-file-access' => true
+        ],
         'env'     => [],
     ],
     
@@ -47,7 +49,9 @@ return [
         'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
         'timeout' => false,
-        'options' => [],
+        'options' => [
+            'enable-local-file-access' => true
+        ],
         'env'     => [],
     ],
 

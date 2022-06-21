@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Bracket</title>
     <style>
+      .vl {
+        border-left: 2px solid black;
+        height: 150px;
+      }
+
       .bracket {
         display: inline-block;
         white-space: nowrap;
@@ -182,7 +187,39 @@
   </head>
   <body translate="no">
     <div class="page" style="break-after:page">
-      <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%">
+      <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
+      <table style="width: 100%; height: 40px;" border="0">
+          <tbody>
+              <tr style="height: 40px;">
+                  <td style="width: 1%; height: 50px;" rowspan="2"></td>
+                  <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
+                  <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
+                  <td style="width: 1%; height: 50px;" rowspan="2"></td>
+                  <td style="width: 42%; height: 50px; ">
+                      <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
+                          <strong><span style="font-size: 30px;">JAKARTA SERIES I ARCHERY COMPETITION</span><br />
+                          <span style="font-size: 30px;">2022</span></strong> <br /><br />
+                          Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur<br />
+                          3 Maret 2022 - 6 Maret 2022
+                      </p>
+                  </td>
+                  <td style="width: 2%; height: 50px;" rowspan="2">
+                    <div class="vl"></div>
+                  </td>
+                  <td style="width: 10%; height: 50px; ">
+                      <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
+                          {{ $competition }}<br />
+                          Elimination<br />
+                          Round<br />
+                      </p>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+      <hr style="height:3px;border:none;color:black;background-color:black;" />
+      <br>
+      <h1 style="text-align: center">{{$category}}</h1>
+      <br>
       <div class="bracket" style="padding-left:20px">
         <section class="round best-16">
           <div class="winners">
