@@ -160,7 +160,7 @@
 
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th style="width:200px;">1</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -173,7 +173,7 @@
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th>2</th>
+                        <th style="width:200px;">2</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -186,7 +186,7 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th>3</th>
+                        <th style="width:200px;">3</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -199,7 +199,7 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th>4</th>
+                        <th style="width:200px;">4</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -212,7 +212,7 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th>5</th>
+                        <th style="width:200px;">5</th>
                         <td></td>
                         <td></td>
                         <td></td>

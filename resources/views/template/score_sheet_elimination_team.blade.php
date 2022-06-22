@@ -82,6 +82,8 @@
                     <td>:</td>
                     <td>{{ $tim1_category }}</td>
                     <td style="width:200px;"></td>
+                    <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
+                        rowspan="3">{{ $tim_1_rank }}</td>
                 </tr>
                 <tr>
                     <td style="">Athlete</td>
@@ -116,6 +118,8 @@
                     <td>:</td>
                     <td>{{ $tim2_category }}</td>
                     <td style="width:200px;"></td>
+                    <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
+                        rowspan="3">{{ $tim_1_rank }}</td>
                 </tr>
                 <tr>
                     <td style="">Athlete</td>
@@ -138,45 +142,55 @@
     </div>
     <div align="center" style="margin-top:2%;margin-left:7%;">
         <div id="col1">
-            <table class="beta" style="margin-right: 10px;width:97%;" cellspacing="0">
+            <table class="beta" style="margin-right: 10px;width:100%;" cellspacing="0">
                 <thead>
                     <tr style="border:1px solid black;">
                         <th style="width: 5%;border:none;"></th>
                         <th colspan=2
-                            style="width:8%;background-color: #808080; text-align:center;border-right: none; margin-left: 30px; padding: 10px;">
+                            style="width:8%;background-color: #808080; text-align:center;border-right: none; margin-left: 30px; padding: 10px; font-size:10pt">
                             <span
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
-                        <th style="width: 10%;background-color: #808080;border-left: none" colspan="7">1/4</th>
+                        <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
+                            colspan="9">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">1</th>
-                        <th style="width: 10%">2</th>
-                        <th style="width: 10%">3</th>
-                        <th>Set Total</th>
-                        <th colspan="3">Set Points</th>
-                        <th>Total Set Points</th>
+                        <th style="width: 10%;font-size:12pt;">1</th>
+                        <th style="width: 10%;font-size:12pt;">2</th>
+                        <th style="width: 10%;font-size:12pt">3</th>
+                        <th style="width: 10%;font-size:12pt;">4</th>
+                        <th style="width: 10%;font-size:12pt;">5</th>
+                        <th style="width: 10%;font-size:12pt;">6</th>
+                        <th style="font-size:12pt">Set Total</th>
+                        <th style="font-size:12pt" colspan="3">Set Points</th>
+                        <th style="width: 21%; font-size:12pt">Total Set Points</th>
                     </tr>
                 </thead>
                 <tbody>
 
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th style="width:7%; font-size:13pt">1</th>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
+                        <td style="width: 12%"></td>
+                        <td style="width: 10%"></td>
+                        <td style="width: 10%"></td>
+                        <td style="width: 10%"></td>
                         <td></td>
                     </tr>
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th>2</th>
+                        <th style="font-size:13pt;">2</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -189,7 +203,10 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th>3</th>
+                        <th style="font-size:13pt">3</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -202,7 +219,10 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th>4</th>
+                        <th style="font-size:13pt">4</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -215,20 +235,10 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th>5</th>
+                        <th style="font-size:13pt">5</th>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    {{-- baris 6 --}}
-                    <tr style="border: 1px solid black;">
-                        <th>6</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -238,55 +248,64 @@
                         <td></td>
                         <td></td>
                     </tr>
-
                     <tr>
-                        <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="11" align="right" style="padding-right:5px;border:none;font-size:13pt;">Total
+                        </td>
                         <td></td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div id="col2">
-            <table class="beta" style="margin-right: 10px;width:97%;" cellspacing="0">
+            <table class="beta" style="margin-right: 10px;width:100%;" cellspacing="0">
                 <thead>
                     <tr style="border:1px solid black;">
                         <th style="width: 5%;border:none;"></th>
                         <th colspan=2
-                            style="width:8%;background-color: #808080; text-align:center;border-right: none; margin-left: 30px; padding: 10px;">
+                            style="width:8%;background-color: #808080; text-align:center;border-right: none; margin-left: 30px; padding: 10px; font-size:10pt">
                             <span
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
-                        <th style="width: 10%;background-color: #808080;border-left: none" colspan="7">1/4</th>
+                        <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
+                            colspan="9">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">1</th>
-                        <th style="width: 10%">2</th>
-                        <th style="width: 10%">3</th>
-                        <th>Set Total</th>
-                        <th colspan="3">Set Points</th>
-                        <th>Total Set Points</th>
+                        <th style="width: 10%;font-size:12pt;">1</th>
+                        <th style="width: 10%;font-size:12pt;">2</th>
+                        <th style="width: 10%;font-size:12pt">3</th>
+                        <th style="width: 10%;font-size:12pt;">4</th>
+                        <th style="width: 10%;font-size:12pt;">5</th>
+                        <th style="width: 10%;font-size:12pt;">6</th>
+                        <th style="font-size:12pt">Set Total</th>
+                        <th style="font-size:12pt" colspan="3">Set Points</th>
+                        <th style="width: 21%; font-size:12pt">Total Set Points</th>
                     </tr>
                 </thead>
                 <tbody>
 
-
                     {{-- baris 1 --}}
                     <tr style="border: 1px solid black;">
-                        <th>1</th>
+                        <th style="width:7%; font-size:13pt">1</th>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
+                        <td style="width: 12%"></td>
+                        <td style="width: 10%"></td>
+                        <td style="width: 10%"></td>
+                        <td style="width: 10%"></td>
                         <td></td>
                     </tr>
 
                     {{-- baris 2 --}}
                     <tr style="border: 1px solid black;">
-                        <th>2</th>
+                        <th style="font-size:13pt;">2</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -299,7 +318,10 @@
 
                     {{-- baris 3 --}}
                     <tr style="border: 1px solid black;">
-                        <th>3</th>
+                        <th style="font-size:13pt">3</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -312,7 +334,10 @@
 
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
-                        <th>4</th>
+                        <th style="font-size:13pt">4</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -325,20 +350,10 @@
 
                     {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
-                        <th>5</th>
+                        <th style="font-size:13pt">5</th>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    {{-- baris 6 --}}
-                    <tr style="border: 1px solid black;">
-                        <th>6</th>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -348,9 +363,9 @@
                         <td></td>
                         <td></td>
                     </tr>
-
                     <tr>
-                        <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="11" align="right" style="padding-right:5px;border:none;font-size:13pt;">Total
+                        </td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -367,13 +382,12 @@
                 <tr>
                     <td colspan=2 style="width:200px;height:20px;"></td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td style="width:200px;height:20px;" coslpan=2> </td>
                 </tr>
                 <tr>
                     <td style="width:200px;height:20px;" coslpan=2> </td>
-
-                </tr>
+                </tr> --}}
             </table>
             <p>Closest to the center</p>
         </div>
@@ -386,13 +400,12 @@
                 <tr>
                     <td colspan=2 style="width:200px;height:20px;"></td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td style="width:200px;height:20px;" coslpan=2> </td>
                 </tr>
                 <tr>
                     <td style="width:200px;height:20px;" coslpan=2> </td>
-
-                </tr>
+                </tr> --}}
             </table>
             <p>Closest to the center</p>
         </div>
