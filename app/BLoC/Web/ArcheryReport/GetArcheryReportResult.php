@@ -23,9 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
 use Response;
 use PDFv2;
-
-
-
+use Illuminate\Support\Facades\Redis;
 
 class GetArcheryReportResult extends Retrieval
 {
@@ -533,6 +531,11 @@ class GetArcheryReportResult extends Retrieval
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
+
+
+        // set generate date of report
+        $key = env("REDIS_KEY_PREFIX") . ":report:date-generate:event-" . $event_id . ":updated";
+        Redis::hset($key, 'competition', date("Y-m-d"));
 
         return $response;
     }
