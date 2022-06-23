@@ -54,11 +54,23 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
         if ($type == 1) {
             $status = "Peserta";
-            return $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $idcard_event->id, $archery_event->event_name);
+            $final_doc = $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         } elseif ($type == 2) {
             $status = "Official";
             $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
         }
+
+        $editor_data = json_decode($idcard_event->editor_data);
+        $paper_size = $editor_data->paperSize;
+        $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
+        $category_file = $type == 1 ? str_replace(' ', '', $final_doc['label']) : $archery_event->event_name;
+        $file_name = $type == 1 ? "asset/idcard/idcard_" . $category_file . "_" . $final_doc["category_id"] . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        return "ok";
+        $generate_idcard = PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
+        return [
+            "file_name" => env('APP_HOSTNAME') . $file_name,
+            "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
+        ];
     }
 
     protected function validation($parameters)
@@ -74,7 +86,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $id_card_event_id, $event_name)
+    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id)
     {
         $category = ArcheryEventCategoryDetail::find($category_id);
 
@@ -130,18 +142,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         }
         $final_doc["label"] = $categoryLabel;
         $final_doc["category_id"] = $category->id;
-
-        $idcard_event = ArcheryEventIdcardTemplate::find($id_card_event_id);
-        $editor_data = json_decode($idcard_event->editor_data);
-        $paper_size = $editor_data->paperSize;
-        $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
-        $category_file = $type == 1 ? str_replace(' ', '', $final_doc['label']) : $event_name;
-        $file_name = $type == 1 ? "asset/idcard/idcard_" . $category_file . "_" . $final_doc["category_id"] . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
-        return [
-            "file_name" => env('APP_HOSTNAME') . $file_name,
-            "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
-        ];
+        return $final_doc;
     }
 
     private function generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type)
