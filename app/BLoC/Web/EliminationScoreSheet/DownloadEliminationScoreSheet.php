@@ -12,8 +12,10 @@ use App\Models\ArcheryEventCertificateTemplates;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventParticipant;
+use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Mpdf\Mpdf;
@@ -126,7 +128,9 @@ class DownloadEliminationScoreSheet extends Retrieval
             $result['club'][] = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
 
             $category = ArcheryEventCertificateTemplates::getCategoryLabel($detail_member['participant_id'], $detail_member['user_id']);
-            if ($category == "") throw new BLoCException("Kategori tidak ditemukan");
+            if ($category == "") {
+                throw new BLoCException("Kategori tidak ditemukan");
+            }
 
             $result['category'][] = $category;
         }
@@ -170,18 +174,19 @@ class DownloadEliminationScoreSheet extends Retrieval
     {
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
-            throw new BLoCException("elimination not found");
+            throw new BLoCException("elimination tim not found");
         }
-        $data_member = ArcheryEventEliminationGroupMatch::where('elimination_group_id', $elimination_id)
+
+        $match_tim = ArcheryEventEliminationGroupMatch::where('elimination_group_id', $elimination_id)
             ->where('round', $round)
             ->where('match', $match)
             ->get();
 
-        if ($data_member->count() == 0) {
+        if ($match_tim->count() == 0) {
             throw new BLoCException("data not found");
         }
 
-        $string_code = "2-" . $elimination_id . "-" . $data_member[0]->match . "-" . $data_member[0]->round . "-t";
+        $string_code = "2-" . $elimination_id . "-" . $match_tim[0]->match . "-" . $match_tim[0]->round . "-t";
         $path = 'asset/score_sheet/' . $category_id  . '/';
         if (!file_exists(public_path() . "/" . $path)) {
             mkdir(public_path() . "/" . $path, 0777);
@@ -201,29 +206,53 @@ class DownloadEliminationScoreSheet extends Retrieval
         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
-        foreach ($data_member as $data) {
-            $elimination_member = ArcheryEventEliminationGroupTeams::find($data->group_team_id);
-            if (!$elimination_member) {
+        foreach ($match_tim as $data) {
+            $elimination_group_tim = ArcheryEventEliminationGroupTeams::find($data->group_team_id);
+            if (!$elimination_group_tim) {
                 throw new BLoCException("elimination group team not found");
             }
-            $participant_id = $elimination_member->participant_id;
+            $participant_id = $elimination_group_tim->participant_id;
 
             $participant = ArcheryEventParticipant::find($participant_id);
             if (!$participant) {
                 throw new BLoCException("participant not found");
             }
 
+            $array_athlete = [];
+            $group_member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $participant_id)->get();
+            if ($group_member_team->count() > 0) {
+                foreach ($group_member_team as $key => $value) {
+                    $athlete = ArcheryEventParticipantMember::find($value->member_id);
+                    if (!$athlete) {
+                        throw new BLoCException("athlete not found");
+                    }
+
+                    $user = User::find($athlete->user_id);
+                    if (!$user) {
+                        throw new BLoCException("User not found");
+                    }
+                    $array_athlete[] = $user->name;
+                }
+            }
+
+
+
             $club = ArcheryClub::find($participant->club_id);
             if (!$club) {
                 throw new BLoCException("club not found");
             }
 
-            $result['name_athlete'][] = $elimination_member->team_name;
-            $result['rank'][] = $elimination_member->elimination_ranked;
+            $result['name_athlete'][] = $elimination_group_tim->team_name;
+            $result['rank'][] = $elimination_group_tim->elimination_ranked;
             $result['club'][] = $club->name;
+            $result["athlete"][] = $array_athlete;
+            $bud_rest_number = $data->bud_rest != 0 && $data->target_face != "" ? $data->bud_rest . $data->target_face : "";
+            $result["budrest"][] = $bud_rest_number;
 
             $category = ArcheryEventCertificateTemplates::getCategoryLabel($participant->id, $participant->user_id);
-            if ($category == "") throw new BLoCException("Kategori tidak ditemukan");
+            if ($category == "") {
+                throw new BLoCException("Kategori tidak ditemukan");
+            }
 
             $result['category'][] = $category;
         }
@@ -242,15 +271,19 @@ class DownloadEliminationScoreSheet extends Retrieval
             'tempDir' => public_path() . '/tmp/pdf'
         ]);
 
-        $html = view('template.score_sheet_elimination', [
-            'peserta1_name' => $result['name_athlete'][0],
-            'peserta2_name' => $result['name_athlete'][1],
-            'peserta1_club' => $result['club'][0],
-            'peserta2_club' => $result['club'][1],
-            'peserta1_rank' => $result['rank'][0],
-            'peserta2_rank' => $result['rank'][1],
-            'peserta1_category' => $result['category'][0],
-            'peserta2_category' => $result['category'][1],
+        $html = view('template.score_sheet_elimination_team', [
+            'tim_1_name' => $result['name_athlete'][0],
+            'tim_2_name' => $result['name_athlete'][1],
+            'club_1' => $result['club'][0],
+            'club_2' => $result['club'][1],
+            'tim_1_rank' => $result['rank'][0],
+            'tim_2_rank' => $result['rank'][1],
+            "athlete_1" => $result["athlete"][0],
+            "athlete_2" => $result["athlete"][1],
+            "budrest_1" => $result["budrest"][0],
+            "budrest_2" => $result["budrest"][1],
+            'tim1_category' => $result['category'][0],
+            'tim2_category' => $result['category'][1],
             "qr" => $base64,
             "event_name" => $event_name,
             "location" => $location_event
