@@ -65,10 +65,9 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
         $category_file = $type == 1 ? str_replace(' ', '', $final_doc['label']) : $archery_event->event_name;
         $file_name = $type == 1 ? "asset/idcard/idcard_" . $category_file . "_" . $final_doc["category_id"] . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
+        PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
-            // "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
         ];
     }
 
