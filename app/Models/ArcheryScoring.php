@@ -642,6 +642,7 @@ class ArcheryScoring extends Model
         if (!$orderByBudrestNumber) {
             usort($archery_event_score, function ($a, $b) {
                 if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                    // if
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
