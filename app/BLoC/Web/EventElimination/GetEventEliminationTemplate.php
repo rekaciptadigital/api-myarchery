@@ -62,6 +62,7 @@ class GetEventEliminationTemplate extends Retrieval
         $elimination_member_count = $category->default_elimination_count;
         if ($elimination) {
             $elimination_id = $elimination->id;
+            $elimination_member_count = $elimination->count_participant;
         }
 
 
@@ -179,12 +180,9 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_group_match.win",
             "archery_event_elimination_group_match.bud_rest",
             "archery_event_elimination_group_match.target_face",
-            "archery_scoring_elimination_group.result",
-            "archery_scoring_elimination_group.scoring_detail",
             "archery_event_elimination_group_match.elimination_group_id"
         )
             ->leftJoin("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
-            ->leftJoin("archery_scoring_elimination_group", "archery_scoring_elimination_group.elimination_match_group_id", "=", "archery_event_elimination_group_match.id")
             ->where("archery_event_elimination_group_match.elimination_group_id", $elimination_id)
             ->orderBy("archery_event_elimination_group_match.round")
             ->orderBy("archery_event_elimination_group_match.match")
