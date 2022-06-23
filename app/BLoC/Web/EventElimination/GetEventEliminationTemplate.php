@@ -62,7 +62,6 @@ class GetEventEliminationTemplate extends Retrieval
         $elimination_member_count = $category->default_elimination_count;
         if ($elimination) {
             $elimination_id = $elimination->id;
-            $elimination_member_count = $elimination->count_participant;
         }
 
 
@@ -76,7 +75,7 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_members.position_qualification",
             "users.name",
             "archery_event_participant_members.id AS member_id",
-            "archery_event_participants.club_id as club",
+            "archery_event_participant_members.club",
             "archery_event_participant_members.gender",
             "archery_event_elimination_matches.id",
             "archery_event_elimination_matches.round",
@@ -89,12 +88,9 @@ class GetEventEliminationTemplate extends Retrieval
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
-            ->leftJoin("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
-            ->where("archery_scorings.item_value", "archery_event_elimination_matches")
-            ->where("archery_scorings.type", 2)
             ->orderBy("archery_event_elimination_matches.round")
             ->orderBy("archery_event_elimination_matches.match")
             ->orderBy("archery_event_elimination_matches.index")
@@ -116,7 +112,7 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = !isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+                        $total_scoring = $scoring_detail->result;
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
