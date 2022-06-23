@@ -77,10 +77,10 @@ class AddOrderOfficial extends Retrieval
             }
         }
 
-        $check_register_event = ArcheryEventParticipant::where("user_id", $user_login->id)->where("event_id", $event_id)->where("status", 1)->first();
-        if ($check_register_event) {
-            throw new BLoCException("Anda sudah terdaftar sebagai atlet di event ini, silahkan mendaftar menjadi official dengan menggunakan akun lain");
-        }
+        // $check_register_event = ArcheryEventParticipant::where("user_id", $user_login->id)->where("event_id", $event_id)->where("status", 1)->first();
+        // if ($check_register_event) {
+        //     throw new BLoCException("Anda sudah terdaftar sebagai atlet di event ini, silahkan mendaftar menjadi official dengan menggunakan akun lain");
+        // }
 
         // cek jika telah terdaftar sebagai official
         $is_exist = ArcheryEventOfficial::select('archery_event_official.*', 'transaction_logs.status as status_transaction_log', 'transaction_logs.expired_time')

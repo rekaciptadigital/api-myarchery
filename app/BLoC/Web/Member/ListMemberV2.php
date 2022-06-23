@@ -33,6 +33,9 @@ class ListMemberV2 extends Retrieval
         $team_category_id = $parameters->get("team_category_id");
         $age_category_id = $parameters->get("age_category_id");
         $name = $parameters->get("name");
+        $event_category_id = $parameters->get("event_category_id");
+        $is_pagination = $parameters->get("is_pagination") ? $parameters->get("is_pagination") : 0;
+        $status = $parameters->get("status");
 
         $perPage = 7;
 
@@ -69,6 +72,15 @@ class ListMemberV2 extends Retrieval
             return $query->where("archery_event_participants.age_category_id", $age_category_id);
         });
 
+        // filter by event_category_id
+        $participant_query->when($event_category_id, function ($query) use ($event_category_id) {
+            return $query->where("archery_event_participants.event_category_id", $event_category_id);
+        });
+
+        $participant_query->when($status, function ($query) use ($status) {
+            return $query->where("archery_event_participants.status", $status);
+        });
+
         $participant_collection = $participant_query->orderBy('archery_event_participants.id', 'DESC')
             ->leftJoin('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
@@ -82,14 +94,17 @@ class ListMemberV2 extends Retrieval
                 'archery_clubs.name as club_name',
                 'archery_event_participants.phone_number',
                 'archery_event_participants.competition_category_id',
-                DB::RAW('case when transaction_logs.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" else "Gratis" END AS status_payment '),
+                DB::RAW('case when transaction_logs.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" else "Gratis" END AS status_payment'),
                 'archery_event_participants.age_category_id',
-                DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 else 4 END AS order_payment ')
-            )->where("archery_event_participants.status", 1)
-            ->paginate(7);
+                DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 else 4 END AS order_payment')
+            );
 
-        $data = $this->paginate($participant_collection);
 
+        if ($is_pagination == 1) { //get all data without pagination
+            return $participant_collection->get();
+        }
+
+        $data = $this->paginate($participant_collection->paginate($perPage));
         return $data;
     }
 
