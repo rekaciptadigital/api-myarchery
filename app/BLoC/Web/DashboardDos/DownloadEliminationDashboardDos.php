@@ -44,7 +44,7 @@ class DownloadEliminationDashboardDos extends Retrieval
                 $view_path = 'reports/dashboard_dos/elimination/graph_sixteen';
                 $pages[] = EliminationFormatPDF::renderPageGraph16($view_path, $data, $title);
             } else if ($elimination->count_participant == 8) {
-                $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
+                $data = EliminationFormatPDF::getViewDataGraph8_reportDos($data_graph);
                 $view_path = 'reports/dashboard_dos/elimination/graph_eight';
                 $pages[] = EliminationFormatPDF::renderPageGraph8($view_path, $data, $title);
             } else {
