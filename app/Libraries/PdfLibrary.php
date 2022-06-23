@@ -112,6 +112,7 @@ class PdfLibrary
 
     public static function savePdf($mpdf = null, $paper_size = "A4", $orientation = "L")
     {
+        ini_set("memory_limit", "16M");
         if ($mpdf == null) {
             $mpdf = new \Mpdf\Mpdf([
                 'margin_left' => 2,
