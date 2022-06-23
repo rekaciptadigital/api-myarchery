@@ -83,13 +83,10 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.win",
             "archery_event_elimination_matches.bud_rest",
             "archery_event_elimination_matches.target_face",
-            "archery_scorings.total as total_scoring",
-            "archery_scorings.scoring_detail"
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
             ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
-            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->orderBy("archery_event_elimination_matches.round")
             ->orderBy("archery_event_elimination_matches.match")
