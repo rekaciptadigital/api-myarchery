@@ -27,11 +27,11 @@ class ArcheryScoringEliminationGroup extends Model
     protected static $elimination_scores_format_by_type = [
         "1" => [
             "shot" => [
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0], // status = ["empty","win","draw","lose"]
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0]
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0], // status = ["empty","win","draw","lose"]
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0]
             ],
             "extra_shot" => [
                 ["distance_from_x" => 0, "score" => "", "status" => "empty"],
@@ -48,11 +48,11 @@ class ArcheryScoringEliminationGroup extends Model
 
         "2" => [
             "shot" => [
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0]
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0]
             ],
             "extra_shot" => [
                 ["distance_from_x" => 0, "score" => "", "status" => "empty"],
