@@ -110,7 +110,7 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = $scoring_detail->result;
+                        $total_scoring = isset($scoring_detail->result)?$scoring_detail->result:$scoring_detail->total;
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
