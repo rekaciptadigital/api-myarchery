@@ -1,5 +1,4 @@
 <?php
-
 namespace App\BLoC\Web\ArcheryEventIdcard;
 
 use App\Models\ArcheryEvent;
@@ -26,7 +25,6 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
     protected function process($parameters)
     {
-        ini_set("memory_limit", "16M");
         $admin = Auth::user();
         $category_id = $parameters->get("category_id");
         $event_id = $parameters->get('event_id');
