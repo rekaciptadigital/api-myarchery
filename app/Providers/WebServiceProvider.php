@@ -141,6 +141,7 @@ use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
 use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -246,6 +247,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
+        $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
 
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
 

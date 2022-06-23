@@ -23,9 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
 use Response;
 use PDFv2;
-
-
-
+use Illuminate\Support\Facades\Redis;
 
 class GetArcheryReportResult extends Retrieval
 {
@@ -41,13 +39,25 @@ class GetArcheryReportResult extends Retrieval
         $event_id = $parameters->get('event_id');
 
         $pages = array();
-
+        $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event.png').'" alt="" width="80%"></img>';
+        $logo_archery = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="80%"></img>';
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
 
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
+        // ------------------------------------------ PRINT COVER ------------------------------------------ //
+        $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/cover-event.png").'" alt="" width="100%"></img>';
+        $logo_archery_cover = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="60%"></img>';
+        $pages[] = view('report_result/cover', [
+            'cover_event' => $logo_event_cover,
+            'logo_archery' => $logo_archery_cover,
+            'event_name' => 'JAKARTA SERIES I ARCHERY COMPETITION 2022',
+            'event_date' => '3 Maret 2022 - 6 Maret 2022',
+            'event_location' => 'Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur'
+        ]);
+        // ------------------------------------------ END PRINT COVER ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
             $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
@@ -73,53 +83,95 @@ class GetArcheryReportResult extends Retrieval
                         ->leftJoin("archery_master_team_categories", 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
                         ->orderBy("archery_master_team_categories.short", "ASC")->get();
                     if (!$team_category) throw new BLoCException("tidak ada data team category terdaftar untuk event tersebut");
-                    $event_id = $parameters->get('event_id');
+
+                    
+                    // ------------------------------------------ ELIMINATION MALE ------------------------------------------ //
                     $type = 'elimination';
-                    $gender = "";
+                    $gender = 'male';
                     $report = $competition->competition_category . ' - Elimination';
                     $data_report = $this->getData($team_category, $type, $competition, $age, $distance, $event_id, $gender);
 
                     if (!empty($data_report[0])) {
 
-                        $pages[] = view('report_result/elimination_qualification', [
+                        $pages[] = view('report_result/elimination', [
                             'data_report' => $data_report[0],
                             'competition' => $competition->competition_category,
                             'report' => $report,
-                            'category' => ' '
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
                         ]);
                         $data_report = array();
                     }
+                    // ------------------------------------------ END ELIMINATION MALE ------------------------------------------ //
 
+
+                    // ------------------------------------------ ELIMINATION FEMALE ------------------------------------------ //
+                    $type = 'elimination';
+                    $gender = 'female';
+                    $report = $competition->competition_category . ' - Elimination';
+                    $data_report = $this->getData($team_category, $type, $competition, $age, $distance, $event_id, $gender);
+
+                    if (!empty($data_report[0])) {
+
+                        $pages[] = view('report_result/elimination', [
+                            'data_report' => $data_report[0],
+                            'competition' => $competition->competition_category,
+                            'report' => $report,
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
+                        ]);
+                        $data_report = array();
+                    }
+                    // ------------------------------------------ END ELIMINATION FEMALE ------------------------------------------ //
+
+
+                    // ------------------------------------------ QUALIFICATION MALE ------------------------------------------ //
                     $type = 'qualification';
                     $gender = 'male';
                     $report = $competition->competition_category . ' - Qualification';
                     $data_report = $this->getData($team_category, $type, $competition, $age, $distance, $event_id, $gender);
 
                     if (!empty($data_report[0])) {
-                        $pages[] = view('report_result/elimination_qualification', [
+                        $pages[] = view('report_result/qualification', [
                             'data_report' => $data_report[0],
                             'competition' => $competition->competition_category,
                             'report' => $report,
-                            'category' => $data_report[0][0]['category']
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
                         ]);
                         $data_report = array();
                     }
+                    // ------------------------------------------ END QUALIFICATION ------------------------------------------ //
 
+                    
+                    // ------------------------------------------ QUALIFICATION FEMALE --------------------------------------- //
                     $type = 'qualification';
                     $gender = 'female';
                     $report = $competition->competition_category . ' - Qualification';
                     $data_report = $this->getData($team_category, $type, $competition, $age, $distance, $event_id, $gender);
 
                     if (!empty($data_report[0])) {
-                        $pages[] = view('report_result/elimination_qualification', [
+                        $pages[] = view('report_result/qualification', [
                             'data_report' => $data_report[0],
                             'competition' => $competition->competition_category,
                             'report' => $report,
-                            'category' => $data_report[0][0]['category']
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
                         ]);
                         $data_report = array();
                     }
+                    // ------------------------------------------ END QUALIFICATION ------------------------------------------ //
 
+                    
+                    // ------------------------------------------ ALL RESULTS MALE --------------------------------------- //
                     $type = '';
                     $gender = 'male';
                     $report = 'Result';
@@ -130,7 +182,10 @@ class GetArcheryReportResult extends Retrieval
                             'data_report' => $data_report[0],
                             'competition' => $competition->competition_category,
                             'report' => $report,
-                            'category' => $data_report[0][0]['category']
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
                         ]);
                         $data_graph = $this->getDataGraph($data_report[1]);
 
@@ -269,6 +324,11 @@ class GetArcheryReportResult extends Retrieval
                                 'round5member1status' => $data['$round5status'][0],
                                 'round5member2status' => $data['$round5status'][1],
 
+                                'report' => $report,
+                                'category' => $data_report[0][0]['category'],
+                                'logo_event' => $logo_event,
+                                'logo_archery' => $logo_archery,
+                                'competition' => $competition->competition_category,
                             ]);
                         }
 
@@ -276,7 +336,10 @@ class GetArcheryReportResult extends Retrieval
                         $data_graph = null;
                         $data = null;
                     }
+                    // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
+                    
 
+                    // ------------------------------------------ ALL RESULTS FEMALE --------------------------------------- //
                     $type = '';
                     $gender = 'female';
                     $report = 'Result';
@@ -288,7 +351,10 @@ class GetArcheryReportResult extends Retrieval
                             'data_report' => $data_report[0],
                             'competition' => $competition->competition_category,
                             'report' => $report,
-                            'category' => $data_report[0][0]['category']
+                            'category' => $data_report[0][0]['category'],
+                            'logo_event' => $logo_event,
+                            'logo_archery' => $logo_archery,
+                            'type' => ucfirst($type)
                         ]);
 
                         $data_graph = $this->getDataGraph($data_report[1]);
@@ -428,6 +494,12 @@ class GetArcheryReportResult extends Retrieval
                                 'round5member1status' => $data['$round5status'][0],
                                 'round5member2status' => $data['$round5status'][1],
 
+                                'report' => $report,
+                                'category' => $data_report[0][0]['category'],
+                                'logo_event' => $logo_event,
+                                'logo_archery' => $logo_archery,
+                                'competition' => $competition->competition_category,
+
                             ]);
                         }
 
@@ -435,6 +507,7 @@ class GetArcheryReportResult extends Retrieval
                         $data_graph = null;
                         $data = null;
                     }
+                    // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
                 }
             }
         }
@@ -447,7 +520,8 @@ class GetArcheryReportResult extends Retrieval
             'enable-javascript' => true,
             'javascript-delay' => 9000,
             'no-stop-slow-scripts' => true,
-            'enable-smart-shrinking' => true
+            'enable-smart-shrinking' => true,
+            'images' => true
         ]);
 
         $digits = 3;
@@ -457,6 +531,11 @@ class GetArcheryReportResult extends Retrieval
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
+
+
+        // set generate date of report
+        $key = env("REDIS_KEY_PREFIX") . ":report:date-generate:event-" . $event_id . ":updated";
+        Redis::hset($key, 'competition', date("Y-m-d"));
 
         return $response;
     }
@@ -474,7 +553,7 @@ class GetArcheryReportResult extends Retrieval
         $category_id = null;
 
         foreach ($team_category as $team) {
-            $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
+            $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
                 ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
                 ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
                 ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
@@ -529,15 +608,24 @@ class GetArcheryReportResult extends Retrieval
                     } else {
                         $club = $club->name;
                     }
-                    $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date);
+
+                    $category = ArcheryEventCategoryDetail::find($member->category_details_id);
+                    $session = [];
+                    for ($i = 0; $i < $category->session_in_qualification; $i++) {
+                        $session[] = $i + 1;
+                    }
+                    $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
+                    
+                    $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring);
 
                     $category_id = $member->category_details_id;
                 }
             }
         }
 
+        $sorted_data = collect($data_report)->sortByDesc('scoring.total')->values()->all();
 
-        return array($data_report, $category_id);
+        return array($sorted_data, $category_id);
     }
 
     protected function getDataGraph($event_category_id)

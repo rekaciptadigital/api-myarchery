@@ -31,6 +31,11 @@ class GetDownloadArcheryEventParticipant extends Retrieval
        
         $destinationPath = Storage::url($filename);
         $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
+
+        // set generate date of report
+        $key = env("REDIS_KEY_PREFIX") . ":report:date-generate:event-" . $event_id . ":updated";
+        Redis::hset($key, 'participant', date("Y-m-d"));
+        
         return $file_path;
     
     }
