@@ -12,6 +12,7 @@ use App\Exports\ArcheryEventParticipantExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Redis;
 
 class GetDownloadArcheryEventParticipant extends Retrieval
 {
