@@ -68,6 +68,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
+            // "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
         ];
     }
 
