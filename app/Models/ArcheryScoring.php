@@ -493,16 +493,14 @@ class ArcheryScoring extends Model
         $shot_off = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $participant_member_id)->first();
         if ($shot_off) {
             $total_shot_off = $shot_off->total;
-            $scoring_detail = json_decode($shot_off->scoring_detail);
-            foreach ($score_detail as $key => $value) {
-                json_encode(print_r($value));
-                throw new BLoCException("ok");
+            $scoring_shoot_off_detail = json_decode($shot_off->scoring_detail);
+            foreach ($scoring_shoot_off_detail as $key => $value) {
                 if (gettype($value->distance_from_x) == "string") {
                     $distance_from_x = 0;
                 }
                 $total_distance_from_x = $total_distance_from_x + $distance_from_x;
             }
-            $sessions["11"] = $scoring_detail;
+            $sessions["11"] = $scoring_shoot_off_detail;
         }
 
         $participant = ArcheryEventParticipantMember::select("archery_event_participants.*")
