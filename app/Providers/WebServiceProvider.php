@@ -141,6 +141,7 @@ use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
 use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
+use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 
 class WebServiceProvider extends ServiceProvider
@@ -315,6 +316,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
         $this->registerService("setBudRestElimination", SetBudRestElimination::class);
         $this->registerService("cleanEliminationMatch", CleanEliminationMatch::class);
+        $this->registerService("cleanScoringQualification", CleanScoringQualification::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
