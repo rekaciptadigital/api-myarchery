@@ -9,7 +9,8 @@ use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\App;
 use Response;
 use Illuminate\Support\Facades\Redis;
-
+use Illuminate\Support\Carbon;
+use App\Models\ArcheryEvent;
 
 
 class GetArcheryReportEventList extends Retrieval
@@ -32,15 +33,33 @@ class GetArcheryReportEventList extends Retrieval
         $report_generate_dates = Redis::hgetall($key);
 
         $date = null;
+        $is_available = true;
         $response = [];
         foreach($type as $key => $value) {
             if (array_key_exists($value, $report_generate_dates)) {
                 $date = $report_generate_dates[$value];
             }
 
+            if ($value == 'finance') {
+                $is_available = false;
+            }
+
+            if ($value == 'competition') {
+                $event = ArcheryEvent::find($event_id);
+                $today = (Carbon::now())->toDateTimeString();
+                $carbon_end_date = Carbon::parse($event->event_end_datetime);
+
+                if($today < $carbon_end_date) {
+                    $is_available = false;
+                } else {
+                    $is_available = true;
+                }
+            }
+           
             $response[] = [
                 'report_type' => $value,
-                'date_generate' => $date
+                'date_generate' => $date,
+                'is_available' => $is_available
             ];
         }
 
