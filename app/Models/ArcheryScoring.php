@@ -495,6 +495,7 @@ class ArcheryScoring extends Model
             $total_shot_off = $shot_off->total;
             $scoring_shoot_off_detail = json_decode($shot_off->scoring_detail);
             foreach ($scoring_shoot_off_detail as $key => $value) {
+                $distance_from_x = $value->distance_from_x;
                 if (gettype($value->distance_from_x) == "string") {
                     $distance_from_x = 0;
                 }
