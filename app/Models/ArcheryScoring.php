@@ -516,8 +516,8 @@ class ArcheryScoring extends Model
         $total_fix = $total + $total_shot_off;
         $output = [
             "sessions" => $sessions,
-            "total_shot_off" => $total_shot_off,
-            "total_distance_from_x" => $total_distance_from_x,
+            "total_shot_off" => $participant->is_present == 1 ? $total_shot_off : 0,
+            "total_distance_from_x" => $participant->is_present == 1 ? $total_distance_from_x : 0,
             "total" => $total,
             "total_x" => $total_per_points["x"],
             "total_per_points" => $total_per_points,
@@ -734,6 +734,9 @@ class ArcheryScoring extends Model
 
         usort($archery_event_score, function ($a, $b) {
             if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                    return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                }
                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
             }
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
@@ -762,7 +765,11 @@ class ArcheryScoring extends Model
                                 if (!$scooring_session_11_member) {
                                     $member->update(["have_shoot_off" => 1]);
                                 } else {
-                                    $member->update(["have_shoot_off" => 2]);
+                                    if ($scooring_session_11_member->total == 0) {
+                                        $member->update(["have_shoot_off" => 1]);
+                                    } else {
+                                        $member->update(["have_shoot_off" => 2]);
+                                    }
                                 }
                             } else {
                                 $member->update(["have_shoot_off" => 0]);
@@ -775,6 +782,9 @@ class ArcheryScoring extends Model
                         }
                         usort($archery_event_score, function ($a, $b) {
                             if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                                if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                                    return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                                }
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
@@ -801,6 +811,9 @@ class ArcheryScoring extends Model
                 }
                 usort($archery_event_score, function ($a, $b) {
                     if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                        if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                            return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                        }
                         return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                     }
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
