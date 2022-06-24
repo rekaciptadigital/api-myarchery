@@ -7,6 +7,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryScoring;
+use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 

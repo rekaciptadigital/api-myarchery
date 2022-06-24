@@ -765,7 +765,11 @@ class ArcheryScoring extends Model
                                 if (!$scooring_session_11_member) {
                                     $member->update(["have_shoot_off" => 1]);
                                 } else {
-                                    $member->update(["have_shoot_off" => 2]);
+                                    if ($scooring_session_11_member->total == 0) {
+                                        $member->update(["have_shoot_off" => 1]);
+                                    } else {
+                                        $member->update(["have_shoot_off" => 2]);
+                                    }
                                 }
                             } else {
                                 $member->update(["have_shoot_off" => 0]);
