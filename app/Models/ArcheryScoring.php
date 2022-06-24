@@ -799,6 +799,12 @@ class ArcheryScoring extends Model
                         throw new BLoCException("member nan");
                     }
 
+                    $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
+
+                    if ($scooring_session_11_member->total == 0) {
+                        $member->update(["have_shoot_off" => 0]);
+                    }
+
                     if ($member->have_shoot_off === 1) {
                         $member->update(["have_shoot_off" => 0]);
                     }
