@@ -28,6 +28,7 @@ class GetListCategoryByEventId extends Retrieval
         $distance_id = $parameters->get("distance_id");
         $team_category_id = $parameters->get("team_category_id");
         $date_event = $parameters->get("date_event");
+        $category_dos = $parameters->get("category_dos"); // parameter for dashboard dos (filter untuk menampilkan list kategori yang hanya ada peserta di setiap kategori)
 
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -92,6 +93,8 @@ class GetListCategoryByEventId extends Retrieval
                     }
                 }
 
+                $total_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
+
                 $response["id"] = $category->id;
                 $response["event_id"] = $category->event_id;
                 $response["age_category_id"] = $category->age_category_id;
@@ -107,12 +110,21 @@ class GetListCategoryByEventId extends Retrieval
                 $response["normal_fee"] = $category->fee;
                 $response["early_bird_fee"] = $category->early_bird;
                 $response["is_early_bird"] = $category->is_early_bird;
-                $response["total_participant"] = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
+                $response["total_participant"] = $total_participant;
                 $response["default_elimination_count"] = $category->default_elimination_count;
                 $response["elimination_lock"] = $event_elimination_lock;
                 $response["session_in_qualification"] = $category->session_in_qualification;
 
-                array_push($output, $response);
+                if ($category_dos == 'true') {
+                    if ($total_participant > 0) {
+                        array_push($output, $response);
+                    } else {
+                        continue;
+                    }
+                } else {
+                    array_push($output, $response);
+                }
+                
             }
         }
         return $output;
