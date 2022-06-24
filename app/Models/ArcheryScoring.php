@@ -494,9 +494,9 @@ class ArcheryScoring extends Model
         if ($shot_off) {
             $total_shot_off = $shot_off->total;
             $scoring_detail = json_decode($shot_off->scoring_detail);
-            print_r($score_detail);
-            throw new BLoCException("ok");
             foreach ($score_detail as $key => $value) {
+                json_encode(print_r($value));
+                throw new BLoCException("ok");
                 if (gettype($value->distance_from_x) == "string") {
                     $distance_from_x = 0;
                 }
