@@ -489,10 +489,18 @@ class ArcheryScoring extends Model
 
         // cek apakah member tersebut melakukan shot off atau tidak
         $total_shot_off = 0;
+        $total_distance_from_x = 0;
         $shot_off = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $participant_member_id)->first();
         if ($shot_off) {
             $total_shot_off = $shot_off->total;
-            $sessions["11"] = json_decode($shot_off->scoring_detail);
+            $scoring_detail = json_decode($shot_off->scoring_detail);
+            foreach ($score_detail as $key => $value) {
+                if (gettype($value->distance_from_x) == "string") {
+                    $distance_from_x = 0;
+                }
+                $total_distance_from_x = $total_distance_from_x + $distance_from_x;
+            }
+            $sessions["11"] = $scoring_detail;
         }
 
         $participant = ArcheryEventParticipantMember::select("archery_event_participants.*")
@@ -508,6 +516,7 @@ class ArcheryScoring extends Model
         $output = [
             "sessions" => $sessions,
             "total_shot_off" => $total_shot_off,
+            "total_distance_from_x" => $total_distance_from_x,
             "total" => $total,
             "total_x" => $total_per_points["x"],
             "total_per_points" => $total_per_points,
@@ -642,6 +651,9 @@ class ArcheryScoring extends Model
         if (!$orderByBudrestNumber) {
             usort($archery_event_score, function ($a, $b) {
                 if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                    }
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;

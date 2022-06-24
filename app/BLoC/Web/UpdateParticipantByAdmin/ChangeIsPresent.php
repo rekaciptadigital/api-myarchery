@@ -51,7 +51,7 @@ class ChangeIsPresent extends Transactional
                 throw new BLoCException("member nan");
             }
 
-            if ($member->have_shoot_off === 1) {
+            if ($member->have_shoot_off != 0) {
                 $member->update([
                     "have_shoot_off" => 0
                 ]);

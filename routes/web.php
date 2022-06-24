@@ -447,6 +447,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
             $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
             $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
+            $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
         });
 
         $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
