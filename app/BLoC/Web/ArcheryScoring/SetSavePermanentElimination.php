@@ -175,10 +175,10 @@ class SetSavePermanentElimination extends Retrieval
             if ($win == 1) {
                 $value->win = $win;
             }
-
-            $result = $value->admin_total;
-            if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
-                $result = json_decode($value->scoring_detail)->result;
+            $scor = ArcheryScoring::where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
+            $result = $scor->admin_total;
+            if ($scoring_2->admin_total == $scoring_1->admin_total) {
+                $result = json_decode($scor->scoring_detail)->result;
             }
             $value->result = $result;
             $next = EliminationFormat::NextMatch($elimination->count_participant, $round, $match, $win);
