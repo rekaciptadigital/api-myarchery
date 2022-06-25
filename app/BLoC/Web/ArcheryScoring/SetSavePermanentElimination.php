@@ -60,11 +60,8 @@ class SetSavePermanentElimination extends Retrieval
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
             "archery_event_elimination_matches.*",
-            // "archery_scorings.admin_total",
-            // "archery_scorings.scoring_detail"
         )
             ->join("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
-            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->where("round", $round)
             ->where("match", $match)
