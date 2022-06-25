@@ -10,6 +10,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
+use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesUserPoint;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
@@ -59,8 +60,8 @@ class SetSavePermanentElimination extends Retrieval
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
             "archery_event_elimination_matches.*",
-            "archery_scorings.admin_total",
-            "archery_scorings.scoring_detail"
+            // "archery_scorings.admin_total",
+            // "archery_scorings.scoring_detail"
         )
             ->join("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
@@ -78,14 +79,15 @@ class SetSavePermanentElimination extends Retrieval
         }
 
         // lakukan perulangan
-
-        $scoring_detail_1 = json_decode($get_member_match[0]->scoring_detail);
-        $scoring_detail_2 = json_decode($get_member_match[1]->scoring_detail);
+        $scoring_1 = ArcheryScoring::where("item_id", $get_member_match[0]->id)->where("item_value", "archery_event_elimination_matches")->first();
+        $scoring_2 = ArcheryScoring::where("item_id", $get_member_match[1]->id)->where("item_value", "archery_event_elimination_matches")->first();
+        if (!$scoring_1 || !$scoring_2) {
+            throw new BLoCException("skoring belum diinputkan");
+        }
+        $scoring_detail_1 = json_decode($scoring_1->scoring_detail);
+        $scoring_detail_2 = json_decode($scoring_2->scoring_detail);
 
         foreach ($get_member_match as $key => $value) {
-            if ($value->admin_total === null) {
-                throw new BLoCException("skoring belum diinputkan");
-            }
             // didalam perulangan pastikan belum ada yang win = 1
             if ($value->win == 1) {
                 throw new BLoCException("match have winner");
@@ -94,15 +96,15 @@ class SetSavePermanentElimination extends Retrieval
 
         // bandingak admin_total keduanya untuk mendapatkan pemenang
 
-        if ($get_member_match[0]->admin_total > $get_member_match[1]->admin_total) {
+        if ($scoring_1->admin_total > $scoring_2->admin_total) {
             $win_member = $get_member_match[0]->id;
         }
 
-        if ($get_member_match[1]->admin_total > $get_member_match[0]->admin_total) {
+        if ($scoring_2->admin_total > $scoring_1->admin_total) {
             $win_member = $get_member_match[1]->id;
         }
 
-        if ($get_member_match[1]->admin_total == $get_member_match[0]->admin_total) {
+        if ($scoring_2->admin_total == $scoring_1->admin_total) {
             $result_shot_of_1 = 0;
             foreach ($scoring_detail_1->extra_shot as $key => $value) {
                 if ($value->score == "" || $value->score == 0 || $value->score == "m") {
@@ -110,7 +112,7 @@ class SetSavePermanentElimination extends Retrieval
                 }
                 $shoot_off = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 10;
+                    $shoot_off = 10.1;
                 }
                 $result_shot_of_1 = $result_shot_of_1 + $shoot_off;
             }
@@ -122,7 +124,7 @@ class SetSavePermanentElimination extends Retrieval
                 }
                 $shoot_off = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 10;
+                    $shoot_off = 10.1;
                 }
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off;
             }
@@ -134,27 +136,21 @@ class SetSavePermanentElimination extends Retrieval
             } else {
                 $result_distance_from_x_1 = 0;
                 foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                    if (gettype($value->distance_from_x) == "string" || $value->distance_from_x == 0) {
                         continue;
                     }
 
                     $distance_from_x = $value->distance_from_x;
-                    if ($value->distance_from_x == "x") {
-                        $distance_from_x = 10;
-                    }
                     $result_distance_from_x_1 = $result_distance_from_x_1 + $distance_from_x;
                 }
 
                 $result_distance_from_x_2 = 0;
                 foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                    if (gettype($value->distance_from_x) == "string" || $value->distance_from_x == 0) {
                         continue;
                     }
 
                     $distance_from_x = $value->distance_from_x;
-                    if ($value->distance_from_x == "x") {
-                        $distance_from_x = 10;
-                    }
                     $result_distance_from_x_2 = $result_distance_from_x_2 + $distance_from_x;
                 }
 
@@ -264,7 +260,7 @@ class SetSavePermanentElimination extends Retrieval
                 }
                 $shoot_off = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 10;
+                    $shoot_off = 10.1;
                 }
                 $result_shot_of_1 = $result_shot_of_1 + $shoot_off;
             }
@@ -276,7 +272,7 @@ class SetSavePermanentElimination extends Retrieval
                 }
                 $shoot_off = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 10;
+                    $shoot_off = 10.1;
                 }
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off;
             }
@@ -288,27 +284,21 @@ class SetSavePermanentElimination extends Retrieval
             } else {
                 $result_distance_from_x_1 = 0;
                 foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                    if (gettype($value->distance_from_x) == "string" || $value->distance_from_x == 0) {
                         continue;
                     }
 
                     $distance_from_x = $value->distance_from_x;
-                    if ($value->distance_from_x == "x") {
-                        $distance_from_x = 10;
-                    }
                     $result_distance_from_x_1 = $result_distance_from_x_1 + $distance_from_x;
                 }
 
                 $result_distance_from_x_2 = 0;
                 foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                    if ($value->distance_from_x == "" || $value->distance_from_x == 0 || $value->distance_from_x == "m") {
+                    if (gettype($value->distance_from_x) == "string" || $value->distance_from_x == 0) {
                         continue;
                     }
 
                     $distance_from_x = $value->distance_from_x;
-                    if ($value->distance_from_x == "x") {
-                        $distance_from_x = 10;
-                    }
                     $result_distance_from_x_2 = $result_distance_from_x_2 + $distance_from_x;
                 }
 
