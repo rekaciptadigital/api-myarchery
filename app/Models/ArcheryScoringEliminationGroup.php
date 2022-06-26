@@ -259,8 +259,8 @@ class ArcheryScoringEliminationGroup extends Model
                 if ($es_score_1 == 0 && $es_score_2 == 0)
                     break;
 
-                $total_score_1 = $total_score_1 + ($es_score_1 == 11 ? 10 : $es_score_1);
-                $total_score_2 = $total_score_2 + ($es_score_2 == 11 ? 10 : $es_score_2);
+                // $total_score_1 = $total_score_1 + ($es_score_1 == 11 ? 10 : $es_score_1);
+                // $total_score_2 = $total_score_2 + ($es_score_2 == 11 ? 10 : $es_score_2);
                 if ($es_score_2 == $es_score_1) {
                     if ($es_distance_1 < $es_distance_2) {
                         $es_status_2 = "lose";
