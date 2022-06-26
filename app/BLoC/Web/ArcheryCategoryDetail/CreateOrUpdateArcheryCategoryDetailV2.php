@@ -84,57 +84,29 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                     throw new BLoCException("harap inputkan tanggal early bird");
                 }
             }
-            $key = array_key_exists("category_id", $category);
-            if ($key) {
-                $category_detail = ArcheryEventCategoryDetail::find($category['category_id']);
-                if (!$category_detail) {
-                    throw new BLoCException("kategori tidak ditemukan");
-                }
-                $is_exist = ArcheryEventCategoryDetail::where("age_category_id", $age_category->id)
-                    ->where("competition_category_id", $competitio_category->id)
-                    ->where("distance_id", $distance_category->id)
-                    ->where("team_category_id", $team_category->id)
-                    ->where("id", "!=", $category["category_id"])
-                    ->where("event_id", $event->id)
-                    ->get();
 
-                if ($is_exist->count() > 0) {
-                    throw new BLoCException("category telah di atur");
-                }
-                $category_detail->age_category_id = $age_category->id;
-                $category_detail->competition_category_id = $competitio_category->id;
-                $category_detail->distance_id  = $distance_category->id;
-                $category_detail->team_category_id  = $team_category->id;
-                $category_detail->quota = $category['quota'];
-                $category_detail->fee = $category['fee'];
-                $category_detail->is_show = $category["is_show"];
-                $category_detail->early_bird = $category["early_bird"];
-                $category_detail->end_date_early_bird = $end_early_bird;
-                $category_detail->save();
-            } else {
-                $is_exist = ArcheryEventCategoryDetail::where("age_category_id", $age_category->id)
-                    ->where("competition_category_id", $competitio_category->id)
-                    ->where("distance_id", $distance_category->id)
-                    ->where("team_category_id", $team_category->id)
-                    ->where("event_id", $event->id)
-                    ->get();
+            $archery_category_detail = ArcheryEventCategoryDetail::where("age_category_id", $age_category->id)
+                ->where("competition_category_id", $competitio_category->id)
+                ->where("distance_id", $distance_category->id)
+                ->where("team_category_id", $team_category->id)
+                ->where("event_id", $event->id)
+                ->first();
 
-                if ($is_exist->count() > 0) {
-                    throw new BLoCException("category telah di atur");
-                }
+            if (!$archery_category_detail) {
                 $archery_category_detail = new ArcheryEventCategoryDetail();
-                $archery_category_detail->event_id = $event->id;
-                $archery_category_detail->age_category_id = $age_category->id;
-                $archery_category_detail->competition_category_id = $competitio_category->id;
-                $archery_category_detail->distance_id  = $distance_category->id;
-                $archery_category_detail->team_category_id  = $team_category->id;
-                $archery_category_detail->quota = $category['quota'];
-                $archery_category_detail->fee = $category['fee'];
-                $archery_category_detail->is_show = $category["is_show"];
-                $archery_category_detail->early_bird = $category["early_bird"];
-                $archery_category_detail->end_date_early_bird = $end_early_bird;
-                $archery_category_detail->save();
             }
+            
+            $archery_category_detail->event_id = $event->id;
+            $archery_category_detail->age_category_id = $age_category->id;
+            $archery_category_detail->competition_category_id = $competitio_category->id;
+            $archery_category_detail->distance_id  = $distance_category->id;
+            $archery_category_detail->team_category_id  = $team_category->id;
+            $archery_category_detail->quota = $category['quota'];
+            $archery_category_detail->fee = $category['fee'];
+            $archery_category_detail->is_show = $category["is_show"];
+            $archery_category_detail->early_bird = $category["early_bird"];
+            $archery_category_detail->end_date_early_bird = $end_early_bird;
+            $archery_category_detail->save();
         }
 
 
