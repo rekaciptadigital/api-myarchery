@@ -107,6 +107,7 @@ class GetEventEliminationTemplate extends Retrieval
                     $admin_total = 0;
                     $is_different = 0;
                     $total_scoring = 0;
+                    
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
