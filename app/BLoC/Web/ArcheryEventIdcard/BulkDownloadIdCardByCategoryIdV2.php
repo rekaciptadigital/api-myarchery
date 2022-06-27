@@ -117,6 +117,15 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
+            $gender = "";
+            if ($user->gender != null) {
+                if ($user->gender == "male") {
+                    $gender = "Laki-Laki";
+                } else {
+                    $gender = "Perempuan";
+                }
+            }
+
             $qr_code_data = $event_id . " " . $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
             if (!$schedule) {
@@ -135,7 +144,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $final_doc['doc'][] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}', '{%gender%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $user->gender],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
                 $html_template
             );
         }
@@ -162,6 +171,15 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
+            $gender = "";
+            if ($user->gender != null) {
+                if ($user->gender == "male") {
+                    $gender = "Laki-Laki";
+                } else {
+                    $gender = "Perempuan";
+                }
+            }
+
             $data_qr = $event_id . " " . $type . "-" . $o->id;
 
             $club = ArcheryClub::find($o->club_id);
@@ -175,7 +193,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $final_doc['doc'][] = str_replace(
                 ['{%category%}', '{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%gender%}'],
-                ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status, $user->gender],
+                ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status, $gender],
                 $html_template
             );
         }
