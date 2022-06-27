@@ -220,7 +220,6 @@ class SetSavePermanentElimination extends Retrieval
             ->orderBy("index")
             ->get();
 
-        // return $get_member_match;
 
         // cek valid atau tidaknya match tersebut
         if ($get_member_match->count() != 2) {
