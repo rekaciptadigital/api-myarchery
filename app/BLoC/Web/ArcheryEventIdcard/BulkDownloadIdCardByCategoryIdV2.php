@@ -128,8 +128,9 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $qr_code_data = $event_id . " " . $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
-            if (!$schedule) {
-                throw new BLoCException("schedule not found");
+            $budrest_number = "";
+            if ($schedule && $schedule->bud_rest_number != 0) {
+                $budrest_number = $schedule->bud_rest_number . $schedule->target_face;
             }
 
             $club = ArcheryClub::find($participant->club_id);
@@ -139,7 +140,6 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 $club = $club->name;
             }
 
-            $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
             $final_doc['doc'][] = str_replace(
