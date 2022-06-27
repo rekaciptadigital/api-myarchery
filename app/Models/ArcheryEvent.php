@@ -34,7 +34,7 @@ class ArcheryEvent extends Model
 
         if ($category->count() > 0) {
             foreach ($category as $c) {
-                if (($c->type == "Individual") && $individu === null) {
+                if (($c->type == "Individual") && $individu === null && $c->age_category_id != "Militer") {
                     $individu = [
                         "price" => $c->fee,
                         "early_bird" => $c->early_bird,
