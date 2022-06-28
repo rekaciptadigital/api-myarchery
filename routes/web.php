@@ -425,6 +425,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScheduleFullDay']);
             $router->put('/change_bud_rest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMemberBudrest']);
+            $router->get('/download-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadMemberBudrest']);
         });
 
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
