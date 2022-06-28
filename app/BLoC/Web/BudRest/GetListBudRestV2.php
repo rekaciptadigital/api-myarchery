@@ -77,7 +77,7 @@ class GetListBudRestV2 extends Transactional
     {
         return [
             "event_id" => "required",
-            "date" => "required"
+            "category_id" => "required"
         ];
     }
 }
