@@ -750,7 +750,7 @@ class ArcheryScoring extends Model
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
             if ($elimination_template > 0) {
                 if ($participant_is_present->count() > $elimination_template) {
-                    // cek apakah archer terakhir sesuai di yang sesuai template eliminasi udah melakukan shoot secara lengkap
+                    // cek apakah archer terakhir yang sesuai template eliminasi udah melakukan shoot secara lengkap
                     if ($archery_event_score[$elimination_template - 1]["sessions"][$category->session_in_qualification]["total"] > 0 && $archery_event_score[$elimination_template]["sessions"][$category->session_in_qualification]["total"] > 0) {
                         // cek apakah terdapat total point yang sama
                         if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
@@ -775,6 +775,29 @@ class ArcheryScoring extends Model
                                 } else {
                                     $member->update(["have_shoot_off" => 0]);
                                 }
+
+                                $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                                $newValue["member"] = $value["member"];
+                                $newValue["have_shoot_off"] = $member->have_shoot_off;
+                                array_push($newArray, $newValue);
+                            }
+                            usort($archery_event_score, function ($a, $b) {
+                                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                                    }
+                                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                                }
+                                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                            });
+                            return $newArray;
+                        } else {
+                            foreach ($archery_event_score as $key => $value) {
+                                $member = ArcheryEventParticipantMember::find($value["member"]->id);
+                                if (!$member) {
+                                    throw new BLoCException("member nan");
+                                }
+                                $member->update(["have_shoot_off" => 0]);
 
                                 $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
                                 $newValue["member"] = $value["member"];
