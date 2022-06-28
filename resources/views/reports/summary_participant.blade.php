@@ -51,14 +51,21 @@ table, th, td {
         </thead>
         <tbody>
             <tr >
-                <th style="text-align: center; background: #a1a11a;"><strong>No</strong></th>
-                <th style="text-align: center; background: #FFFF00;"><strong>Kategori</strong></th>
-                <th style="text-align: center; background: #a1a11a;"><strong>Harga Regis</strong></th>
-                <th style="text-align: center; background: #FFFF00;"><strong>Total Quota</strong></th>
-                <th style="text-align: center; background: #a1a11a;"><strong>Total Terjual</strong></th>
-                <th style="text-align: center; background: #FFFF00;"><strong>Sisa Kuota</strong></th>
-                <th style="text-align: center; background: #a1a11a;"><strong>Total Uang Masuk</strong></th>
+                <th rowspan="2" style="text-align: center; background: #a1a11a;"><strong>No</strong></th>
+                <th rowspan="2" style="text-align: center; background: #FFFF00;"><strong>Kategori</strong></th>
+                <th rowspan="2" style="text-align: center; background: #a1a11a;"><strong>Total Quota</strong></th>
+                <th colspan="2" style="text-align: center; background: #FFFF00;"><strong>Registrasi Normal</strong></th>
+                <th colspan="2" style="text-align: center; background: #a1a11a;"><strong>Registrasi Early Bird</strong></th>
+                <th rowspan="2" style="text-align: center; background: #FFFF00;"><strong>Sisa Kuota</strong></th>
+                <th rowspan="2" style="text-align: center; background: #a1a11a;"><strong>Total Uang Masuk</strong></th>
               
+            </tr>
+
+            <tr>
+                <th style="text-align: center; background: #FFFF00;"><strong>Harga</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>Total Terjual</strong></th>
+                <th style="text-align: center; background: #a1a11a;"><strong>Harga</strong></th>
+                <th style="text-align: center; background: #a1a11a;"><strong>Total Terjual</strong></th>
             </tr>
             <?php
                 $no = 0;
@@ -66,14 +73,17 @@ table, th, td {
                 $left_quota = 0;
                 $quota = 0;
                 $quota_sell = 0;
+                $quota_sell_early_bird = 0;
             ?>
             @foreach ($team_category as $data)
             <tr>
                 <td style="text-align: center;">{{ $no = $no + 1 }}</td>
                 <td style="text-align: left;">{{ $data['label'] ? $data['label'] : '-' }}</td>
-                <td style="text-align: right;">Rp{{ $data['fee'] ? number_format($data['fee']) : '0' }}</td>
                 <td style="text-align: center;">{{ $data['quota'] ? $data['quota'] : '0' }}</td>
+                <td style="text-align: right;">Rp{{ $data['fee'] ? number_format($data['fee']) : '0' }}</td>
                 <td style="text-align: center;">{{ $data['total_sell'] ? $data['total_sell'] : '0' }}</td>
+                <td style="text-align: right;">Rp{{ $data['fee_early_bird'] ? number_format($data['fee_early_bird']) : '0' }}</td>
+                <td style="text-align: center;">{{ $data['total_sell_early_bird'] ? $data['total_sell_early_bird'] : '0' }}</td>
                 <td style="text-align: center;">{{ $data['left_quota'] ? $data['left_quota'] : '0' }}</td>
                 <td style="text-align: right;">Rp{{ $data['total_amount'] ? number_format($data['total_amount']) : '0' }}</td>
                 <?php 
@@ -81,14 +91,18 @@ table, th, td {
                     $left_quota = $left_quota + $data['left_quota'];
                     $quota = $data['quota'] + $quota;
                     $quota_sell = $data['total_sell'] + $quota_sell;
+                    $quota_sell_early_bird = $data['total_sell_early_bird'] + $quota_sell_early_bird;
                 ?>
             </tr>
             @endforeach
             
             <tr>
-                <td colspan="3" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
+                <td colspan="2" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
                 <td style="text-align: center;background: #ccccad;">{{$quota}}</td>
+                <td style="text-align: center;background: #ccccad;"></td>
                 <td style="text-align: center;background: #ccccad;">{{$quota_sell}}</td>
+                <td style="text-align: center;background: #ccccad;"></td>
+                <td style="text-align: center;background: #ccccad;">{{$quota_sell_early_bird}}</td>
                 <td style="text-align: center;background: #ccccad;">{{$left_quota}}</td>
                 <td style="text-align: right;background: #ccccad;">Rp{{number_format($total_amount)}}</td>
             </tr>

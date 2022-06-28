@@ -47,28 +47,61 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
         if(empty($team_category)){
             throw new BLoCException("data tidak ditemukan");
         }
-        
+        // dd($team_category);
         $team_category_obj = [];
         foreach ($team_category as $key => $value) {
             $team_category_id = $value->team_category_id;
+            // $team_category_id = 'individu female';
             $team_category_detail = ArcheryMasterTeamCategory::where("id",$team_category_id)->first();
             $category = ArcheryEventCategoryDetail::where("archery_event_category_details.event_id",$event_id)->where("archery_event_category_details.team_category_id",$team_category_id)->first();
-            $check_participant = DB::select('SELECT count(archery_event_participants.id) as total_register
-            FROM archery_event_participants
-            JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
-            WHERE archery_event_category_details.event_id = ? 
-            AND archery_event_category_details.team_category_id = ? 
-            AND archery_event_participants.status = 1 
-            GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id]);
-            $total_sell = $check_participant ? $check_participant[0]->total_register : 0;
-            $fee = $category ? $category->fee : 0;
+
+            $end_date_early_bird = $category ? $category->end_date_early_bird : null;
+            $check_participant_early_bird = null;
+
+            if ($end_date_early_bird) {
+                $check_participant = DB::select('SELECT count(archery_event_participants.id) as total_register
+                FROM archery_event_participants
+                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
+                WHERE archery_event_category_details.event_id = ? 
+                AND archery_event_category_details.team_category_id = ? 
+                AND archery_event_participants.status = 1 
+                AND archery_event_participants.created_at > end_date_early_bird
+                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id],
+                ["end_date_early_bird" => $end_date_early_bird]);
+
+                $check_participant_early_bird = DB::select('SELECT count(archery_event_participants.id) as total_register
+                FROM archery_event_participants
+                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
+                WHERE archery_event_category_details.event_id = ? 
+                AND archery_event_category_details.team_category_id = ? 
+                AND archery_event_participants.status = 1 
+                AND archery_event_participants.created_at <= end_date_early_bird
+                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id],
+                ["end_date_early_bird" => $end_date_early_bird]);
+            } else {
+                $check_participant = DB::select('SELECT count(archery_event_participants.id) as total_register
+                FROM archery_event_participants
+                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
+                WHERE archery_event_category_details.event_id = ? 
+                AND archery_event_category_details.team_category_id = ? 
+                AND archery_event_participants.status = 1 
+                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id]);
+            }
+            // dd($check_participant);
+            $total_sell_regular = $check_participant ? $check_participant[0]->total_register : 0;
+            $total_sell_early_bird = $check_participant_early_bird ? $check_participant_early_bird[0]->total_register : 0;
+            $fee_regular = $category ? $category->fee : 0;
+            $fee_early_bird = $category ? $category->early_bird : 0;
             $team_category_obj[$team_category_id] = [
                 "quota" => $value->total_quota,
-                "fee" => $fee,
+                "fee" => $fee_regular,
+                "fee_early_bird" => $fee_early_bird,
                 "label" => $team_category_detail->label,
-                "total_sell" => $total_sell,
-                "total_amount" => $fee * $total_sell,
-                "left_quota" => $value->total_quota - $total_sell,
+                "total_sell" => $total_sell_regular,
+                "total_sell_early_bird" => $total_sell_early_bird,
+                "total_amount" => ($fee_regular * $total_sell_regular) + ($fee_early_bird * $total_sell_early_bird),
+                "total_amount_early_bird" => $fee_early_bird * $total_sell_early_bird,
+                "left_quota" => $value->total_quota - ($total_sell_regular + $total_sell_early_bird),
             ];
         }
         
