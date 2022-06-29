@@ -60,9 +60,12 @@ class GetEventEliminationTemplate extends Retrieval
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
         $elimination_member_count = 16;
+
         if ($elimination) {
             $elimination_id = $elimination->id;
             $elimination_member_count = $elimination->count_participant;
+        } elseif ($category->default_elimination_count != 0) {
+            $elimination_member_count = $category->default_elimination_count;
         }
 
 
