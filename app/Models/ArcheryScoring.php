@@ -760,16 +760,20 @@ class ArcheryScoring extends Model
                                 throw new BLoCException("member nan");
                             }
 
-                            if ($value["total"] === $total) {
-                                $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
-                                if (!$scooring_session_11_member) {
-                                    $member->update(["have_shoot_off" => 1]);
-                                } else {
-                                    if ($scooring_session_11_member->total == 0) {
+                            if ($value["member"]->is_present == 1) {
+                                if ($value["total"] === $total) {
+                                    $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
+                                    if (!$scooring_session_11_member) {
                                         $member->update(["have_shoot_off" => 1]);
                                     } else {
-                                        $member->update(["have_shoot_off" => 2]);
+                                        if ($scooring_session_11_member->total == 0) {
+                                            $member->update(["have_shoot_off" => 1]);
+                                        } else {
+                                            $member->update(["have_shoot_off" => 2]);
+                                        }
                                     }
+                                } else {
+                                    $member->update(["have_shoot_off" => 0]);
                                 }
                             } else {
                                 $member->update(["have_shoot_off" => 0]);
