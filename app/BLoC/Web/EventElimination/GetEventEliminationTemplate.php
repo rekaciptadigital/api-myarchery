@@ -59,7 +59,7 @@ class GetEventEliminationTemplate extends Retrieval
     {
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
-        $elimination_member_count = $category->default_elimination_count;
+        $elimination_member_count = 16;
         if ($elimination) {
             $elimination_id = $elimination->id;
             $elimination_member_count = $elimination->count_participant;
@@ -107,11 +107,11 @@ class GetEventEliminationTemplate extends Retrieval
                     $admin_total = 0;
                     $is_different = 0;
                     $total_scoring = 0;
-                    
+
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = isset($scoring_detail->result)?$scoring_detail->result:$scoring_detail->total;
+                        $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
@@ -161,9 +161,10 @@ class GetEventEliminationTemplate extends Retrieval
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
         $elimination_id = 0;
-        $elimination_member_count = $category_team->default_elimination_count;
+        $elimination_member_count = 16;
         if ($elimination) {
             $elimination_id = $elimination->id;
+            $elimination_member_count = $elimination->count_participant;
         }
 
         $session = [];
