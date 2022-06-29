@@ -98,7 +98,7 @@ class SetEventEliminationV2 extends Transactional
                 }
 
                 foreach ($session as $key => $s) {
-                    if ($value["sessions"][$s + 1]["total"] == 0) {
+                    if ($value["sessions"][$s]["total"] == 0) {
                         throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
                     }
                 }
