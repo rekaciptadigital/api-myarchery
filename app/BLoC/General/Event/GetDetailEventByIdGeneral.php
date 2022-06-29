@@ -16,7 +16,7 @@ class GetDetailEventByIdGeneral extends Retrieval
     protected function process($parameters)
     {
         $event_id = $parameters->get("event_id");
-        $event = ArcheryEvent::find($event_id)->first();
+        $event = ArcheryEvent::find($event_id);
 
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
