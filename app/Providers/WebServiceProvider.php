@@ -143,6 +143,7 @@ use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
 use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
+use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -249,6 +250,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
+        $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
 
