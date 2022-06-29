@@ -93,11 +93,14 @@ class SetEventEliminationV2 extends Transactional
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
             foreach ($qualification_rank as $key => $value) {
-                // if ($value["sessions"][count($session)]["total"] === 0) {
-                //     throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
-                // }
                 if ($value["total"] == 0) {
                     throw new BLoCException("skor kualifikasi masih kosong");
+                }
+
+                foreach ($session as $key => $s) {
+                    if ($value["sessions"][$s]["total"] == 0) {
+                        throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
+                    }
                 }
             }
         }

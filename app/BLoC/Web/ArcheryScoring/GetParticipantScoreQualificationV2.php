@@ -93,7 +93,6 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, $score_type, $event_id);
 
-
         $response = [];
 
         foreach ($qualification_member as $key1 => $value1) {
