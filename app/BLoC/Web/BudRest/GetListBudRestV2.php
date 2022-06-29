@@ -23,6 +23,7 @@ class GetListBudRestV2 extends Transactional
         $event_id = $parameters->get("event_id");
         $event = ArcheryEvent::find($event_id);
         $date = $parameters->get("date");
+        $category_id = $parameters->get("category_id");
 
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
@@ -35,7 +36,8 @@ class GetListBudRestV2 extends Transactional
         $bud_rest = BudRest::select("bud_rest.*")->join("archery_event_category_details", "archery_event_category_details.id", "=", "bud_rest.archery_event_category_id")
             ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "bud_rest.archery_event_category_id")
             ->where("archery_event_category_details.event_id", $event_id)
-            ->whereDate("event_start_datetime", $date)
+            // ->whereDate("event_start_datetime", $date)
+            ->where("archery_event_category_details.id", $category_id)
             ->get();
 
         $response = [];
@@ -75,7 +77,7 @@ class GetListBudRestV2 extends Transactional
     {
         return [
             "event_id" => "required",
-            "date" => "required"
+            "category_id" => "required"
         ];
     }
 }
