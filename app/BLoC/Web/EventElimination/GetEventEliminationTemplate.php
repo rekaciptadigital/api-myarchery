@@ -168,6 +168,8 @@ class GetEventEliminationTemplate extends Retrieval
         if ($elimination) {
             $elimination_id = $elimination->id;
             $elimination_member_count = $elimination->count_participant;
+        } elseif ($category_team->default_elimination_count != 0) {
+            $elimination_member_count = $category_team->default_elimination_count;
         }
 
         $session = [];
