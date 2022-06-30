@@ -639,8 +639,10 @@ class ArcheryScoring extends Model
         )->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+            ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_participants.event_category_id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
+            ->where("archery_event_qualification_time.category_detail_id", $event_category_id)
             ->where('archery_event_participants.event_category_id', $event_category_id);
 
         if ($name) {
