@@ -1296,19 +1296,19 @@ class EliminationFormat
         }
 
         // round 3 match 1
-        // if (isset($teams_3[0][0]["id"]) && !isset($teams_3[0][1]["id"]) && !isset($teams_3[0][1]["status"])) {
-        //     $teams_3[0][0]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][0]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["id"]) && isset($teams_3[0][1]["id"])) {
-        //     $teams_3[0][1]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][1]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (isset($teams_3[0][0]["id"]) && isset($teams_3[0][1]["id"])) {
-        //     $teams_4[0][0]["status"] = "wait";
-        // }
+        if (isset($teams_3[0][0]["id"]) && !isset($teams_3[0][1]["id"]) && !isset($teams_3[0][1]["status"])) {
+            $teams_3[0][0]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][0]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["id"]) && isset($teams_3[0][1]["id"])) {
+            $teams_3[0][1]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][1]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (isset($teams_3[0][0]["id"]) && isset($teams_3[0][1]["id"])) {
+            $teams_4[0][0]["status"] = "wait";
+        }
 
         $match_1 = ["round" => "round 1", "seeds" => [
             ["teams" => $teams[0]],
