@@ -86,7 +86,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         ];
     }
 
-    private function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
+    public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
@@ -110,7 +110,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         return $response;
     }
 
-    private function teamBestOfThree($category_detail, $team_category, $session)
+    public function teamBestOfThree($category_detail, $team_category, $session)
     {
         $team_cat = ($team_category->id) == "male_team" ? "individu male" : "individu female";
         $category_detail_team = ArcheryEventCategoryDetail::where("event_id", $category_detail->event_id)
@@ -172,7 +172,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         return $new_array;
     }
 
-    private function mixTeamBestOfThree($category_detail, $team_category, $session)
+    public function mixTeamBestOfThree($category_detail, $team_category, $session)
     {
         $category_detail_male = ArcheryEventCategoryDetail::where("event_id", $category_detail->event_id)
             ->where("age_category_id", $category_detail->age_category_id)
