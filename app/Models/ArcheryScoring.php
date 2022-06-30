@@ -602,28 +602,7 @@ class ArcheryScoring extends Model
 
     protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false)
     {
-        // $participants_query = ArcheryEventParticipantMember::select(
-        //     "archery_event_participant_members.id",
-        //     "archery_event_participant_members.have_shoot_off",
-        //     "users.name",
-        //     "archery_event_participant_members.user_id",
-        //     "users.gender",
-        //     "archery_event_participants.id as participant_id",
-        //     "archery_event_participants.event_id",
-        //     "archery_event_participants.is_present",
-        //     "archery_clubs.name as club_name",
-        //     "archery_clubs.id as club_id",
-        //     "archery_event_qualification_schedule_full_day.bud_rest_number",
-        //     "archery_event_qualification_schedule_full_day.target_face"
-        // )
-        //     ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-        //     ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
-        //     ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
-        //     ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
-        //     ->where('archery_event_participants.status', 1)
-        //     ->where('archery_event_participants.event_category_id', $event_category_id);
-
-        $participants_query = ArcheryEventParticipant::select(
+        $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
             "users.name",
@@ -636,13 +615,12 @@ class ArcheryScoring extends Model
             "archery_clubs.id as club_id",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
-        )->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
+        )
+            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
-            ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_participants.event_category_id")
-            ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
+            ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->where('archery_event_participants.status', 1)
-            ->where("archery_event_qualification_time.category_detail_id", $event_category_id)
             ->where('archery_event_participants.event_category_id', $event_category_id);
 
         if ($name) {
