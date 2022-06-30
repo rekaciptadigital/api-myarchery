@@ -602,7 +602,28 @@ class ArcheryScoring extends Model
 
     protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false)
     {
-        $participants_query = ArcheryEventParticipantMember::select(
+        // $participants_query = ArcheryEventParticipantMember::select(
+        //     "archery_event_participant_members.id",
+        //     "archery_event_participant_members.have_shoot_off",
+        //     "users.name",
+        //     "archery_event_participant_members.user_id",
+        //     "users.gender",
+        //     "archery_event_participants.id as participant_id",
+        //     "archery_event_participants.event_id",
+        //     "archery_event_participants.is_present",
+        //     "archery_clubs.name as club_name",
+        //     "archery_clubs.id as club_id",
+        //     "archery_event_qualification_schedule_full_day.bud_rest_number",
+        //     "archery_event_qualification_schedule_full_day.target_face"
+        // )
+        //     ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+        //     ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
+        //     ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+        //     ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+        //     ->where('archery_event_participants.status', 1)
+        //     ->where('archery_event_participants.event_category_id', $event_category_id);
+
+        $participants_query = ArcheryEventParticipant::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
             "users.name",
@@ -613,17 +634,14 @@ class ArcheryScoring extends Model
             "archery_event_participants.is_present",
             "archery_clubs.name as club_name",
             "archery_clubs.id as club_id",
-        )
-            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
+            "archery_event_qualification_schedule_full_day.bud_rest_number",
+            "archery_event_qualification_schedule_full_day.target_face"
+        )->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+            ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id);
-
-        $q_time = ArcheryEventQualificationTime::where("category_detail_id", $event_category_id)->first();
-        if (!$q_time) {
-            throw new BLoCException("jadwal untuk kategori ini belum di set");
-        }
 
         if ($name) {
             $participants_query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
@@ -642,14 +660,6 @@ class ArcheryScoring extends Model
         $participants_collection = $participants_query->get();
         $archery_event_score = [];
         foreach ($participants_collection as $key => $value) {
-            $jadwal = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $value->id)->where("qalification_time_id", $q_time->id)->first();
-            if ($jadwal) {
-                $value->bud_rest_number = $jadwal->bud_rest_number;
-                $value->target_face = $jadwal->target_face;
-            } else {
-                $value->target_face = "";
-                $value->bud_rest_number = 0;
-            }
             $score = $this->generateScoreBySession($value->id, $score_type, $sessions);
             $score["club_id"] = $value->club_id;
             $score["club_name"] = $value->club_name;
