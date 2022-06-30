@@ -60,9 +60,14 @@ class GetParticipantScoreQualificationDos extends Retrieval
             $session = [];
             for ($i=0; $i < $filter_session; $i++) { 
                 if ($filter_session == 2) {
-                    if ($i == 0) {
-                        continue;
-                    }
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                }
+
+                if ($filter_session == 3) {
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                    if ($i == 1) continue; 
                 }
                 $session[] = $i+1;
             }
