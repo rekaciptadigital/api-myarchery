@@ -27,11 +27,11 @@ class ArcheryScoringEliminationGroup extends Model
     protected static $elimination_scores_format_by_type = [
         "1" => [
             "shot" => [
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0], // status = ["empty","win","draw","lose"]
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0],
-                ["score" => ["", "", ""], "total" => 0, "status" => "empty", "point" => 0]
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0], // status = ["empty","win","draw","lose"]
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0, "status" => "empty", "point" => 0]
             ],
             "extra_shot" => [
                 ["distance_from_x" => 0, "score" => "", "status" => "empty"],
@@ -48,11 +48,11 @@ class ArcheryScoringEliminationGroup extends Model
 
         "2" => [
             "shot" => [
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0],
-                ["score" => ["", "", "",], "total" => 0]
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0],
+                ["score" => ["", "", "", "", "", ""], "total" => 0]
             ],
             "extra_shot" => [
                 ["distance_from_x" => 0, "score" => "", "status" => "empty"],
@@ -125,8 +125,8 @@ class ArcheryScoringEliminationGroup extends Model
                 if ($es_score_1 == 0 && $es_score_2 == 0)
                     break;
 
-                $total_score_1 = $total_score_1 + ($es_score_1 != 11 ? $es_score_1 : 10);
-                $total_score_2 = $total_score_2 + ($es_score_2 != 11 ? $es_score_2 : 10);
+                // $total_score_1 = $total_score_1 + ($es_score_1 != 11 ? $es_score_1 : 10);
+                // $total_score_2 = $total_score_2 + ($es_score_2 != 11 ? $es_score_2 : 10);
                 if ($es_score_2 == $es_score_1) {
                     if ($es_distance_1 < $es_distance_2) {
                         $es_status_2 = "lose";
@@ -259,8 +259,8 @@ class ArcheryScoringEliminationGroup extends Model
                 if ($es_score_1 == 0 && $es_score_2 == 0)
                     break;
 
-                $total_score_1 = $total_score_1 + ($es_score_1 == 11 ? 10 : $es_score_1);
-                $total_score_2 = $total_score_2 + ($es_score_2 == 11 ? 10 : $es_score_2);
+                // $total_score_1 = $total_score_1 + ($es_score_1 == 11 ? 10 : $es_score_1);
+                // $total_score_2 = $total_score_2 + ($es_score_2 == 11 ? 10 : $es_score_2);
                 if ($es_score_2 == $es_score_1) {
                     if ($es_distance_1 < $es_distance_2) {
                         $es_status_2 = "lose";

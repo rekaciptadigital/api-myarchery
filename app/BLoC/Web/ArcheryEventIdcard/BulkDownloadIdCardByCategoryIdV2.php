@@ -65,10 +65,10 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
         $category_file = $type == 1 ? str_replace(' ', '', $final_doc['label']) : $archery_event->event_name;
         $file_name = $type == 1 ? "asset/idcard/idcard_" . $category_file . "_" . $final_doc["category_id"] . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
-        $generate_idcard = PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
+        PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
-            "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
+            // "file_base_64" => env('APP_HOSTNAME') . $generate_idcard,
         ];
     }
 
@@ -117,10 +117,20 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
+            $gender = "";
+            if ($user->gender != null) {
+                if ($user->gender == "male") {
+                    $gender = "Laki-Laki";
+                } else {
+                    $gender = "Perempuan";
+                }
+            }
+
             $qr_code_data = $event_id . " " . $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
-            if (!$schedule) {
-                throw new BLoCException("schedule not found");
+            $budrest_number = "";
+            if ($schedule && $schedule->bud_rest_number != 0) {
+                $budrest_number = $schedule->bud_rest_number . $schedule->target_face;
             }
 
             $club = ArcheryClub::find($participant->club_id);
@@ -130,12 +140,11 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 $club = $club->name;
             }
 
-            $budrest_number = $schedule && $schedule->bud_rest_number != 0 ? $schedule->bud_rest_number . $schedule->target_face : "";
             $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
             $final_doc['doc'][] = str_replace(
-                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number],
+                ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}', '{%gender%}'],
+                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
                 $html_template
             );
         }
@@ -162,6 +171,15 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
+            $gender = "";
+            if ($user->gender != null) {
+                if ($user->gender == "male") {
+                    $gender = "Laki-Laki";
+                } else {
+                    $gender = "Perempuan";
+                }
+            }
+
             $data_qr = $event_id . " " . $type . "-" . $o->id;
 
             $club = ArcheryClub::find($o->club_id);
@@ -174,8 +192,8 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
             $avatar = !empty($user->avatar) ? $user->avatar : "https://i0.wp.com/eikongroup.co.uk/wp-content/uploads/2017/04/Blank-avatar.png?ssl=1";
 
             $final_doc['doc'][] = str_replace(
-                ['{%category%}', '{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}'],
-                ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status],
+                ['{%category%}', '{%player_name%}', '{%avatar%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%gender%}'],
+                ["", $user->name, $avatar, $club, $background, $logo, $location_and_date_event, $data_qr, $status, $gender],
                 $html_template
             );
         }

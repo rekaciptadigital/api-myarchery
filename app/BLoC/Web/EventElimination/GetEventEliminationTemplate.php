@@ -59,9 +59,13 @@ class GetEventEliminationTemplate extends Retrieval
     {
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
-        $elimination_member_count = $category->default_elimination_count;
+        $elimination_member_count = 16;
+
         if ($elimination) {
             $elimination_id = $elimination->id;
+            $elimination_member_count = $elimination->count_participant;
+        } elseif ($category->default_elimination_count != 0) {
+            $elimination_member_count = $category->default_elimination_count;
         }
 
 
@@ -83,13 +87,10 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.win",
             "archery_event_elimination_matches.bud_rest",
             "archery_event_elimination_matches.target_face",
-            "archery_scorings.total as total_scoring",
-            "archery_scorings.scoring_detail"
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
             ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
-            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->orderBy("archery_event_elimination_matches.round")
             ->orderBy("archery_event_elimination_matches.match")
@@ -109,10 +110,11 @@ class GetEventEliminationTemplate extends Retrieval
                     $admin_total = 0;
                     $is_different = 0;
                     $total_scoring = 0;
+
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = $scoring_detail->result;
+                        $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
@@ -162,9 +164,12 @@ class GetEventEliminationTemplate extends Retrieval
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
         $elimination_id = 0;
-        $elimination_member_count = $category_team->default_elimination_count;
+        $elimination_member_count = 16;
         if ($elimination) {
             $elimination_id = $elimination->id;
+            $elimination_member_count = $elimination->count_participant;
+        } elseif ($category_team->default_elimination_count != 0) {
+            $elimination_member_count = $category_team->default_elimination_count;
         }
 
         $session = [];
@@ -182,12 +187,9 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_group_match.win",
             "archery_event_elimination_group_match.bud_rest",
             "archery_event_elimination_group_match.target_face",
-            "archery_scoring_elimination_group.result",
-            "archery_scoring_elimination_group.scoring_detail",
             "archery_event_elimination_group_match.elimination_group_id"
         )
             ->leftJoin("archery_event_elimination_group_teams", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
-            ->leftJoin("archery_scoring_elimination_group", "archery_scoring_elimination_group.elimination_match_group_id", "=", "archery_event_elimination_group_match.id")
             ->where("archery_event_elimination_group_match.elimination_group_id", $elimination_id)
             ->orderBy("archery_event_elimination_group_match.round")
             ->orderBy("archery_event_elimination_group_match.match")

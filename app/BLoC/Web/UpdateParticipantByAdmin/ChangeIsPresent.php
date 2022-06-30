@@ -45,13 +45,13 @@ class ChangeIsPresent extends Transactional
             "is_present" => $parameters->get("is_present")
         ]);
 
-        if ($participant->is_present === 0) {
+        if ($parameters->get("is_present") == 0) {
             $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
             if (!$member) {
                 throw new BLoCException("member nan");
             }
 
-            if ($member->have_shoot_off === 1) {
+            if ($member->have_shoot_off === 1 || $member->have_shoot_off === 2) {
                 $member->update([
                     "have_shoot_off" => 0
                 ]);
