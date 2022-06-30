@@ -75,59 +75,9 @@ class EliminationFormat
             [3, 6],
             [7, 2]
         ],
-
-        "4" => [
-            [1, 4],
-            [3, 2]
-        ]
     ];
 
     static $next_match_potition = [
-        // eliminasi template 32
-        "32" => [
-            "1" => [
-                "1-1" => [2, 1, 0], // round, match, index
-                "2-1" => [2, 1, 1], // round, match, index
-                "3-1" => [2, 2, 0], // round, match, index
-                "4-1" => [2, 2, 1], // round, match, index
-                "5-1" => [2, 3, 0], // round, match, index
-                "6-1" => [2, 3, 1], // round, match, index
-                "7-1" => [2, 4, 0], // round, match, index
-                "8-1" => [2, 4, 1], // round, match, index
-                "9-1" => [2, 5, 0], // round, match, index
-                "10-1" => [2, 5, 1], // round, match, index
-                "11-1" => [2, 6, 0], // round, match, index
-                "12-1" => [2, 6, 1], // round, match, index
-                "13-1" => [2, 7, 0], // round, match, index
-                "14-1" => [2, 7, 1], // round, match, index
-                "15-1" => [2, 8, 0], // round, match, index
-                "16-1" => [2, 8, 1], // round, match, index
-            ],
-            "2" => [
-                "1-1" => [3, 1, 0], // round, match, index
-                "2-1" => [3, 1, 1], // round, match, index
-                "3-1" => [3, 2, 0], // round, match, index
-                "4-1" => [3, 2, 1], // round, match, index
-                "5-1" => [3, 3, 0], // round, match, index
-                "6-1" => [3, 3, 1], // round, match, index
-                "7-1" => [3, 4, 0], // round, match, index
-                "8-1" => [3, 4, 1], // round, match, index
-            ],
-            "3" => [
-                "1-1" => [4, 1, 0], // round, match, index
-                "2-1" => [4, 1, 1], // round, match, index
-                "3-1" => [4, 2, 0], // round, match, index
-                "4-1" => [4, 2, 1], // round, match, index
-            ],
-            "4" => [
-                "1-1" => [5, 1, 0], // round, match, index
-                "2-1" => [5, 1, 1], // round, match, index
-                "1-0" => [6, 1, 0], // round, match, index
-                "2-0" => [6, 1, 1], // round, match, index
-            ]
-        ],
-
-        // eliminasi template babak 16 besar
         "16" => [
             "1" => [
                 "1-1" => [2, 1, 0], // round, match, index
@@ -152,8 +102,6 @@ class EliminationFormat
                 "2-0" => [5, 1, 1], // round, match, index
             ]
         ],
-
-        // eliminasi template babak 8 besar
         "8" => [
             "1" => [
                 "1-1" => [2, 1, 0], // round, match, index
@@ -167,66 +115,11 @@ class EliminationFormat
                 "1-0" => [4, 1, 0], // round, match, index
                 "2-0" => [4, 1, 1], // round, match, index
             ]
-        ],
-
-        // eliminasi template babak 4 besar
-        "4" => [
-            "1" => [
-                "1-1" => [2, 1, 0],
-                "2-1" => [2, 1, 1],
-                "1-0" => [3, 1, 0],
-                "2-0" => [3, 1, 1]
-            ]
         ]
     ];
 
     static $elimination_champion = [
-        "32" => [
-            // round 1
-            "1-1-0" => 17,
-            "1-2-0" => 18,
-            "1-3-0" => 19,
-            "1-4-0" => 20,
-            "1-5-0" => 21,
-            "1-6-0" => 22,
-            "1-7-0" => 23,
-            "1-8-0" => 24,
-            "1-9-0" => 25,
-            "1-10-0" => 26,
-            "1-11-0" => 27,
-            "1-12-0" => 28,
-            "1-13-0" => 29,
-            "1-14-0" => 30,
-            "1-15-0" => 31,
-            "1-16-0" => 32,
-
-            // round 2
-            "2-1-0" => 9,
-            "2-2-0" => 10,
-            "2-3-0" => 11,
-            "2-4-0" => 12,
-            "2-5-0" => 13,
-            "2-6-0" => 14,
-            "2-7-0" => 15,
-            "2-8-0" => 16,
-
-            //round 3
-            "3-1-0" => 5,
-            "3-2-0" => 6,
-            "3-3-0" => 7,
-            "3-4-0" => 8,
-
-            // final
-            "5-1-1" => 1,
-            "5-1-0" => 2,
-
-            // perebutan juara 3
-            "6-1-1" => 3,
-            "6-1-0" => 4
-        ],
-
         "16" => [
-            // round 1
             "1-1-0" => 9,
             "1-2-0" => 10,
             "1-3-0" => 11,
@@ -235,45 +128,24 @@ class EliminationFormat
             "1-6-0" => 14,
             "1-7-0" => 15,
             "1-8-0" => 16,
-
-            // round 2
             "2-1-0" => 5,
             "2-2-0" => 6,
             "2-3-0" => 7,
             "2-4-0" => 8,
-
-            // final
             "4-1-1" => 1,
             "4-1-0" => 2,
-
-            // perebutan juara 3
             "5-1-1" => 3,
             "5-1-0" => 4,
         ],
         "8" => [
-            // round 1
-            "1-1-0" => 5,
-            "1-2-0" => 6,
-            "1-3-0" => 7,
-            "1-4-0" => 8,
-
-            // final
+            "2-1-0" => 5,
+            "2-2-0" => 6,
+            "2-3-0" => 7,
+            "2-4-0" => 8,
             "3-1-1" => 1,
             "3-1-0" => 2,
-
-            // rebut juara 3
             "4-1-1" => 3,
-            "4-1-0" => 4
         ],
-        "4" => [
-            // final
-            "2-1-1" => 1,
-            "2-1-0" => 2,
-
-            // rebut juara 3
-            "3-1-1" => 3,
-            "3-1-0" => 4
-        ]
     ];
 
 
@@ -306,20 +178,6 @@ class EliminationFormat
     }
 
     public static function Template32($members = [])
-    {
-        $matches = [];
-        foreach ($members as $key => $value) {
-            $m = [];
-            foreach ($value as $key => $value) {
-                $m[] = $value;
-            }
-            $matches[] = ["round" => "", "seeds" => $m];
-        }
-
-        return $matches;
-    }
-
-    public static function Template4($members = [])
     {
         $matches = [];
         foreach ($members as $key => $value) {
@@ -1331,155 +1189,6 @@ class EliminationFormat
         return [$match_1, $match_2, $match_3, $match_4];
     }
 
-    public static function MakeTemplate4($members = [])
-    {
-        $elimination_member_count = 4;
-        $members_coll = [];
-        $members = array_slice($members, 0, $elimination_member_count);
-        // error_log(\json_encode($members_coll[1]["member"]));
-        for ($i = 0; $i < $elimination_member_count; $i++) {
-            if (isset($members[$i]["member"])) {
-                $arr = collect($members[$i]["member"]);
-                $arr["postition"] = $i + 1;
-                $arr["win"] = 0;
-                $members_coll[$i] = $arr;
-            } else
-                $members_coll[$i] = [];
-        }
-        $teams = [];
-        foreach (self::$match_potition[$elimination_member_count] as $key => $value) {
-            $team = [];
-            foreach ($value as $k => $v) {
-                $i = $v - 1;
-                $team[] = isset($members_coll[$i]) ? $members_coll[$i] : [];
-            }
-            $teams[] = $team;
-        }
-        $teams_2[1] = [[], []];
-
-        $teams_3[0] = [[], []];
-
-        // round 1 match 1
-        if (isset($teams[0][0]["id"]) && !isset($teams[0][1]["id"])) {
-            $teams_2[0][0] = collect($teams[0][0]);
-            $teams[0][0]["win"] = 1;
-            $teams_2[0][0]["win"] = 0;
-        }
-        if (isset($teams[0][0]["id"]) && isset($teams[0][1]["id"])) {
-            $teams_2[0][0]["status"] = "wait";
-        }
-        if (!isset($teams[0][0]["id"]) && isset($teams[0][1]["id"])) {
-            $teams[0][1]["win"] = 1;
-            $teams_2[0][0] = collect($teams[0][1]);
-            $teams_2[0][0]["win"] = 0;
-        }
-
-        // round 1 match 2
-        if (isset($teams[1][0]["id"]) && !isset($teams[1][1]["id"])) {
-            $teams[1][0]["win"] = 1;
-            $teams_2[0][1] = collect($teams[1][0]);
-            $teams_2[0][1]["win"] = 0;
-        }
-        if (!isset($teams[1][0]["id"]) && isset($teams[1][1]["id"])) {
-            $teams[1][1]["win"] = 1;
-            $teams_2[0][1] = collect($teams[1][1]);
-            $teams_2[0][1]["win"] = 0;
-        }
-        if (isset($teams[1][0]["id"]) && isset($teams[1][1]["id"])) {
-            $teams_2[0][1]["status"] = "wait";
-        }
-
-        $match_1 = ["round" => "round 1", "seeds" => [
-            ["teams" => $teams[0]],
-            ["teams" => $teams[1]],
-        ]];
-
-        $match_2 = ["round" => "gold", "seeds" => [
-            ["teams" => $teams_2[0]],
-        ]];
-
-        $match_3 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_3[0]],
-        ]];
-
-        return [$match_1, $match_2, $match_3];
-    }
-
-    public static function MakeTemplate4Team($team_club = [])
-    {
-        $elimination_team_count = 8;
-        $team_coll = [];
-        $team_club = array_slice($team_club, 0, $elimination_team_count);
-        // error_log(\json_encode($members_coll[1]["member"]));
-        // print_r(json_encode($team_club));
-        // throw new BLoCException("ok");
-        for ($i = 0; $i < $elimination_team_count; $i++) {
-            if (isset($team_club[$i])) {
-                $arr = collect($team_club[$i]);
-                $arr["postition"] = $i + 1;
-                $arr["win"] = 0;
-                $team_coll[$i] = $arr;
-            } else
-                $team_coll[$i] = [];
-        }
-        $teams = [];
-        foreach (self::$match_potition[$elimination_team_count] as $key => $value) {
-            $team = [];
-            foreach ($value as $k => $v) {
-                $i = $v - 1;
-                $team[] = isset($team_coll[$i]) ? $team_coll[$i] : [];
-            }
-            $teams[] = $team;
-        }
-        $teams_2[0] = [[], []];
-
-        $teams_3[0] = [[], []];
-
-        // round 1 match 1
-        if (isset($teams[0][0]["participant_id"]) && !isset($teams[0][1]["participant_id"])) {
-            $teams_2[0][0] = collect($teams[0][0]);
-            $teams[0][0]["win"] = 1;
-            $teams_2[0][0]["win"] = 0;
-        }
-        if (isset($teams[0][0]["participant_id"]) && isset($teams[0][1]["participant_id"])) {
-            $teams_2[0][0]["status"] = "wait";
-        }
-        if (!isset($teams[0][0]["participant_id"]) && isset($teams[0][1]["participant_id"])) {
-            $teams[0][1]["win"] = 1;
-            $teams_2[0][0] = collect($teams[0][1]);
-            $teams_2[0][0]["win"] = 0;
-        }
-
-        // round 1 match 2
-        if (isset($teams[1][0]["participant_id"]) && !isset($teams[1][1]["participant_id"])) {
-            $teams[1][0]["win"] = 1;
-            $teams_2[0][1] = collect($teams[1][0]);
-            $teams_2[0][1]["win"] = 0;
-        }
-        if (!isset($teams[1][0]["participant_id"]) && isset($teams[1][1]["participant_id"])) {
-            $teams[1][1]["win"] = 1;
-            $teams_2[0][1] = collect($teams[1][1]);
-            $teams_2[0][1]["win"] = 0;
-        }
-        if (isset($teams[1][0]["participant_id"]) && isset($teams[1][1]["participant_id"])) {
-            $teams_2[0][1]["status"] = "wait";
-        }
-
-        $match_1 = ["round" => "round 1", "seeds" => [
-            ["teams" => $teams[0]],
-            ["teams" => $teams[1]],
-        ]];
-
-        $match_2 = ["round" => "gold", "seeds" => [
-            ["teams" => $teams_2[0]],
-        ]];
-        $match_3 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_3[0]],
-        ]];
-
-        return [$match_1, $match_2, $match_3];
-    }
-
     public static function MakeTemplate8Team($team_club = [])
     {
         $elimination_team_count = 8;
@@ -1603,19 +1312,19 @@ class EliminationFormat
         }
 
         // round 3 match 1
-        // if (isset($teams_3[0][0]["participant_id"]) && !isset($teams_3[0][1]["participant_id"]) && !isset($teams_3[0][1]["status"])) {
-        //     $teams_3[0][0]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][0]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
-        //     $teams_3[0][1]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][1]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
-        //     $teams_4[0][0]["status"] = "wait";
-        // }
+        if (isset($teams_3[0][0]["participant_id"]) && !isset($teams_3[0][1]["participant_id"]) && !isset($teams_3[0][1]["status"])) {
+            $teams_3[0][0]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][0]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
+            $teams_3[0][1]["win"] = 1;
+            $teams_4[0][0] = collect($teams_3[0][1]);
+            $teams_4[0][0]["win"] = 0;
+        }
+        if (isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
+            $teams_4[0][0]["status"] = "wait";
+        }
 
         $match_1 = ["round" => "round 1", "seeds" => [
             ["teams" => $teams[0]],
