@@ -89,6 +89,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
     private function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
+        return $qualification_member;
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, $score_type, $event_id);
