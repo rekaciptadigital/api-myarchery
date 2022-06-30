@@ -60,9 +60,14 @@ class GetParticipantScoreQualificationDos extends Retrieval
             $session = [];
             for ($i=0; $i < $filter_session; $i++) { 
                 if ($filter_session == 2) {
-                    if ($i == 0) {
-                        continue;
-                    }
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                }
+
+                if ($filter_session == 3) {
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                    if ($i == 1) continue; 
                 }
                 $session[] = $i+1;
             }
@@ -101,6 +106,13 @@ class GetParticipantScoreQualificationDos extends Retrieval
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         if ($session[0] == 2) {
+            foreach($qualification_member as $key => $value) {
+                $qualification_member[$key]["rank"] = $key + 1;
+            }
+            return $qualification_member;
+        }
+
+        if ($session[0] == 3) {
             foreach($qualification_member as $key => $value) {
                 $qualification_member[$key]["rank"] = $key + 1;
             }

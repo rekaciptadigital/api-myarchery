@@ -59,6 +59,10 @@ class DownloadScoreQualification extends Retrieval
             throw new BLoCException("CATEGORY INVALID");
         }
 
+        if ($filter_session > $category_detail->session_in_qualification) {
+            throw new BLoCException("Sesi ini tidak tersedia");
+        }
+
         $session = [];
         for ($i=0; $i < $category_detail->session_in_qualification; $i++) { 
             $session[] = $i+1;
@@ -66,7 +70,7 @@ class DownloadScoreQualification extends Retrieval
         
         if ($category_detail->category_team == "Individual") {
             $data = $this->getListMemberScoringIndividual($event_category_id, $score_type, $session, $name, $event->id);
-            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->label_category,'individual');
+            return $this->download($data,$category_detail->event_name, $filter_session, $category_detail->session_in_qualification, $category_detail->label_category, 'individual');
         }
 
         if (strtolower($team_category->type) == "team") {
@@ -253,7 +257,7 @@ class DownloadScoreQualification extends Retrieval
         return $participant_club;
     }
 
-    private function download($response, $event_name, $session_qualification,$category_name,$type)
+    private function download($response, $event_name, $filter_session, $session_in_qualification, $category_name,$type)
     {
         $file_name = $event_name."_".$category_name."_".date("YmdHis");
         $final_doc = '/score-qualification/'.$event_name.'/'.$file_name.'.xlsx';
@@ -262,7 +266,8 @@ class DownloadScoreQualification extends Retrieval
             "type" => $type,
             "response" => $response,
             "event_name" => $event_name,
-            "session_qualification" => $session_qualification
+            "filter_session" => $filter_session,
+            "session_in_qualification" => $session_in_qualification
         ];
     
         $excel = new ParticipantScoreQualification($data);
