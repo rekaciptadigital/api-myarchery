@@ -108,7 +108,7 @@ class BudRest extends Model
         }
 
         foreach ($member_in_budrest as $key => $data) {
-            if ($key != 0) {
+            if ($key != 0 && count($data["members"]) > 1) {
                 $qrCode = new QrCode($data['code']);
                 $output_qrcode = new Output\Png();
                 // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
