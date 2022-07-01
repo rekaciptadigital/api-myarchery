@@ -120,14 +120,14 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
-                    $club_name =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
+                    $club =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
 
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" => $club_name->name ?? '-',
+                        "club" =>  $club->name ?? '-',
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
@@ -136,6 +136,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                     );
+
                 } else {
                     $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
                     if ($match[0]->elimination_member_id == 0 && $match[1]->win == 1) {
