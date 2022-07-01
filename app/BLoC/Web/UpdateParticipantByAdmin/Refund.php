@@ -66,7 +66,7 @@ class Refund extends Transactional
             throw new BLoCException("event telah lewat");
         }
         if ($new_format->diffInDays($now) < 1) {
-            throw new BLoCException("tidak dapat refund, minimal refund adalah 24 jam sebelum berlangsungnya event");
+            // throw new BLoCException("tidak dapat refund, minimal refund adalah 24 jam sebelum berlangsungnya event");
         }
 
         $image_refund = "";
