@@ -59,6 +59,10 @@ class DownloadScoreQualification extends Retrieval
             throw new BLoCException("CATEGORY INVALID");
         }
 
+        if ($filter_session > $category_detail->session_in_qualification) {
+            throw new BLoCException("Sesi ini tidak tersedia");
+        }
+
         $session = [];
         for ($i=0; $i < $category_detail->session_in_qualification; $i++) { 
             $session[] = $i+1;
@@ -66,7 +70,7 @@ class DownloadScoreQualification extends Retrieval
         
         if ($category_detail->category_team == "Individual") {
             $data = $this->getListMemberScoringIndividual($event_category_id, $score_type, $session, $name, $event->id);
-            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->label_category,'individual');
+            return $this->download($data,$category_detail->event_name, $filter_session, $category_detail->session_in_qualification, $category_detail->label_category, 'individual');
         }
 
         if (strtolower($team_category->type) == "team") {
@@ -75,7 +79,7 @@ class DownloadScoreQualification extends Retrieval
             } else {
                 $data = $this->teamBestOfThree($category_detail, $team_category, $session);
             }
-            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->label_category,'team');
+            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->session_in_qualification,$category_detail->label_category,'team');
         }
     }
 
@@ -150,7 +154,7 @@ class DownloadScoreQualification extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -163,12 +167,19 @@ class DownloadScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+
          // number of rank
-         foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+         foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
         
-        return $participant_club;
+        return $new_array;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -232,7 +243,7 @@ class DownloadScoreQualification extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -245,15 +256,22 @@ class DownloadScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 2) {
+                array_push($new_array, $value);
+            }
+        }
+        
         // number of rank
-        foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+        foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
 
-        return $participant_club;
+        return $new_array;
     }
 
-    private function download($response, $event_name, $session_qualification,$category_name,$type)
+    private function download($response, $event_name, $filter_session, $session_in_qualification, $category_name,$type)
     {
         $file_name = $event_name."_".$category_name."_".date("YmdHis");
         $final_doc = '/score-qualification/'.$event_name.'/'.$file_name.'.xlsx';
@@ -262,7 +280,8 @@ class DownloadScoreQualification extends Retrieval
             "type" => $type,
             "response" => $response,
             "event_name" => $event_name,
-            "session_qualification" => $session_qualification
+            "filter_session" => $filter_session,
+            "session_in_qualification" => $session_in_qualification
         ];
     
         $excel = new ParticipantScoreQualification($data);
