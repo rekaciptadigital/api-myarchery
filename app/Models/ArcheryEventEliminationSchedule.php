@@ -60,12 +60,16 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::MakeTemplate8($members);
         }
 
+        if ($elimination_member_count == 4) {
+            return EliminationFormat::MakeTemplate4($members);
+        }
+
         if ($elimination_member_count == 32) {
             return EliminationFormat::MakeTemplate32($members);
         }
 
         if ($elimination_member_count == 0) {
-            throw new BLoCException("tentukan eliminasi untuk melihat bagan");
+            throw new BLoCException("tentukan jumlah peserta eliminasi melihat bagan");
         }
 
         throw new BLoCException("template eliminasi tidak valid");
@@ -81,12 +85,16 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::MakeTemplate8Team($team);
         }
 
+        if ($elimination_team_count == 4) {
+            return EliminationFormat::MakeTemplate4Team($team);
+        }
+
         if ($elimination_team_count == 32) {
             return EliminationFormat::MakeTemplate32Team($team);
         }
 
         if ($elimination_team_count == 0) {
-            throw new BLoCException("tentukan eliminasi untuk melihat bagan");
+            throw new BLoCException("tentukan jumlah peserta eliminasi untuk melihat bagan");
         }
 
         throw new BLoCException("template eliminasi tidak valid");
@@ -99,6 +107,10 @@ class ArcheryEventEliminationSchedule extends Model
         }
         if ($elimination_member_count == 8) {
             return EliminationFormat::Template8($member_matches);
+        }
+
+        if ($elimination_member_count == 4) {
+            return EliminationFormat::Template4($member_matches);
         }
 
         if ($elimination_member_count == 32) {

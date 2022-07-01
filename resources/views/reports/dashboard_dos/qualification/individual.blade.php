@@ -19,12 +19,13 @@ table, th, td {
 
 <body>
 <table style="width: 100%; height: 70px;" border="0">
-    <td colspan="9"
+    <td colspan="8"
                     style="text-align: left; font-size: 13; color: #000000; font-weight: bold; white-space: pre-line">
                      
                     <strong>RINGKASAN PERTANDINGAN BABAK KUALIFIKASI {{ $event_name }}</strong></td>
                    
     </table>
+    <table style="width: 100%; height: 70px;" border="0"><td colspan="6"></td></table>
 
 
 

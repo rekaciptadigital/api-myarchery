@@ -327,6 +327,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
                 $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
                 $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
+                $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
             });
 
 
@@ -382,6 +383,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/elimination-template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
             $router->get('/download-score-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadScoreQualification']);
             $router->get('/download-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationDashboardDos']);
+            $router->get('/scorer-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationDos']);
         });
     });
 
@@ -423,6 +425,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScheduleFullDay']);
             $router->put('/change_bud_rest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMemberBudrest']);
+            $router->get('/download-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadMemberBudrest']);
         });
 
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -445,6 +448,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
             $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
             $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
+            $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
+            $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
         });
 
         $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {

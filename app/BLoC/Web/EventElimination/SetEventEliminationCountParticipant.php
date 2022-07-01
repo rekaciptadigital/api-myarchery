@@ -30,24 +30,29 @@ class SetEventEliminationCountParticipant extends Transactional
         }
 
         $participants_collection = ArcheryEventParticipantMember::select(
-            "archery_event_participant_members.id",
+            "archery_event_participant_members.id as member_id",
             "archery_event_participant_members.user_id",
             "archery_event_participants.id as participant_id",
             "archery_event_participants.event_id",
             "archery_event_participants.is_present",
-            "archery_scorings.scoring_session",
+            "archery_scorings.*",
             "archery_event_participant_members.have_shoot_off"
         )
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->join("archery_scorings", "archery_scorings.participant_member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $category->id)
-            ->where(function ($query) {
-                return $query->where("archery_scorings.type", 2)->orWhere("archery_scorings.scoring_session", 11);
-            })->get();
+            ->where("archery_scorings.type", 2)
+            ->where("item_value", "archery_event_elimination_matches")
+            ->get();
 
-        if ($participants_collection->count() > 0) {
-            throw new BLoCException("tidak dapat mengubah jumlah peserta karena telah terdapat yang melakukan eliminasi atau melakukan shoot off");
+        foreach ($participants_collection as $key => $value) {
+            if ($value->type == 2 && $value->item_value == "archery_event_elimination_matches") {
+                $scoring_detail_elimination_result = json_decode($value->scoring_detail)->result;
+                if ($scoring_detail_elimination_result > 0) {
+                    throw new BLoCException("sudah ada yang melakukan scoring eliminasi");
+                }
+            }
         }
 
         $category->update([

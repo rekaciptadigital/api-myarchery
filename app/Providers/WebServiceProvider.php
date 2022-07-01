@@ -50,6 +50,7 @@ use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
+use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
@@ -139,6 +140,11 @@ use App\BLoC\Web\UpdateParticipantByAdmin\InsertParticipantByAdmin;
 use App\BLoC\Web\DashboardDos\GetArcheryEventScheduleDashboardDos;
 use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
 use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
+use App\BLoC\Web\EventElimination\CleanEliminationMatch;
+use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
+use App\BLoC\Web\EventElimination\CleanScoringQualification;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
+use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -244,6 +250,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
+        $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
+        $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
 
@@ -276,6 +284,7 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================= Events ==========================================
         $this->registerService("getDetailEventBySlugV2", GetDetailEventBySlugV2::class);
+        $this->registerService("getDetailEventByIdGeneral", GetDetailEventByIdGeneral::class);
 
         // ================================== Bud Rest =======================================
         $this->registerService("getBudRestV2", GetBudRestV2::class);
@@ -310,6 +319,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
         $this->registerService("setBudRestElimination", SetBudRestElimination::class);
+        $this->registerService("cleanEliminationMatch", CleanEliminationMatch::class);
+        $this->registerService("cleanScoringQualification", CleanScoringQualification::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
@@ -319,6 +330,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
         $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
         $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
+        $this->registerService("getParticipantScoreQualificationDos", GetParticipantScoreQualificationDos::class);
 
     }
 

@@ -7,6 +7,7 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventOfficial;
 use App\Models\ArcheryEventOfficialDetail;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ClubMember;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -75,6 +76,11 @@ class AddOrderOfficial extends Retrieval
                 throw new BLoCException("user dengan email " . $user_login->email . " belum tergabung pada club tersebut");
             }
         }
+
+        // $check_register_event = ArcheryEventParticipant::where("user_id", $user_login->id)->where("event_id", $event_id)->where("status", 1)->first();
+        // if ($check_register_event) {
+        //     throw new BLoCException("Anda sudah terdaftar sebagai atlet di event ini, silahkan mendaftar menjadi official dengan menggunakan akun lain");
+        // }
 
         // cek jika telah terdaftar sebagai official
         $is_exist = ArcheryEventOfficial::select('archery_event_official.*', 'transaction_logs.status as status_transaction_log', 'transaction_logs.expired_time')

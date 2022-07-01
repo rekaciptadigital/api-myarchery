@@ -35,6 +35,7 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("kategori tidak ada");
         }
 
+
         $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
         if (!$team_category) {
             throw new BLoCException("team category not found");
@@ -92,11 +93,14 @@ class SetEventEliminationV2 extends Transactional
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
             foreach ($qualification_rank as $key => $value) {
-                // if ($value["sessions"][count($session)]["total"] === 0) {
-                //     throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
-                // }
                 if ($value["total"] == 0) {
                     throw new BLoCException("skor kualifikasi masih kosong");
+                }
+
+                foreach ($session as $key => $s) {
+                    if ($value["sessions"][$s]["total"] == 0) {
+                        throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
+                    }
                 }
             }
         }
@@ -188,29 +192,6 @@ class SetEventEliminationV2 extends Transactional
         return $template;
     }
 
-    private function cleanEliminationMatch($category_id)
-    {
-        $elimination = ArcheryEventElimination::where('event_category_id', $category_id)->first();
-        if (!$elimination) {
-            throw new BLoCException("elimination tidak ditemukan");
-        }
-
-        $list_match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination->id)->get();
-        foreach ($list_match as $value) {
-            if ($value->elimination_member_id != 0) {
-                $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
-                if (!$member) {
-                    throw new BLoCException("member not found");
-                }
-                $member->delete();
-            }
-            $value->delete();
-        }
-
-        $elimination->delete();
-        return "success";
-    }
-
     private function makeTemplateTeam($group, $category_team, $elimination_member_count, $scoring_type)
     {
         if ($group == "mix_team") {
@@ -233,6 +214,16 @@ class SetEventEliminationV2 extends Transactional
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }
 
+        $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
+        if ($elimination_group) {
+            throw new BLoCException("elimination sudah ditentukan");
+        }
+        $elimination_group = new ArcheryEventEliminationGroup;
+        $elimination_group->category_id = $category_team->id;
+        $elimination_group->count_participant = $elimination_member_count;
+        $elimination_group->elimination_scoring_type = $scoring_type;
+        $elimination_group->save();
+
         if (count($lis_team) > 0) {
             foreach ($lis_team as $value1) {
                 if (count($value1["teams"]) > 0) {
@@ -246,16 +237,6 @@ class SetEventEliminationV2 extends Transactional
             }
         }
 
-        $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
-        if ($elimination_group) {
-            throw new BLoCException("elimination sudah ditentukan");
-        }
-        $elimination_group = new ArcheryEventEliminationGroup;
-        $elimination_group->category_id = $category_team->id;
-        $elimination_group->count_participant = $elimination_member_count;
-        $elimination_group->elimination_scoring_type = $scoring_type;
-        $elimination_group->save();
-
         foreach ($template as $key => $value) {
             foreach ($value["seeds"] as $k => $v) {
                 foreach ($v["teams"] as $i => $team) {
@@ -264,6 +245,12 @@ class SetEventEliminationV2 extends Transactional
                     $thread = $k;
                     $position = isset($team["postition"]) ? $team["postition"] : 0;
                     if ($participant_id != 0) {
+                        $team_name = "";
+                        foreach ($lis_team as $lt) {
+                            if ($lt["participant_id"] == $participant_id) {
+                                $team_name = $lt["team"];
+                            }
+                        }
                         $em = ArcheryEventEliminationGroupTeams::where("participant_id", $participant_id)->first();
                         if ($em) {
                             $elimination_team = $em;
@@ -272,6 +259,7 @@ class SetEventEliminationV2 extends Transactional
                             $elimination_team->thread = $thread;
                             $elimination_team->participant_id = $participant_id;
                             $elimination_team->position = $position;
+                            $elimination_team->team_name = $team_name;
                             $elimination_team->save();
                         }
                         $elimination_group_team_id = $elimination_team->id;

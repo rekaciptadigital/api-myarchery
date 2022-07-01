@@ -79,7 +79,7 @@ class BudRest extends Model
             substr($category->distance_id, 4, 2)
         ];
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
-            if($i == $session){
+            if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
                     $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
@@ -100,16 +100,15 @@ class BudRest extends Model
             if ($m["detail_member"]["bud_rest_number"] == 0) {
                 $member_not_have_budrest[] = $m["detail_member"]["member_id"];
             }
-            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m; 
-            if(count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2){
+            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
+            if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
                 $i++;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
-
         }
-        
+
         foreach ($member_in_budrest as $key => $data) {
-            if($key != 0){
+            if ($key != 0 && count($data["members"]) > 1) {
                 $qrCode = new QrCode($data['code']);
                 $output_qrcode = new Output\Png();
                 // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
@@ -131,8 +130,7 @@ class BudRest extends Model
                     "event" => $output['event']
                 ]);
                 $mpdf->WriteHTML($html);
-            }
-            else{
+            } else {
                 foreach ($data["members"] as $group_member) {
                     foreach ($group_member as $m) {
                         $qrCode = new QrCode($m['code']);

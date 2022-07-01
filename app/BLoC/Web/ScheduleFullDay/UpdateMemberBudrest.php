@@ -21,6 +21,7 @@ class UpdateMemberBudrest extends Retrieval
         $event_id = $parameters->get("event_id");
         $schedule_full_day_id = $parameters->get("schedule_id");
         $bud_rest_number = $parameters->get("bud_rest_number");
+        $category_id = $parameters->get("category_id");
         $admin = Auth::user();
 
         // cek event
@@ -30,9 +31,9 @@ class UpdateMemberBudrest extends Retrieval
         }
 
         // cek pemilik event
-        if ($event->admin_id != $admin->id) {
-            throw new BLoCException('you are not owner this event');
-        }
+        // if ($event->admin_id != $admin->id) {
+        //     throw new BLoCException('you are not owner this event');
+        // }
 
         // dapatkan jadwal peserta
         $schedule_full_day1 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
@@ -41,6 +42,7 @@ class UpdateMemberBudrest extends Retrieval
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where("archery_event_qualification_schedule_full_day.id", $schedule_full_day_id)
+            ->where("archery_event_qualification_time.category_detail_id", $category_id)
             ->where("archery_event_category_details.event_id", $event_id)
             ->first();
 
@@ -58,11 +60,13 @@ class UpdateMemberBudrest extends Retrieval
 
 
         // cek apakah terdapat peserta di budrest tujuan
-        $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
+        $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
+            ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
             ->where("archery_event_category_details.event_id", $event_id)
             ->where("bud_rest_number", $bud_rest)
             ->where("target_face", $target_face)
+            ->where("archery_event_qualification_time.category_detail_id", $category_id)
             ->first();
 
         if ($schedule_full_day_2) {
@@ -90,7 +94,8 @@ class UpdateMemberBudrest extends Retrieval
         return [
             "event_id" => "required|integer",
             "schedule_id" => "required|integer",
-            "bud_rest_number" => "required"
+            "bud_rest_number" => "required",
+            "category_id" => "required"
         ];
     }
 }
