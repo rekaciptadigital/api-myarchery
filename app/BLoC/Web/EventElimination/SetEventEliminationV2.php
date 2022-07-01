@@ -93,12 +93,19 @@ class SetEventEliminationV2 extends Transactional
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
             foreach ($qualification_rank as $key => $value) {
-                if ($value["total"] == 0) {
-                    throw new BLoCException("skor kualifikasi masih kosong");
-                }
+                // if ($value["total"] == 0) {
+                //     throw new BLoCException("skor kualifikasi masih kosong");
+                // }
 
                 foreach ($session as $key => $s) {
-                    if ($value["sessions"][$s]["total"] == 0) {
+                    // if ($value["sessions"][$s]["total"] == 0) {
+                    //     throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
+                    // }
+                    $scoring_per_session =  ArcheryScoring::where("participant_member_id", $value["member"]->id)
+                        ->where("type", 1)
+                        ->where("scoring_session", $s)
+                        ->first();
+                    if (!$scoring_per_session) {
                         throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
                     }
                 }
