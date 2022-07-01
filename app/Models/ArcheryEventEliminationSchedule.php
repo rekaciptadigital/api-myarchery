@@ -60,9 +60,9 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::MakeTemplate8($members);
         }
 
-        // if ($elimination_member_count == 4) {
-        //     return EliminationFormat::MakeTemplate4($members);
-        // }
+        if ($elimination_member_count == 4) {
+            return EliminationFormat::MakeTemplate4($members);
+        }
 
         if ($elimination_member_count == 32) {
             return EliminationFormat::MakeTemplate32($members);
@@ -85,9 +85,9 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::MakeTemplate8Team($team);
         }
 
-        // if ($elimination_team_count == 4) {
-        //     return EliminationFormat::MakeTemplate4Team($team);
-        // }
+        if ($elimination_team_count == 4) {
+            return EliminationFormat::MakeTemplate4Team($team);
+        }
 
         if ($elimination_team_count == 32) {
             return EliminationFormat::MakeTemplate32Team($team);
