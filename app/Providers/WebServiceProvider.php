@@ -50,6 +50,7 @@ use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
+use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
@@ -283,6 +284,7 @@ class WebServiceProvider extends ServiceProvider
 
         // ================================= Events ==========================================
         $this->registerService("getDetailEventBySlugV2", GetDetailEventBySlugV2::class);
+        $this->registerService("getDetailEventByIdGeneral", GetDetailEventByIdGeneral::class);
 
         // ================================== Bud Rest =======================================
         $this->registerService("getBudRestV2", GetBudRestV2::class);
