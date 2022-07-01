@@ -113,7 +113,7 @@ class GetParticipantScoreQualification extends Retrieval
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
                 "total_per_points" => $total_per_point,
-                "total_tmp" => ArcheryScoring::getTotalTmp($total_per_point, $total),
+                "total_tmp" => count($club_members) == 3 ? ArcheryScoring::getTotalTmp($total_per_point, $total) : 0,
                 "teams" => $club_members
             ];
         }
@@ -121,13 +121,7 @@ class GetParticipantScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        $new_array = [];
-        foreach ($participant_club as $key => $value) {
-            if (count($value["teams"]) == 3) {
-                array_push($new_array, $value);
-            }
-        }
-        return $new_array;
+        return $participant_club;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -196,7 +190,7 @@ class GetParticipantScoreQualification extends Retrieval
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
                 "total_per_points" => $total_per_point,
-                "total_tmp" => ArcheryScoring::getTotalTmp($total_per_point, $total),
+                "total_tmp" => count($club_members) == 2 ? ArcheryScoring::getTotalTmp($total_per_point, $total) : 0,
                 "teams" => $club_members
             ];
         }
@@ -204,13 +198,7 @@ class GetParticipantScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        $new_array = [];
-        foreach ($participant_club as $key => $value) {
-            if (count($value["teams"]) == 2) {
-                array_push($new_array, $value);
-            }
-        }
-        return $new_array;
+        return $participant_club;
     }
 
     protected function validation($parameters)
