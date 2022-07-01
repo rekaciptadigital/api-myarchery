@@ -886,15 +886,15 @@ class EliminationFormat
         ]];
 
         $match_4 = ["round" => "round 4", "seeds" => [
-            ["teams" => $teams_3[0]],
-            ["teams" => $teams_3[1]],
+            ["teams" => $teams_4[0]],
+            ["teams" => $teams_4[1]],
         ]];
 
         $match_5 = ["round" => "gold", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_5[0]],
         ]];
         $match_6 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_6[0]],
         ]];
 
         return [$match_1, $match_2, $match_3, $match_4, $match_5, $match_6];
