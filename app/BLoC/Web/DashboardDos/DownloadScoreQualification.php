@@ -79,7 +79,7 @@ class DownloadScoreQualification extends Retrieval
             } else {
                 $data = $this->teamBestOfThree($category_detail, $team_category, $session);
             }
-            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->label_category,'team');
+            return $this->download($data,$category_detail->event_name,$filter_session,$category_detail->session_in_qualification,$category_detail->label_category,'team');
         }
     }
 
