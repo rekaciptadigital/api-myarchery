@@ -79,7 +79,7 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_members.position_qualification",
             "users.name",
             "archery_event_participant_members.id AS member_id",
-            "archery_event_participant_members.club",
+            "archery_event_participant_members.archery_event_participant_id as participant_id",
             "archery_event_participant_members.gender",
             "archery_event_elimination_matches.id",
             "archery_event_elimination_matches.round",
@@ -120,12 +120,14 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
+                    $club_name =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
+
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" => $value->club,
+                        "club" => $club_name,
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
