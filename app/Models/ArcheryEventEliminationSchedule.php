@@ -109,9 +109,9 @@ class ArcheryEventEliminationSchedule extends Model
             return EliminationFormat::Template8($member_matches);
         }
 
-        // if ($elimination_member_count == 4) {
-        //     return EliminationFormat::Template4($member_matches);
-        // }
+        if ($elimination_member_count == 4) {
+            return EliminationFormat::Template4($member_matches);
+        }
 
         if ($elimination_member_count == 32) {
             return EliminationFormat::Template32($member_matches);
