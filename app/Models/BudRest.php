@@ -108,7 +108,7 @@ class BudRest extends Model
         }
 
         foreach ($member_in_budrest as $key => $data) {
-            if ($key != 0) {
+            if ($key != 0 && count($data["members"]) > 1) {
                 $qrCode = new QrCode($data['code']);
                 $output_qrcode = new Output\Png();
                 // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
@@ -187,6 +187,27 @@ class BudRest extends Model
         $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
         if (!$bud_rest) {
             throw new BLoCException("Bud rest belum di set");
+        }
+
+        $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
+        foreach ($participants as $key => $value) {
+            $participant_member =  ArcheryEventParticipantMember::where("archery_event_participant_id", $value->id)->first();
+            if (!$participant_member) {
+                throw new BLoCException("data member tidak ditemukan");
+            }
+
+            $q_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->first();
+            if (!$q_time) {
+                throw new BLoCException("jadwal belum ditentukan");
+            }
+
+            $jadwal =  ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $q_time->id)->where("participant_member_id", $participant_member->id)->first();
+            if (!$jadwal) {
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $q_time->id,
+                    'participant_member_id' => $participant_member->id,
+                ]);
+            }
         }
 
         $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->get();

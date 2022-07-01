@@ -725,8 +725,13 @@ class ArcheryScoring extends Model
 
         $archery_event_score = [];
 
+        $session = [];
+        for ($i = 0; $i < $category->session_in_qualification; $i++) {
+            $session[] = $i + 1;
+        }
+
         foreach ($participants as $key => $value) {
-            $score = $this->generateScoreBySession($value->id, $score_type);
+            $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $archery_event_score[] = $score;
@@ -779,7 +784,7 @@ class ArcheryScoring extends Model
                                 $member->update(["have_shoot_off" => 0]);
                             }
 
-                            $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                            $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
                             array_push($newArray, $newValue);
@@ -801,7 +806,7 @@ class ArcheryScoring extends Model
                                 throw new BLoCException("member nan");
                             }
                             $member->update(["have_shoot_off" => 0]);
-                            $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                            $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
                             array_push($newArray, $newValue);
@@ -824,7 +829,7 @@ class ArcheryScoring extends Model
                             throw new BLoCException("member nan");
                         }
                         $member->update(["have_shoot_off" => 0]);
-                        $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                        $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                         $newValue["member"] = $value["member"];
                         $newValue["have_shoot_off"] = $member->have_shoot_off;
                         array_push($newArray, $newValue);
@@ -858,7 +863,7 @@ class ArcheryScoring extends Model
                     }
 
 
-                    $newValue = $this->generateScoreBySession($value["member"]->id, $score_type);
+                    $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                     $newValue["member"] = $value["member"];
                     $newValue["have_shoot_off"] = $member->have_shoot_off;
                     array_push($newArray, $newValue);

@@ -25,13 +25,15 @@ class ParticipantScoreQualification implements FromView, WithColumnWidths, WithH
             return view('reports.dashboard_dos.qualification.individual', [
                 'datas' => $this->data['response'],
                 'event_name' => $this->data['event_name'],
-                'session' => $this->data['session_qualification'],
+                'filter_session' => $this->data['filter_session'],
+                'session_in_qualification' => $this->data['session_in_qualification']
             ]);
         } else {
             return view('reports.dashboard_dos.qualification.team', [
                 'datas' => $this->data['response'],
                 'event_name' => $this->data['event_name'],
-                'session' => $this->data['session_qualification'],
+                'filter_session' => $this->data['filter_session'],
+                'session_in_qualification' => $this->data['session_in_qualification']
             ]);
         }
         
