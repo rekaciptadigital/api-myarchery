@@ -34,7 +34,7 @@
 
 
 <body>
-    <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
+    <table style="height: 376px; width: 869px;" border="0" cellspacing="0" cellpadding="0">
         <tbody>
             <tr style="height: 30px;">
                 <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
@@ -49,13 +49,13 @@
                     <p style="text-align: left;float: left;">{{ $category_label }}</p>
                 </td>
                 <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
-                    <img style="display: block;" src="" alt="" height="90" />
+                    <!-- <img style="display: block;" src="" alt="" height="90" /> -->
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
+    <table style="height: 376px; width: 869px;" border="0" cellspacing="0" cellpadding="0">
         <tbody>
             <tr style="height: 60px;text-align: left;float: left;">
                 <td style="border-bottom: 1pt solid black;width: 00px; height: 30px;text-align: left;float: left;">Nama
@@ -79,7 +79,7 @@
         </tbody>
     </table>
     <br />
-    <table class="table-scorer" style="height: 276px; width: 549px;">
+    <table class="table-scorer" style="height: 376px; width: 869px;">
         <thead>
             <tr style="height: 42px;">
                 <th style="font-size: 11px; width: 17px; height: 42px; text-align: left;">
@@ -212,18 +212,20 @@
             </tr>
         </tbody>
     </table>
-    <table style="height: 276px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
+    <table style="height: 376px; width: 549px;" border="0" cellspacing="0" cellpadding="0">
         <tbody>
             <tr>
-                <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;">&nbsp;</td>
-                <td rowspan="2" style="width: 23.1329%; height: 10px;">
-                    <img style="display: block;" src="{{ $qr }}" alt="" width="90" height="90" />
+                <td rowspan="2" style="width: 280px; height: 200px;">
+                    <img style="display: block;" src="{{ $qr }}" alt="" width="150" height="150" />
                 </td>
-                <td style="border-bottom: 1pt solid black;width: 37.705%; height: 100px;">&nbsp;</td>
+                <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;margin :10px">&nbsp;</td>
+                <td style="width: 10%; height: 100px;margin :10px">&nbsp;</td>
+                <td style="border-bottom: 1pt solid black;width: 37.705%; height: 100px;margin :10px">&nbsp;</td>
             </tr>
-            <tr style="height: 15px;">
-                <td style="width: 39.1621%; height: 14px; text-align: center;">wasit</td>
-                <td style="width: 37.705%; height: 14px; text-align: center;">peserta</td>
+            <tr style="height: 100px;">
+                <td style="width: 39.1621%; height: 14px; text-align: center;margin :10px;">wasit</td>
+                <td style="width: 150px; height: 14px; text-align: center;"> &nbsp; </td>
+                <td style="width: 37.705%; height: 14px; text-align: center;margin :10px;">peserta</td>
             </tr>
         </tbody>
     </table>
