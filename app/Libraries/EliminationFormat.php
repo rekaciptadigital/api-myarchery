@@ -1169,7 +1169,7 @@ class EliminationFormat
             ["teams" => $teams_4[0]],
         ]];
         $match_5 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_5[0]],
         ]];
 
         return [$match_1, $match_2, $match_3, $match_4, $match_5];
@@ -1587,20 +1587,6 @@ class EliminationFormat
             $teams_3[0][1]["status"] = "wait";
         }
 
-        // round 3 match 1
-        // if (isset($teams_3[0][0]["participant_id"]) && !isset($teams_3[0][1]["participant_id"]) && !isset($teams_3[0][1]["status"])) {
-        //     $teams_3[0][0]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][0]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (!isset($teams_3[0][0]["status"]) && !isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
-        //     $teams_3[0][1]["win"] = 1;
-        //     $teams_4[0][0] = collect($teams_3[0][1]);
-        //     $teams_4[0][0]["win"] = 0;
-        // }
-        // if (isset($teams_3[0][0]["participant_id"]) && isset($teams_3[0][1]["participant_id"])) {
-        //     $teams_4[0][0]["status"] = "wait";
-        // }
 
         $match_1 = ["round" => "round 1", "seeds" => [
             ["teams" => $teams[0]],
@@ -1891,7 +1877,7 @@ class EliminationFormat
             ["teams" => $teams_4[0]],
         ]];
         $match_5 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_5[0]],
         ]];
 
         return [$match_1, $match_2, $match_3, $match_4, $match_5];
@@ -2431,15 +2417,15 @@ class EliminationFormat
         ]];
 
         $match_4 = ["round" => "round 4", "seeds" => [
-            ["teams" => $teams_3[0]],
-            ["teams" => $teams_3[1]],
+            ["teams" => $teams_4[0]],
+            ["teams" => $teams_4[1]],
         ]];
 
         $match_5 = ["round" => "gold", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_5[0]],
         ]];
         $match_6 = ["round" => "bronze", "seeds" => [
-            ["teams" => $teams_4[0]],
+            ["teams" => $teams_6[0]],
         ]];
 
         return [$match_1, $match_2, $match_3, $match_4, $match_5, $match_6];
