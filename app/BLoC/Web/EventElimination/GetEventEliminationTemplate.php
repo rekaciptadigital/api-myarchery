@@ -127,7 +127,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" => $club_name,
+                        "club" => $club_name->name,
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
