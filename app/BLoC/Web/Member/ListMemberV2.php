@@ -78,7 +78,15 @@ class ListMemberV2 extends Retrieval
         });
 
         $participant_query->when($status, function ($query) use ($status) {
-            return $query->where("archery_event_participants.status", $status);
+            if ($status == 4) {
+                return $query->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", time());
+            } elseif ($status == 2) {
+                return $query->where("archery_event_participants.status", 2)->orWhere(function ($q) {
+                    return $q->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", "<", time());
+                });
+            } else {
+                return $query->where("archery_event_participants.status", $status);
+            }
         });
 
         $participant_collection = $participant_query->orderBy('archery_event_participants.id', 'DESC')
@@ -112,6 +120,7 @@ class ListMemberV2 extends Retrieval
     {
         return [
             'event_id' => 'required|exists:archery_events,id',
+            'status' => "in:1,2,3,4,5"
         ];
     }
     protected function paginate($models)
