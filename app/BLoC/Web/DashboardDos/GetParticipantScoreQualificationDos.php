@@ -183,7 +183,7 @@ class GetParticipantScoreQualificationDos extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -196,12 +196,19 @@ class GetParticipantScoreQualificationDos extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+
          // number of rank
-         foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+         foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
         
-        return $participant_club;
+        return $new_array;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -265,7 +272,7 @@ class GetParticipantScoreQualificationDos extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -278,11 +285,18 @@ class GetParticipantScoreQualificationDos extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 2) {
+                array_push($new_array, $value);
+            }
+        }
+        
         // number of rank
-        foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+        foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
 
-        return $participant_club;
+        return $new_array;
     }
 }
