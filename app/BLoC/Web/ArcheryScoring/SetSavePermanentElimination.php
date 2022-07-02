@@ -108,7 +108,7 @@ class SetSavePermanentElimination extends Retrieval
                     continue;
                 }
                 $shoot_off = $value->score;
-                if ($value->score == "x") {
+                if ($value->score === "x") {
                     $shoot_off = 10.1;
                 }
                 $result_shot_of_1 = $result_shot_of_1 + $shoot_off;
@@ -120,7 +120,7 @@ class SetSavePermanentElimination extends Retrieval
                     continue;
                 }
                 $shoot_off = $value->score;
-                if ($value->score == "x") {
+                if ($value->score === "x") {
                     $shoot_off = 10.1;
                 }
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off;
