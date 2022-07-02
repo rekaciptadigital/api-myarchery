@@ -126,6 +126,8 @@ class SetSavePermanentElimination extends Retrieval
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off;
             }
 
+            return $result_shot_of_1;
+
             if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
             } elseif ($result_shot_of_2 > $result_shot_of_1) {
