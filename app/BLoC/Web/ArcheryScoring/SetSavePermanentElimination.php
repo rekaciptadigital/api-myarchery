@@ -104,29 +104,35 @@ class SetSavePermanentElimination extends Retrieval
         if ($scoring_2->admin_total == $scoring_1->admin_total) {
             $result_shot_of_1 = 0;
             foreach ($scoring_detail_1->extra_shot as $key => $value) {
-                if ($value->score == "" || $value->score == 0 || $value->score == "m") {
+                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
+                    $result_shot_of_1 = $result_shot_of_1 + 11;
                     continue;
                 }
-                $shoot_off1 = $value->score;
-                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
-                    $shoot_off1 = 11;
+
+
+
+                if ($value->score == 0 || $value->score == "m" || $value->score == "") {
+                    continue;
                 }
-                $result_shot_of_1 = $result_shot_of_1 + $shoot_off1;
+
+                $result_shot_of_1 = $result_shot_of_1 + $value->score;
             }
+
 
             $result_shot_of_2 = 0;
             foreach ($scoring_detail_2->extra_shot as $key => $value) {
-                if ($value->score == "" || $value->score == 0 || $value->score == "m") {
+                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
+                    $result_shot_of_2 = $result_shot_of_2 + 11;
                     continue;
                 }
-                $shoot_off2 = $value->score;
-                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
-                    $shoot_off2 = 11;
+
+                if ($value->score == 0 || $value->score == "m" || $value->score == "") {
+                    continue;
                 }
-                $result_shot_of_2 = $result_shot_of_2 + $shoot_off2;
+
+                $result_shot_of_2 = $result_shot_of_2 + $value->score;
             }
 
-            return $scoring_detail_1->extra_shot;
 
             if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
