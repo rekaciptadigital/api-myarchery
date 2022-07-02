@@ -108,7 +108,7 @@ class SetSavePermanentElimination extends Retrieval
                     continue;
                 }
                 $shoot_off1 = $value->score;
-                if ($value->score == "x") {
+                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
                     $shoot_off1 = 11;
                 }
                 $result_shot_of_1 = $result_shot_of_1 + $shoot_off1;
@@ -120,7 +120,7 @@ class SetSavePermanentElimination extends Retrieval
                     continue;
                 }
                 $shoot_off2 = $value->score;
-                if ($value->score == "x") {
+                if (gettype($value->score) == "string" && strtolower($value->score) == "x") {
                     $shoot_off2 = 11;
                 }
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off2;
