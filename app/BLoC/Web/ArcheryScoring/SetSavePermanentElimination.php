@@ -126,7 +126,7 @@ class SetSavePermanentElimination extends Retrieval
                 $result_shot_of_2 = $result_shot_of_2 + $shoot_off2;
             }
 
-            return $result_shot_of_1 . " " . $result_shot_of_2;
+            return $scoring_detail_1->extra_shot;
 
             if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
