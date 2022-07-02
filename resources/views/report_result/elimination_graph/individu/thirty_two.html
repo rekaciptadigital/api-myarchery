@@ -88,7 +88,7 @@
 
         .bracket .round .winners>div.connector .merger {
             position: relative;
-            height: 8rem;
+            height: 7rem;
         }
 
         .bracket .round .winners>div.connector .merger:before,
@@ -113,23 +113,23 @@
         }
 
         .bracket .round.best-32 .winners:not(:last-child) {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .bracket .round.best-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         .bracket .round.best-16-of-32 .winners:not(:last-child) {
-            margin-bottom: 10rem;
+            margin-bottom: 8rem;
         }
 
         .bracket .round.best-16-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 10rem;
+            margin-bottom: 8rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .merger {
-            height: 16rem;
+            height: 14rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .line {
@@ -137,15 +137,15 @@
         }
 
         .bracket .round.quarterfinals-of-32 .winners:not(:last-child) {
-            margin-bottom: 26rem;
+            margin-bottom: 22rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 26rem;
+            margin-bottom: 22rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .merger {
-            height: 32rem;
+            height: 28rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .line {
@@ -153,11 +153,11 @@
         }
 
         .bracket .round.semifinals32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 28rem;
+            margin-bottom: 22rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .merger {
-            height: 68rem;
+            height: 58rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .line {
@@ -248,7 +248,6 @@
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
         <h1 style="text-align: center">{{$category}}</h1>
-        <br>
         <div class="bracket">
             <section class="round best-32">
                 <div class="winners">
@@ -763,7 +762,7 @@
             <section class="round semifinals32">
                 <div class="winners">
                     <div class="matchups">
-                        <div class="matchup" style="margin-bottom: 460px;">
+                        <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
                                     <span> {!! $round4member1 !!} <p class="log_output" style="background:black;">{!!
@@ -817,7 +816,7 @@
                     </div>
                 </div>
             </section>
-            <section class="round finals">
+            <section class="round finals" style="margin-top: -15px;">
                 <div class="title">
                     <p>Medali Emas</p>
                 </div>
