@@ -107,11 +107,11 @@ class SetSavePermanentElimination extends Retrieval
                 if ($value->score == "" || $value->score == 0 || $value->score == "m") {
                     continue;
                 }
-                $shoot_off = $value->score;
+                $shoot_off1 = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 11;
+                    $shoot_off1 = 11;
                 }
-                $result_shot_of_1 = $result_shot_of_1 + $shoot_off;
+                $result_shot_of_1 = $result_shot_of_1 + $shoot_off1;
             }
 
             $result_shot_of_2 = 0;
@@ -119,14 +119,14 @@ class SetSavePermanentElimination extends Retrieval
                 if ($value->score == "" || $value->score == 0 || $value->score == "m") {
                     continue;
                 }
-                $shoot_off = $value->score;
+                $shoot_off2 = $value->score;
                 if ($value->score == "x") {
-                    $shoot_off = 11;
+                    $shoot_off2 = 11;
                 }
-                $result_shot_of_2 = $result_shot_of_2 + $shoot_off;
+                $result_shot_of_2 = $result_shot_of_2 + $shoot_off2;
             }
 
-            return $result_shot_of_1;
+            return $result_shot_of_1 . " " . $result_shot_of_2;
 
             if ($result_shot_of_1 > $result_shot_of_2) {
                 $win_member = $get_member_match[0]->id;
