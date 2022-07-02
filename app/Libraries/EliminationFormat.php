@@ -1392,7 +1392,7 @@ class EliminationFormat
 
     public static function MakeTemplate4Team($team_club = [])
     {
-        $elimination_team_count = 8;
+        $elimination_team_count = 4;
         $team_coll = [];
         $team_club = array_slice($team_club, 0, $elimination_team_count);
         // error_log(\json_encode($members_coll[1]["member"]));
