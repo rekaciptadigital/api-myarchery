@@ -142,9 +142,9 @@ use App\BLoC\Web\DashboardDos\DownloadScoreQualification;
 use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
-use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 
 class WebServiceProvider extends ServiceProvider
 {
