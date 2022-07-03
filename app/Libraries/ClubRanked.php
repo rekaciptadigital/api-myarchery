@@ -44,6 +44,7 @@ class ClubRanked
             }
         }
 
+        // cek apakah categori ada eliminasi atau tidak
 
         // TODO SEMENTARA
         $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])->get();
