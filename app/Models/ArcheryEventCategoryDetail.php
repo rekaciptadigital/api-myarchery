@@ -16,7 +16,7 @@ class ArcheryEventCategoryDetail extends Model
     protected $guarded = ['id'];
     protected $appends = [
         'category_team', 'max_age', 'event_name', 'gender_category', 'min_age', 'start_event',
-        'is_early_bird', 'label_category', 'class_category'
+        'is_early_bird', 'label_category', 'class_category', 'end_event'
     ];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
@@ -67,7 +67,7 @@ class ArcheryEventCategoryDetail extends Model
         }
 
         $can_update_series = 0;
-        if (Carbon::now() <  $this->start_event && $have_series == 1) {
+        if (Carbon::now() <  $this->end_event && $have_series == 1) {
             $can_update_series = 1;
         }
         $output = [
@@ -203,6 +203,13 @@ class ArcheryEventCategoryDetail extends Model
         $event =  ArcheryEvent::find($this->event_id);
 
         return $this->attributes['start_event'] = $event->event_start_datetime;
+    }
+
+    public function getEndEventAttribute()
+    {
+        $event =  ArcheryEvent::find($this->event_id);
+
+        return $this->attributes['end_event'] = $event->event_end_datetime;
     }
 
     public function getMinAgeAttribute()
