@@ -3,9 +3,6 @@
 namespace App\BLoC\General;
 
 use DAI\Utils\Abstracts\Retrieval;
-use Illuminate\Support\Facades\DB;
-use DAI\Utils\Helpers\BLoC;
-use DAI\Utils\Exceptions\BLoCException;
 use App\Libraries\ClubRanked;
 
 class GetEventClubRanked extends Retrieval
@@ -17,7 +14,8 @@ class GetEventClubRanked extends Retrieval
 
     protected function process($parameters)
     {
-        return ClubRanked::getEventRanked($parameters->get("event_id"));
+        $event_id = $parameters->get("event_id");
+        return ClubRanked::getEventRanked($event_id);
     }
 
     protected function validation($parameters)
