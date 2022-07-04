@@ -115,7 +115,13 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+
+                        if ($admin_total != 0) {
+                            $total_scoring = $admin_total;
+                        } else {
+                            $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+                        }
+
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
@@ -138,7 +144,6 @@ class GetEventEliminationTemplate extends Retrieval
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                     );
-
                 } else {
                     $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
                     if ($match[0]->elimination_member_id == 0 && $match[1]->win == 1) {
@@ -216,7 +221,13 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring_team) {
                         $admin_total = $archery_scooring_team->admin_total;
                         $scoring_detail = json_decode($archery_scooring_team->scoring_detail);
-                        $total_scoring = $scoring_detail->result;
+
+                        if ($admin_total != 0) {
+                            $total_scoring = $admin_total;
+                        } else {
+                            $total_scoring = $scoring_detail->result;
+                        }
+                        
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
