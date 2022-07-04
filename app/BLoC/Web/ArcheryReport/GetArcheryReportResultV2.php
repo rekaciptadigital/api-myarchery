@@ -29,6 +29,11 @@ use Illuminate\Support\Facades\Redis;
 use App\Libraries\EliminationFormatPDF;
 use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
 use Illuminate\Support\Collection;
+use App\Models\ArcheryEventQualificationTime;
+use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupTeams;
+
 
 class GetArcheryReportResultV2 extends Retrieval
 {
@@ -42,10 +47,14 @@ class GetArcheryReportResultV2 extends Retrieval
 
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
+        // $id = array();
 
         $pages = array();
-        $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event.png').'" alt="" width="80%"></img>';
+        $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event-series-2.png').'" alt="" width="80%"></img>';
         $logo_archery = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="80%"></img>';
+        $event_name_report = 'PRO JAKARTA OPEN 2022';
+        $event_date_report = '2 Juli 2022 - 6 Juli 2022';
+        $event_location_report = 'Jakarta International Equestrian Park';
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -53,19 +62,19 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/cover-event.png").'" alt="" width="100%"></img>';
+        $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/logo-event-series-2.png").'" alt="" width="25%"></img>';
         $logo_archery_cover = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="60%"></img>';
         $pages[] = view('report_result/cover', [
             'cover_event' => $logo_event_cover,
             'logo_archery' => $logo_archery_cover,
-            'event_name' => 'JAKARTA SERIES I ARCHERY COMPETITION 2022',
-            'event_date' => '3 Maret 2022 - 6 Maret 2022',
-            'event_location' => 'Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur'
+            'event_name_report' => $event_name_report,
+            'event_date_report' => $event_date_report,
+            'event_location_report' => $event_location_report
         ]);
         // ------------------------------------------ END PRINT COVER ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
-            // $competition->competition_category = 'Nasional';
+            // $competition->competition_category = 'Compound';
             $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
                 ->where("competition_category_id", $competition->competition_category)
                 ->orderBy('competition_category_id', 'DESC')->get();
@@ -83,7 +92,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
 
                 foreach ($distance_category as $distance) {
-                    // $distance->distance_category = '304050';
+                    // $distance->distance_category = '50';
                     $team_category = ArcheryEventCategoryDetail::select(DB::RAW('team_category_id as team_category'), DB::RAW('archery_event_category_details.id as category_detail_id'))->where("event_id", $event_id)
                         ->where("competition_category_id", $competition->competition_category)
                         ->where("age_category_id", $age->age_category)
@@ -94,55 +103,106 @@ class GetArcheryReportResultV2 extends Retrieval
 
                     
                     foreach ($team_category as $team) {
+                        // $team->category_detail_id = 108;
                         $category_detail = ArcheryEventCategoryDetail::find($team->category_detail_id);
                         if (!$category_detail) throw new BLoCException("category not found");
-// return ($category_detail); die;
+
+                        $date_now = date("Y-m-d H:i:s");
+                        $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", '<', $date_now)->first();
+
                         $data_elimination = $this->getElimination($category_detail);
                         $data_qualification = $this->getQualification($category_detail);
-                        // return ($data_qualification); die;
-                        if (!empty($data_qualification)) {
-                            $category_of_team = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
-                            if (!$category_of_team) throw new BLoCException("team category not found");
 
-                            // ------------------------------------------ ELIMINATION ------------------------------------------ //
-                            $type = 'elimination';
-                            $report = $competition->competition_category . ' - Elimination';
-                            $data_report = $this->getData($category_detail->id, $type, $event_id);
+                        if($qualification_time) {
+                            // $id[] = $category_detail->id;
+                            // if (!empty($data_qualification)) {
+                                $category_of_team = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
+                                if (!$category_of_team) throw new BLoCException("team category not found");
+    
+                                // ------------------------------------------ ELIMINATION ------------------------------------------ //
+                                $type = 'elimination';
+                                $report = $competition->competition_category . ' - Elimination';
+                                $data_report = $this->getData($category_detail->id, $type, $event_id);
 
-                            if (!empty($data_report[0])) {
-                                $pages[] = view('report_result/elimination', [
-                                    'data_report' => $data_report[0],
-                                    'competition' => $competition->competition_category,
-                                    'report' => $report,
-                                    'category' => $data_report[0][0]['category'],
-                                    'logo_event' => $logo_event,
-                                    'logo_archery' => $logo_archery,
-                                    'type' => ucfirst($type)
-                                ]);
-                                $data_report = array();
-                            }
-                            // ------------------------------------------ END ELIMINATION ------------------------------------------ //
-
-                            // ------------------------------------------ QUALIFICATION ------------------------------------------ //
-                            $type = 'qualification';
-                            $report = $competition->competition_category . ' - Qualification';
-                            $data_report = $this->getData($category_detail->id, $type, $event_id);
-
-                            if (!empty($data_report[0])) {
-                                if (strtolower($category_of_team->type) == "individual") {
-                                    $pages[] = view('report_result/qualification', [
-                                        'data_report' => $data_report[0],
-                                        'competition' => $competition->competition_category,
-                                        'report' => $report,
-                                        'category' => $data_report[0][0]['category'],
-                                        'logo_event' => $logo_event,
-                                        'logo_archery' => $logo_archery,
-                                        'type' => ucfirst($type)
-                                    ]);
-                                    $data_report = array();
+                                if (!empty($data_report[0])) {
+                                    // if (strtolower($category_of_team->type) == "individual") {
+                                        $pages[] = view('report_result/elimination', [
+                                            'data_report' => $data_report[0],
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => $data_report[0][0]['category'],
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                                        $data_report = array();
+                                    // }
                                 }
-                                
-                                if (strtolower($category_of_team->type) == "team") {
+
+                                    if (strtolower($category_of_team->type) == "team") {
+                                        $data_elimination_team = $this->getDataEliminationTeam($category_detail->id);
+                                        if (!empty($data_elimination_team)) {
+                                            $pages[] = view('report_result/elimination_team', [
+                                                'data_report' => $data_elimination_team,
+                                                'competition' => $competition->competition_category,
+                                                'report' => $report,
+                                                'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                                'logo_event' => $logo_event,
+                                                'logo_archery' => $logo_archery,
+                                                'type' => ucfirst($type),
+                                                'event_name_report' => $event_name_report,
+                                                'event_date_report' => $event_date_report,
+                                                'event_location_report' => $event_location_report
+                                            ]);
+                                            $data_report = array();
+                                        }
+                                        
+                                    }
+                                    
+                                // ------------------------------------------ END ELIMINATION ------------------------------------------ //
+    
+
+                                // ------------------------------------------ QUALIFICATION ------------------------------------------ //
+                                $type = 'qualification';
+                                $report = $competition->competition_category . ' - Qualification';
+                                $data_report = $this->getData($category_detail->id, $type, $event_id);
+    
+                                if (!empty($data_report[0])) {
+                                    if (strtolower($category_of_team->type) == "individual") {
+                                        $pages[] = view('report_result/qualification', [
+                                            'data_report' => $data_report[0],
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => $data_report[0][0]['category'],
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                                        $data_report = array();
+                                    }
+                                    
+                                    if (strtolower($category_of_team->type) == "team") {
+                                        $pages[] = view('report_result/qualification_team', [
+                                            'data_report' => $data_qualification,
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                                        $data_report = array();
+                                    }
+                                } else {
                                     $pages[] = view('report_result/qualification_team', [
                                         'data_report' => $data_qualification,
                                         'competition' => $competition->competition_category,
@@ -150,104 +210,111 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
-                                        'type' => ucfirst($type)
+                                        'type' => ucfirst($type),
+                                        'event_name_report' => $event_name_report,
+                                        'event_date_report' => $event_date_report,
+                                        'event_location_report' => $event_location_report
                                     ]);
                                     $data_report = array();
                                 }
-                            } else {
-                                $pages[] = view('report_result/qualification_team', [
-                                    'data_report' => $data_qualification,
-                                    'competition' => $competition->competition_category,
-                                    'report' => $report,
-                                    'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
-                                    'logo_event' => $logo_event,
-                                    'logo_archery' => $logo_archery,
-                                    'type' => ucfirst($type)
-                                ]);
-                                $data_report = array();
-                            }
-                            
-                            // ------------------------------------------ END QUALIFICATION ------------------------------------------ //
-
-                            // ------------------------------------------ ALL RESULTS --------------------------------------- //
-                            $type = '';
-                            $report = 'Result';
-                            $data_report = $this->getData($category_detail->id, $type, $event_id);
-                            $elimination = ArcheryEventElimination::where("event_category_id", $data_report[1])->first();
-
-                            if (!empty($data_report[0])) {
-
-                                if (strtolower($category_of_team->type) == "team") {
-                                    $pages[] = view('report_result/all_results_team', [
-                                        'data_report' => $data_qualification,
-                                        'competition' => $competition->competition_category,
-                                        'report' => $report,
-                                        'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
-                                        'logo_event' => $logo_event,
-                                        'logo_archery' => $logo_archery,
-                                        'type' => ucfirst($type)
-                                    ]);
-                                    $data_report = array();
-                                }
-                        
-                                if (strtolower($category_of_team->type) == "individual") {
+                                
+                                // ------------------------------------------ END QUALIFICATION ------------------------------------------ //
     
-                                    $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
-                            
-                                    if ($data_graph) {
-                                        if ($elimination->count_participant == 16) {
-                                            $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
-                                            $view_path = 'report_result/graph_sixteen';
-                                            $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                        } else if ($elimination->count_participant == 8) {
-                                            $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
-                                            $view_path = 'report_result/graph_eight';
-                                            $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                        } else {
-                                            continue;
-                                        }
-                                        
-                                    }
 
-                                    $pages[] = view('report_result/all_results_individu', [
-                                        'data_report' => $data_report[0],
-                                        'competition' => $competition->competition_category,
-                                        'report' => $report,
-                                        'category' => $data_report[0][0]['category'],
-                                        'logo_event' => $logo_event,
-                                        'logo_archery' => $logo_archery,
-                                        'type' => ucfirst($type)
-                                    ]);
-            
-                                    $data_report = array();
-                                    $data_graph = null;
-                                    $data = null;
-                                }
-                                
-                                
-                            } else {
-                                if (strtolower($category_of_team->type) == "team") {
-                                    $pages[] = view('report_result/all_results_team', [
-                                        'data_report' => $data_qualification,
-                                        'competition' => $competition->competition_category,
-                                        'report' => $report,
-                                        'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
-                                        'logo_event' => $logo_event,
-                                        'logo_archery' => $logo_archery,
-                                        'type' => ucfirst($type)
-                                    ]);
-                                    $data_report = array();
-                                }
-                            }
-                            // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
+                                // ------------------------------------------ ALL RESULTS --------------------------------------- //
+                                $type = '';
+                                $report = 'Result';
+                                $data_report = $this->getData($category_detail->id, $type, $event_id);
+                                $elimination = ArcheryEventElimination::where("event_category_id", $data_report[1])->first();
+    
+                                if (!empty($data_report[0])) {
+    
+                                    if (strtolower($category_of_team->type) == "team") {
+                                        $pages[] = view('report_result/all_results_team', [
+                                            'data_report' => $data_qualification,
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                                        $data_report = array();
+                                    }
                             
+                                    if (strtolower($category_of_team->type) == "individual") {
+        
+                                        // print bagan eliminasi hide dulu
+                                        // $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
+                                
+                                        // if ($data_graph) {
+                                        //     if ($elimination->count_participant == 16) {
+                                        //         $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
+                                        //         $view_path = 'report_result/graph_sixteen';
+                                        //         $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                        //     } else if ($elimination->count_participant == 8) {
+                                        //         $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
+                                        //         $view_path = 'report_result/graph_eight';
+                                        //         $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                        //     } else {
+                                        //         continue;
+                                        //     }
+                                            
+                                        // }
+    
+                                        $pages[] = view('report_result/all_results_individu', [
+                                            'data_report' => $data_qualification,
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => $data_report[0][0]['category'],
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                
+                                        $data_report = array();
+                                        $data_graph = null;
+                                        $data = null;
+                                    }
+                                    
+                                    
+                                } else {
+                                    if (strtolower($category_of_team->type) == "team") {
+                                        $pages[] = view('report_result/all_results_team', [
+                                            'data_report' => $data_qualification,
+                                            'competition' => $competition->competition_category,
+                                            'report' => $report,
+                                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                            'logo_event' => $logo_event,
+                                            'logo_archery' => $logo_archery,
+                                            'type' => ucfirst($type),
+                                            'event_name_report' => $event_name_report,
+                                            'event_date_report' => $event_date_report,
+                                            'event_location_report' => $event_location_report
+                                        ]);
+                                        $data_report = array();
+                                    }
+                                }
+                                // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
+                                
+                            // } else {
+                            //     continue;
+                            // }
                         } else {
                             continue;
                         }
+                        
                     }
                 }
             }
         }
+
         $pdf = PDFv2::loadView('report_result/all', ['pages' => $pages]);
         $pdf->setOptions([
             'margin-top'    => 10,
@@ -262,7 +329,8 @@ class GetArcheryReportResultV2 extends Retrieval
         ]);
 
         $digits = 3;
-        $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
+        $fileName   = 'report_result_' . date("YmdHis") . '.pdf';
+        // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/report-result';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
@@ -318,12 +386,32 @@ class GetArcheryReportResultV2 extends Retrieval
 
                     $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($member->category_details_id);
 
-                    if ($member->elimination_ranked == 1 || $member->position_qualification == 1) {
-                        $medal = 'Gold';
-                    } else if ($member->elimination_ranked == 2 || $member->position_qualification == 2) {
-                        $medal = 'Silver';
+                    // if ($member->elimination_ranked == 1 || $member->position_qualification == 1) {
+                    //     $medal = 'Gold';
+                    // } else if ($member->elimination_ranked == 2 || $member->position_qualification == 2) {
+                    //     $medal = 'Silver';
+                    // } else {
+                    //     $medal = 'Bronze';
+                    // }
+
+                    if ($type == "elimination") {
+                        if ($member->elimination_ranked == 1) {
+                            $medal = 'Gold';
+                        } else if ($member->elimination_ranked == 2) {
+                            $medal = 'Silver';
+                        } else {
+                            $medal = 'Bronze';
+                        }
+                    } elseif ($type == "qualification") {
+                        if ($member->position_qualification == 1) {
+                            $medal = 'Gold';
+                        } else if ($member->position_qualification == 2) {
+                            $medal = 'Silver';
+                        } else {
+                            $medal = 'Bronze';
+                        }
                     } else {
-                        $medal = 'Bronze';
+                        $medal = '-';
                     }
 
                     $athlete = $member->name;
@@ -386,7 +474,10 @@ class GetArcheryReportResultV2 extends Retrieval
         }
 
         if ($category_detail->category_team == "Individual") {
-            $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
+            // $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
+            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name);
+
+            return $qualification_member;
         }
 
         if (strtolower($team_category->type) == "team") {
@@ -398,5 +489,37 @@ class GetArcheryReportResultV2 extends Retrieval
         }
 
         return $data;
+    }
+
+    protected function getDataEliminationTeam($category_detail_id)
+    {
+        $elimination_group = ArcheryEventEliminationGroup::where('category_id' , $category_detail_id)->first();
+        if ($elimination_group) {
+            $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))->where('elimination_group_id', $elimination_group->id)->get();
+
+            $data = array();
+            foreach ($elimination_group_match as $key => $value) {
+    
+                $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
+
+                if ($elimination_group_team) {
+                    if ($elimination_group_team->elimination_ranked <= 3) {
+                        $data[] = [
+                            'id' => $elimination_group_team->id,
+                            'team_name' => $elimination_group_team->team_name,
+                            'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
+                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
+                            'date' => $elimination_group->created_at->format('Y-m-d')
+                        ];
+                    } else {
+                        continue;
+                    }
+                }
+                
+            }
+    
+            $sorted_data = collect($data)->sortBy('elimination_ranked')->values()->take(3);
+            return $sorted_data;
+        }
     }
 }
