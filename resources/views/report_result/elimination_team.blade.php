@@ -77,9 +77,6 @@
               <strong>Medal</strong>
             </th>
             <th style="text-align: center;border: 1px solid black; ">
-              <strong>Athlete</strong>
-            </th>
-            <th style="text-align: center;border: 1px solid black; ">
               <strong>Club</strong>
             </th>
           </tr>
@@ -87,7 +84,7 @@
             $rowid = 0;
             $rowspan = 0;
           @endphp
-          @foreach ($data_report as $key => $data)
+          @foreach ($data_report->take(3) as $key => $data)
             @php
               $rowid += 1;
             @endphp
@@ -100,30 +97,18 @@
                 <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">{{ $data['category'] ? $data['category'] : '-' }}</td>
                 <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">{{ $data['date'] ? $data['date'] : '-' }}</td>
               @endif
-              <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
               <!-- start initiate medals -->
-              <!-- @if ($key == 0)
-                @if ($data['medal'] == 'Gold')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-                @else
-                  <td style="text-align: left;border: 1px solid black;">Gold</td>
-                @endif
-              @elseif ($key == 1)
-                @if ($data['medal'] == 'Silver')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-                @else
+                @if ($data['elimination_ranked'] == '1')
+                  <td style="text-align: left;border: 1px solid black;">Gold</td>     
+                @elseif ($data['elimination_ranked'] == '2')
                   <td style="text-align: left;border: 1px solid black;">Silver</td>
-                @endif
-              @else
-                @if ($data['medal'] == 'Bronze')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}</td>
-                @else
+                @elseif ($data['elimination_ranked'] == '3')
                   <td style="text-align: left;border: 1px solid black;">Bronze </td>
+                @else
+                  <td style="text-align: left;border: 1px solid black;">Bronze</td>
                 @endif
-              @endif -->
               <!-- end medals -->
-              <td style="text-align: center;border: 1px solid black;">{{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['club'] ? $data['club'] : '-' }}</td>
+              <td style="text-align: center;border: 1px solid black;">{{ $data['team_name'] ? $data['team_name'] : '-' }}</td>
             </tr>
           @endforeach
         </tbody>

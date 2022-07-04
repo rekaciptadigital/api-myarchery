@@ -34,9 +34,9 @@
                   <td style="width: 1%; height: 50px;" rowspan="2"></td>
                   <td style="width: 42%; height: 50px; ">
                       <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
-                          <strong><span style="font-size: 30px;">JAKARTA SERIES I ARCHERY COMPETITION 2022</span></strong> <br /><br />
-                          Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur<br />
-                          3 Maret 2022 - 6 Maret 2022
+                          <strong><span style="font-size: 30px;">{{ $event_name_report }}</span></strong> <br /><br />
+                          {{ $event_location_report }}<br />
+                          {{ $event_date_report }}
                       </p>
                   </td>
                   <td style="width: 2%; height: 50px;" rowspan="2">
@@ -80,13 +80,13 @@
           @foreach ($data_report as $data)
             <tr style="border: 1px solid black;">
             
-                <td style="text-align: center;border: 1px solid black;">{{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['club'] ? $data['club'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['scoring']['sessions']['2'] ? $data['scoring']['sessions']['2']['total'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total_x'] : '-' }}</td>
-                <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total_x_plus_ten'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['member'] ? $data['member']['name'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['club_name'] ? $data['club_name'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['sessions']['1'] ? $data['sessions']['1']['total'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['sessions']['2'] ? $data['sessions']['2']['total'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total'] ? $data['total'] : '0' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x'] ? $data['total_x'] : '0' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x_plus_ten'] ? $data['total_x_plus_ten'] : '0' }}</td>
                
 
             </tr>
