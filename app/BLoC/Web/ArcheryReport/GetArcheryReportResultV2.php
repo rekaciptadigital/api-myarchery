@@ -320,8 +320,8 @@ class GetArcheryReportResultV2 extends Retrieval
 
         $pdf = PDFv2::loadView('report_result/all', ['pages' => $pages]);
         $pdf->setOptions([
-            'margin-top'    => 10,
-            'margin-bottom' => 15,
+            'margin-top'    => 5,
+            'margin-bottom' => 1,
             'page-size'     => 'a4',
             'orientation'   => 'portrait',
             'enable-javascript' => true,
