@@ -122,7 +122,7 @@ class ClubRanked
                 "gold" => $total_gold,
                 "silver" => $total_silver,
                 "bronze" => $total_bronze,
-                "total" => $gold + $silver + $bronze
+                "total" => $total_gold + $total_silver + $total_bronze
             ];
         }
 
