@@ -27,6 +27,7 @@ use Response;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Libraries\EliminationFormatPDF;
+use App\Libraries\EliminationFormatPDFV2;
 use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
 use Illuminate\Support\Collection;
 use App\Models\ArcheryEventQualificationTime;
@@ -47,6 +48,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
+        $date_filter = $parameters->get('date');
         // $id = array();
 
         $pages = array();
@@ -109,6 +111,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
                         $date_now = date("Y-m-d H:i:s");
                         $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", '<', $date_now)->first();
+                        // $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", $date_filter)->first();
 
                         $data_elimination = $this->getElimination($category_detail);
                         $data_qualification = $this->getQualification($category_detail);
@@ -118,7 +121,7 @@ class GetArcheryReportResultV2 extends Retrieval
                             // if (!empty($data_qualification)) {
                                 $category_of_team = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
                                 if (!$category_of_team) throw new BLoCException("team category not found");
-    
+
                                 // ------------------------------------------ ELIMINATION ------------------------------------------ //
                                 $type = 'elimination';
                                 $report = $competition->competition_category . ' - Elimination';
@@ -225,43 +228,26 @@ class GetArcheryReportResultV2 extends Retrieval
                                 $type = '';
                                 $report = 'Result';
                                 $data_report = $this->getData($category_detail->id, $type, $event_id);
-                                $elimination = ArcheryEventElimination::where("event_category_id", $data_report[1])->first();
-    
-                                if (!empty($data_report[0])) {
-    
-                                    if (strtolower($category_of_team->type) == "team") {
-                                        $pages[] = view('report_result/all_results_team', [
-                                            'data_report' => $data_qualification,
-                                            'competition' => $competition->competition_category,
-                                            'report' => $report,
-                                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
-                                            'logo_event' => $logo_event,
-                                            'logo_archery' => $logo_archery,
-                                            'type' => ucfirst($type),
-                                            'event_name_report' => $event_name_report,
-                                            'event_date_report' => $event_date_report,
-                                            'event_location_report' => $event_location_report
-                                        ]);
-                                        $data_report = array();
-                                    }
-                            
-                                    if (strtolower($category_of_team->type) == "individual") {
+
+                                if (strtolower($category_of_team->type) == "individual") {
+                                    if (!empty($data_report[0])) {
         
+                                        $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_detail->id)->first();
                                         // print bagan eliminasi hide dulu
                                         // $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
                                 
                                         // if ($data_graph) {
-                                        //     if ($elimination->count_participant == 16) {
-                                        //         $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
-                                        //         $view_path = 'report_result/graph_sixteen';
-                                        //         $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                        //     } else if ($elimination->count_participant == 8) {
-                                        //         $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
-                                        //         $view_path = 'report_result/graph_eight';
-                                        //         $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                        //     } else {
-                                        //         continue;
-                                        //     }
+                                            // if ($elimination->count_participant == 16) {
+                                            //     $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
+                                            //     $view_path = 'report_result/graph_sixteen';
+                                            //     $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                            // } else if ($elimination->count_participant == 8) {
+                                            //     $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
+                                            //     $view_path = 'report_result/graph_eight';
+                                            //     $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                            // } else {
+                                            //     continue;
+                                            // }
                                             
                                         // }
     
@@ -282,10 +268,26 @@ class GetArcheryReportResultV2 extends Retrieval
                                         $data_graph = null;
                                         $data = null;
                                     }
-                                    
-                                    
-                                } else {
-                                    if (strtolower($category_of_team->type) == "team") {
+                                }
+                                                         
+                                if (strtolower($category_of_team->type) == "team") {
+                                        $elimination_team = ArcheryEventEliminationGroup::where("category_id", $category_detail->id)->first();
+
+                                        //print bagan eliminasi
+                                        if ($data_elimination['updated'] == false) {
+                                            if ($elimination_team->count_participant == 4) {
+                                                // return ($data_elimination); die;
+                                                $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
+                                                $view_path = 'report_result/elimination_graph/team/graph_four';
+                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                                $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                                            }
+                                        } else {
+                                            continue;
+                                        }
+                                        //end print bagan eliminasi
+
+                                        //print all result qualification
                                         $pages[] = view('report_result/all_results_team', [
                                             'data_report' => $data_qualification,
                                             'competition' => $competition->competition_category,
@@ -299,8 +301,9 @@ class GetArcheryReportResultV2 extends Retrieval
                                             'event_location_report' => $event_location_report
                                         ]);
                                         $data_report = array();
-                                    }
+                                        //end print all result qualification
                                 }
+                                
                                 // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
                                 
                             // } else {
