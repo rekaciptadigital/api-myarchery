@@ -46,8 +46,6 @@ class ClubRanked
             }
         }
 
-        // cek apakah categori ada eliminasi atau tidak
-
         // TODO SEMENTARA
         $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])->get();
 
@@ -92,8 +90,6 @@ class ClubRanked
 
         // dapatkan data eliminasi beregu
         $lis_club_with_medal_eliminasi = self::getMedalEliminationByEventId($event_id);
-        // return $club_ids;
-        // return $lis_club_with_medal_eliminasi;
 
         foreach ($club_ids as $k => $v) {
             $club = ArcheryClub::find($k);
@@ -339,6 +335,7 @@ class ClubRanked
         foreach ($club_id_join_event as $key => $club_id) {
             $category_teams = ArcheryEventCategoryDetail::where("event_id", $event_id)
                 ->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])
+                ->where("is_join_eliminasi", 1)
                 ->get();
             $detail_club = [];
             $gold_medal = 0;
