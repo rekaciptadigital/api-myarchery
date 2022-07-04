@@ -14,7 +14,7 @@ class AddFieldIsJoinEliminationToCategoryTabel extends Migration
     public function up()
     {
         Schema::table('archery_event_category_details', function (Blueprint $table) {
-            $table->smallInteger("is_join_series")->default(1);
+            $table->smallInteger("is_join_eliminasi")->default(1);
         });
     }
 
@@ -26,7 +26,7 @@ class AddFieldIsJoinEliminationToCategoryTabel extends Migration
     public function down()
     {
         Schema::table('archery_event_category_details', function (Blueprint $table) {
-            $table->dropColumn('is_join_series');
+            $table->dropColumn('is_join_eliminasi');
         });
     }
 }
