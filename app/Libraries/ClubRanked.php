@@ -341,14 +341,13 @@ class ClubRanked
             $gold_medal = 0;
             $silver_medal = 0;
             $bronze_medal = 0;
+
             foreach ($category_teams as $category) {
                 $teams = ArcheryEventEliminationGroupTeams::select("archery_event_elimination_group_teams.*", "archery_event_participants.event_category_id", "archery_event_participants.club_id")
                     ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_elimination_group_teams.participant_id")
                     ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-                    ->join("archery_event_elimination_group_match", "archery_event_elimination_group_match.group_team_id", "=", "archery_event_elimination_group_teams.id")
-                    ->join("archery_event_elimination_group", "archery_event_elimination_group.id", "=", "archery_event_elimination_group_match.elimination_group_id")
-                    ->where("archery_event_elimination_group.category_id", $category->id)
                     ->where("archery_event_participants.club_id", $club_id)
+                    ->where("archery_event_participants.event_category_id", $category->id)
                     ->get();
 
                 foreach ($teams as $key => $team) {
