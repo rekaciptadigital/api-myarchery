@@ -74,8 +74,8 @@
         }
 
         .bracket .round .winners>div.connector.filled .line,
-        .bracket .round .winners>div.connector.filled.bottom .merger:after,
-        .bracket .round .winners>div.connector.filled.top .merger:before {
+        .bracket .round .winners>div.connector.filled.bottom .merger::after,
+        .bracket .round .winners>div.connector.filled.top .merger::before {
             border-color: #1f3d7a;
         }
 
@@ -96,8 +96,8 @@
             height: 7rem;
         }
 
-        .bracket .round .winners>div.connector .merger:before,
-        .bracket .round .winners>div.connector .merger:after {
+        .bracket .round .winners>div.connector .merger::before,
+        .bracket .round .winners>div.connector .merger::after {
             content: "";
             display: block;
             box-sizing: border-box;
@@ -107,12 +107,12 @@
             border-color: #000000;
         }
 
-        .bracket .round .winners>div.connector .merger:before {
+        .bracket .round .winners>div.connector .merger::before {
             border-right-width: thin;
             border-top-width: thin;
         }
 
-        .bracket .round .winners>div.connector .merger:after {
+        .bracket .round .winners>div.connector .merger::after {
             border-right-width: thin;
             border-bottom-width: thin;
         }
@@ -178,8 +178,8 @@
             height: 3rem;
         }
 
-        .bracket .round.finals .winners .connector .merger:before,
-        .bracket .round.finals .winners .connector .merger:after {
+        .bracket .round.finals .winners .connector .merger::before,
+        .bracket .round.finals .winners .connector .merger::after {
             border-color: transparent;
         }
 

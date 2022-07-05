@@ -57,7 +57,7 @@
 
 <h1 style="text-align: center">{{$report}}</h1>
 <h1 style="text-align: center">{{$category}}</h1>
-<table style="width:100%;border: 1px solid black;">
+<table style="width:100%;border: 1px solid black; border-collapse: collapse;">
         <thead>
             <!-- <tr>
                 <th>Table Heading</th>
