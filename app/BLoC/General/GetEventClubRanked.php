@@ -16,18 +16,6 @@ class GetEventClubRanked extends Retrieval
     protected function process($parameters)
     {
         $event_id = $parameters->get("event_id");
-        // $category_events = ArcheryEventCategoryDetail::where("event_id", $event_id)->where("is_join_eliminasi", 1)
-        //     ->where("is_show", 1)
-        //     ->get()
-        //     ->groupBy(["competition_category_id", "age_category_id"]);
-
-        // foreach ($category_events as $key1 => $value1) {
-        //     foreach ($value1 as $key2 => $value2) {
-        //         foreach ($value2 as $key3 => $value3) {
-        //             return $value3;
-        //         }
-        //     }
-        // }
         return ClubRanked::getEventRanked($event_id);
     }
 
