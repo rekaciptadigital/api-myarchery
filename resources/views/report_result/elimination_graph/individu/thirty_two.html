@@ -41,10 +41,10 @@
             box-sizing: border-box;
             color: #000000;
             background: white;
-            /* width: 18rem; */
-            height: 3rem;
+            width: 10rem;
+            height: 2rem;
             box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
-            text-align: center;
+            text-align: left;
         }
 
         .bracket .round .winners>div.matchups .matchup .participants .participant32.winner {
@@ -63,8 +63,8 @@
 
         .bracket .round .winners>div.matchups .matchup .participants .participant32 span {
             margin: 0 1.25rem;
-            line-height: 3.5;
-            font-size: 13px;
+            line-height: 2;
+            font-size: 11px;
             font-family: 'Inter';
         }
 
@@ -121,15 +121,15 @@
         }
 
         .bracket .round.best-16-of-32 .winners:not(:last-child) {
-            margin-bottom: 8rem;
+            margin-bottom: 6rem;
         }
 
         .bracket .round.best-16-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 8rem;
+            margin-bottom: 6rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .merger {
-            height: 14rem;
+            height: 10rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .line {
@@ -137,15 +137,15 @@
         }
 
         .bracket .round.quarterfinals-of-32 .winners:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 16rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 17rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .merger {
-            height: 28rem;
+            height: 21rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .line {
@@ -153,11 +153,11 @@
         }
 
         .bracket .round.semifinals32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 14rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .merger {
-            height: 58rem;
+            height: 38rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .line {
@@ -200,14 +200,16 @@
             padding-top: -60px;
         }
 
-        .log_output {
+        .log_output_32 {
             color: white;
             float: right;
             font-size: 10.5px;
+            margin-top: 2px;
+            margin-bottom: -5px;
             margin-right: 5px;
-            width: 28px;
+            width: 25px;
             position: relative;
-            height: 25px;
+            height: 20px;
             text-align: center;
             border-radius: 0.5rem;
         }
@@ -255,26 +257,28 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member1 !!} <p class="log_output" style="background:black;">{!!
-                                            $round1member1result !!}</p>
+                                    <span> Bismillah 
                                     </span>
+                                    <p class="log_output_32" style="background:black;">
+                                        19 </p>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member2 !!} <p class="log_output" style="background:black;">{!!
-                                            $round1member2result !!}</p>
+                                    <span> Bisa yukkk
                                     </span>
+                                    <p class="log_output_32" style="background:black;">
+                                        10 </p>
                                 </div>
                             </div>
                         </div>
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member3 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member3 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member3result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member4 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member4 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member4result !!}</p>
                                     </span>
                                 </div>
@@ -291,12 +295,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member5 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member5 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member5result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member6 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member6 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member6result !!}</p>
                                     </span>
                                 </div>
@@ -305,12 +309,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member7 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member7 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member7result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member8 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member8 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member8result !!}</p>
                                     </span>
                                 </div>
@@ -327,12 +331,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member9 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member9 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member9result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member10 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member10 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member10result !!}</p>
                                     </span>
                                 </div>
@@ -341,12 +345,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member11 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member11 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member11result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member12 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member12 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member12result !!}</p>
                                     </span>
                                 </div>
@@ -363,12 +367,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member13 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member13 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member13result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member14 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member14 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member14result !!}</p>
                                     </span>
                                 </div>
@@ -377,12 +381,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member15 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member15 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member15result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member16 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member16 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member16result !!}</p>
                                     </span>
                                 </div>
@@ -399,12 +403,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member17 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member17 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member17result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member18 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member18 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member18result !!}</p>
                                     </span>
                                 </div>
@@ -413,12 +417,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member19 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member19 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member3result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member20 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member20 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member20result !!}</p>
                                     </span>
                                 </div>
@@ -435,12 +439,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member21 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member21 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member21result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member22 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member22 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member22result !!}</p>
                                     </span>
                                 </div>
@@ -449,12 +453,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member23 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member23 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member23result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member24 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member24 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member24result !!}</p>
                                     </span>
                                 </div>
@@ -471,12 +475,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member25 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member25 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member25result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member26 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member26 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member26result !!}</p>
                                     </span>
                                 </div>
@@ -485,12 +489,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member27 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member27 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1membe27result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member28 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member28 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member28result !!}</p>
                                     </span>
                                 </div>
@@ -507,12 +511,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member29 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member29 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member29result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member30 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member30 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member30result !!}</p>
                                     </span>
                                 </div>
@@ -521,12 +525,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member31 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member31 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member32result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member32 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round1member32 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round1member32result !!}</p>
                                     </span>
                                 </div>
@@ -545,12 +549,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member1 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member1 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member1result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member2 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member2 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member2result !!}</p>
                                     </span>
                                 </div>
@@ -559,12 +563,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member3 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member3 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member3result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member4 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member4 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member4result !!}</p>
                                     </span>
                                 </div>
@@ -581,12 +585,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member5 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member5 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member5result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member6 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member6 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member6result !!}</p>
                                     </span>
                                 </div>
@@ -595,12 +599,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member7 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member7 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member7result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member8 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member8 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member8result !!}</p>
                                     </span>
                                 </div>
@@ -617,12 +621,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member9 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member9 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member9result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member10 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member10 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member10result !!}</p>
                                     </span>
                                 </div>
@@ -631,12 +635,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member11 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member11 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member11result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member12 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member12 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member12result !!}</p>
                                     </span>
                                 </div>
@@ -653,12 +657,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member13 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member13 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member13result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member14 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member14 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member14result !!}</p>
                                     </span>
                                 </div>
@@ -667,12 +671,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member15 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member15 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member15result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member16 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round2member16 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round2member16result !!}</p>
                                     </span>
                                 </div>
@@ -691,12 +695,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member1 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member1 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member1result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member2 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member2 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member2result !!}</p>
                                     </span>
                                 </div>
@@ -705,12 +709,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member3 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member3 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member3result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member4 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member4 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member4result !!}</p>
                                     </span>
                                 </div>
@@ -727,12 +731,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member5 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member5 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member5result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member6 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member6 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member6result !!}</p>
                                     </span>
                                 </div>
@@ -741,12 +745,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member7 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member7 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member7result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member8 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round3member8 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round3member8result !!}</p>
                                     </span>
                                 </div>
@@ -765,12 +769,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round4member1 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round4member1 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round4member1result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round4member2 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round4member2 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round4member2result !!}</p>
                                     </span>
                                 </div>
@@ -783,12 +787,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round6member1 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round6member1 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round6member1result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round6member2 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round6member2 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round6member2result !!}</p>
                                     </span>
                                 </div>
@@ -798,12 +802,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round4member3 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round4member3 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round4member3result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round4member4 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round4member4 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round4member4result !!}</p>
                                     </span>
                                 </div>
@@ -825,12 +829,12 @@
                         <div class="matchup">
                             <div class="participants">
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round5member1 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round5member1 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round5member1result !!}</p>
                                     </span>
                                 </div>
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round5member2 !!} <p class="log_output" style="background:black;">{!!
+                                    <span> {!! $round5member2 !!} <p class="log_output_32" style="background:black;">{!!
                                             $round5member2result !!}</p>
                                     </span>
                                 </div>
