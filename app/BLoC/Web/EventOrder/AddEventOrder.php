@@ -20,6 +20,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
+use App\Models\ArcherySeriesUserPoint;
 use Carbon\Carbon as CarbonCarbon;
 use DateTime;
 use Illuminate\Support\Carbon;
@@ -224,7 +225,7 @@ class AddEventOrder extends Transactional
                 "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
-
+            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id,$user->id);
             return $this->composeResponse($res);
         }
 

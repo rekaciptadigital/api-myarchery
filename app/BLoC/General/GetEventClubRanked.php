@@ -4,6 +4,7 @@ namespace App\BLoC\General;
 
 use DAI\Utils\Abstracts\Retrieval;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryEventCategoryDetail;
 
 class GetEventClubRanked extends Retrieval
 {

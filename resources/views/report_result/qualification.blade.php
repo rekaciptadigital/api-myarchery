@@ -34,9 +34,9 @@
                   <td style="width: 1%; height: 50px;" rowspan="2"></td>
                   <td style="width: 42%; height: 50px; ">
                       <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
-                          <strong><span style="font-size: 30px;">JAKARTA SERIES I ARCHERY COMPETITION 2022</span></strong> <br /><br />
-                          Lapangan Tembak Yonkav 7 Cijantung, Jakarta Timur<br />
-                          3 Maret 2022 - 6 Maret 2022
+                          <strong><span style="font-size: 30px;">{{ $event_name_report }}</span></strong> <br /><br />
+                          {{ $event_location_report }}<br />
+                          {{ $event_date_report }}
                       </p>
                   </td>
                   <td style="width: 2%; height: 50px;" rowspan="2">
@@ -56,7 +56,7 @@
       <br>
       <h1 style="text-align: center">{{$report}}</h1>
       <h1 style="text-align: center">{{$category}}</h1>
-      <table class="table" style="width:100%;border: 1px solid black;">
+      <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
         <thead>
           <!-- <tr><th>Table Heading</th></tr> -->
         </thead>

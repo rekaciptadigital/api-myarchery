@@ -6,6 +6,8 @@ use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryScoring;
 use App\Models\City;
@@ -50,6 +52,10 @@ class ClubRanked
         $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])->get();
 
         foreach ($teams as $t => $team) {
+            $elimination_group = ArcheryEventEliminationGroup::where("category_id", $team->id)->first();
+            if ($elimination_group) {
+                continue;
+            }
             $session = [];
             for ($i = 0; $i < $team->session_in_qualification; $i++) {
                 $session[] = $i + 1;
