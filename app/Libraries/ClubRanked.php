@@ -50,6 +50,9 @@ class ClubRanked
         $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])->get();
 
         foreach ($teams as $t => $team) {
+            if ($team->is_join_eliminasi == 1) {
+                continue;
+            }
             $session = [];
             for ($i = 0; $i < $team->session_in_qualification; $i++) {
                 $session[] = $i + 1;
