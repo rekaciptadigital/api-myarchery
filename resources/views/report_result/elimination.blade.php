@@ -68,7 +68,7 @@
           </tr>
           <tr style="border: 1px solid black;">
             <th style="text-align: center;border: 1px solid black;">
-              <strong>Event Name</strong>
+              <strong>Category</strong>
             </th>
             <th style="text-align: center; border: 1px solid black;">
               <strong>Date</strong>
