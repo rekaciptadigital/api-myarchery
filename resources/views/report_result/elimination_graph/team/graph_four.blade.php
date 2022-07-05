@@ -173,14 +173,16 @@
             padding-top: -60px;
         }
 
-        .log_output {
+        .log_output_four {
             color: white;
             float: right;
-            font-size: 10.5px;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 10px;
             margin-right: 5px;
             width: 28px;
             position: relative;
-            height: 25px;
+            height: 30px;
             text-align: center;
             border-radius: 0.5rem;
         }
@@ -230,22 +232,22 @@
                             <div class="participants">
                                 @if ($round1member1status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member1 !!} <p class="log_output" style="background:black;">{!! $round1member1result !!}</p>
+                                    <span> {!! $round1member1 !!} <p class="log_output_four" style="background:black;">{!! $round1member1result !!}</p>
                                     </span>
                                 @else
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round1member1 !!} <p class="log_output" style="background:gray;">{!! $round1member1result !!}</p>
+                                    <span> {!! $round1member1 !!} <p class="log_output_four" style="background:gray;">{!! $round1member1result !!}</p>
                                     </span>
                                 @endif
                                 </div>
 
                                 @if ($round1member2status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member2 !!} <p class="log_output" style="background:black;">{!! $round1member2result !!}</p>
+                                    <span> {!! $round1member2 !!} <p class="log_output_four" style="background:black;">{!! $round1member2result !!}</p>
                                     </span>
                                 @else
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                      <span> {!! $round1member2 !!} <p class="log_output" style="background:gray;">{!! $round1member2result !!}</p>
+                                      <span> {!! $round1member2 !!} <p class="log_output_four" style="background:gray;">{!! $round1member2result !!}</p>
                                       </span>
                                 @endif
                                 </div>
@@ -255,22 +257,22 @@
                             <div class="participants">
                                 @if ($round1member3status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member3 !!} <p class="log_output" style="background:black;">{!! $round1member3result !!}</p>
+                                    <span> {!! $round1member3 !!} <p class="log_output_four" style="background:black;">{!! $round1member3result !!}</p>
                                     </span> 
                                 @else 
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round1member3 !!} <p class="log_output" style="background:gray;">{!! $round1member3result !!}</p>
+                                    <span> {!! $round1member3 !!} <p class="log_output_four" style="background:gray;">{!! $round1member3result !!}</p>
                                     </span> 
                                 @endif
                                 </div> 
                                     
                                 @if ($round1member4status === 'win') 
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round1member4 !!} <p class="log_output" style="background:black;">{!! $round1member4result !!}</p>
+                                    <span> {!! $round1member4 !!} <p class="log_output_four" style="background:black;">{!! $round1member4result !!}</p>
                                     </span>
                                 @else
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round1member4 !!} <p class="log_output" style="background:gray;">{!! $round1member4result !!}</p>
+                                    <span> {!! $round1member4 !!} <p class="log_output_four" style="background:gray;">{!! $round1member4result !!}</p>
                                     </span>
                                 @endif
                               </div>
@@ -293,22 +295,22 @@
                             <div class="participants">
                                 @if ($round2member1status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member1 !!} <p class="log_output" style="background:black;">{!! $round2member1result !!}</p>
+                                    <span> {!! $round2member1 !!} <p class="log_output_four" style="background:black;">{!! $round2member1result !!}</p>
                                     </span>
                                 @else 
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                      <span> {!! $round2member1 !!} <p class="log_output" style="background:gray;">{!! $round2member1result !!}</p>
+                                      <span> {!! $round2member1 !!} <p class="log_output_four" style="background:gray;">{!! $round2member1result !!}</p>
                                       </span> 
                                 @endif
                                 </div>
 
                                 @if ($round2member2status === 'win') 
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round2member2 !!} <p class="log_output" style="background:black;">{!! $round2member2result !!}</p>
+                                    <span> {!! $round2member2 !!} <p class="log_output_four" style="background:black;">{!! $round2member2result !!}</p>
                                     </span> 
                                 @else 
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round2member2 !!} <p class="log_output" style="background:gray;">{!! $round2member2result !!}</p>
+                                    <span> {!! $round2member2 !!} <p class="log_output_four" style="background:gray;">{!! $round2member2result !!}</p>
                                     </span>
                                 @endif
                                 </div>
@@ -331,22 +333,22 @@
                             <div class="participants">
                                 @if ($round3member1status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member1 !!} <p class="log_output" style="background:black;">{!! $round3member1result !!}</p>
+                                    <span> {!! $round3member1 !!} <p class="log_output_four" style="background:black;">{!! $round3member1result !!}</p>
                                     </span> 
                                 @else 
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round3member1 !!} <p class="log_output" style="background:gray;">{!! $round3member1result !!}</p>
+                                    <span> {!! $round3member1 !!} <p class="log_output_four" style="background:gray;">{!! $round3member1result !!}</p>
                                     </span> 
                                 @endif
                                 </div>
                                 
                                 @if ($round3member2status === 'win')
                                 <div class="participant" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span> {!! $round3member2 !!} <p class="log_output" style="background:black;">{!! $round3member2result !!}</p>
+                                    <span> {!! $round3member2 !!} <p class="log_output_four" style="background:black;">{!! $round3member2result !!}</p>
                                     </span>
                                 @else
                                 <div class="participant" style="background:white;border:1.8px solid gray">
-                                    <span> {!! $round3member2 !!} <p class="log_output" style="background:gray;">{!! $round3member2result !!}</p>
+                                    <span> {!! $round3member2 !!} <p class="log_output_four" style="background:gray;">{!! $round3member2result !!}</p>
                                     </span> 
                                 @endif
                                 </div>

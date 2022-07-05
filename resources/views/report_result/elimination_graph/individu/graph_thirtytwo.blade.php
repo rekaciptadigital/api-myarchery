@@ -64,7 +64,7 @@
         .bracket .round .winners>div.matchups .matchup .participants .participant32 span {
             margin: 0 1.25rem;
             line-height: 2;
-            font-size: 13px;
+            font-size: 11px;
             font-family: 'Inter';
         }
 
@@ -121,15 +121,15 @@
         }
 
         .bracket .round.best-16-of-32 .winners:not(:last-child) {
-            margin-bottom: 8rem;
+            margin-bottom: 6rem;
         }
 
         .bracket .round.best-16-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 8rem;
+            margin-bottom: 6rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .merger {
-            height: 14rem;
+            height: 10rem;
         }
 
         .bracket .round.best-16-of-32 .winners .connector .line {
@@ -137,15 +137,15 @@
         }
 
         .bracket .round.quarterfinals-of-32 .winners:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 16rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 17rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .merger {
-            height: 28rem;
+            height: 21rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners .connector .line {
@@ -153,11 +153,11 @@
         }
 
         .bracket .round.semifinals32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 22rem;
+            margin-bottom: 14rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .merger {
-            height: 58rem;
+            height: 38rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .line {
@@ -204,11 +204,12 @@
             color: white;
             float: right;
             font-size: 10.5px;
-            margin-top: -5px;
+            margin-top: 2px;
+            margin-bottom: -5px;
             margin-right: 5px;
             width: 25px;
             position: relative;
-            height: 15px;
+            height: 20px;
             text-align: center;
             border-radius: 0.5rem;
         }
