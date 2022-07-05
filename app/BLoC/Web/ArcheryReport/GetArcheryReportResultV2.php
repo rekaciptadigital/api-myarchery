@@ -103,7 +103,7 @@ class GetArcheryReportResultV2 extends Retrieval
                         ->orderBy("archery_master_team_categories.short", "ASC")->get();
                     if (!$team_category) throw new BLoCException("tidak ada data team category terdaftar untuk event tersebut");
 
-                    
+
                     foreach ($team_category as $team) {
                         // $team->category_detail_id = 108;
                         $category_detail = ArcheryEventCategoryDetail::find($team->category_detail_id);
@@ -118,7 +118,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
                         if($qualification_time) {
                             // $id[] = $category_detail->id;
-                            // if (!empty($data_qualification)) {
+                            if (!empty($data_qualification)) {
                                 $category_of_team = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
                                 if (!$category_of_team) throw new BLoCException("team category not found");
 
@@ -233,23 +233,31 @@ class GetArcheryReportResultV2 extends Retrieval
                                     if (!empty($data_report[0])) {
         
                                         $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_detail->id)->first();
-                                        // print bagan eliminasi hide dulu
-                                        // $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
+                                        $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
                                 
-                                        // if ($data_graph) {
-                                            // if ($elimination->count_participant == 16) {
-                                            //     $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
-                                            //     $view_path = 'report_result/graph_sixteen';
-                                            //     $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                            // } else if ($elimination->count_participant == 8) {
-                                            //     $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
-                                            //     $view_path = 'report_result/graph_eight';
-                                            //     $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                            // } else {
-                                            //     continue;
-                                            // }
+                                        if ($data_elimination['updated'] == false) {
+                                            if ($elimination_individu->count_participant == 32) {
+                                                $data_graph_individu = EliminationFormatPDFV2::getViewDataGraphIndividuOfBigTwentyTwo($data_elimination);
+                                                $view_path = 'report_result/elimination_graph/individu/graph_thirtytwo';
+                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                                $pages[] = EliminationFormatPDFV2::renderPageGraphIndividuOfBigTwentyTwo($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                                            } else if ($elimination_individu->count_participant == 16) {
+                                                if ($data_graph) {
+                                                    $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
+                                                    $view_path = 'report_result/graph_sixteen';
+                                                    $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                                }
+                                            } else if ($elimination_individu->count_participant == 8) {
+                                                if ($data_graph) {
+                                                    $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
+                                                    $view_path = 'report_result/graph_eight';
+                                                    $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
+                                                }
+                                            } else {
+                                                continue;
+                                            }
                                             
-                                        // }
+                                        }
     
                                         $pages[] = view('report_result/all_results_individu', [
                                             'data_report' => $data_qualification,
@@ -306,9 +314,9 @@ class GetArcheryReportResultV2 extends Retrieval
                                 
                                 // ------------------------------------------ END ALL RESULTS ------------------------------------------ //
                                 
-                            // } else {
-                            //     continue;
-                            // }
+                            } else {
+                                continue;
+                            }
                         } else {
                             continue;
                         }
@@ -320,7 +328,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
         $pdf = PDFv2::loadView('report_result/all', ['pages' => $pages]);
         $pdf->setOptions([
-            'margin-top'    => 5,
+            'margin-top'    => 8,
             'margin-bottom' => 1,
             'page-size'     => 'a4',
             'orientation'   => 'portrait',
