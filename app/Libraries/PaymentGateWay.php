@@ -252,6 +252,7 @@ class PaymentGateWay
             ]);
 
             ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $participant_member->id, "individual");
+            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id,$user->id);
         }
     }
 
