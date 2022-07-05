@@ -14,6 +14,7 @@ use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
+use App\Models\ArcherySeriesUserPoint;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
 use App\Models\User;
