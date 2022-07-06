@@ -40,7 +40,7 @@ table, th, td {
                 <th colspan="{{ $value[0]['count_colspan'] }}" style="text-align: center;"><strong>{{ $key }}</strong></th>
                 @endforeach
                 <!-- foreach -->
-                <th rowspan="3" style="text-align: center;"><strong>TOTAL</strong></th>
+                <th rowspan="2" colspan="3" style="text-align: center;"><strong>TOTAL</strong></th>
             </tr>
             <tr>
                 @foreach ($headers as $key2 => $value2)
@@ -59,6 +59,9 @@ table, th, td {
                     @endforeach
                 @endforeach
                 <!-- endforeach -->
+                <th style="text-align:center;">E</th>
+                <th style="text-align:center;">P</th>
+                <th style="text-align:center;">PR</th>
             </tr>
             
             @php ($i = 1)
