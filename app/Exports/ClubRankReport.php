@@ -23,7 +23,8 @@ class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
     public function view(): View
     {
         return view('reports.club_rank', [
-            'data' => $this->data['title_header']['category']
+            'headers' => $this->data['title_header']['category'],
+            'datatables' => $this->data['datatable']
         ]);
     }
 

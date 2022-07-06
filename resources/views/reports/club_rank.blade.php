@@ -36,14 +36,14 @@ table, th, td {
                 <th rowspan="3" style="text-align: center;"><strong>NO</strong></th>
                 <th rowspan="3" style="text-align: center;"><strong>KLUB/KONTINGEN</strong></th>
                 <!-- foreach -->
-                @foreach ($data as $key => $value)
+                @foreach ($headers as $key => $value)
                 <th colspan="{{ $value[0]['count_colspan'] }}" style="text-align: center;"><strong>{{ $key }}</strong></th>
                 @endforeach
                 <!-- foreach -->
                 <th rowspan="3" style="text-align: center;"><strong>TOTAL</strong></th>
             </tr>
             <tr>
-                @foreach ($data as $key2 => $value2)
+                @foreach ($headers as $key2 => $value2)
                     @foreach ($value2['age_category'] as $key3 => $value3)
                         <th colspan="3" style="text-align:center;">{{ $key3 }}</th>
                     @endforeach
@@ -51,7 +51,7 @@ table, th, td {
             </tr>
             <tr>
                 <!-- foreach -->
-                @foreach ($data as $key => $value2)
+                @foreach ($headers as $key => $value2)
                     @foreach ($value2['age_category'] as $key => $value3)
                         <th style="text-align:center;">E</th>
                         <th style="text-align:center;">P</th>
@@ -62,7 +62,7 @@ table, th, td {
             </tr>
             
             @php ($i = 1)
-            @foreach ($data as $key => $data)
+            @foreach ($datatables as $key => $data)
             <tr>
                
             </tr>

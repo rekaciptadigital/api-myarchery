@@ -65,7 +65,7 @@ class GetArcheryReportClubRanked extends Retrieval
         $detail_club_with_medal_response = []; 
         foreach ($data as $key => $d) { 
             $detail_club_with_medal_response["club_name"] = $d["club_name"]; 
-            
+
             foreach ($competition_category as $competition) { 
                 $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id) 
                     ->where("competition_category_id", $competition->competition_category) 
@@ -91,14 +91,14 @@ class GetArcheryReportClubRanked extends Retrieval
             } 
             array_push($result, $detail_club_with_medal_response);
         }
-        return ($result); die;
+        // return ($result); die;
 
         $file_name = "CLUB_RANK_". $event_id .'_'.date("YmdHis");
         $final_doc = '/club_rank/'.$event_id.'/'.$file_name.'.xlsx';
     
         $data = [
             'title_header' => $title_header,
-            'datatable' => null,
+            'datatable' => $result,
         ];
 
         $excel = new ClubRankReport($data);
