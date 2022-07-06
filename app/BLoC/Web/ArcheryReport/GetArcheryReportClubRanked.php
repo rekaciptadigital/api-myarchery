@@ -55,7 +55,11 @@ class GetArcheryReportClubRanked extends Retrieval
         $result = [];
         $detail_club_with_medal_response = [];
         foreach ($data as $key => $d) {
+            // return $d;
             $detail_club_with_medal_response["club_name"] = $d["club_name"];
+            $detail_club_with_medal_response["total_gold"] = $d["gold"];
+            $detail_club_with_medal_response["total_silver"] = $d["silver"];
+            $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
 
             foreach ($competition_category as $competition) {
                 $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)

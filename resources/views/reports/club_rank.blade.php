@@ -79,6 +79,9 @@
                     @foreach ($data['medal_array'] as $item)
                         <td style="text-align:center;">{{ $item }}</td>
                     @endforeach
+                    <td>{{ $data['total_gold'] }}</td>
+                    <td>{{ $data['total_silver'] }}</td>
+                    <td>{{ $data['total_bronze'] }}</td>
                 </tr>
                 @php($i++)
             @endforeach
