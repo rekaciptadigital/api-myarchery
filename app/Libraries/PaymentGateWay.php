@@ -14,6 +14,7 @@ use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ClubMember;
+use App\Models\ArcherySeriesUserPoint;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
 use App\Models\User;
@@ -252,6 +253,7 @@ class PaymentGateWay
             ]);
 
             ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $participant_member->id, "individual");
+            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id,$user->id);
         }
     }
 

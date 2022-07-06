@@ -55,7 +55,7 @@ class GetEventEliminationTemplate extends Retrieval
         return [];
     }
 
-    private function getTemplateIndividu($category)
+    public function getTemplateIndividu($category)
     {
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
@@ -86,7 +86,8 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.match",
             "archery_event_elimination_matches.win",
             "archery_event_elimination_matches.bud_rest",
-            "archery_event_elimination_matches.target_face"
+            "archery_event_elimination_matches.target_face",
+            "archery_event_elimination_matches.result"
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
@@ -139,6 +140,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "total_scoring" => $total_scoring,
                         "status" => $value->win == 1 ? "win" : "wait",
                         "admin_total" => $admin_total,
+                        "result" => $value->result,
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                     );
@@ -168,7 +170,7 @@ class GetEventEliminationTemplate extends Retrieval
         return $template;
     }
 
-    private function getTemplateTeam($category_team)
+    public function getTemplateTeam($category_team)
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
         $elimination_id = 0;

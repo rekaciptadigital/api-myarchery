@@ -112,7 +112,7 @@ use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
-use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportResultV2;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2;
 use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
 use App\BLoC\Web\BudRest\GetBudRestV2;
@@ -143,8 +143,8 @@ use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
 use App\BLoC\Web\EventElimination\CleanScoringQualification;
-use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -249,7 +249,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("refund", Refund::class);
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
-        $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
+        $this->registerService("getArcheryReportResult", GetArcheryReportResultV2::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 

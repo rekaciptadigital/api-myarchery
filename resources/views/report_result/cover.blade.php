@@ -34,15 +34,15 @@
     </div>
     <div style="margin-bottom: 300px;"></div>
     <div class="box-bottom">
-        <strong style="text-align: left; font-size: 25pt; font-family: helvetica;">{!! $event_name !!}</strong><br></br>
+        <strong style="text-align: left; font-size: 25pt; font-family: helvetica;">{!! $event_name_report !!}</strong><br></br>
         <hr style="height:3px;border:none;color:black;background-color:black;" >
         <table style="width: 100%; height: 40px;" border="0">
                 <tbody>
                     <tr style="height: 20px;">
                         <td style="width: 75%; height: 20px; ">
                             <p style="text-align: left; font-size: 20pt; font-family: helvetica;">
-                                {!! $event_location !!}<br><br />
-                                {!! $event_date !!}
+                                {!! $event_location_report !!}<br><br />
+                                {!! $event_date_report !!}
                             </p>
                         </td>
                         <td style="width: 10%;"></td>
