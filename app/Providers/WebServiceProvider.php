@@ -145,6 +145,7 @@ use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
 use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -254,6 +255,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
+        $this->registerService("getArcheryReportClubRanked", GetArcheryReportClubRanked::class);
 
         // ============================ Api v2 =======================================
         // ========================== event =================================
