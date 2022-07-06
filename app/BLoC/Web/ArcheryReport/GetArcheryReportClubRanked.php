@@ -61,47 +61,37 @@ class GetArcheryReportClubRanked extends Retrieval
             array_push($title_header['category'][$competition->competition_category], $count_colspan);
         }
 
-        // dapat list club yang joint event baik individu maupun beregu
-        // $clubs = ArcheryClub::all();
-        // $list_club_join_event = [];
-        // foreach ($clubs as $key => $club) {
-        //     $participant = ArcheryEventParticipant::where("event_id", $event_id)->where("status", 1)->where("club_id", $club->id)->first();
-        //     if ($participant) {
-        //         $list_club_join_event[] = $club;
-        //     }
-        // }
+        $result =[];
+        $detail_club_with_medal_response = []; 
+        foreach ($data as $key => $d) { 
+            $detail_club_with_medal_response["club_name"] = $d["club_name"]; 
+            
+            foreach ($competition_category as $competition) { 
+                $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id) 
+                    ->where("competition_category_id", $competition->competition_category) 
+                    ->orderBy('competition_category_id', 'DESC')->get(); 
 
-        // $category_events = ArcheryEventCategoryDetail::select('id', 'session_in_qualification', 'team_category_id', 'age_category_id', 'competition_category_id','distance_id')->where("event_id", $event_id)
-        //     ->where("is_show", 1)
-        //     ->get()
-        //     ->groupBy(["competition_category_id", "age_category_id"]);
-
-        // $list_club_with_medal = [];
-        // foreach ($list_club_join_event as $key => $club) {
-        //     $detail_club_with_medal = [];
-        //     $detail_club_with_medal["club_name"] = $club->name;
-        //     $total_gold_medal = 0;
-        //     $total_silver_medal = 0;
-        //     $total_bronze_medal = 0;
-        //     $list_medal = [];
-        //     foreach ($category_events as $key1 => $value1) {
-        //         foreach ($value1 as $key2 => $value2) {
-        //             foreach ($value2 as $key3 => $value3) {
-        //                 $qualification_medal = $this->getClubMedalQualificationIndividualAndTeam($club->id, $value3);
-        //                 $total_gold_medal = $total_gold_medal + $qualification_medal["gold"];
-        //                 $total_silver_medal = $total_silver_medal + $qualification_medal["silver"];
-        //                 $total_bronze_medal = $total_bronze_medal + $qualification_medal["bronze"];
-        //             }
-        //         }
-        //     }
-
-        //     $detail_club_with_medal["total_gold_medal"] = $total_gold_medal;
-        //     $detail_club_with_medal["total_silver_medal"] = $total_silver_medal;
-        //     $detail_club_with_medal["total_bronze_medal"] = $total_bronze_medal;
-        //     array_push($list_club_with_medal, $detail_club_with_medal);
-        // }
-
-        // return $list_club_with_medal; die;
+                foreach ($age_category as $age) { 
+                    $gold = 0; 
+                    $silver = 0; 
+                    $bronze = 0; 
+ 
+                    if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) { 
+                        $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0; 
+                        $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0; 
+                        $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0; 
+                    }; 
+     
+                    $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [ 
+                        "gold" => $gold, 
+                        "silver" => $silver, 
+                        "bronze" => $bronze 
+                    ]; 
+                } 
+            } 
+            array_push($result, $detail_club_with_medal_response);
+        }
+        return ($result); die;
 
         $file_name = "CLUB_RANK_". $event_id .'_'.date("YmdHis");
         $final_doc = '/club_rank/'.$event_id.'/'.$file_name.'.xlsx';
