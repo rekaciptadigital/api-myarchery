@@ -17,13 +17,13 @@ class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
     public function __construct($data)
     {
          $this->data = $data;
-         dd($data);
+        //  dd($data);
     }
 
     public function view(): View
     {
-        return view('reports.dashboard_dos.qualification.individual', [
-            'title_header' => $this->data['title_header']
+        return view('reports.club_rank', [
+            'data' => $this->data['title_header']['category']
         ]);
     }
 
@@ -40,13 +40,7 @@ class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
     {
         return [
             'A' => 10,
-            'B' => 30,            
-            'C' => 20,   
-            'D' => 15,
-            'E' => 25,
-            'F' => 15,
-            'G' => 10,
-            'H' => 20
+            'B' => 40,
         ];
     }
 }

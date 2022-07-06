@@ -22,7 +22,7 @@ table, th, td {
     <td colspan="8"
                     style="text-align: left; font-size: 13; color: #000000; font-weight: bold; white-space: pre-line">
                      
-                    <strong>MEDALS STANDING {{ $event_name }}</strong></td>
+                    <strong>MEDALS STANDING</strong></td>
                    
     </table>
     <table style="width: 100%; height: 70px;" border="0"><td colspan="6"></td></table>
@@ -33,27 +33,36 @@ table, th, td {
         <thead></thead>
         <tbody>
             <tr >
-                <th rowspan="3" style="text-align: center; background: #FFFF00;"><strong>NO</strong></th>
-                <th rowspan="3" style="text-align: center; background: #FFFF00;"><strong>KLUB/KONTINGEN</strong></th>
+                <th rowspan="3" style="text-align: center;"><strong>NO</strong></th>
+                <th rowspan="3" style="text-align: center;"><strong>KLUB/KONTINGEN</strong></th>
                 <!-- foreach -->
-                @foreach ($data['deta'])
-                <th colspan="variable" style="text-align: center; background: #FFFF00;"><strong>Recurve</strong></th>
+                @foreach ($data as $key => $value)
+                <th colspan="{{ $value[0]['count_colspan'] }}" style="text-align: center;"><strong>{{ $key }}</strong></th>
+                @endforeach
                 <!-- foreach -->
-                <th rowspan="3" style="text-align: center; background: #FFFF00;"><strong>TOTAL</strong></th>
+                <th rowspan="3" style="text-align: center;"><strong>TOTAL</strong></th>
             </tr>
             <tr>
-                <th colspan="3" style="text-align:center; background: #ffd68a;">U-12</th>
+                @foreach ($data as $key2 => $value2)
+                    @foreach ($value2['age_category'] as $key3 => $value3)
+                        <th colspan="3" style="text-align:center;">{{ $key3 }}</th>
+                    @endforeach
+                @endforeach
             </tr>
             <tr>
                 <!-- foreach -->
-                <th style="text-align:center; background: #ffd68a;">E</th>
-                <th style="text-align:center; background: #ffd68a;">P</th>
-                <th style="text-align:center; background: #ffd68a;">PR</th>
+                @foreach ($data as $key => $value2)
+                    @foreach ($value2['age_category'] as $key => $value3)
+                        <th style="text-align:center;">E</th>
+                        <th style="text-align:center;">P</th>
+                        <th style="text-align:center;">PR</th>
+                    @endforeach
+                @endforeach
                 <!-- endforeach -->
             </tr>
             
             @php ($i = 1)
-            @foreach ($datas as $key => $data)
+            @foreach ($data as $key => $data)
             <tr>
                
             </tr>

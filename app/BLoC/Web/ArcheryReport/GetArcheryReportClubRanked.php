@@ -13,6 +13,8 @@ use App\Models\ArcheryScoring;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Exports\ClubRankReport;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 class GetArcheryReportClubRanked extends Retrieval
 {
@@ -45,15 +47,19 @@ class GetArcheryReportClubRanked extends Retrieval
                 ->orderBy('competition_category_id', 'DESC')->get();
 
             foreach ($age_category as $age) {
-                $title_header[$competition->competition_category][$age->age_category] = [
+                $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
                     'gold' => null,
                     'silver' => null,
                     'bronze' => null,
                 ];
             } 
-        }
 
-        return $title_header; die;
+            // colspan header title
+            $count_colspan = [
+                'count_colspan' => count($age_category)*3
+            ];
+            array_push($title_header['category'][$competition->competition_category], $count_colspan);
+        }
 
         // dapat list club yang joint event baik individu maupun beregu
         // $clubs = ArcheryClub::all();
