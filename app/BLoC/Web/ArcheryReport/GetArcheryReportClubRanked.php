@@ -27,15 +27,6 @@ class GetArcheryReportClubRanked extends Retrieval
     {
         $event_id = $parameters->get("event_id");
         $data = ClubRanked::getEventRanked($event_id);
-        // return $data;
-        foreach ($data as $key => $value) {
-            // return $value; die;
-            // return count($value['detail_medal']['category']); die;
-            foreach ($value['detail_medal']['category'] as $key => $value2) {
-                // return count($value2); die;
-
-            }
-        }
 
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
@@ -115,98 +106,4 @@ class GetArcheryReportClubRanked extends Retrieval
             'event_id' => 'required'
         ];
     }
-
-    private function getClubMedalQualificationIndividualAndTeam($club_id, $category)
-    {
-        $gold_medal = 0;
-        $silver_medal = 0;
-        $bronze_medal = 0;
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
-        if ($category->categoryTeam == "Individual") {
-            $member_rank = ArcheryScoring::getScoringRankByCategoryId($category, 1, $session, false, null, true);
-            foreach ($member_rank as $key => $mr) {
-                if ($mr["club_id"] == $club_id) {
-                    if ($key + 1 == 1) {
-                        $gold_medal = $gold_medal + 1;
-                    }
-
-                    if ($key + 1 == 2) {
-                        $silver_medal = $silver_medal + 1;
-                    }
-
-                    if ($key + 1 == 3) {
-                        $bronze_medal = $bronze_medal + 1;
-                    }
-                }
-            }
-        } else {
-            $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category->id);
-            if (!$elimination_group) {
-                if ($category->team_category_id == "mix_team") {
-                    $mix_team_rank = ArcheryScoring::teamBestOfThree($category);
-                    foreach ($mix_team_rank as $key_club => $mtr) {
-                        if ($mtr["club_id"] == $club_id) {
-                            if ($key_club + 1 == 1) {
-                                $gold_medal = $gold_medal + 1;
-                            }
-
-                            if ($key_club + 1 == 2) {
-                                $silver_medal = $silver_medal + 1;
-                            }
-
-                            if ($key_club + 1 == 3) {
-                                $bronze_medal = $bronze_medal + 1;
-                            }
-                        }
-                    }
-                } else {
-                    $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
-                    if (!$team_category) {
-                        throw new BLoCException("team category not found");
-                    }
-                    $team_cat = ($category->team_category_id) == "male_team" ? "individu male" : "individu female";
-                    $category_detail_individu = ArcheryEventCategoryDetail::select('id', 'session_in_qualification')->where("event_id", $category->event_id)
-                        ->where("age_category_id", $category->age_category_id)
-                        ->where("competition_category_id", $category->competition_category_id)
-                        ->where("distance_id", $category->distance_id)
-                        ->where("team_category_id", $team_cat)
-                        ->first();
-
-                    if (!$category_detail_individu) {
-                        throw new BLoCException("category individu tidak ditemukan");
-                    }
-                    $team = ArcheryScoring::mixTeamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category->id);
-                    foreach ($team as $key_team => $t) {
-                        if ($t["club_id"] == $club_id) {
-                            if ($t + 1 == 1) {
-                                $gold_medal = $gold_medal + 1;
-                            }
-
-                            if ($t + 1 == 2) {
-                                $silver_medal = $silver_medal + 1;
-                            }
-
-                            if ($t + 1 == 3) {
-                                $bronze_medal = $bronze_medal + 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return [
-            "club_id" => $club_id,
-            "gold" => $gold_medal,
-            "silver" => $silver_medal,
-            "bronze" => $bronze_medal
-        ];
-    }
-
-    // private function getClubMedalEliminationIndividualAndTeam($club_id, $category){
-    //     ArcheryEventElimination::
-    // }
 }
