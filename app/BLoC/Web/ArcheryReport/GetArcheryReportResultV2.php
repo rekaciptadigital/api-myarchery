@@ -34,7 +34,7 @@ use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
-
+use App\Libraries\ClubRanked;
 
 class GetArcheryReportResultV2 extends Retrieval
 {
@@ -74,6 +74,20 @@ class GetArcheryReportResultV2 extends Retrieval
             'event_location_report' => $event_location_report
         ]);
         // ------------------------------------------ END PRINT COVER ------------------------------------------ //
+
+        // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
+        $data_medal_standing = $this->getMedalStanding($event_id);
+        // return $data_medal_standing['title_header']['category']; die;
+        $pages[] = view('report_result/club_rank_medals_standing', [
+            'logo_event' => $logo_event,
+            'logo_archery' => $logo_archery,
+            'event_name_report' => $event_name_report,
+            'event_date_report' => $event_date_report,
+            'event_location_report' => $event_location_report,
+            'headers' => $data_medal_standing['title_header']['category'],
+            'datatables' => $data_medal_standing['datatable']
+        ]);
+        // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
             // $competition->competition_category = 'Compound';
@@ -349,6 +363,88 @@ class GetArcheryReportResultV2 extends Retrieval
         return [
             "event_id" => 'required|integer'
         ];
+    }
+
+    protected function getMedalStanding($event_id)
+    {
+        $data = ClubRanked::getEventRanked($event_id);
+
+        $title_header = array();
+        $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
+            ->orderBy('competition_category_id', 'DESC')->get();
+
+        foreach ($competition_category as $competition) {
+            $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+                ->where("competition_category_id", $competition->competition_category)
+                ->orderBy('competition_category_id', 'DESC')->get();
+
+            foreach ($age_category as $age) {
+                $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                    'gold' => null,
+                    'silver' => null,
+                    'bronze' => null,
+                ];
+            }
+
+            // colspan header title
+            $count_colspan = [
+                'count_colspan' => count($age_category) * 3
+            ];
+            array_push($title_header['category'][$competition->competition_category], $count_colspan);
+        }
+
+        $result = [];
+        $detail_club_with_medal_response = [];
+        foreach ($data as $key => $d) {
+            $detail_club_with_medal_response["club_name"] = $d["club_name"];
+            $detail_club_with_medal_response["total_gold"] = $d["gold"];
+            $detail_club_with_medal_response["total_silver"] = $d["silver"];
+            $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+
+            foreach ($competition_category as $competition) {
+                $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+                    ->where("competition_category_id", $competition->competition_category)
+                    ->orderBy('competition_category_id', 'DESC')->get();
+
+                foreach ($age_category as $age) {
+                    $gold = 0;
+                    $silver = 0;
+                    $bronze = 0;
+
+                    if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                        $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
+                        $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
+                        $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
+                    };
+
+                    $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                        "gold" => $gold,
+                        "silver" => $silver,
+                        "bronze" => $bronze
+                    ];
+                }
+            }
+            $medal_array = [];
+            foreach ($detail_club_with_medal_response["category"] as $c) {
+                foreach ($c as $a) {
+                    foreach ($a as $s) {
+                        foreach ($s as $b) {
+                            array_push($medal_array, $b);
+                        }
+                    }
+                }
+            }
+            $detail_club_with_medal_response["medal_array"] = $medal_array;
+            array_push($result, $detail_club_with_medal_response);
+        }
+
+        $response = [
+            'title_header' => $title_header,
+            'datatable' => $result,
+        ];
+
+        return $response;
+
     }
 
     protected function getData($category_detail_id, $type, $event_id)
