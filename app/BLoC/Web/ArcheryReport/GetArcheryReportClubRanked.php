@@ -28,6 +28,8 @@ class GetArcheryReportClubRanked extends Retrieval
         $event_id = $parameters->get("event_id");
         $data = ClubRanked::getEventRanked($event_id);
 
+        // return $data;
+
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -96,10 +98,35 @@ class GetArcheryReportClubRanked extends Retrieval
                 }
             }
             $detail_club_with_medal_response["medal_array"] = $medal_array;
-            // return $detail_club_with_medal_response;
             array_push($result, $detail_club_with_medal_response);
         }
-        // return ($result); die;
+
+        $coun_modal_array = count($result[0]["medal_array"]);
+        $array_of_total_medal_by_category = [];
+
+        for ($i = 0; $i < $coun_modal_array; $i++) {
+            $total_medal_by_category = 0;
+            foreach ($result as $key1 => $value1) {
+                $total_medal_by_category += $value1["medal_array"][$i];
+            }
+            $array_of_total_medal_by_category[] = $total_medal_by_category;
+        }
+
+        // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
+        $array_of_total_medal_by_category_all_club = [];
+        $total_medal_by_category_gold = 0;
+        $total_medal_by_category_silver = 0;
+        $total_medal_by_category_bronze = 0;
+        for ($k = 0; $k < count($result); $k++) {
+            $total_medal_by_category_gold += $result[$k]['total_gold'];
+            $total_medal_by_category_silver += $result[$k]['total_silver'];
+            $total_medal_by_category_bronze += $result[$k]['total_bronze'];
+        }
+        $array_of_total_medal_by_category_all_club = [
+            'gold' => $total_medal_by_category_gold,
+            'silver' => $total_medal_by_category_silver,
+            'bronze' => $total_medal_by_category_bronze
+        ];
 
         $file_name = "CLUB_RANK_" . $event_id . '_' . date("YmdHis");
         $final_doc = '/club_rank/' . $event_id . '/' . $file_name . '.xlsx';
@@ -107,6 +134,8 @@ class GetArcheryReportClubRanked extends Retrieval
         $data = [
             'title_header' => $title_header,
             'datatable' => $result,
+            'array_of_total_medal_by_category' => $array_of_total_medal_by_category,
+            'array_of_total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
         ];
 
         $excel = new ClubRankReport($data);
