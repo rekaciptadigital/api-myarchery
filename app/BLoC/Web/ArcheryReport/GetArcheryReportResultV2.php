@@ -85,7 +85,9 @@ class GetArcheryReportResultV2 extends Retrieval
             'event_date_report' => $event_date_report,
             'event_location_report' => $event_location_report,
             'headers' => $data_medal_standing['title_header']['category'],
-            'datatables' => $data_medal_standing['datatable']
+            'datatables' => $data_medal_standing['datatable'],
+            'total_medal_by_category' => $data_medal_standing['total_medal_by_category'], 
+            'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
         ]);
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
@@ -438,9 +440,40 @@ class GetArcheryReportResultV2 extends Retrieval
             array_push($result, $detail_club_with_medal_response);
         }
 
+        // start: total medal emas, perak, perunggu dari setiap kategori semua klub
+        $array_of_total_medal_by_category = []; 
+        $total_array_category = count($result[0]['medal_array']);
+        for ($i = 0; $i < $total_array_category; $i++) {
+            $total_medal_by_category = 0;
+            for ($j = 0; $j < count($result); $j++) {
+                $total_medal_by_category += $result[$j]['medal_array'][$i];
+            }
+            array_push($array_of_total_medal_by_category, $total_medal_by_category);
+        }
+        // end: total medal emas, perak, perunggu dari setiap kategori semua klub
+
+        // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
+        $array_of_total_medal_by_category_all_club = [];
+        $total_medal_by_category_gold = 0;
+        $total_medal_by_category_silver = 0;
+        $total_medal_by_category_bronze = 0;
+        for ($k = 0; $k < count($result); $k++) {
+            $total_medal_by_category_gold += $result[$k]['total_gold'];
+            $total_medal_by_category_silver += $result[$k]['total_silver'];
+            $total_medal_by_category_bronze += $result[$k]['total_bronze'];
+        }
+        $array_of_total_medal_by_category_all_club = [
+            'gold' => $total_medal_by_category_gold, 
+            'silver' => $total_medal_by_category_silver, 
+            'bronze' => $total_medal_by_category_bronze
+        ];
+        // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
+
         $response = [
             'title_header' => $title_header,
             'datatable' => $result,
+            'total_medal_by_category' => $array_of_total_medal_by_category, 
+            'total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
         ];
 
         return $response;
