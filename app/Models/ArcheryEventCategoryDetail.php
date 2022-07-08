@@ -66,8 +66,10 @@ class ArcheryEventCategoryDetail extends Model
             }
         }
 
+
+        $end_date_event = $this->end_event;
         $can_update_series = 0;
-        if (Carbon::now() <  $this->end_event && $have_series == 1) {
+        if (date("Y-m-d H:i:s") <= date('Y-m-d H:i:s', strtotime($end_date_event . env("CAN_UPDATE_SERIES"))) && $have_series == 1) {
             $can_update_series = 1;
         }
         $output = [
