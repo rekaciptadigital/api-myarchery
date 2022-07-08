@@ -1,22 +1,23 @@
 <?php
+
 namespace App\Exports;
 
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\WithHeadings; 
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\Storage;
 
 class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
 {
     use Exportable;
-    
+
     private $data;
 
     public function __construct($data)
     {
-         $this->data = $data;
+        $this->data = $data;
         //  dd($data);
     }
 
@@ -24,7 +25,9 @@ class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
     {
         return view('reports.club_rank', [
             'headers' => $this->data['title_header']['category'],
-            'datatables' => $this->data['datatable']
+            'datatables' => $this->data['datatable'],
+            'array_of_total_medal_by_category' => $this->data['array_of_total_medal_by_category'],
+            'array_of_total_medal_by_category_all_club' => $this->data['array_of_total_medal_by_category_all_club']
         ]);
     }
 
@@ -32,8 +35,8 @@ class ClubRankReport implements FromView, WithColumnWidths, WithHeadings
     {
         return [
             'A' => 10,
-            'B' => 10, 
-            'C' => 85          
+            'B' => 10,
+            'C' => 85
         ];
     }
 

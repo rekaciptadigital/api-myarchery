@@ -26,30 +26,28 @@ class GetListDownloadCertificate extends Retrieval
   {
     $user = Auth::guard('app-api')->user();
 
-    $events = ArcheryEventParticipantMember::select(
-                                                    "archery_event_participants.event_id"
-                                                    )->join("archery_event_participants","archery_event_participant_members.archery_event_participant_id","=","archery_event_participants.id")
-                    ->join("archery_events","archery_event_participants.event_id","=","archery_events.id")
-                    ->where("archery_event_participants.type","individual")
-                    ->where("archery_event_participant_members.user_id",$user["id"])
-                    ->where("archery_event_participants.status",1)
-                    ->where("archery_event_participants.status",1)
-                    ->groupBy("archery_event_participants.event_id")
-                    ->orderBy("archery_events.event_end_datetime","DESC")
-                    ->get();
-    
+    $events = ArcheryEventParticipantMember::select("archery_event_participants.event_id")
+      ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+      ->join("archery_events", "archery_event_participants.event_id", "=", "archery_events.id")
+      ->where("archery_event_participants.type", "individual")
+      ->where("archery_event_participant_members.user_id", $user["id"])
+      ->where("archery_event_participants.status", 1)
+      ->where("archery_event_participants.status", 1)
+      ->groupBy("archery_event_participants.event_id")
+      ->orderBy("archery_events.event_end_datetime", "DESC")
+      ->get();
+
     $output = [];
     foreach ($events as $key => $value) {
       $event = ArcheryEvent::find($value->event_id);
-      $certificate = ArcheryMemberCertificate::prepareUserCertificate($event->id,$user["id"]);
-      if(!empty($certificate)){
+      $certificate = ArcheryMemberCertificate::prepareUserCertificate(22, $user["id"]);
+      if (!empty($certificate)) {
         $output[] = [
           "event_id" => $event->id,
           "event_name" => $event->event_name,
           "certificates" => $certificate
         ];
       }
-      
     }
     // $participant_id = $parameters->get('participant_id');
     // $user = Auth::guard('app-api')->user();
@@ -57,7 +55,7 @@ class GetListDownloadCertificate extends Retrieval
 
     // $member=ArcheryEventParticipant::getMemberByUserId($user['id'],$participant_id);
     // if(!$member)throw new BLoCException("anda tidak mengikuti event ini");
-    
+
     // $event_id = $member->event_id;
     // $member_id = $member->id;
 
@@ -97,5 +95,4 @@ class GetListDownloadCertificate extends Retrieval
 
     return $output;
   }
-
 }
