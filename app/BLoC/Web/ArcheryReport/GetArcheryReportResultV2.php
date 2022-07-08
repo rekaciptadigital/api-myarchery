@@ -66,7 +66,7 @@ class GetArcheryReportResultV2 extends Retrieval
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
         $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/logo-event-series-2.png").'" alt="" width="25%"></img>';
         $logo_archery_cover = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="60%"></img>';
-        $pages[] = view('report_result/cover', [
+        $cover_page = view('report_result/cover', [
             'cover_event' => $logo_event_cover,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
@@ -74,6 +74,12 @@ class GetArcheryReportResultV2 extends Retrieval
             'event_location_report' => $event_location_report
         ]);
         // ------------------------------------------ END PRINT COVER ------------------------------------------ //
+
+
+        // ------------------------------------------ PRINT FOOTER ------------------------------------------ //
+        $footer_html = view('report_result/footer');
+        // ------------------------------------------ END PRINT FOOTER ------------------------------------------ //
+        
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
@@ -208,8 +214,26 @@ class GetArcheryReportResultV2 extends Retrieval
                                     }
                                     
                                     if (strtolower($category_of_team->type) == "team") {
-                                        if ($data_elimination['updated'] != false) {
-                                            $pages[] = view('report_result/qualification_team', [
+                                        if (!empty($data_elimination_team)) {
+                                            // print qualification team yang ada round eliminasi
+                                            if ($data_elimination['updated'] != false) {
+                                                $pages[] = view('report_result/qualification_team', [
+                                                    'data_report' => $data_qualification,
+                                                    'competition' => $competition->competition_category,
+                                                    'report' => $report,
+                                                    'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                                    'logo_event' => $logo_event,
+                                                    'logo_archery' => $logo_archery,
+                                                    'type' => ucfirst($type),
+                                                    'event_name_report' => $event_name_report,
+                                                    'event_date_report' => $event_date_report,
+                                                    'event_location_report' => $event_location_report
+                                                ]);
+                                                $data_report = array();
+                                            }
+                                        } else {
+                                            // print qualification team yang tidak ada round eliminasi (eliminasi = qualification)
+                                            $pages[] = view('report_result/qualification_team_without_elimination', [ 
                                                 'data_report' => $data_qualification,
                                                 'competition' => $competition->competition_category,
                                                 'report' => $report,
@@ -333,14 +357,20 @@ class GetArcheryReportResultV2 extends Retrieval
         $pdf = PDFv2::loadView('report_result/all', ['pages' => $pages]);
         $pdf->setOptions([
             'margin-top'    => 8,
-            'margin-bottom' => 1,
+            'margin-bottom' => 12,
             'page-size'     => 'a4',
             'orientation'   => 'portrait',
             'enable-javascript' => true,
             'javascript-delay' => 9000,
             'no-stop-slow-scripts' => true,
             'enable-smart-shrinking' => true,
-            'images' => true
+            'images' => true,
+            'cover' => $cover_page,
+            // 'header-html' => $header_html,
+            'footer-html' => $footer_html,
+            'toc' => true,
+            'toc-level-indentation' => '2rem',
+            'enable-toc-back-links' => true,
         ]);
 
         $digits = 3;
