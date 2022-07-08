@@ -28,6 +28,8 @@ class GetArcheryReportClubRanked extends Retrieval
         $event_id = $parameters->get("event_id");
         $data = ClubRanked::getEventRanked($event_id);
 
+        // return $data;
+
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -99,7 +101,21 @@ class GetArcheryReportClubRanked extends Retrieval
             // return $detail_club_with_medal_response;
             array_push($result, $detail_club_with_medal_response);
         }
-        // return ($result); die;
+
+        $coun_modal_array = count($result[0]["medal_array"]);
+        $array_of_total_medal_by_category = [];
+
+        for ($i = 0; $i < $coun_modal_array; $i++) {
+            $total_medal_by_category = 0;
+            foreach ($result as $key1 => $value1) {
+                $total_medal_by_category += $value1["medal_array"][$i];
+            }
+            $array_of_total_medal_by_category[] = $total_medal_by_category;
+        }
+
+        // $result["total_medal_per_category"] = $array_of_total_medal_by_category;
+
+        // return $result;
 
         $file_name = "CLUB_RANK_" . $event_id . '_' . date("YmdHis");
         $final_doc = '/club_rank/' . $event_id . '/' . $file_name . '.xlsx';
