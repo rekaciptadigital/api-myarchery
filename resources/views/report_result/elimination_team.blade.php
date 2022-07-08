@@ -54,8 +54,8 @@
       </table>
       <hr style="height:3px;border:none;color:black;background-color:black;" />
       <br>
-      <h1 style="text-align: center">{{$report}}</h1>
       <h1 style="text-align: center">{{$category}}</h1>
+      <h2 style="text-align: center">Elimination</h2>
       <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
         <thead>
           <!-- <tr><th>Table Heading</th></tr> -->

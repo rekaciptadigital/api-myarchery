@@ -252,8 +252,9 @@
                 </tr>
             </tbody>
         </table>
-        <hr style="height:3px;border:none;color:black;background-color:black;" /><br>
-        <h1 style="text-align: center;">{{ $category }}</h1>
+        <hr style="height:3px;border:none;color:black;background-color:black;" />
+        <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
+        <h2 style="text-align: center">Elimination & Final (Bracket)</h2>
         <div class="bracket">
             <section class="round best-32">
                 <div class="winners">
