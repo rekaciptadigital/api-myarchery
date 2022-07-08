@@ -32,7 +32,6 @@ class GetListDownloadCertificate extends Retrieval
       ->where("archery_event_participants.type", "individual")
       ->where("archery_event_participant_members.user_id", $user["id"])
       ->where("archery_event_participants.status", 1)
-      ->where("archery_event_participants.status", 1)
       ->groupBy("archery_event_participants.event_id")
       ->orderBy("archery_events.event_end_datetime", "DESC")
       ->get();
@@ -40,7 +39,7 @@ class GetListDownloadCertificate extends Retrieval
     $output = [];
     foreach ($events as $key => $value) {
       $event = ArcheryEvent::find($value->event_id);
-      $certificate = ArcheryMemberCertificate::prepareUserCertificate(22, $user["id"]);
+      $certificate = ArcheryMemberCertificate::prepareUserCertificate($event->id, $user["id"]);
       if (!empty($certificate)) {
         $output[] = [
           "event_id" => $event->id,
