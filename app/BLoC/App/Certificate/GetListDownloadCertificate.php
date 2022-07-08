@@ -40,7 +40,7 @@ class GetListDownloadCertificate extends Retrieval
     $output = [];
     foreach ($events as $key => $value) {
       $event = ArcheryEvent::find($value->event_id);
-      $certificate = ArcheryMemberCertificate::prepareUserCertificate(22, $user["id"]);
+      $certificate = ArcheryMemberCertificate::prepareUserCertificate($event->id, $user["id"]);
       if (!empty($certificate)) {
         $output[] = [
           "event_id" => $event->id,
