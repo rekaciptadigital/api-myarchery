@@ -44,7 +44,7 @@
                   </td>
                   <td style="width: 10%; height: 50px; ">
                       <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
-                          Medal<br />
+                          Medals<br />
                           Standing<br />
                       </p>
                   </td>
@@ -52,8 +52,8 @@
           </tbody>
       </table>
       <hr style="height:3px;border:none;color:black;background-color:black;" />
-      <h1 style="text-align: center">Medal Standing</h1>
-      <table  class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 10px; transform: rotate(270deg);" border="1">
+      <h1 style="text-align: center">Medals Standing</h1>
+      <table  class="table" style="width:100%; border-collapse: collapse; font-size: 14px;" border="1">
         <thead></thead>
         <tbody>
             <tr>
@@ -79,15 +79,15 @@
                 <!-- foreach -->
                 @foreach ($headers as $key => $value2)
                     @foreach ($value2['age_category'] as $key => $value3)
-                        <th style="text-align:center;">E</th>
-                        <th style="text-align:center;">P</th>
-                        <th style="text-align:center;">PR</th>
+                        <th style="text-align:center; background: #e7ac54; width:20px;">E</th>
+                        <th style="text-align:center; width:20px;">P</th>
+                        <th style="text-align:center; background: #b78458; width:20px;">PR</th>
                     @endforeach
                 @endforeach
                 <!-- endforeach -->
-                <th style="text-align:center;">E</th>
-                <th style="text-align:center;">P</th>
-                <th style="text-align:center;">PR</th>
+                <th style="text-align:center; background: #e7ac54; width:20px;">E</th>
+                <th style="text-align:center; width:20px;">P</th>
+                <th style="text-align:center; background: #b78458; width:20px;">PR</th>
             </tr>
 
             @php($i = 1)
@@ -96,14 +96,24 @@
                     <td style="text-align:center;">{{ $i }}</td>
                     <td>{{ $data['club_name'] }}</td>
                     @foreach ($data['medal_array'] as $item)
-                        <td style="text-align:center;">{{ $item }}</td>
+                        <td style="text-align:center;">{{ $item === 0 ? '' : $item }}</td>
                     @endforeach
-                    <td>{{ $data['total_gold'] }}</td>
-                    <td>{{ $data['total_silver'] }}</td>
-                    <td>{{ $data['total_bronze'] }}</td>
+                    <td style="text-align:center;">{{ $data['total_gold'] }}</td>
+                    <td style="text-align:center;">{{ $data['total_silver'] }}</td>
+                    <td style="text-align:center;">{{ $data['total_bronze'] }}</td>
                 </tr>
                 @php($i++)
             @endforeach
+
+            <tr>
+                <td colspan="2" style="text-align:center;"><strong>JUMLAH</strong></td>
+                @foreach ($total_medal_by_category as $value_medal_each_category)
+                    <td style="text-align:center;"><strong>{{ $value_medal_each_category }}</strong></td>
+                @endforeach
+                @foreach ($total_medal_by_category_all_club as $value_medal_total)
+                    <td style="text-align:center;"><strong>{{ $value_medal_total }}</strong></td>
+                @endforeach
+            </tr>
             <!-- <tr>
             <td colspan="3"></td>
         </tr> -->
