@@ -14,7 +14,7 @@
         page-break-inside: avoid;
         break-after:page;
 		float:none;
-    overflow: visible;
+        overflow: visible;
     }
 
     div.page.table {
@@ -54,7 +54,7 @@
       </table>
       <hr style="height:3px;border:none;color:black;background-color:black;" />
       <br>
-      <p style="text-align: center; font-size: 30px;"><strong>{{$category}}</strong></p>
+      <h1 style="text-align: center">{{$category}}</h1>
       <h2 style="text-align: center">Qualification</h2>
       <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
         <thead>
@@ -71,12 +71,6 @@
             <th style="text-align: center;border: 1px solid black; ">
               <strong>Club</strong>
             </th>
-            <th style="text-align: center;border: 1px solid black;">
-              <strong>Sesi 1</strong>
-            </th>
-            <th style="text-align: center; border: 1px solid black;">
-              <strong>Sesi 2</strong>
-            </th>
             <th style="text-align: center; border: 1px solid black;">
               <strong>Total</strong>
             </th>
@@ -88,36 +82,34 @@
             </th>
           </tr>
           @foreach ($data_report as $key => $data)
-            <tr style="border: 1px solid black;">
-              <!-- start initiate medals -->
-              @if ($key == 0)
-                @if ($data['medal'] == 'Gold')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
+            @if ($key <= 2)
+                @isset($data['teams'])
+                <tr style="border: 1px solid black;">
+                <!-- start initiate medals -->
+                @if ($key == 0)
+                    <td style="text-align: center;border: 1px solid black;">Gold</td>
+                @elseif ($key == 1)
+                    <td style="text-align: center;border: 1px solid black;">Silver</td>
                 @else
-                  <td style="text-align: left;border: 1px solid black;">Gold</td>
+                    <td style="text-align: center;border: 1px solid black;">Bronze </td>
                 @endif
-              @elseif ($key == 1)
-                @if ($data['medal'] == 'Silver')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-                @else
-                  <td style="text-align: left;border: 1px solid black;">Silver</td>
-                @endif
-              @else
-                @if ($data['medal'] == 'Bronze')
-                  <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}</td>
-                @else
-                  <td style="text-align: left;border: 1px solid black;">Bronze </td>
-                @endif
-              @endif
-              <!-- end medals -->
-              <td style="text-align: center;border: 1px solid black;">{{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['club'] ? $data['club'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['scoring']['sessions']['2'] ? $data['scoring']['sessions']['2']['total'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total_x'] : '-' }}</td>
-              <td style="text-align: center;border: 1px solid black;">{{ $data['scoring'] ? $data['scoring']['total_x_plus_ten'] : '-' }}</td>
-            </tr>
+                <!-- end medals -->
+                <td style="text-align: center;border: 1px solid black;">
+                            @if (sizeof($data['teams']) > 0)
+                                @foreach ($data['teams'] as $key => $team)
+                                    {{ $team['name'] }} <br>
+                                @endforeach
+                            @else
+                                Belum ada anggota 
+                            @endif
+                </td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['club_name'] ? $data['club_name'] : '-' }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total'] }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x'] }}</td>
+                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x_plus_ten'] }}</td>
+                </tr>
+                @endisset
+            @endif
           @endforeach
         </tbody>
       </table>

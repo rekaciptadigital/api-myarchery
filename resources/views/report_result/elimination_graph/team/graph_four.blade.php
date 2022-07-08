@@ -222,7 +222,8 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
-        <h1 style="text-align: center">{{$category}}</h1>
+        <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
+        <h2 style="text-align: center">Elimination & Final (Bracket)</h2>
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round semifinals">
