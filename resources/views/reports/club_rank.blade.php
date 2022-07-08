@@ -79,12 +79,21 @@
                     @foreach ($data['medal_array'] as $item)
                         <td style="text-align:center;">{{ $item }}</td>
                     @endforeach
-                    <td>{{ $data['total_gold'] }}</td>
-                    <td>{{ $data['total_silver'] }}</td>
-                    <td>{{ $data['total_bronze'] }}</td>
+                    <td style="text-align: center;">{{ $data['total_gold'] }}</td>
+                    <td style="text-align: center;">{{ $data['total_silver'] }}</td>
+                    <td style="text-align: center;">{{ $data['total_bronze'] }}</td>
                 </tr>
                 @php($i++)
             @endforeach
+            <tr>
+                <td colspan="2" style="text-align: center;">Jumlah</td>
+                @foreach ($array_of_total_medal_by_category as $item)
+                    <td style="text-align: center;">{{ $item }}</td>
+                @endforeach
+                <td style="text-align: center;">{{ $array_of_total_medal_by_category_all_club['gold'] }}</td>
+                <td style="text-align: center;">{{ $array_of_total_medal_by_category_all_club['silver'] }}</td>
+                <td style="text-align: center;">{{ $array_of_total_medal_by_category_all_club['bronze'] }}</td>
+            </tr>
             <!-- <tr>
             <td colspan="3"></td>
         </tr> -->
