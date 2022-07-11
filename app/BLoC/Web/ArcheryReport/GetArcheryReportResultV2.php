@@ -35,6 +35,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use Illuminate\Support\Carbon;
 
 class GetArcheryReportResultV2 extends Retrieval
 {
@@ -54,9 +55,13 @@ class GetArcheryReportResultV2 extends Retrieval
         $pages = array();
         $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event-series-2.png').'" alt="" width="80%"></img>';
         $logo_archery = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="80%"></img>';
-        $event_name_report = 'PRO JAKARTA OPEN 2022';
+
+        $archery_event = ArcheryEvent::find($event_id);
+        if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+
+        $event_name_report = $archery_event->event_name;
         $event_date_report = '2 Juli 2022 - 6 Juli 2022';
-        $event_location_report = 'Jakarta International Equestrian Park';
+        $event_location_report = $archery_event->location;
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -132,8 +137,8 @@ class GetArcheryReportResultV2 extends Retrieval
                         if (!$category_detail) throw new BLoCException("category not found");
 
                         $date_now = date("Y-m-d H:i:s");
-                        // $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", '<', $date_now)->first(); // report all category in event
-                        $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", $date_filter)->first(); //report harian
+                        $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", '<', $date_now)->first(); // report all category in event
+                        // $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category_detail->id)->whereDate("event_end_datetime", $date_filter)->first(); //report harian
 
                         $data_elimination = $this->getElimination($category_detail);
                         $data_qualification = $this->getQualification($category_detail);
