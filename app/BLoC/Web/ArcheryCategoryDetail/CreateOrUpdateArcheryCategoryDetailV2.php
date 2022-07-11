@@ -95,12 +95,15 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             if (!$archery_category_detail) {
                 $archery_category_detail = new ArcheryEventCategoryDetail();
             }
-            
+
             $archery_category_detail->event_id = $event->id;
             $archery_category_detail->age_category_id = $age_category->id;
             $archery_category_detail->competition_category_id = $competitio_category->id;
             $archery_category_detail->distance_id  = $distance_category->id;
             $archery_category_detail->team_category_id  = $team_category->id;
+            if ($team_category->type == "Team") {
+                $archery_category_detail->qualification_mode = "best_of_three";
+            }
             $archery_category_detail->quota = $category['quota'];
             $archery_category_detail->fee = $category['fee'];
             $archery_category_detail->is_show = $category["is_show"];
