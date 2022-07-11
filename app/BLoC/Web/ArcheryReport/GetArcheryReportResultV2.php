@@ -35,6 +35,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use Illuminate\Support\Carbon;
 
 class GetArcheryReportResultV2 extends Retrieval
 {
@@ -54,9 +55,13 @@ class GetArcheryReportResultV2 extends Retrieval
         $pages = array();
         $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event-series-2.png').'" alt="" width="80%"></img>';
         $logo_archery = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="80%"></img>';
-        $event_name_report = 'PRO JAKARTA OPEN 2022';
+
+        $archery_event = ArcheryEvent::find($event_id);
+        if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+
+        $event_name_report = $archery_event->event_name;
         $event_date_report = '2 Juli 2022 - 6 Juli 2022';
-        $event_location_report = 'Jakarta International Equestrian Park';
+        $event_location_report = $archery_event->location;
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -98,7 +103,7 @@ class GetArcheryReportResultV2 extends Retrieval
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
-            // $competition->competition_category = 'Compound';
+            // $competition->competition_category = 'Nasional';
             $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
                 ->where("competition_category_id", $competition->competition_category)
                 ->orderBy('competition_category_id', 'DESC')->get();
@@ -106,7 +111,7 @@ class GetArcheryReportResultV2 extends Retrieval
             if (!$age_category) throw new BLoCException("tidak ada data age category terdaftar untuk event tersebut");
 
             foreach ($age_category as $age) {
-                // $age->age_category = 'Umum';
+                // $age->age_category = 'U-12';
                 $distance_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct distance_id as distance_category'))->where("event_id", $event_id)
                     ->where("competition_category_id", $competition->competition_category)
                     ->where("age_category_id", $age->age_category)
@@ -116,7 +121,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
 
                 foreach ($distance_category as $distance) {
-                    // $distance->distance_category = '50';
+                    // $distance->distance_category = '15';
                     $team_category = ArcheryEventCategoryDetail::select(DB::RAW('team_category_id as team_category'), DB::RAW('archery_event_category_details.id as category_detail_id'))->where("event_id", $event_id)
                         ->where("competition_category_id", $competition->competition_category)
                         ->where("age_category_id", $age->age_category)
@@ -127,7 +132,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
 
                     foreach ($team_category as $team) {
-                        // $team->category_detail_id = 108;
+                        // $team->category_detail_id = 136;
                         $category_detail = ArcheryEventCategoryDetail::find($team->category_detail_id);
                         if (!$category_detail) throw new BLoCException("category not found");
 
@@ -317,6 +322,11 @@ class GetArcheryReportResultV2 extends Retrieval
                                                 $view_path = 'report_result/elimination_graph/team/graph_four';
                                                 $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
                                                 $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                                            } else if ($elimination_team->count_participant == 8) {
+                                                $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigEight($data_elimination);
+                                                $view_path = 'report_result/elimination_graph/team/graph_eight';
+                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                                $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigEight($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                                             }
                                         } else {
                                             continue;
