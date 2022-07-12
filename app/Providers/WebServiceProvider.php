@@ -54,6 +54,7 @@ use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
+use App\BLoC\Web\AdminAuth\UpdateProfile;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualification;
@@ -160,6 +161,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("login", Login::class);
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
+        $this->registerService("updateProfile", UpdateProfile::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
         $this->registerService("editArcheryAgeCategory", EditArcheryAgeCategory::class);
