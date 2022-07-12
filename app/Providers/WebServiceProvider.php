@@ -49,6 +49,7 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BLoC\Web\AdminAuth\UpdateAdminAvatar;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
@@ -92,7 +93,6 @@ use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
-use App\BLoC\Web\ArcheryEvent\AddArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
@@ -162,6 +162,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
         $this->registerService("updateProfile", UpdateProfile::class);
+        $this->registerService("updateAdminAvatar", UpdateAdminAvatar::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
         $this->registerService("editArcheryAgeCategory", EditArcheryAgeCategory::class);
