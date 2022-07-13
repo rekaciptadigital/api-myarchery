@@ -11,6 +11,7 @@ use App\BLoC\Web\AdminAuth\ResetPassword;
 use App\BLoC\Web\AdminAuth\GetProfile;
 use App\BLoC\Web\AdminAuth\Logout;
 use App\BLoC\Web\AdminAuth\Password;
+use App\BLoC\Web\AdminAuth\UpdateAdminProfile;
 use App\BLoC\Web\ArcheryAgeCategory\EditArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\FindArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\DeleteArcheryAgeCategory;
@@ -164,6 +165,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
         $this->registerService("password", Password::class);
+        $this->registerService("updateAdminProfile", UpdateAdminProfile::class);
         $this->registerService("editArcheryAgeCategory", EditArcheryAgeCategory::class);
         $this->registerService("findArcheryAgeCategory", FindArcheryAgeCategory::class);
         $this->registerService("deleteArcheryAgeCategory", DeleteArcheryAgeCategory::class);
