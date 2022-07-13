@@ -37,7 +37,6 @@ class UpdateAdminAvatar extends Transactional
     protected function validation($parameters)
     {
         return [
-            "user_id" => 'required|integer',
             "avatar" => 'required|string'
         ];
     }
