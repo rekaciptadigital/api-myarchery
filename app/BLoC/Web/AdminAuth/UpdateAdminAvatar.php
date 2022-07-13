@@ -4,11 +4,11 @@ namespace App\BLoC\Web\AdminAuth;
 
 use App\Libraries\Upload;
 use App\Models\Admin;
-use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class UpdateAdminAvatar extends Retrieval
+class UpdateAdminAvatar extends Transactional
 {
     public function getDescription()
     {
