@@ -70,6 +70,7 @@ class Admin extends Model implements JWTSubject, AuthenticatableContract
         ];
         $province_id = $city ? $city->province_id : 0;
         $province = Provinces::find($province_id);
+        $admin->province_id = $province_id;
         $admin->province = [
                         "id" => $province ? $province->id : 0 , 
                         "name" => $province ? $province->name : ""
