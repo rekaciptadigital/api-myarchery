@@ -15,9 +15,11 @@ class Password extends Transactional
 
     protected function process($parameters)
     {
-        
         $admin_login = Auth::user();
         $admin = Admin::where("id",$admin_login->id)->first();
+        if (!Hash::check($parameters->get('password'), $admin->password)) {
+            throw new BLoCException("password lama salah");
+        }
         $admin->update([
             'password' => Hash::make($parameters->get('password'))
         ]);
