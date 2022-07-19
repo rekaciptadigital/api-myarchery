@@ -10,6 +10,9 @@ use App\BLoC\Web\AdminAuth\Register;
 use App\BLoC\Web\AdminAuth\ResetPassword;
 use App\BLoC\Web\AdminAuth\GetProfile;
 use App\BLoC\Web\AdminAuth\Logout;
+use App\BLoC\Web\AdminAuth\Password;
+use App\BLoC\Web\AdminAuth\UpdateAdminProfile;
+use App\BLoC\Web\AdminAuth\UpdateAdminAvatar;
 use App\BLoC\Web\ArcheryAgeCategory\EditArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\FindArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\DeleteArcheryAgeCategory;
@@ -49,7 +52,6 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
-use App\BLoC\Web\AdminAuth\UpdateAdminAvatar;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
@@ -147,6 +149,7 @@ use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
+use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -162,9 +165,11 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
         $this->registerService("updateProfile", UpdateProfile::class);
-        $this->registerService("updateAdminAvatar", UpdateAdminAvatar::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
+        $this->registerService("password", Password::class);
+        $this->registerService("updateAdminProfile", UpdateAdminProfile::class);
+        $this->registerService("updateAdminAvatar", UpdateAdminAvatar::class);
         $this->registerService("editArcheryAgeCategory", EditArcheryAgeCategory::class);
         $this->registerService("findArcheryAgeCategory", FindArcheryAgeCategory::class);
         $this->registerService("deleteArcheryAgeCategory", DeleteArcheryAgeCategory::class);
@@ -330,6 +335,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
+        $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
