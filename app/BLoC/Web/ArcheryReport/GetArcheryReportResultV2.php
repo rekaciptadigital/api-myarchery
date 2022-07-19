@@ -60,8 +60,8 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$archery_event) throw new BLoCException("event tidak terdaftar");
 
         $event_name_report = $archery_event->event_name;
-        $start_date_event = dateFormatTranslate($archery_event->event_start_datetime->format('d-F-Y'), false);
-        $end_date_event = dateFormatTranslate($archery_event->event_end_datetime->format('d-F-Y'), false);
+        $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
+        $end_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_end_datetime)->format('d-F-Y'), false);
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $archery_event->location;
 
