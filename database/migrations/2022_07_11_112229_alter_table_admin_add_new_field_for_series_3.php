@@ -15,7 +15,7 @@ class AlterTableAdminAddNewFieldForSeries3 extends Migration
     {
         Schema::table('admins', function (Blueprint $table) {
             $table->integer('province_id');
-            // $table->integer('city_id');
+            $table->integer('city_id');
             $table->text("intro");
         });
     }
