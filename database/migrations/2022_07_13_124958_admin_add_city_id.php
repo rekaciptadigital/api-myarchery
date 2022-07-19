@@ -13,9 +13,9 @@ class AdminAddCityId extends Migration
      */
     public function up()
     {
-        Schema::table('admins', function (Blueprint $table) {
-            $table->integer("city_id")->index();
-        });
+        // Schema::table('admins', function (Blueprint $table) {
+        //     $table->integer("city_id")->index();
+        // });
     }
 
     /**
