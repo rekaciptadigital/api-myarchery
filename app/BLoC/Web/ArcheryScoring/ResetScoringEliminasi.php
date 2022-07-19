@@ -2,16 +2,11 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
-use App\Libraries\EliminationFormat;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventElimination;
-use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
-use App\Models\ArcheryScoring;
-use App\Models\ArcherySeriesUserPoint;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 
