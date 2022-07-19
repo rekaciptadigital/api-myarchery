@@ -149,6 +149,7 @@ use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
+use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
 class WebServiceProvider extends ServiceProvider
@@ -342,6 +343,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
         $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
         $this->registerService("getParticipantScoreQualificationDos", GetParticipantScoreQualificationDos::class);
+
+
+
+        // ======================================== Fats Open 3 ==========================================
+        // ================================================================================================
+        $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
 
     }
 
