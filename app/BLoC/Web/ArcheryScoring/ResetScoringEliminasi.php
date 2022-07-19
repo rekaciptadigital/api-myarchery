@@ -23,6 +23,7 @@ class ResetScoringEliminasi extends Retrieval
         $elimination_id = $parameters->get("elimination_id");
         $category_id = $parameters->get("category_id");
         $round = $parameters->get("round");
+        $match = $parameters->get("match");
 
         $category =  ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type")
             ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
@@ -34,21 +35,22 @@ class ResetScoringEliminasi extends Retrieval
         }
 
         if (strtolower($category->type) == "individual") {
-            return $this->resetScoringIndividu($elimination_id, $round);
+            return $this->resetScoringIndividu($elimination_id, $round, $match);
         } else {
-            return $this->resetScoringGroup($elimination_id, $round);
+            return $this->resetScoringGroup($elimination_id, $round, $match);
         }
 
         return -1;
     }
 
-    private function resetScoringIndividu($elimination_id, $round)
+    private function resetScoringIndividu($elimination_id, $round, $match)
     {
         // tangkap match berdasarkan round, match dan elimination
         $elimination_match = ArcheryEventEliminationMatch::select("archery_event_elimination_matches.*")
             ->join("archery_event_eliminations", "archery_event_eliminations.id", "=", "archery_event_elimination_matches.event_elimination_id")
             ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
             ->where("archery_event_elimination_matches.round", $round)
+            ->where("archery_event_elimination_matches.match", $match)
             ->get();
 
         if ($elimination_match->count() < 1 || $elimination_match->count() > 2) {
@@ -90,13 +92,14 @@ class ResetScoringEliminasi extends Retrieval
         return "success";
     }
 
-    private function resetScoringGroup($elimination_id, $round)
+    private function resetScoringGroup($elimination_id, $round, $match)
     {
         // tangkap match berdasarkan round, match dan elimination
         $elimination_group_match = ArcheryEventEliminationGroupMatch::select("archery_event_elimination_group_match.*")
             ->join("archery_event_elimination_group", "archery_event_elimination_group.id", "=", "archery_event_elimination_group_match.elimination_group_id")
             ->where("archery_event_elimination_group_match.elimination_group_id", $elimination_id)
             ->where("archery_event_elimination_group_match.round", $round)
+            ->where("archery_event_elimination_group_match.match", $match)
             ->get();
 
 
@@ -144,6 +147,7 @@ class ResetScoringEliminasi extends Retrieval
         return [
             "elimination_id" => "required",
             "round" => "required",
+            "match" => "required",
             "category_id" => "required"
         ];
     }
