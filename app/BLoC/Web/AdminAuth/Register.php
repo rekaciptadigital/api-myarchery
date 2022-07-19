@@ -7,6 +7,7 @@ use App\Models\AdminRole;
 use App\Models\City;
 use App\Models\Provinces;
 use App\Models\Role;
+use App\Models\ArcheryEventOrganizer;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,13 @@ class Register extends Transactional
         $admin_role->admin_id = $admin->id;
         $admin_role->role_id = !is_null($role) ? $role->id : null;
         $admin_role->save();
+
+        $archery_event_organizer = new ArcheryEventOrganizer();
+        $archery_event_organizer->eo_name = $admin->name;
+        $archery_event_organizer->save();
+        $admin->update([
+            'eo_id' => $archery_event_organizer->id
+        ]);
 
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
