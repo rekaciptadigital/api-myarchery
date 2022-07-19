@@ -234,6 +234,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
             $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProfile']);
+            $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
         });
 
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {

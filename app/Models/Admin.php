@@ -24,7 +24,7 @@ class Admin extends Model implements JWTSubject, AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'place_of_birth', 'date_of_birth', 'phone_number', 'city_id'
+        'name', 'email', 'password', 'city_id', 'province_id', 'phone_number', 'intro'
     ];
 
     /**
