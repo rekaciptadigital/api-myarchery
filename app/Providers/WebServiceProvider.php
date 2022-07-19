@@ -52,7 +52,6 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
-use App\BLoC\Web\AdminAuth\UpdateAdminAvatar;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
@@ -165,7 +164,6 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
         $this->registerService("updateProfile", UpdateProfile::class);
-        $this->registerService("updateAdminAvatar", UpdateAdminAvatar::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
         $this->registerService("password", Password::class);
