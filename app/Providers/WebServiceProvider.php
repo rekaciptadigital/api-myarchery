@@ -57,6 +57,7 @@ use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
+use App\BLoC\Web\AdminAuth\UpdateProfile;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualification;
@@ -94,7 +95,6 @@ use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
-use App\BLoC\Web\ArcheryEvent\AddArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
@@ -150,6 +150,7 @@ use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
+use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -164,6 +165,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("login", Login::class);
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
+        $this->registerService("updateProfile", UpdateProfile::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
         $this->registerService("password", Password::class);
@@ -334,6 +336,7 @@ class WebServiceProvider extends ServiceProvider
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
+        $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);

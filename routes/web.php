@@ -234,6 +234,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
             $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProfile']);
+            $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
         });
 
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -339,6 +341,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
+                $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
             });
         });
 
