@@ -46,9 +46,10 @@ class BulkInsertUserParticipant extends Retrieval
             throw new BLoCException('event belum bisa di daftar');
         }
 
-        foreach ($array_names as $name) {
+        foreach ($array_names as $data) {
             $user = new User;
-            $user->name = $name;
+            $user->gender = $data["gender"];
+            $user->name = $data["name"];
             $user->password = Hash::make("12345678");
             $user->save();
 
@@ -97,9 +98,9 @@ class BulkInsertUserParticipant extends Retrieval
                 'participant_member_id' => $member->id,
             ]);
             ParticipantMemberTeam::saveParticipantMemberTeam($category_id, $participant->id, $member->id, $category->category_team);
-
-            return $participant;
         }
+
+        return "success";
     }
 
     protected function validation($parameters)
