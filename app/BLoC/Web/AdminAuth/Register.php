@@ -48,6 +48,7 @@ class Register extends Transactional
         $admin_role = new AdminRole();
         $admin_role->admin_id = $admin->id;
         $admin_role->role_id = !is_null($role) ? $role->id : null;
+        
         $admin_role->save();
 
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
