@@ -32,7 +32,7 @@ class UpdateAdminAvatar extends Retrieval
         }
 
         if($parameters->get('avatar')){
-            $avatar = Upload::setPath("asset/avatar/")->setFileName("avatar_admin_" . $admin->id)->setBase64($parameters->get('avatar'))->save();
+            $avatar = Upload::setPath("asset/admin_avatar/")->setFileName("avatar_admin_" . $admin->id)->setBase64($parameters->get('avatar'))->save();
             $admin->avatar = $avatar;
             $admin->save();
         }
