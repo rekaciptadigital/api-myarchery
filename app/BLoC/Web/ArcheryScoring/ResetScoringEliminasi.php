@@ -81,7 +81,10 @@ class ResetScoringEliminasi extends Retrieval
                         throw new Exception("harap reset 1 per satu setiap round", 401);
                     }
 
-                    $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)->where("match", $next_match[0]->match)->get();
+                    $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)
+                        ->where("match", $next_match[0]->match)
+                        ->where("event_elimination_id", $elimination_id)
+                        ->get();
 
                     foreach ($match_after as $ma) {
                         $scoring_elimination_next_match = ArcheryScoring::where("type", 2)
@@ -90,6 +93,11 @@ class ResetScoringEliminasi extends Retrieval
                             ->first();
                         if ($scoring_elimination_next_match) {
                             $scoring_elimination_next_match->delete();
+                        }
+
+                        if ($ma->win == 1) {
+                            $ma->win = 0;
+                            $ma->save();
                         }
                     }
 
