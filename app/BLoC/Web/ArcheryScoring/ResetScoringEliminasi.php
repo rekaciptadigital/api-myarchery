@@ -7,6 +7,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
+use App\Models\ArcheryScoring;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 use Exception;
@@ -81,6 +82,13 @@ class ResetScoringEliminasi extends Retrieval
                     }
 
                     foreach ($next_match as $nm) {
+                        $scoring_elimination_next_match = ArcheryScoring::where("type", 2)
+                            ->where("item_id", $nm->id)
+                            ->where("item_value", "archery_event_elimination_matches")
+                            ->first();
+                        if ($scoring_elimination_next_match) {
+                            $scoring_elimination_next_match->delete();
+                        }
                         $nm->elimination_member_id = 0;
                         $nm->save();
                     }
