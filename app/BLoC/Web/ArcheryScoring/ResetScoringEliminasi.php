@@ -100,6 +100,7 @@ class ResetScoringEliminasi extends Retrieval
                         $is_3rd_winer = 1;
                     }
 
+                    
 
                     if ($is_3rd_winer == 0) {
                         $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)
