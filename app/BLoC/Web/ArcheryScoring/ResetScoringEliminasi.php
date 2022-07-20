@@ -169,6 +169,27 @@ class ResetScoringEliminasi extends Retrieval
                             throw new Exception("match 3rd winer not found", 404);
                         }
 
+                        $match_after = ArcheryEventEliminationMatch::where("round", $match->round)
+                            ->where("match", $match->match)
+                            ->where("event_elimination_id", $elimination_id)
+                            ->get();
+
+                        foreach ($match_after as $ma) {
+                            $scoring_elimination_next_match = ArcheryScoring::where("type", 2)
+                                ->where("item_id", $ma->id)
+                                ->where("item_value", "archery_event_elimination_matches")
+                                ->first();
+                            if ($scoring_elimination_next_match) {
+                                $scoring_elimination_next_match->delete();
+                            }
+
+                            if ($ma->win == 1) {
+                                $ma->win = 0;
+                                $ma->save();
+                            }
+                        }
+
+
                         $match->elimination_member_id = 0;
                         $match->win = 0;
                         $match->save();
