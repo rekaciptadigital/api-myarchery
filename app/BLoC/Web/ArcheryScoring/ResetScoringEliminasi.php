@@ -67,6 +67,11 @@ class ResetScoringEliminasi extends Retrieval
         try {
             DB::beginTransaction();
             foreach ($elimination_match as $value) {
+                $elimination = ArcheryEventElimination::find($elimination_id);
+                if (!$elimination) {
+                    throw new Exception("elimination not found", 404);
+                }
+
                 if ($value->win == 1) {
                     // reset pemenang dari match
                     $value->win = 0;
@@ -83,23 +88,38 @@ class ResetScoringEliminasi extends Retrieval
                         throw new Exception("harap reset 1 per satu setiap round", 401);
                     }
 
-                    $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)
-                        ->where("match", $next_match[0]->match)
-                        ->where("event_elimination_id", $elimination_id)
-                        ->get();
+                    $is_3rd_winer = 0;
 
-                    foreach ($match_after as $ma) {
-                        $scoring_elimination_next_match = ArcheryScoring::where("type", 2)
-                            ->where("item_id", $ma->id)
-                            ->where("item_value", "archery_event_elimination_matches")
-                            ->first();
-                        if ($scoring_elimination_next_match) {
-                            $scoring_elimination_next_match->delete();
-                        }
+                    if ($elimination->count_participant == 32 && $value->round == 6) {
+                        $is_3rd_winer = 1;
+                    } elseif ($elimination->count_participant == 16 && $value->round == 5) {
+                        $is_3rd_winer = 1;
+                    } elseif ($elimination->count_participant == 8 && $value->round == 4) {
+                        $is_3rd_winer = 1;
+                    } elseif ($elimination->count_participant == 4 && $value->round == 3) {
+                        $is_3rd_winer = 1;
+                    }
 
-                        if ($ma->win == 1) {
-                            $ma->win = 0;
-                            $ma->save();
+
+                    if ($is_3rd_winer == 0) {
+                        $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)
+                            ->where("match", $next_match[0]->match)
+                            ->where("event_elimination_id", $elimination_id)
+                            ->get();
+
+                        foreach ($match_after as $ma) {
+                            $scoring_elimination_next_match = ArcheryScoring::where("type", 2)
+                                ->where("item_id", $ma->id)
+                                ->where("item_value", "archery_event_elimination_matches")
+                                ->first();
+                            if ($scoring_elimination_next_match) {
+                                $scoring_elimination_next_match->delete();
+                            }
+
+                            if ($ma->win == 1) {
+                                $ma->win = 0;
+                                $ma->save();
+                            }
                         }
                     }
 
@@ -110,10 +130,6 @@ class ResetScoringEliminasi extends Retrieval
                 } else {
                     // cek apakah pembatalan dilakukan di semifinal atau tidak
                     $is_semifinal = 0;
-                    $elimination = ArcheryEventElimination::find($elimination_id);
-                    if (!$elimination) {
-                        throw new Exception("elimination not found", 404);
-                    }
 
                     if ($elimination->count_participant == 32 && $value->round == 4) {
                         $is_semifinal = 1;
