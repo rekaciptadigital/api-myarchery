@@ -18,7 +18,7 @@ class ArcheryEvent extends Model
         'detail_admin', 'more_information', "event_price", "location_date_event"
     ];
     protected $guarded = ['id'];
-    protected $dates = ['event_start_datetime', 'event_end_datetime'];
+    // protected $dates = ['event_start_datetime', 'event_end_datetime'];
 
     public function getEventPriceAttribute()
     {
