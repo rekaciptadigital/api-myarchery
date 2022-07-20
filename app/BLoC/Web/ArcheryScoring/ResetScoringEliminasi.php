@@ -2,7 +2,9 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
@@ -106,12 +108,46 @@ class ResetScoringEliminasi extends Retrieval
                         $nm->save();
                     }
                 } else {
-                    // reset peringkat eliminasi di tabel elimination member
+                    // cek apakah pembatalan dilakukan di semifinal atau tidak
+                    $is_semifinal = 0;
+                    $elimination = ArcheryEventElimination::find($elimination_id);
+                    if (!$elimination) {
+                        throw new Exception("elimination not found", 404);
+                    }
+
+                    if ($elimination->count_participant == 32 && $value->round == 4) {
+                        $is_semifinal = 1;
+                    } elseif ($elimination->count_participant == 16 && $value->round == 3) {
+                        $is_semifinal = 1;
+                    } elseif ($elimination->count_participant == 8 && $value->round == 2) {
+                        $is_semifinal = 1;
+                    } elseif ($elimination->count_participant == 4 && $value->round == 1) {
+                        $is_semifinal = 1;
+                    }
+
+
                     $elimination_member = ArcheryEventEliminationMember::find($value->elimination_member_id);
                     if (!$elimination_member) {
                         throw new BLoCException("elimination member not found");
                     }
 
+                    if ($is_semifinal == 1) {
+                        // ambil round di perebutan juara 3
+                        $match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)
+                            ->where("round", $value->round + 2)
+                            ->where("elimination_member_id", $elimination_member->id)
+                            ->first();
+
+                        if (!$match) {
+                            throw new Exception("match 3rd winer not found", 404);
+                        }
+
+                        $match->elimination_member_id = 0;
+                        $match->win = 0;
+                        $match->save();
+                    }
+
+                    // reset peringkat eliminasi di tabel elimination member
                     $elimination_member->elimination_ranked = 0;
                     $elimination_member->save();
                 }
