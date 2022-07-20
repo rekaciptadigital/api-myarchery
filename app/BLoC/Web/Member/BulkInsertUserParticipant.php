@@ -46,10 +46,12 @@ class BulkInsertUserParticipant extends Retrieval
             throw new BLoCException('event belum bisa di daftar');
         }
 
-        foreach ($array_names as $data) {
+        $gender = $category->gender_category;
+
+        foreach ($array_names as $name) {
             $user = new User;
-            $user->gender = $data["gender"];
-            $user->name = $data["name"];
+            $user->gender = $gender;
+            $user->name = $name;
             $user->password = Hash::make("12345678");
             $user->save();
 
