@@ -341,6 +341,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
+                $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
             });
         });
 
@@ -448,6 +449,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
             $router->post('/insert-by-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertParticipantByAdmin']);
+
+            // ====================================== Fast Open 3 ======================================
+            $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
         });
 
         $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {

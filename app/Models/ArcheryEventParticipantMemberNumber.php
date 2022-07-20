@@ -15,8 +15,8 @@ class ArcheryEventParticipantMemberNumber extends Model
     {
         $number = "";
         $data = self::where('user_id', $user_id)->where('event_id', $event_id)->first();
-        if($data){
-            $number = $data->prefix."-".self::sequenceFormatNumber($data->sequence);
+        if ($data) {
+            $number = $data->prefix . "-" . self::sequenceFormatNumber($data->sequence);
         }
         return $number;
     }
@@ -33,18 +33,18 @@ class ArcheryEventParticipantMemberNumber extends Model
     public static function makePrefix($event_id, $gender)
     {
         $g = $gender == "male" ? 1 : 2;
-        return "MA-".date("y")."-".$event_id."-".$g;
+        return "MA-" . date("y") . "-" . $event_id . "-" . $g;
     }
 
     private static function sequenceFormatNumber($number)
     {
-        if ($number <= 9){
-            $number = "00".$number;
-        } else if ($number <= 99 && $number > 9 ){
-            $number = "0".$number;
+        if ($number <= 9) {
+            $number = "00" . $number;
+        } else if ($number <= 99 && $number > 9) {
+            $number = "0" . $number;
         } else {
-            $number = "".$number;
+            $number = "" . $number;
         }
         return $number;
-    }  
+    }
 }
