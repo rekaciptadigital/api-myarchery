@@ -100,9 +100,19 @@ class ResetScoringEliminasi extends Retrieval
                         $is_3rd_winer = 1;
                     }
 
-                    
+                    $is_final = 0;
 
-                    if ($is_3rd_winer == 0) {
+                    if ($elimination->count_participant == 32 && $value->round == 5) {
+                        $is_final = 1;
+                    } elseif ($elimination->count_participant == 16 && $value->round == 4) {
+                        $is_final = 1;
+                    } elseif ($elimination->count_participant == 8 && $value->round == 3) {
+                        $is_final = 1;
+                    } elseif ($elimination->count_participant == 4 && $value->round == 2) {
+                        $is_final = 1;
+                    }
+
+                    if ($is_3rd_winer == 0 || $is_final == 0) {
                         $match_after = ArcheryEventEliminationMatch::where("round", $next_match[0]->round)
                             ->where("match", $next_match[0]->match)
                             ->where("event_elimination_id", $elimination_id)
