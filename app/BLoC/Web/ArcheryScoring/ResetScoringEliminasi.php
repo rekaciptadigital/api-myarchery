@@ -9,6 +9,8 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ResetScoringEliminasi extends Retrieval
 {
@@ -53,40 +55,50 @@ class ResetScoringEliminasi extends Retrieval
             ->where("archery_event_elimination_matches.match", $match)
             ->get();
 
+        // return $elimination_match;
+
         if ($elimination_match->count() < 1 || $elimination_match->count() > 2) {
             throw new BLoCException("match tidak valid");
         }
 
-        foreach ($elimination_match as $value) {
-            if ($value->win == 1) {
-                // reset pemenang dari match
-                $value->win = 0;
-                $value->save();
+        try {
+            DB::beginTransaction();
+            foreach ($elimination_match as $value) {
+                if ($value->win == 1) {
+                    // reset pemenang dari match
+                    $value->win = 0;
+                    $value->save();
 
-                // reset posisi pada round setelah round saat ini
-                $next_match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)
-                    ->where("round", ">", $round)
-                    ->where("elimination_member_id", $value->elimination_member_id)
-                    ->get();
+                    // reset posisi pada round setelah round saat ini
+                    $next_match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)
+                        ->where("round", ">", $round)
+                        ->where("elimination_member_id", $value->elimination_member_id)
+                        ->get();
 
-                if ($next_match->count() > 1) {
-                    throw new BLoCException("harap reset 1 per satu setiap round");
+                    if ($next_match->count() > 1) {
+                        // throw new BLoCException("harap reset 1 per satu setiap round");
+                        throw new Exception("harap reset 1 per satu setiap round", 401);
+                    }
+
+                    foreach ($next_match as $nm) {
+                        $nm->elimination_member_id = 0;
+                        $nm->save();
+                    }
+                } else {
+                    // reset peringkat eliminasi di tabel elimination member
+                    $elimination_member = ArcheryEventEliminationMember::find($value->elimination_member_id);
+                    if (!$elimination_member) {
+                        throw new BLoCException("elimination member not found");
+                    }
+
+                    $elimination_member->elimination_ranked = 0;
+                    $elimination_member->save();
                 }
-
-                foreach ($next_match as $nm) {
-                    $nm->elimination_member_id = 0;
-                    $nm->save();
-                }
-            } else {
-                // reset peringkat eliminasi di tabel elimination member
-                $elimination_member = ArcheryEventEliminationMember::find($value->elimination_member_id);
-                if (!$elimination_member) {
-                    throw new BLoCException("elimination member not found");
-                }
-
-                $elimination_member->elimination_ranked = 0;
-                $elimination_member->save();
             }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new BLoCException($th->getMessage());
         }
 
         return "success";
