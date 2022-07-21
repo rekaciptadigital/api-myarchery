@@ -78,7 +78,15 @@ class ListMemberV2 extends Retrieval
         });
 
         $participant_query->when($status, function ($query) use ($status) {
-            return $query->where("archery_event_participants.status", $status);
+            if ($status == 4) {
+                return $query->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", time());
+            } elseif ($status == 2) {
+                return $query->where("archery_event_participants.status", 2)->orWhere(function ($q) {
+                    return $q->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", "<", time());
+                });
+            } else {
+                return $query->where("archery_event_participants.status", $status);
+            }
         });
 
         $participant_collection = $participant_query->orderBy('archery_event_participants.id', 'DESC')
@@ -94,9 +102,9 @@ class ListMemberV2 extends Retrieval
                 'archery_clubs.name as club_name',
                 'archery_event_participants.phone_number',
                 'archery_event_participants.competition_category_id',
-                DB::RAW('case when transaction_logs.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" else "Gratis" END AS status_payment'),
+                DB::RAW('case when archery_event_participants.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" when archery_event_participants.status=5 then "Refund" else "Gratis" END AS status_payment'),
                 'archery_event_participants.age_category_id',
-                DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 else 4 END AS order_payment')
+                DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 when archery_event_participants.status=5 then 5 else 4 END AS order_payment')
             );
 
 
@@ -112,6 +120,7 @@ class ListMemberV2 extends Retrieval
     {
         return [
             'event_id' => 'required|exists:archery_events,id',
+            'status' => "in:1,2,3,4,5"
         ];
     }
     protected function paginate($models)

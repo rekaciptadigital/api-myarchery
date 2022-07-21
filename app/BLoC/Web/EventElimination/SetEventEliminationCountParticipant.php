@@ -66,7 +66,7 @@ class SetEventEliminationCountParticipant extends Transactional
     {
         return [
             'event_category_id' => 'required|exists:archery_event_category_details,id',
-            "count_elimination_participant" => "required|in:0,8,16,32,64,128"
+            "count_elimination_participant" => "required|in:0,4,8,16,32,64,128"
         ];
     }
 }

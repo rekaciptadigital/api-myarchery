@@ -38,6 +38,7 @@ table, th, td {
                 <th style="text-align: center; background: #FFFF00;"><strong>KLUB</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>SESI 1</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>SESI 2</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>SESI 3</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>TOTAL</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>X</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>X + 10</strong></th>
@@ -49,31 +50,64 @@ table, th, td {
                 <td style="text-align: center;">{{ $i }}</td>
                 <td style="text-align: center;">{{ $data['member']['name'] }}</td>
                 <td style="text-align: center;">{{ $data['member']['club_name'] }}</td>
-                <td style="text-align: center;">{{ $session == "2" ? '-' : $data['sessions']['1']['total'] }} </td>
-                <td style="text-align: center;">{{ $session == "1" ? '-' : $data['sessions']['2']['total'] }}</td>
+
                 <td style="text-align: center;">
-                    @if ($session == "1")
+                    @if ($filter_session == "2" || $filter_session == "3")
+                        -
+                    @else
                         {{ $data['sessions']['1']['total'] }}
-                    @elseif ($session == "2")
+                    @endif
+                </td>
+
+                <td style="text-align: center;">
+                    @if ($filter_session == "1" || $filter_session == "3")
+                        -
+                    @else
                         {{ $data['sessions']['2']['total'] }}
+                    @endif
+                </td>
+
+                <td style="text-align: center;">
+                    @if ($filter_session == "1" || $filter_session == "2")
+                        -
+                    @else
+                        @if ($filter_session < $session_in_qualification)
+                            -
+                        @else
+                            {{ $data['sessions']['3']['total'] }}
+                        @endif
+                    @endif
+                </td>
+
+                <td style="text-align: center;">
+                    @if ($filter_session == "1")
+                        {{ $data['sessions']['1']['total'] }}
+                    @elseif ($filter_session == "2")
+                        {{ $data['sessions']['2']['total'] }}
+                    @elseif ($filter_session == "3")
+                        {{ $data['sessions']['3']['total'] }}
                     @else
                         {{ $data['total'] }}
                     @endif
                 </td>
                 <td style="text-align: center;">
-                    @if ($session == "1")
+                    @if ($filter_session == "1")
                         {{ $data['sessions']['1']['total_x'] }}
-                    @elseif ($session == "2")
+                    @elseif ($filter_session == "2")
                         {{ $data['sessions']['2']['total_x'] }}
+                    @elseif ($filter_session == "3")
+                        {{ $data['sessions']['3']['total_x'] }}
                     @else
                         {{ $data['total_x'] }}
                     @endif
                 </td>
                 <td style="text-align: center;">
-                    @if ($session == "1")
+                    @if ($filter_session == "1")
                         {{ $data['sessions']['1']['total_x_plus_ten'] }}
-                    @elseif ($session == "2")
+                    @elseif ($filter_session == "2")
                         {{ $data['sessions']['2']['total_x_plus_ten'] }}
+                    @elseif ($filter_session == "3")
+                        {{ $data['sessions']['3']['total_x_plus_ten'] }}
                     @else
                         {{ $data['total_x_plus_ten'] }}
                     @endif

@@ -230,7 +230,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:logout']);
+            $router->put('/password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:password']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
+            $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProfile']);
+            $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
         });
 
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -328,6 +333,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
                 $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
                 $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
+                $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
             });
 
 
@@ -335,6 +341,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'scorer'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
+                $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
             });
         });
 
@@ -442,6 +449,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
             $router->post('/insert-by-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertParticipantByAdmin']);
+
+            // ====================================== Fast Open 3 ======================================
+            $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
         });
 
         $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {

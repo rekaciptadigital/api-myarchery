@@ -49,11 +49,14 @@ class GetArcheryReportEventList extends Retrieval
                 $today = (Carbon::now())->toDateTimeString();
                 $carbon_end_date = Carbon::parse($event->event_end_datetime);
 
-                if($today < $carbon_end_date) {
-                    $is_available = false;
-                } else {
-                    $is_available = true;
-                }
+                // if($today < $carbon_end_date) {
+                //     $is_available = false;
+                // } else {
+                //     $is_available = true;
+                // }
+
+                // unlock case download hanya bisa setelah event berakhir
+                $is_available = true;
             }
            
             $response[] = [

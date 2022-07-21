@@ -189,6 +189,27 @@ class BudRest extends Model
             throw new BLoCException("Bud rest belum di set");
         }
 
+        $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
+        foreach ($participants as $key => $value) {
+            $participant_member =  ArcheryEventParticipantMember::where("archery_event_participant_id", $value->id)->first();
+            if (!$participant_member) {
+                throw new BLoCException("data member tidak ditemukan");
+            }
+
+            $q_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->first();
+            if (!$q_time) {
+                throw new BLoCException("jadwal belum ditentukan");
+            }
+
+            $jadwal =  ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $q_time->id)->where("participant_member_id", $participant_member->id)->first();
+            if (!$jadwal) {
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $q_time->id,
+                    'participant_member_id' => $participant_member->id,
+                ]);
+            }
+        }
+
         $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->get();
         $bud_rest_start = $bud_rest->bud_rest_start;
         $bud_rest_end = $bud_rest->bud_rest_end;

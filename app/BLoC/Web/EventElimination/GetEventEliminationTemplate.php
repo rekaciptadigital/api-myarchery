@@ -55,7 +55,7 @@ class GetEventEliminationTemplate extends Retrieval
         return [];
     }
 
-    private function getTemplateIndividu($category)
+    public function getTemplateIndividu($category)
     {
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
@@ -79,7 +79,7 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_members.position_qualification",
             "users.name",
             "archery_event_participant_members.id AS member_id",
-            "archery_event_participant_members.club",
+            "archery_event_participant_members.archery_event_participant_id as participant_id",
             "archery_event_participant_members.gender",
             "archery_event_elimination_matches.id",
             "archery_event_elimination_matches.round",
@@ -87,6 +87,7 @@ class GetEventEliminationTemplate extends Retrieval
             "archery_event_elimination_matches.win",
             "archery_event_elimination_matches.bud_rest",
             "archery_event_elimination_matches.target_face",
+            "archery_event_elimination_matches.result"
         )
             ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
             ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
@@ -114,23 +115,32 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+
+                        if ($admin_total != 0) {
+                            $total_scoring = $admin_total;
+                        } else {
+                            $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+                        }
+
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
                     }
+
+                    $club =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
 
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" => $value->club,
+                        "club" =>  $club->name ?? '-',
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
                         "status" => $value->win == 1 ? "win" : "wait",
                         "admin_total" => $admin_total,
+                        "result" => $value->result,
                         "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                     );
@@ -160,7 +170,7 @@ class GetEventEliminationTemplate extends Retrieval
         return $template;
     }
 
-    private function getTemplateTeam($category_team)
+    public function getTemplateTeam($category_team)
     {
         $elimination = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
         $elimination_id = 0;
@@ -211,7 +221,13 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring_team) {
                         $admin_total = $archery_scooring_team->admin_total;
                         $scoring_detail = json_decode($archery_scooring_team->scoring_detail);
-                        $total_scoring = $scoring_detail->result;
+
+                        if ($admin_total != 0) {
+                            $total_scoring = $admin_total;
+                        } else {
+                            $total_scoring = $scoring_detail->result;
+                        }
+                        
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }

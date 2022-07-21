@@ -10,6 +10,9 @@ use App\BLoC\Web\AdminAuth\Register;
 use App\BLoC\Web\AdminAuth\ResetPassword;
 use App\BLoC\Web\AdminAuth\GetProfile;
 use App\BLoC\Web\AdminAuth\Logout;
+use App\BLoC\Web\AdminAuth\Password;
+use App\BLoC\Web\AdminAuth\UpdateAdminProfile;
+use App\BLoC\Web\AdminAuth\UpdateAdminAvatar;
 use App\BLoC\Web\ArcheryAgeCategory\EditArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\FindArcheryAgeCategory;
 use App\BLoC\Web\ArcheryAgeCategory\DeleteArcheryAgeCategory;
@@ -54,6 +57,7 @@ use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
 use App\BLoC\General\QandA\GetQandAByEventId;
+use App\BLoC\Web\AdminAuth\UpdateProfile;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualification;
@@ -91,7 +95,6 @@ use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
-use App\BLoC\Web\ArcheryEvent\AddArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
@@ -112,7 +115,7 @@ use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
-use App\BLoC\Web\ArcheryReport\GetArcheryReportResult;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportResultV2;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2;
 use App\BLoC\Web\BudRest\CreateOrUpdateBudRestV2;
 use App\BLoC\Web\BudRest\GetBudRestV2;
@@ -143,8 +146,11 @@ use App\BLoC\Web\DashboardDos\DownloadEliminationDashboardDos;
 use App\BLoC\Web\EventElimination\CleanEliminationMatch;
 use App\BLoC\Web\DashboardDos\GetParticipantScoreQualificationDos;
 use App\BLoC\Web\EventElimination\CleanScoringQualification;
-use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
+use App\BLoC\Web\Member\BulkInsertUserParticipant;
+use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -159,8 +165,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("login", Login::class);
         $this->registerService("register", Register::class);
         $this->registerService("resetPassword", ResetPassword::class);
+        $this->registerService("updateProfile", UpdateProfile::class);
         $this->registerService("getProfile", GetProfile::class);
         $this->registerService("logout", Logout::class);
+        $this->registerService("password", Password::class);
+        $this->registerService("updateAdminProfile", UpdateAdminProfile::class);
+        $this->registerService("updateAdminAvatar", UpdateAdminAvatar::class);
         $this->registerService("editArcheryAgeCategory", EditArcheryAgeCategory::class);
         $this->registerService("findArcheryAgeCategory", FindArcheryAgeCategory::class);
         $this->registerService("deleteArcheryAgeCategory", DeleteArcheryAgeCategory::class);
@@ -249,11 +259,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("refund", Refund::class);
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
-        $this->registerService("getArcheryReportResult", GetArcheryReportResult::class);
+        $this->registerService("getArcheryReportResult", GetArcheryReportResultV2::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
+        $this->registerService("getArcheryReportClubRanked", GetArcheryReportClubRanked::class);
 
         // ============================ Api v2 =======================================
         // ========================== event =================================
@@ -325,12 +336,19 @@ class WebServiceProvider extends ServiceProvider
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
+        $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
         $this->registerService("downloadScoreQualification", DownloadScoreQualification::class);
         $this->registerService("downloadEliminationDashboardDos", DownloadEliminationDashboardDos::class);
         $this->registerService("getParticipantScoreQualificationDos", GetParticipantScoreQualificationDos::class);
+
+
+
+        // ======================================== Fats Open 3 ==========================================
+        // ================================================================================================
+        $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
 
     }
 

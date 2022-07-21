@@ -4,8 +4,12 @@ namespace App\BLoC\Web\AdminAuth;
 
 use App\Models\Admin;
 use App\Models\AdminRole;
+use App\Models\City;
+use App\Models\Provinces;
 use App\Models\Role;
+use App\Models\ArcheryEventOrganizer;
 use DAI\Utils\Abstracts\Transactional;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,13 +22,26 @@ class Register extends Transactional
 
     protected function process($parameters)
     {
+        $intro = $parameters->get("intro");
+        $province_id = $parameters->get("province_id");
+        $city_id = $parameters->get("city_id");
+        $province = Provinces::find($province_id);
+        if (!$province) {
+            throw new BLoCException("province not found");
+        }
+
+        $city = City::where("province_id", $province_id)->where("id", $city_id)->first();
+        if (!$city) {
+            throw new BLoCException("city not valid");
+        }
         $admin = Admin::create([
-            'name' => $parameters->get('name'),
+            'name' => $parameters->get('name_organizer'),
             'email' => $parameters->get('email'),
             'password' => Hash::make($parameters->get('password')),
-            'date_of_birth' => $parameters->get('date_of_birth'),
-            'place_of_birth' => $parameters->get('place_of_birth'),
+            'province_id' => $province_id,
+            "city_id" => $city_id,
             'phone_number' => $parameters->get('phone_number'),
+            "intro" => json_encode($intro)
         ]);
 
         $role = Role::where('name', 'event_organizer')->first();
@@ -33,6 +50,13 @@ class Register extends Transactional
         $admin_role->admin_id = $admin->id;
         $admin_role->role_id = !is_null($role) ? $role->id : null;
         $admin_role->save();
+
+        $archery_event_organizer = new ArcheryEventOrganizer();
+        $archery_event_organizer->eo_name = $admin->name;
+        $archery_event_organizer->save();
+        $admin->update([
+            'eo_id' => $archery_event_organizer->id
+        ]);
 
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
@@ -48,9 +72,13 @@ class Register extends Transactional
     protected function validation($parameters)
     {
         return [
-            'name' => 'required|string|max:255',
+            'name_organizer' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:admins',
             'password' => 'required|string|min:6|confirmed',
+            'phone_number' => "required|unique:admins",
+            'province_id' => "required",
+            "city_id" => "required",
+            "intro" => "required"
         ];
     }
 }

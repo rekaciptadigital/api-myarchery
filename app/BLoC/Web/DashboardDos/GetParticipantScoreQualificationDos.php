@@ -60,9 +60,14 @@ class GetParticipantScoreQualificationDos extends Retrieval
             $session = [];
             for ($i=0; $i < $filter_session; $i++) { 
                 if ($filter_session == 2) {
-                    if ($i == 0) {
-                        continue;
-                    }
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                }
+
+                if ($filter_session == 3) {
+                    if ($filter_session > $category_detail->session_in_qualification) throw new BLoCException("Data pada sesi ini tidak ditemukan");
+                    if ($i == 0) continue;
+                    if ($i == 1) continue; 
                 }
                 $session[] = $i+1;
             }
@@ -101,6 +106,13 @@ class GetParticipantScoreQualificationDos extends Retrieval
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         if ($session[0] == 2) {
+            foreach($qualification_member as $key => $value) {
+                $qualification_member[$key]["rank"] = $key + 1;
+            }
+            return $qualification_member;
+        }
+
+        if ($session[0] == 3) {
             foreach($qualification_member as $key => $value) {
                 $qualification_member[$key]["rank"] = $key + 1;
             }
@@ -171,7 +183,7 @@ class GetParticipantScoreQualificationDos extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -184,12 +196,19 @@ class GetParticipantScoreQualificationDos extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+
          // number of rank
-         foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+         foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
         
-        return $participant_club;
+        return $new_array;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -253,7 +272,7 @@ class GetParticipantScoreQualificationDos extends Retrieval
                 "participant_id" => $value->id,
                 "club_id" => $value->club_id,
                 "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
+                "team" => $value->club_name . " " . $sequence_club[$value->club_id],
                 "total" => $total,
                 "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
                 "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
@@ -266,11 +285,18 @@ class GetParticipantScoreQualificationDos extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 2) {
+                array_push($new_array, $value);
+            }
+        }
+        
         // number of rank
-        foreach($participant_club as $key => $value) {
-            $participant_club[$key]["rank"] = $key + 1;
+        foreach($new_array as $key => $value) {
+            $new_array[$key]["rank"] = $key + 1;
         }
 
-        return $participant_club;
+        return $new_array;
     }
 }

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Auth;
+use App\Models\City;
+use App\Models\Provinces;
 
 class Admin extends Model implements JWTSubject, AuthenticatableContract
 {
@@ -22,7 +24,7 @@ class Admin extends Model implements JWTSubject, AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'place_of_birth', 'date_of_birth', 'phone_number'
+        'name', 'email', 'password', 'city_id', 'province_id', 'phone_number', 'intro', 'eo_id'
     ];
 
     /**
@@ -61,6 +63,18 @@ class Admin extends Model implements JWTSubject, AuthenticatableContract
             "role" => Role::find($admin_role->role_id),
             "event_organizers" => ArcheryEventOrganizer::find($admin->eo_id)
         );
+        $city = City::find($admin->city_id);
+        $admin->city = [
+                        "id" => $city ? $city->id : 0, 
+                        "name" => $city ? $city->name : ""
+        ];
+        $province_id = $city ? $city->province_id : 0;
+        $province = Provinces::find($province_id);
+        $admin->province_id = $province_id;
+        $admin->province = [
+                        "id" => $province ? $province->id : 0 , 
+                        "name" => $province ? $province->name : ""
+        ];
         return $admin;
     }
 }
