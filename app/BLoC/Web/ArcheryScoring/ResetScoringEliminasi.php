@@ -5,11 +5,13 @@ namespace App\BLoC\Web\ArcheryScoring;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryScoring;
+use App\Models\ArcheryScoringEliminationGroup;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 use Exception;
@@ -249,48 +251,197 @@ class ResetScoringEliminasi extends Retrieval
     private function resetScoringGroup($elimination_id, $round, $match)
     {
         // tangkap match berdasarkan round, match dan elimination
-        $elimination_group_match = ArcheryEventEliminationGroupMatch::select("archery_event_elimination_group_match.*")
+        $elimination_match_group = ArcheryEventEliminationGroupMatch::select("archery_event_elimination_group_match.*")
             ->join("archery_event_elimination_group", "archery_event_elimination_group.id", "=", "archery_event_elimination_group_match.elimination_group_id")
             ->where("archery_event_elimination_group_match.elimination_group_id", $elimination_id)
             ->where("archery_event_elimination_group_match.round", $round)
             ->where("archery_event_elimination_group_match.match", $match)
             ->get();
 
+        // return $elimination_match_group;
 
-        if ($elimination_group_match->count() < 1 || $elimination_group_match->count() > 2) {
+        if ($elimination_match_group->count() < 1 || $elimination_match_group->count() > 2) {
             throw new BLoCException("match tidak valid");
         }
 
-        foreach ($elimination_group_match as $key => $value) {
-            if ($value->win == 1) {
-                // reset pemenang dari match
-                $value->win = 0;
-                $value->save();
-
-                // reset posisi pada round setelah round saat ini
-                $next_match =  ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
-                    ->where("round", ">", $round)
-                    ->where("group_team_id", $value->group_team_id)
-                    ->get();
-
-                if ($next_match->count() > 1) {
-                    throw new BLoCException("harap reset 1 per satu setiap round");
-                }
-
-                foreach ($next_match as $nm) {
-                    $nm->group_team_id = 0;
-                    $nm->save();
-                }
-            } else {
-                // reset peringkat eliminasi di tabel elimination member
-                $elimination_group_team = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
-                if (!$elimination_group_team) {
-                    throw new BLoCException("elimination group team not found");
-                }
-
-                $elimination_group_team->elimination_ranked = 0;
-                $elimination_group_team->save();
+        try {
+            DB::beginTransaction();
+            $elimination_group = ArcheryEventEliminationGroup::find($elimination_id);
+            if (!$elimination_group) {
+                throw new BLoCException("elimination_group not found");
             }
+
+            $current_round = $this->checkRound($elimination_group->count_participant, $round);
+            if ($current_round == "other") {
+                foreach ($elimination_match_group as $key => $emg) {
+                    $group_team = ArcheryEventEliminationGroupTeams::find($emg->group_team_id);
+                    if ($group_team) {
+                        $group_team->elimination_ranked = 0;
+                        $group_team->save();
+                    }
+
+                    if ($emg->win == 1) {
+                        $next_match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", ">", $round)
+                            ->where("group_team_id", $emg->group_team_id)
+                            ->get();
+
+                        if ($next_match->count() > 1) {
+                            throw new Exception("harap lakukan pembatalan dari round terakhir", 400);
+                        }
+
+                        $match_after = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", $round + 1)
+                            ->where("group_team_id", $emg->group_team_id)
+                            ->first();
+
+                        if (!$match_after) {
+                            throw new Exception("match after not found", 404);
+                        }
+
+                        $full_match_after = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", $match_after->round)
+                            ->where("match", $match_after->match)
+                            ->get();
+
+                        foreach ($full_match_after as $key => $fma) {
+                            $fma->win = 0;
+                            $fma->save();
+
+                            $elimination_group_next = ArcheryEventEliminationGroupTeams::find($fma->group_team_id);
+                            if ($elimination_group_next) {
+                                $elimination_group_next->elimination_ranked = 0;
+                                $elimination_group_next->save();
+                            }
+
+                            if ($fma->group_team_id == $emg->group_team_id) {
+                                $fma->group_team_id = 0;
+                                $fma->save();
+                            }
+
+                            $scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $fma->id)->first();
+                            if ($scoring) {
+                                $scoring->delete();
+                            }
+                        }
+                    }
+
+                    $emg->win = 0;
+                    $emg->save();
+                }
+            }
+
+            if ($current_round == "semi_final") {
+                foreach ($elimination_match_group as $key => $emg) {
+
+                    $group_team = ArcheryEventEliminationGroupTeams::find($emg->group_team_id);
+                    if ($group_team) {
+                        $group_team->elimination_ranked = 0;
+                        $group_team->save();
+                    }
+
+                    $next_match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                        ->where("round", ">", $round)
+                        ->where("group_team_id", $emg->group_team_id)
+                        ->get();
+
+                    if ($next_match->count() > 1) {
+                        throw new Exception("harap lakukan pembatalan dari round terakhir", 400);
+                    }
+
+                    if ($emg->win == 1) {
+                        $match_after = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", $round + 1)
+                            ->where("group_team_id", $emg->group_team_id)
+                            ->first();
+
+                        if (!$match_after) {
+                            throw new Exception("match after not found", 404);
+                        }
+
+                        $full_match_after = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", $match_after->round)
+                            ->where("match", $match_after->match)
+                            ->get();
+
+                        foreach ($full_match_after as $key => $fma) {
+                            $fma->win = 0;
+                            $fma->save();
+
+                            $elimination_group_next = ArcheryEventEliminationGroupTeams::find($fma->group_team_id);
+                            if ($elimination_group_next) {
+                                $elimination_group_next->elimination_ranked = 0;
+                                $elimination_group_next->save();
+                            }
+
+                            if ($fma->group_team_id == $emg->group_team_id) {
+                                $fma->group_team_id = 0;
+                                $fma->save();
+                            }
+
+                            $scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $fma->id)->first();
+                            if ($scoring) {
+                                $scoring->delete();
+                            }
+                        }
+                    } else {
+                        $round_juara_3 = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)->where("round", $round + 2)
+                            ->where("group_team_id", $emg->group_team_id)
+                            ->first();
+
+                        if (!$round_juara_3) {
+                            throw new Exception("perebutan juara 3 tidak ada", 404);
+                        }
+
+                        $full_match_round_juara_3 = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_id)
+                            ->where("round", $round_juara_3->round)
+                            ->where("match", $round_juara_3->match)
+                            ->get();
+
+                        foreach ($full_match_round_juara_3 as $key => $fmrj) {
+                            $fmrj->win = 0;
+                            $fmrj->save();
+
+                            $elimination_member_round_juara_3 = ArcheryEventEliminationGroupTeams::find($fmrj->group_team_id);
+                            if ($elimination_member_round_juara_3) {
+                                $elimination_member_round_juara_3->elimination_ranked = 0;
+                                $elimination_member_round_juara_3->save();
+                            }
+
+
+                            if ($fmrj->group_team_id == $emg->group_team_id) {
+                                $fmrj->group_team_id = 0;
+                                $fmrj->save();
+                            }
+
+                            $scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $fmrj->id)->first();
+                            if ($scoring) {
+                                $scoring->delete();
+                            }
+                        }
+                    }
+
+                    $emg->win = 0;
+                    $emg->save();
+                }
+            }
+
+            if ($current_round == "final" || $current_round == "juara3") {
+                foreach ($elimination_match_group as $key => $emg) {
+                    $emg->win = 0;
+                    $emg->save();
+
+                    $elimination_member_final = ArcheryEventEliminationGroupTeams::find($emg->group_team_id);
+                    if ($elimination_member_final) {
+                        $elimination_member_final->elimination_ranked = 0;
+                        $elimination_member_final->save();
+                    }
+                }
+            }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new BLoCException($th->getMessage());
         }
 
         return "success";
