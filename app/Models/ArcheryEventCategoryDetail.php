@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcherySerieCity;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
+use DAI\Utils\Exceptions\BLoCException;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -225,8 +229,18 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = ArcheryEventCategoryDetail
-            ::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
+
+        $is_games = 0;
+        $event = ArcheryEvent::find($event_id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        if ($event->event_type == "Marathon" && $event->event_competition == "Games") {
+            $is_games = 1;
+        }
+
+        $datas = ArcheryEventCategoryDetail::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
             ->orderBy('archery_master_team_categories.short', 'asc')
@@ -248,6 +262,20 @@ class ArcheryEventCategoryDetail extends Model
 
                 $category->id = $category->id;
                 $category->is_open = $is_open;
+                $category->is_games = $is_games;
+                $range_date = [];
+                if ($is_games == 1 && $qualification_schedule) {
+                    $period = new DatePeriod(
+                        new DateTime($qualification_schedule->event_start_datetime),
+                        new DateInterval('P1D'),
+                        new DateTime($qualification_schedule->event_end_datetime)
+                    );
+
+                    foreach ($period as $key => $p) {
+                        $range_date[] = $p->format('Y-m-d');
+                    }
+                }
+                $category->range_date = $range_date;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
 
