@@ -86,7 +86,7 @@ class ResetScoringEliminasi extends Retrieval
                             ->where("elimination_member_id", $em->elimination_member_id)
                             ->get();
 
-                        if ($next_match > 1) {
+                        if ($next_match->count() > 1) {
                             throw new Exception("harap lakukan pembatalan dari round terakhir", 400);
                         }
 
@@ -145,7 +145,7 @@ class ResetScoringEliminasi extends Retrieval
                         ->where("elimination_member_id", $em->elimination_member_id)
                         ->get();
 
-                    if ($next_match > 1) {
+                    if ($next_match->count() > 1) {
                         throw new Exception("harap lakukan pembatalan dari round terakhir", 400);
                     }
 
