@@ -69,14 +69,14 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        $is_games = 0;
+        $is_marathon = 0;
         $event = ArcheryEvent::find($event->id);
         if (!$event) {
             throw new BLoCException("event not found");
         }
 
-        if ($event->event_type == "Marathon" && $event->event_competition == "Games") {
-            $is_games = 1;
+        if ($event->event_type == "Marathon") {
+            $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
         }
 
@@ -117,13 +117,13 @@ class AddEventOrder extends Transactional
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
-            return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_games, $day_choice);
+            return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice);
         } else {
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name, $price);
         }
     }
 
-    private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_games, $day_choice)
+    private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice)
     {
         $time_now = time();
 
@@ -132,7 +132,7 @@ class AddEventOrder extends Transactional
             throw new BLoCException('event belum bisa di daftar');
         }
 
-        if ($is_games == 1) {
+        if ($is_marathon == 1) {
             $day_choice = date('Y-m-d', strtotime($day_choice));
             $category_start = date('Y-m-d', strtotime($qualification_time->event_start_datetime));
             $category_end = date('Y-m-d', strtotime($qualification_time->event_end_datetime));
@@ -226,7 +226,7 @@ class AddEventOrder extends Transactional
         }
 
         // insert data participant
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_games == 1 ? $day_choice : null);
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null);
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
 

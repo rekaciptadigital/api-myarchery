@@ -230,14 +230,14 @@ class ArcheryEventCategoryDetail extends Model
     public static function getCategoriesRegisterEvent($event_id)
     {
 
-        $is_games = 0;
+        $is_marathon = 0;
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("event not found");
         }
 
-        if ($event->event_type == "Marathon" && $event->event_competition == "Games") {
-            $is_games = 1;
+        if ($event->event_type == "Marathon") {
+            $is_marathon = 1;
         }
 
         $datas = ArcheryEventCategoryDetail::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
@@ -262,9 +262,9 @@ class ArcheryEventCategoryDetail extends Model
 
                 $category->id = $category->id;
                 $category->is_open = $is_open;
-                $category->is_games = $is_games;
+                $category->is_marathon = $is_marathon;
                 $range_date = [];
-                if ($is_games == 1 && $qualification_schedule) {
+                if ($is_marathon == 1 && $qualification_schedule) {
                     $period = new DatePeriod(
                         new DateTime($qualification_schedule->event_start_datetime),
                         new DateInterval('P1D'),
