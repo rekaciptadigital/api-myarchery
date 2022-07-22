@@ -38,13 +38,22 @@ class SetBudRestElimination extends Transactional
             throw new BLoCException("team category not found");
         }
 
+        $bud_rest = 0;
+        $target_face = "";
+
         // split budrest number dan target face
         $brn = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $budrest_number);
-        if (count($brn) != 2) {
-            throw new BLoCException("bantalan harus terdiri dari huruf dan angka");
+        if (count($brn) == 1) {
+            if (ctype_alpha($brn[0])) {
+                throw new BLoCException("bantalan harus mengandung angka");
+            }
+            $bud_rest = $brn[0];
+        } elseif (count($brn) == 2) {
+            $bud_rest = $brn[0];
+            $target_face = $brn[1];
+        } else {
+            throw new BLoCException("input invalid");
         }
-        $bud_rest = $brn[0];
-        $target_face = $brn[1];
 
         if (strtolower($team_category->type) == "team") {
             return $this->setBudrestTeam($elimination_id, $match, $round, $bud_rest, $target_face);

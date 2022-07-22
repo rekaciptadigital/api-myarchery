@@ -60,9 +60,11 @@ class UpdateMemberBudrest extends Retrieval
                 throw new BLoCException("bantalan harus mengandung angka");
             }
             $bud_rest = $brn[0];
-        } else {
+        } elseif (count($brn) == 2) {
             $bud_rest = $brn[0];
             $target_face = $brn[1];
+        } else {
+            throw new BLoCException("input invalid");
         }
 
         // cek apakah terdapat peserta di budrest tujuan
