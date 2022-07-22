@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ArcherySerieCity;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
+use DAI\Utils\Exceptions\BLoCException;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -225,8 +229,18 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-        $datas = ArcheryEventCategoryDetail
-            ::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
+
+        $is_marathon = 0;
+        $event = ArcheryEvent::find($event_id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        if ($event->event_type == "Marathon") {
+            $is_marathon = 1;
+        }
+
+        $datas = ArcheryEventCategoryDetail::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
             ->orderBy('archery_master_team_categories.short', 'asc')
@@ -238,16 +252,32 @@ class ArcheryEventCategoryDetail extends Model
             foreach ($team_categories as $key => $category) {
                 $count_participant = ArcheryEventParticipant::countEventUserBooking($category->id);
                 $is_open = true;
+                $range_date = [];
                 if ($category->type == "Individual") {
                     $qualification_schedule = DB::table('archery_event_qualification_time')
                         ->where('category_detail_id', $category->id)->first();
                     if (!$qualification_schedule) {
                         $is_open = false;
+                    } else {
+                        if ($is_marathon == 1) {
+                            // Start date
+                            $start = strtotime($qualification_schedule->event_start_datetime);
+                            // End date
+                            $end = strtotime($qualification_schedule->event_end_datetime);
+
+                            for ($i = $start; $i <= $end; $i += 86400) {
+                                $day = date("Y-m-d", $i);
+                                $range_date[] = $day;
+                            }
+                        }
                     }
                 }
 
                 $category->id = $category->id;
                 $category->is_open = $is_open;
+                $category->is_marathon = $is_marathon;
+
+                $category->range_date = $range_date;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
 

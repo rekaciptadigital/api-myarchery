@@ -49,6 +49,8 @@ class AddEventOrder extends Transactional
         $user = Auth::guard('app-api')->user();
         $team_name = $parameters->get('team_name') ? $parameters->get('team_name') : "";
         $event_category_id = $parameters->get('event_category_id');
+        $day_choice = $parameters->get("day_choice");
+
 
         // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
@@ -65,6 +67,17 @@ class AddEventOrder extends Transactional
         $event = ArcheryEvent::find($event_category_detail->event_id);
         if (!$event) {
             throw new BLoCException("event tidak tersedia");
+        }
+
+        $is_marathon = 0;
+        $event = ArcheryEvent::find($event->id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        if ($event->event_type == "Marathon") {
+            $is_marathon = 1;
+            Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
         }
 
         // cek apakah event butuh verifikasi user atau tidak
@@ -104,19 +117,29 @@ class AddEventOrder extends Transactional
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
-            return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price);
+            return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice);
         } else {
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name, $price);
         }
     }
 
-    private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price)
+    private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice)
     {
         $time_now = time();
 
         $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
         if (!$qualification_time) {
             throw new BLoCException('event belum bisa di daftar');
+        }
+
+        if ($is_marathon == 1) {
+            $day_choice = date('Y-m-d', strtotime($day_choice));
+            $category_start = date('Y-m-d', strtotime($qualification_time->event_start_datetime));
+            $category_end = date('Y-m-d', strtotime($qualification_time->event_end_datetime));
+
+            if (!($day_choice >= $category_start) && ($day_choice <= $category_end)) {
+                throw new BLoCException("inputan tanggal tidak sesuai");
+            }
         }
 
         // hitung jumlah participant pada category yang didaftarkan user
@@ -144,13 +167,14 @@ class AddEventOrder extends Transactional
             if ($user->age == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
             }
-            
-            if(!empty($event_category_detail->limit_birthday_register) 
+
+            if (
+                !empty($event_category_detail->limit_birthday_register)
                 && $event_category_detail->limit_birthday_register != "0000-00-00"
-                && $user->date_of_birth < $event_category_detail->limit_birthday_register 
-                ){
+                && $user->date_of_birth < $event_category_detail->limit_birthday_register
+            ) {
                 throw new BLoCException("tidak memenuhi syarat usia, batas kelahiran " . $event_category_detail->limit_birthday_register . " ");
-            }else{
+            } else {
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
                 if ($check_date["y"] > $event_category_detail->max_age) {
@@ -160,7 +184,6 @@ class AddEventOrder extends Transactional
                     throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age . " tahun");
                 }
             }
-            
         }
 
         // cek jika memiliki syarat minimal umur
@@ -177,16 +200,20 @@ class AddEventOrder extends Transactional
         }
 
         $gender_category = $event_category_detail->gender_category;
-        if ($user->gender != $gender_category) {
-            if (empty($user->gender))
-                throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+        if ($event->event_type == "Full_day") {
+            if ($user->gender != $gender_category) {
+                if (empty($user->gender))
+                    throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
 
-            throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+            }
         }
+
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
-            ->where('user_id', $user->id)->get();
+            ->where('user_id', $user->id)
+            ->get();
         if ($isExist->count() > 0) {
             foreach ($isExist as $ie) {
                 if ($ie->status == 1) {
@@ -202,7 +229,7 @@ class AddEventOrder extends Transactional
         }
 
         // insert data participant
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0);
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null);
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
 
@@ -234,7 +261,7 @@ class AddEventOrder extends Transactional
                 "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
-            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id,$user->id);
+            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id, $user->id);
             return $this->composeResponse($res);
         }
 
@@ -359,7 +386,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id, null);
 
         if ($price < 1) {
             $participant_new->status = 1;
@@ -539,7 +566,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id);
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id, null);
 
         if ($price < 1) {
             $participant_new->status = 1;
