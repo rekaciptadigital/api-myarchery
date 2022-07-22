@@ -152,6 +152,9 @@ use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
+use App\BLoC\Web\Enterprise\Venue\CreateVenue;
+use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
+
 class WebServiceProvider extends ServiceProvider
 {
     /**
@@ -349,6 +352,16 @@ class WebServiceProvider extends ServiceProvider
         // ======================================== Fats Open 3 ==========================================
         // ================================================================================================
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
+
+        
+        // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
+        
+        $this->registerService("createVenue", CreateVenue::class);
+        $this->registerService("getVenueListFacilities", GetVenueMasterPlaceFacilities::class);
+        
+        // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
+
+
 
     }
 
