@@ -260,14 +260,14 @@ class ArcheryEventCategoryDetail extends Model
                         $is_open = false;
                     } else {
                         if ($is_marathon == 1) {
-                            $period = new DatePeriod(
-                                new DateTime($qualification_schedule->event_start_datetime),
-                                new DateInterval('P1D'),
-                                new DateTime($qualification_schedule->event_end_datetime)
-                            );
+                            // Start date
+                            $start = strtotime($qualification_schedule->event_start_datetime);
+                            // End date
+                            $end = strtotime($qualification_schedule->event_end_datetime);
 
-                            foreach ($period as $key => $p) {
-                                $range_date[] = $p->format('Y-m-d');
+                            for ($i = $start; $i <= $end; $i += 86400) {
+                                $day = date("Y-m-d", $i);
+                                $range_date[] = $day;
                             }
                         }
                     }
