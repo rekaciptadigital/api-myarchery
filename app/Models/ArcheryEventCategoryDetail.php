@@ -252,29 +252,31 @@ class ArcheryEventCategoryDetail extends Model
             foreach ($team_categories as $key => $category) {
                 $count_participant = ArcheryEventParticipant::countEventUserBooking($category->id);
                 $is_open = true;
+                $range_date = [];
                 if ($category->type == "Individual") {
                     $qualification_schedule = DB::table('archery_event_qualification_time')
                         ->where('category_detail_id', $category->id)->first();
                     if (!$qualification_schedule) {
                         $is_open = false;
+                    } else {
+                        if ($is_marathon == 1) {
+                            $period = new DatePeriod(
+                                new DateTime($qualification_schedule->event_start_datetime),
+                                new DateInterval('P1D'),
+                                new DateTime($qualification_schedule->event_end_datetime)
+                            );
+
+                            foreach ($period as $key => $p) {
+                                $range_date[] = $p->format('Y-m-d');
+                            }
+                        }
                     }
                 }
 
                 $category->id = $category->id;
                 $category->is_open = $is_open;
                 $category->is_marathon = $is_marathon;
-                $range_date = [];
-                if ($is_marathon == 1 && $qualification_schedule) {
-                    $period = new DatePeriod(
-                        new DateTime($qualification_schedule->event_start_datetime),
-                        new DateInterval('P1D'),
-                        new DateTime($qualification_schedule->event_end_datetime)
-                    );
 
-                    foreach ($period as $key => $p) {
-                        $range_date[] = $p->format('Y-m-d');
-                    }
-                }
                 $category->range_date = $range_date;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
