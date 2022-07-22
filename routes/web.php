@@ -478,4 +478,19 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
     });
+
+
+    // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
+    $router->group(['prefix' => 'enterprise'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+
+            $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
+            });
+
+        });
+    });
+    // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
+    
+
 });
