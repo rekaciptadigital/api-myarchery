@@ -47,17 +47,25 @@ class UpdateMemberBudrest extends Retrieval
             ->first();
 
         if (!$schedule_full_day1) {
-            throw new BLoCException("jadwal peserta tidak ditemukan");
+            // throw new BLoCException("jadwal peserta tidak ditemukan");
         }
+
+        $bud_rest = 0;
+        $target_face = "";
 
         // split budrest number dan target face
         $brn = preg_split('/(?<=[0-9])(?=[a-z]+)/i', $bud_rest_number);
-        if (count($brn) != 2) {
-            throw new BLoCException("bantalan harus terdiri dari huruf dan angka");
+        if (count($brn) == 1) {
+            if (ctype_alpha($brn[0])) {
+                throw new BLoCException("bantalan harus mengandung angka");
+            }
+            $bud_rest = $brn[0];
+        } elseif (count($brn) == 2) {
+            $bud_rest = $brn[0];
+            $target_face = $brn[1];
+        } else {
+            throw new BLoCException("input invalid");
         }
-        $bud_rest = $brn[0];
-        $target_face = $brn[1];
-
 
         // cek apakah terdapat peserta di budrest tujuan
         $schedule_full_day_2 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
