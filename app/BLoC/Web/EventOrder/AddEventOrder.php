@@ -480,7 +480,7 @@ class AddEventOrder extends Transactional
                 ->get()
                 ->count();
 
-            if ($check_success_category_mix > 2) {
+            if ($check_success_category_mix > 3) {
                 throw new BLoCException("club anda sudah terdaftar 2 kali pada kategori ini");
             }
 
@@ -533,7 +533,7 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
         } else {
-            if ($check_register_same_category >= 2) {
+            if ($check_register_same_category >= 3) {
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                     ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                     ->where('archery_event_participants.club_id', $club_member->club_id)
