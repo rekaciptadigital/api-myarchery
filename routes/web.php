@@ -485,6 +485,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'v1'], function () use ($router) {
 
             $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
                 $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
             });
 
