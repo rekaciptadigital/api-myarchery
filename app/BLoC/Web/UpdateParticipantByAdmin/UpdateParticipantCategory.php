@@ -162,11 +162,11 @@ class UpdateParticipantCategory extends Transactional
         $new_format = Carbon::parse($new_category->start_event);
 
         if ($now > $new_format) {
-            throw new BLoCException("event telah lewat");
+            // throw new BLoCException("event telah lewat");
         }
 
         if ($new_format->diffInDays($now) < 1) {
-            throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 24 jam sebelum berlangsungnya event");
+            // throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 24 jam sebelum berlangsungnya event");
         }
 
         $participant_count = ArcheryEventParticipant::countEventUserBooking($new_category->id);
@@ -183,7 +183,7 @@ class UpdateParticipantCategory extends Transactional
             } else {
                 $msg = $msg . ", silahkan daftar atau pindah di kategori lain";
             }
-            throw new BLoCException($msg);
+            // throw new BLoCException($msg);
         }
 
         $partticipant->update([

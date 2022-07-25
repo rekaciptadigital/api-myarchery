@@ -74,8 +74,10 @@ class ListMemberTeamV2 extends Retrieval
             if ($status == 4) {
                 return $query->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", time());
             } elseif ($status == 2) {
-                return $query->where("archery_event_participants.status", 2)->orWhere(function ($q) {
-                    return $q->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", "<", time());
+                return $query->where(function ($qr) {
+                    return $qr->where("archery_event_participants.status", 2)->orWhere(function ($q) {
+                        return $q->where("archery_event_participants.status", 4)->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", "<", time());
+                    });
                 });
             } else {
                 return $query->where("archery_event_participants.status", $status);
@@ -84,7 +86,7 @@ class ListMemberTeamV2 extends Retrieval
 
         $participant_collection = $participant_query->orderBy('id', 'DESC')->limit($limit)->offset($offset)->get();
 
-        
+
 
         $detail_member = [];
 

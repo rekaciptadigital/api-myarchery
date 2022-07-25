@@ -23,7 +23,7 @@ class CreateArcheryEventV2 extends Transactional
         $admin = Auth::user();
         $event_type = $parameters->get('event_type');
 
-        if ($event_type === 'Full_day') {
+        if ($event_type === 'Full_day' || $event_type === "Marathon") {
             $time = time();
 
             $archery_event = new ArcheryEvent();
@@ -84,7 +84,7 @@ class CreateArcheryEventV2 extends Transactional
 
             return ArcheryEvent::detailEventById($archery_event->id);
         } else {
-            throw new BLoCException("untuk saat ini yang dibuka hanya full day");
+            throw new BLoCException("untuk saat ini yang dibuka hanya full day dan marathon");
         }
     }
 

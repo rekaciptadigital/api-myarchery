@@ -34,9 +34,9 @@ class CreateQualificationTimeV2 extends Transactional
             throw new BLoCException("forbiden");
         }
 
-        $today = strtotime("now");
-        $date_time_event_start_datetime = strtotime($event->event_start_datetime);
-        $date_time_event_end_datetime = strtotime($event->event_end_datetime);
+        $today = date('Y-m-d', strtotime("now"));
+        $date_time_event_start_datetime = date('Y-m-d', strtotime($event->event_start_datetime));
+        $date_time_event_end_datetime = date('Y-m-d', strtotime($event->event_end_datetime));
 
         // validasi hanya bisa set jadwal sebelum event mulai
         if ($today > $date_time_event_start_datetime) {
@@ -59,8 +59,8 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("category tidak valid");
             }
 
-            $qualification_time_event_start_datetime = strtotime($qualification_time['event_start_datetime']);
-            $qualification_time_event_end_datetime = strtotime($qualification_time['event_end_datetime']);
+            $qualification_time_event_start_datetime = date('Y-m-d', strtotime($qualification_time['event_start_datetime']));
+            $qualification_time_event_end_datetime = date('Y-m-d', strtotime($qualification_time['event_end_datetime']));
 
             if (
                 (($qualification_time_event_start_datetime >= $date_time_event_start_datetime) && ($qualification_time_event_start_datetime <= $date_time_event_end_datetime))
