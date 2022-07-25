@@ -305,6 +305,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
             });
 
+            $router->group(['prefix' => 'age-categories', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
+            });
+
             $router->group(['prefix' => 'events'], function () use ($router) {
                 $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
