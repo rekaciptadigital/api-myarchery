@@ -141,7 +141,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "status" => $value->win == 1 ? "win" : "wait",
                         "admin_total" => $admin_total,
                         "result" => $value->result,
-                        "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
+                        "budrest_number" => $value->bud_rest != 0 ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                     );
                 } else {
@@ -227,7 +227,7 @@ class GetEventEliminationTemplate extends Retrieval
                         } else {
                             $total_scoring = $scoring_detail->result;
                         }
-                        
+
                         if ($total_scoring != $admin_total) {
                             $is_different = 1;
                         }
@@ -255,7 +255,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "result" => $total_scoring,
                         "status" => $value->win == 1 ? "win" : "wait",
                         "admin_total" => $admin_total,
-                        "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
+                        "budrest_number" => $value->bud_rest != 0 ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
                         "member_team" => $list_member,
                         "team_name" => $team_name
