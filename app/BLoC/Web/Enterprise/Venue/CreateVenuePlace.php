@@ -4,6 +4,7 @@ namespace App\BLoC\Web\Enterprise\Venue;
 
 use App\Models\VenuePlace;
 use App\Models\VenuePlaceFacility;
+use App\Models\VenuePlaceGallery;
 use App\Models\VenueMasterPlaceFacility;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
@@ -39,9 +40,8 @@ class CreateVenuePlace extends Transactional
     
         // place's facilities
         $facilities = $parameters->get('facilities', []); 
-        $data_facilities = json_decode($facilities);
-        if (count($data_facilities) > 0) {
-            foreach ($data_facilities as $key => $value) {
+        if (count($facilities) > 0) {
+            foreach ($facilities as $key => $value) {
                 $venue_facilities = new VenuePlaceFacility();
                 $venue_facilities->place_id = $venue_place->id;
                 $venue_facilities->master_place_facility_id = $value;
@@ -52,9 +52,8 @@ class CreateVenuePlace extends Transactional
 
         // place's other facilities
         $other_facilities = $parameters->get('other_facilities', []); 
-        $data_other_facilities = json_decode($other_facilities);
-        if (count($data_other_facilities) > 0) {
-            foreach ($data_other_facilities as $key => $value) {
+        if (count($other_facilities) > 0) {
+            foreach ($other_facilities as $key => $value) {
                 $venue_master_facilities = new VenueMasterPlaceFacility();
                 $venue_master_facilities->name = $value;
                 $venue_master_facilities->eo_id = $admin->eo_id;
@@ -64,6 +63,24 @@ class CreateVenuePlace extends Transactional
                 $venue_facilities_2->place_id = $venue_place->id;
                 $venue_facilities_2->master_place_facility_id = $venue_master_facilities->id;
                 $venue_facilities_2->save();
+            }
+        }
+
+        // image galleries
+        $galleries = $parameters->get('galleries', []); 
+        if (count($galleries) > 0) {
+            foreach ($galleries as $key => $value) {
+                $array_file_index_0 = explode(";", $value)[0];
+                $ext_file_upload =  explode("/", $array_file_index_0)[1];
+                if ($ext_file_upload != "png" && $ext_file_upload != "jpg" && $ext_file_upload != "jpeg") {
+                    throw new BLoCException("mohon inputkan tipe data gambar");
+                }
+                $gallery_result = Upload::setPath("asset/venue_place/")->setFileName("venue_place_" . $parameters->get("name") . "_" .$key)->setBase64($value)->save();
+
+                $gallery = new VenuePlaceGallery();
+                $gallery->place_id = $venue_place->id;
+                $gallery->file = $gallery_result;
+                $gallery->save();
             }
         }
 
@@ -80,8 +97,9 @@ class CreateVenuePlace extends Transactional
             "province_id" => "required",
             "city_id" => "required",
             "type" => "required|in:Indoor,Outdoor,Both",
-            // "facilities" => "array",
-            // "other_facilities" => "array"
+            "facilities" => "array",
+            "other_facilities" => "array",
+            "galleries" => "array"
         ];
     }
 }

@@ -21,7 +21,7 @@ class GetVenuePlace extends Retrieval
         $admin = Auth::user();
         $venue_place = VenuePlace::find($parameters->get('id'));
         if (!$venue_place) throw new BLoCException("Data not found");
-        if ($venue_place->admin_id != $admin->id) throw new BLoCException("You're not the owner of this event");
+        if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this event");
         $venue_place_detail = VenuePlace::detailVenueById($parameters->get('id'));
 
         return $venue_place_detail;
