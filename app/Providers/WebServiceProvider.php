@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use App\BLoC\Web\AdminAuth\ForgotPassword;
 use App\BLoC\Web\AdminAuth\Login;
 use App\BLoC\Web\AdminAuth\Register;
+use App\BLoC\Web\AdminAuth\CheckAdminRegister;
 use App\BLoC\Web\AdminAuth\ResetPassword;
 use App\BLoC\Web\AdminAuth\GetProfile;
 use App\BLoC\Web\AdminAuth\Logout;
@@ -167,6 +168,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("forgotPassword", ForgotPassword::class);
         $this->registerService("login", Login::class);
         $this->registerService("register", Register::class);
+        $this->registerService("checkAdminRegister", CheckAdminRegister::class);
         $this->registerService("resetPassword", ResetPassword::class);
         $this->registerService("updateProfile", UpdateProfile::class);
         $this->registerService("getProfile", GetProfile::class);

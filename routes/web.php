@@ -221,6 +221,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:forgotPassword']);
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
+            $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
