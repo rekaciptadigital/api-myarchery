@@ -113,6 +113,7 @@ use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadIdCardByCategoryIdV2;
 use App\BLoC\Web\ArcheryEventIdcard\CreateOrUpdateIdCardTemplateV2;
 use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
+use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResultV2;
@@ -232,6 +233,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
+        $this->registerService("getArcheryMasterAgeCategoryByAdmin", GetArcheryMasterAgeCategoryByAdmin::class);
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
         $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
