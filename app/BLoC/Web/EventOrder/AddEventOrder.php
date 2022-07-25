@@ -106,19 +106,24 @@ class AddEventOrder extends Transactional
             throw new BLoCException("club harus diisi");
         }
 
+
+
         // cek apakah user sudah tergabung dalam club atau belum
         if ($parameters->get('club_id') != 0) {
+
             $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
             if (!$club_member) {
                 throw new BLoCException("member not joined this club");
             }
         } else {
+
             $club_member = null;
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice);
         } else {
+
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name, $price);
         }
     }
@@ -126,6 +131,7 @@ class AddEventOrder extends Transactional
     private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice)
     {
         $time_now = time();
+
 
         $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
         if (!$qualification_time) {
@@ -200,7 +206,8 @@ class AddEventOrder extends Transactional
         }
 
         $gender_category = $event_category_detail->gender_category;
-        if ($event->event_type == "Full_day") {
+
+        if ($gender_category != "mix") {
             if ($user->gender != $gender_category) {
                 if (empty($user->gender))
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
