@@ -206,8 +206,7 @@ class AddEventOrder extends Transactional
         }
 
         $gender_category = $event_category_detail->gender_category;
-
-        if ($gender_category != "mix") {
+        if ($event->event_type == "Full_day") {
             if ($user->gender != $gender_category) {
                 if (empty($user->gender))
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
@@ -215,7 +214,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
             }
         }
-
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
