@@ -21,11 +21,28 @@ class VenuePlace extends Model
 
     protected function listVenueByEoId($limit, $offset, $eo_id)
     {
-        $data = VenuePlace::select("*")
-                ->leftJoin("venue_place_galleries", "venue_place_galleries.place_id", "=", "venue_places.id")
-                ->where('venue_places.eo_id', $eo_id)
+        $datas = VenuePlace::where('eo_id', $eo_id)
                 ->limit($limit)->offset($offset)
-                ->get();                              
-        return $data;
+                ->get();  
+                
+        $output = [];
+        foreach ($datas as $data) {
+            $galleries = VenuePlaceGallery::where("place_id", "=", $data->id)->get();   
+            $galleries_data = [];
+            if ($galleries) {
+                foreach ($galleries as $key => $value) {
+                    $galleries_data[] = [
+                        'id' => $value->id,
+                        'file' => $value->file
+                    ];
+                }
+            }
+
+            $output[] = array(
+                "venue_place" => $data,
+                "galleries" => $galleries_data
+            );
+        }
+        return $output;
     }
 }
