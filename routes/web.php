@@ -295,19 +295,17 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
             });
 
+            $router->group(['prefix' => 'master-age-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
+                //  ======================================fast open ==========================================
+                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
+                $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
+            });
+
             $router->group(['prefix' => 'more-information'], function () use ($router) {
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventMoreInformation']);
                 $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEventMoreInformation']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
-            });
-
-            $router->group(['prefix' => 'age-categories'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
-                //  ======================================fast open ==========================================
-                $router->group(['middleware' => 'auth.admin'], function () use ($router) {
-                    $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
-                    $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
-                });
             });
 
             $router->group(['prefix' => 'events'], function () use ($router) {
