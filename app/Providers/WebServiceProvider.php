@@ -109,6 +109,7 @@ use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\CreateMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryMasterAgeCategoryByAdmin;
+use App\BLoC\Web\ArcheryEventMasterAgeCategory\UpdateMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportResultV2;
@@ -226,9 +227,14 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+
+        // ==================================== master age category ======================================
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
         $this->registerService("getArcheryMasterAgeCategoryByAdmin", GetArcheryMasterAgeCategoryByAdmin::class);
         $this->registerService("createMasterAgeCategoryByAdmin", CreateMasterAgeCategoryByAdmin::class);
+        $this->registerService("updateMasterAgeCategoryByAdmin", UpdateMasterAgeCategoryByAdmin::class);
+
+
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
         $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
