@@ -303,12 +303,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
-            });
-
-            $router->group(['prefix' => 'age-categories', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
-                
-                $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
+                //  ======================================fast open ==========================================
+                $router->group(['middleware' => 'auth.admin'], function () use ($router) {
+                    $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
+                    $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
+                });
             });
 
             $router->group(['prefix' => 'events'], function () use ($router) {
@@ -498,10 +497,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
 
             });
-
         });
     });
     // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
-    
+
 
 });
