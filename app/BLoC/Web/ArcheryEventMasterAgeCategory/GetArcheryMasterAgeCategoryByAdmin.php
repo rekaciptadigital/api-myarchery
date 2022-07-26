@@ -18,7 +18,7 @@ class GetArcheryMasterAgeCategoryByAdmin extends Retrieval
     {
         $admin = Auth::user();
 
-        $age_categories = ArcheryEventMasterAgeCategory::where("eo_id", 0)->orWhere("eo_id", $admin->id)->orderBy("eo_id")->get();
+        $age_categories = ArcheryEventMasterAgeCategory::where("eo_id", 0)->orWhere("eo_id", $admin->id)->orderBy("eo_id")->orderBy("id")->get();
 
         return $age_categories;
     }

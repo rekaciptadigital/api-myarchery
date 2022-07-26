@@ -221,6 +221,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:forgotPassword']);
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
+            $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -290,12 +291,18 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
             });
 
+            $router->group(['prefix' => 'master-age-categories'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
+                //  ======================================fast open ==========================================
+                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
+                $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
+            });
+
             $router->group(['prefix' => 'more-information'], function () use ($router) {
                 $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventMoreInformation']);
                 $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEventMoreInformation']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
             });
-
 
             $router->group(['prefix' => 'events'], function () use ($router) {
                 $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
@@ -471,4 +478,22 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
     });
+
+
+    // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
+    $router->group(['prefix' => 'enterprise'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+
+            $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
+                $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
+                $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
+
+            });
+        });
+    });
+    // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
+
+
 });
