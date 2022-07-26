@@ -55,6 +55,7 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
 
                 $category->min_date_of_birth = $min;
                 $category->max_date_of_birth = $max;
+                $category->is_age = $is_age;
             }
         }
         $category->id = $id;
