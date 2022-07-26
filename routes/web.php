@@ -240,12 +240,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryAgeCategory']);
-                $router->delete('/bulk', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDeleteArcheryAgeCategory']);
-                $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryAgeCategory']);
-                $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryAgeCategory']);
-                $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryAgeCategory']);
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryAgeCategory']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
+                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
             });
             $router->group(['prefix' => 'categories'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryCategory']);
@@ -300,13 +296,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
             });
 
-            $router->group(['prefix' => 'age-categories'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
-            });
-
-            $router->group(['prefix' => 'age-categories', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
-            });
 
             $router->group(['prefix' => 'events'], function () use ($router) {
                 $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
