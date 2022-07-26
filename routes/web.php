@@ -240,10 +240,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
 
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/event-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEventBySlug']);
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
                 $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
                 $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
+                $router->put('/update-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMasterAgeCategoryByAdmin']);
             });
             $router->group(['prefix' => 'categories'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryCategory']);
@@ -291,50 +293,49 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'competition-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterCompetitionCategory']);
             });
-        });
 
-        $router->group(['prefix' => 'more-information'], function () use ($router) {
-            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventMoreInformation']);
-            $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEventMoreInformation']);
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
-        });
+            $router->group(['prefix' => 'events'], function () use ($router) {
+                $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
+                $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEvent']);
+                $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEvent']);
+                $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEvent']);
+                $router->get('/find/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEvent']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
+                $router->get('/all/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListArcheryEventDetail']);
+                $router->get('/{id}/categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategory']);
+                $router->get('/{id}/participants', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipant']);
+                $router->get('/participant/members', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMember']);
+                $router->get('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantScore']);
+                $router->get('/participant/member/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMemberProfile']);
+                $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
+                $router->get('/participant/excel/download/lunas', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantLunas']);
+                $router->get('/participant/excel/download/pending', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantPending']);
+                $router->get('/participant/excel/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipant']);
+                $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
+                $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
+                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
+                $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
+                $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
+                $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
+                $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
+                $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
+                $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
+                $router->get('/detail-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailBySlug']);
+                $router->get('/register/list-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategoryRegister']);
+            });
 
-        $router->group(['prefix' => 'events'], function () use ($router) {
-            $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
-            $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEvent']);
-            $router->delete('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEvent']);
-            $router->put('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEvent']);
-            $router->get('/find/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEvent']);
-            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
-            $router->get('/all/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListArcheryEventDetail']);
-            $router->get('/{id}/categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategory']);
-            $router->get('/{id}/participants', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipant']);
-            $router->get('/participant/members', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMember']);
-            $router->get('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantScore']);
-            $router->get('/participant/member/profile', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventParticipantMemberProfile']);
-            $router->put('/{id}/participants/{participant_id}/scores', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEvent']);
-            $router->get('/participant/excel/download/lunas', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantLunas']);
-            $router->get('/participant/excel/download/pending', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipantPending']);
+            $router->group(['prefix' => 'scorer'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
+                $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
+                $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
+            });
 
-
-
-            $router->get('/participant/excel/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadArcheryEventParticipant']);
-            $router->post('/update-status', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventStatus']);
-            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailById']);
-            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventSeparated']);
-            $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
-            $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
-            $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
-            $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
-            $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
-            $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
-        });
-
-        $router->group(['prefix' => 'scorer'], function () use ($router) {
-            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
-            $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
-            $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
+            $router->group(['prefix' => 'more-information'], function () use ($router) {
+                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventMoreInformation']);
+                $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteArcheryEventMoreInformation']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventMoreInformation']);
+            });
         });
 
         $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -358,14 +359,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'series', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download/user-points', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadUserSeriePoint']);
-        });
-
-        $router->group(['prefix' => 'archery'], function () use ($router) {
-            $router->get('/event-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findArcheryEventBySlug']);
-            $router->group(['prefix' => 'events'], function () use ($router) {
-                $router->get('/detail-by-slug', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventDetailBySlug']);
-                $router->get('/register/list-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCategoryRegister']);
-            });
         });
 
         $router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {
