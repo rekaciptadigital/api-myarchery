@@ -155,6 +155,7 @@ use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
+use App\BLoC\Web\Enterprise\Venue\GetListVenuePlace;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -360,6 +361,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createVenuePlace", CreateVenuePlace::class);
         $this->registerService("getVenuePlace", GetVenuePlace::class);
         $this->registerService("getVenueListFacilities", GetVenueMasterPlaceFacilities::class);
+        $this->registerService("getListVenuePlace", GetListVenuePlace::class);
+
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
 
