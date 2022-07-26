@@ -241,7 +241,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
         $this->registerService("getArcheryMasterAgeCategoryByAdmin", GetArcheryMasterAgeCategoryByAdmin::class);
-        $this->registerService("createMasterAgeCategoryByAdmin", createMasterAgeCategoryByAdmin::class);
+        $this->registerService("createMasterAgeCategoryByAdmin", CreateMasterAgeCategoryByAdmin::class);
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
         $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
