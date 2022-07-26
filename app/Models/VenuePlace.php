@@ -18,4 +18,14 @@ class VenuePlace extends Model
         $data['galleries'] = VenuePlaceGallery::where("place_id", "=", $id)->get();                        
         return $data;
     }
+
+    protected function listVenueByEoId($limit, $offset, $eo_id)
+    {
+        $data = VenuePlace::select("*")
+                ->leftJoin("venue_place_galleries", "venue_place_galleries.place_id", "=", "venue_places.id")
+                ->where('venue_places.eo_id', $eo_id)
+                ->limit($limit)->offset($offset)
+                ->get();                              
+        return $data;
+    }
 }
