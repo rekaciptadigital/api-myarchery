@@ -38,10 +38,8 @@ class VenuePlace extends Model
                 }
             }
 
-            $output[] = array(
-                "venue_place" => $data,
-                "galleries" => $galleries_data
-            );
+            $data['galleries'] = $galleries_data;
+            array_push($output, $data);
         }
         return $output;
     }
