@@ -27,7 +27,7 @@ class CreateVenuePlace extends Transactional
         $venue_place = new VenuePlace();
         $venue_place->eo_id = $admin->eo_id;
         $venue_place->name = $parameters->get('name');
-        $venue_place->type = $parameters->get('type');
+        $venue_place->place_type = $parameters->get('type');
         $venue_place->description = $parameters->get('description');
         $venue_place->phone_number = $parameters->get('phone_number');
         $venue_place->address = $parameters->get('address');
