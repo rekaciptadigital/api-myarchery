@@ -41,14 +41,17 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
             } else {
                 $datetime_min = DateTime::createFromFormat("Y-m-d H:i:s", $min);
                 $datetime_max = DateTime::createFromFormat("Y-m-d H:i:s", $max);
-                if (!$datetime_min || !$datetime_max) {
-                    throw new BLoCException("date invalid");
+                if ($datetime_min && $datetime_max) {
+                    if ($datetime_min > $datetime_max) {
+                        throw new BLoCException("date min must be lower than date max");
+                    }
+                } elseif ($datetime_min && $max != 0) {
+                    throw new BLoCException("invalid 1");
+                } elseif ($datetime_max && $min != 0) {
+                    throw new BLoCException("invalid 2");
+                } elseif (!$datetime_min && !$datetime_max) {
+                    throw new BLoCException("invalid 3");
                 }
-
-                if ($datetime_min > $datetime_max) {
-                    throw new BLoCException("date min must be lower than date max");
-                }
-
 
                 $category->min_date_of_birth = $min;
                 $category->max_date_of_birth = $max;
