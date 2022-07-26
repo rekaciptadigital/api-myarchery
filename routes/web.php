@@ -307,6 +307,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->group(['prefix' => 'age-categories', 'middleware' => 'auth.admin'], function () use ($router) {
                 $router->get('/get-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryMasterAgeCategoryByAdmin']);
+                
                 $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
             });
 
