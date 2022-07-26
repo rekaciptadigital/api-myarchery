@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use App\BLoC\Web\AdminAuth\ForgotPassword;
 use App\BLoC\Web\AdminAuth\Login;
 use App\BLoC\Web\AdminAuth\Register;
+use App\BLoC\Web\AdminAuth\CheckAdminRegister;
 use App\BLoC\Web\AdminAuth\ResetPassword;
 use App\BLoC\Web\AdminAuth\GetProfile;
 use App\BLoC\Web\AdminAuth\Logout;
@@ -154,6 +155,10 @@ use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
+use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
+
 class WebServiceProvider extends ServiceProvider
 {
     /**
@@ -166,6 +171,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("forgotPassword", ForgotPassword::class);
         $this->registerService("login", Login::class);
         $this->registerService("register", Register::class);
+        $this->registerService("checkAdminRegister", CheckAdminRegister::class);
         $this->registerService("resetPassword", ResetPassword::class);
         $this->registerService("updateProfile", UpdateProfile::class);
         $this->registerService("getProfile", GetProfile::class);
@@ -352,6 +358,17 @@ class WebServiceProvider extends ServiceProvider
         // ======================================== Fats Open 3 ==========================================
         // ================================================================================================
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
+
+        // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
+        
+        $this->registerService("createVenuePlace", CreateVenuePlace::class);
+        $this->registerService("getVenuePlace", GetVenuePlace::class);
+        $this->registerService("getVenueListFacilities", GetVenueMasterPlaceFacilities::class);
+        
+        // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
+
+
+
     }
 
 

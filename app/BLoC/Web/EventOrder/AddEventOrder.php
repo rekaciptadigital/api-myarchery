@@ -106,19 +106,24 @@ class AddEventOrder extends Transactional
             throw new BLoCException("club harus diisi");
         }
 
+
+
         // cek apakah user sudah tergabung dalam club atau belum
         if ($parameters->get('club_id') != 0) {
+
             $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
             if (!$club_member) {
                 throw new BLoCException("member not joined this club");
             }
         } else {
+
             $club_member = null;
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice);
         } else {
+
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name, $price);
         }
     }
@@ -126,6 +131,7 @@ class AddEventOrder extends Transactional
     private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice)
     {
         $time_now = time();
+
 
         $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
         if (!$qualification_time) {
@@ -208,7 +214,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
             }
         }
-
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)

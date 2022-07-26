@@ -221,6 +221,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/reset-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetPassword']);
             $router->post('/forgot-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:forgotPassword']);
             $router->post('/validate-code-password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:validateCodePassword']);
+            $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -483,4 +484,21 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
     });
+
+
+    // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
+    $router->group(['prefix' => 'enterprise'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+
+            $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
+                $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
+            });
+
+        });
+    });
+    // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
+    
+
 });
