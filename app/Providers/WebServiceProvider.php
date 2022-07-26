@@ -113,6 +113,7 @@ use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadIdCardByCategoryIdV2;
 use App\BLoC\Web\ArcheryEventIdcard\CreateOrUpdateIdCardTemplateV2;
 use App\BLoC\Web\ArcheryEventIdcard\FindIdCardByMmeberOrOfficialId;
 use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
+use App\BLoC\Web\ArcheryEventMasterAgeCategory\CreateMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
@@ -234,6 +235,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
         $this->registerService("getArcheryMasterAgeCategoryByAdmin", GetArcheryMasterAgeCategoryByAdmin::class);
+        $this->registerService("createMasterAgeCategoryByAdmin", createMasterAgeCategoryByAdmin::class);
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
         $this->registerService("getArcheryEventDetailById", GetArcheryEventDetailById::class);
         $this->registerService("getArcheryEventQualificationTime", GetArcheryEventQualificationTime::class);
@@ -251,7 +253,6 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadArcheryEventParticipant", GetDownloadArcheryEventParticipant::class);
         $this->registerService("acceptVerifyUser", AcceptVerifyUser::class);
         $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
-
         $this->registerService("downloadPdf", DownloadPdf::class);
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
@@ -351,7 +352,6 @@ class WebServiceProvider extends ServiceProvider
         // ======================================== Fats Open 3 ==========================================
         // ================================================================================================
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
-
     }
 
 
