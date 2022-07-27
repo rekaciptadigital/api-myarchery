@@ -64,6 +64,9 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
 
         if ($type == "usia") {
             if ($is_age == 1) {
+                if (($min > 0 && $max > 0) && $min > $max) {
+                    throw new BLoCException("min harus lebih kecil dari max");
+                }
                 $age_category->min_date_of_birth = null;
                 $age_category->max_date_of_birth = null;
                 $age_category->min_age = $min;
