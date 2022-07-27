@@ -48,4 +48,51 @@ class VenuePlace extends Model
         }
         return $output;
     }
+
+    protected function getAllListVenue($filter_status = '')
+    {
+        $datas = VenuePlace::query();  
+
+        // filter by status
+        $datas->when($filter_status, function ($query) use ($filter_status) {
+            return $query->where("status", $filter_status);
+        });
+
+        $data_collection = $datas->get();
+   
+        $result = [];
+        foreach ($data_collection as $data) {
+            $admin_venue = Admin::where('eo_id', $data->eo_id)->first();
+            $facilities = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
+                            ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
+                            ->where("venue_place_facilities.place_id", "=", $data->id)
+                            ->get(); 
+            $facilities_data = [];
+            if ($facilities) {
+                foreach ($facilities as $key => $value) {
+                    $facilities_data[] = [
+                        'id' => $value->id,
+                        'name' => $value->name
+                    ];
+                }
+            }
+            
+            $galleries = VenuePlaceGallery::where("place_id", "=", $data->id)->get();   
+            $galleries_data = [];
+            if ($galleries) {
+                foreach ($galleries as $key => $value) {
+                    $galleries_data[] = [
+                        'id' => $value->id,
+                        'file' => $value->file
+                    ];
+                }
+            }
+
+            $data['admin'] = $admin_venue;
+            $data['facilities'] = $facilities_data;
+            $data['galleries'] = $galleries_data;
+            array_push($result, $data);
+        }
+        return $result;
+    }
 }

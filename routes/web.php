@@ -20,6 +20,7 @@ use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
 use App\Models\User;
+use App\Models\VenuePlace;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -498,3 +499,36 @@ $router->group(['prefix' => 'web'], function () use ($router) {
     
 
 });
+
+
+// ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
+$router->get('enterprise/fldryepswqpxrat', function () {
+    $new_submission = VenuePlace::getAllListVenue(1);
+    $submission_approved = VenuePlace::getAllListVenue(2);
+    
+    return view('enterprise/venue_submission_index', [
+        "datas" => $new_submission,
+        "data_approved" => $submission_approved
+    ]);
+});
+
+$router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id) {
+    try {
+        $data = VenuePlace::find($id);
+        if (!$data) {
+            throw new Exception("data venue not found", 404);
+        }
+        $data->update([
+            "status" => 2
+        ]);
+
+        return redirect('enterprise/fldryepswqpxrat');
+
+    } catch (\Throwable $th) {
+        return response()->json([
+            "status" => "error",
+            "message" => $th->getMessage()
+        ], $th->getCode());
+    }
+});
+// ------------------------------------------------------------- End Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
