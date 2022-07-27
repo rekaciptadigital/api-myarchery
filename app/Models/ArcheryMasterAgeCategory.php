@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ArcheryMasterAgeCategory extends Model
 {
     protected $table = 'archery_master_age_categories';
+    protected $guarded = ["id"];
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $primaryKey = 'id';
     protected $appends = [
         'can_update'
     ];
