@@ -110,6 +110,7 @@ use App\BLoC\Web\ArcheryEventIdcard\GetTemplateIdCardByEventIdV2;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\CreateMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetDetailMasterAgeCategory;
+use App\BLoC\Web\ArcheryEventMasterAgeCategory\UpdateIsHideAgeCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\UpdateMasterAgeCategoryByAdmin;
 use App\BLoC\Web\ArcheryEventQualificationTime\CreateQualificationTimeV2;
 use App\BLoC\Web\Member\ListMemberV2;
@@ -235,6 +236,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createMasterAgeCategoryByAdmin", CreateMasterAgeCategoryByAdmin::class);
         $this->registerService("updateMasterAgeCategoryByAdmin", UpdateMasterAgeCategoryByAdmin::class);
         $this->registerService("getDetailMasterAgeCategory", GetDetailMasterAgeCategory::class);
+        $this->registerService("updateIsHideAgeCategory", UpdateIsHideAgeCategory::class);
 
 
         $this->registerService("updateArcheryEventStatus", UpdateArcheryEventStatus::class);
