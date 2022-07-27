@@ -29,7 +29,7 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
 
         $is_exist = ArcheryEventMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)->first();
         if ($is_exist) {
-            throw new BLoCException("category sudah dibuat sebelumnya");
+            throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
         $digits = 4;
         $id = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
