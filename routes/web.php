@@ -247,6 +247,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/create-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createMasterAgeCategoryByAdmin']);
                 $router->put('/update-by-eo', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMasterAgeCategoryByAdmin']);
                 $router->get("/get-detail-by-eo", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailMasterAgeCategory']);
+                $router->put("/update-is-hide-age-by-eo", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideAgeCategory']);
             });
             $router->group(['prefix' => 'categories'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryCategory']);
