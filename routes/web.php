@@ -503,8 +503,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
-    $new_submission = VenuePlace::getAllListVenue(1);
-    $submission_approved = VenuePlace::getAllListVenue(2);
+    $new_submission = VenuePlace::getAllListVenue(2);
+    $submission_approved = VenuePlace::getAllListVenue(3);
     
     return view('enterprise/venue_submission_index', [
         "datas" => $new_submission,
@@ -519,7 +519,7 @@ $router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id
             throw new Exception("data venue not found", 404);
         }
         $data->update([
-            "status" => 2
+            "status" => 3
         ]);
 
         return redirect('enterprise/fldryepswqpxrat');

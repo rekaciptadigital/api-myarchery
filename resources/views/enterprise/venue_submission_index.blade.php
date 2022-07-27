@@ -62,7 +62,7 @@
                         </td>
                         <td>
                             <form action="/enterprise/fldryepswqpxrat/{{ $data->id }}" method="post">
-                                <input type="submit" value="Change Status" class="btn btn-warning">
+                                <input type="submit" value="Approve" class="btn btn-success">
                             </form>
                         </td>
                     </tr>
