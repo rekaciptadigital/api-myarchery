@@ -27,9 +27,9 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
         $max = $parameters->get("max");
         $eo_id = $admin->id;
 
-        $is_exist = ArcheryEventMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)->first();
+        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)->first();
         if ($is_exist) {
-            throw new BLoCException("category sudah dibuat sebelumnya");
+            throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
         $digits = 4;
         $id = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
@@ -53,8 +53,8 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
                     throw new BLoCException("invalid 3");
                 }
 
-                $category->min_date_of_birth = $min;
-                $category->max_date_of_birth = $max;
+                $category->min_date_of_birth = $min == 0 ? null : $min;
+                $category->max_date_of_birth = $max == 0 ? null : $max;
                 $category->is_age = $is_age;
             }
         }

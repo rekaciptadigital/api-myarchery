@@ -8,9 +8,6 @@ use App\Models\ArcherySerieCity;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Exceptions\BLoCException;
-use DateInterval;
-use DatePeriod;
-use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -197,7 +194,7 @@ class ArcheryEventCategoryDetail extends Model
 
     public function getMaxAgeAttribute()
     {
-        $age = ArcheryEventMasterAgeCategory::where('id', $this->age_category_id)->first();
+        $age = ArcheryMasterAgeCategory::where('id', $this->age_category_id)->first();
         if (!$age) {
             return $this->attributes['max_age'] = 0;
         }
@@ -220,7 +217,7 @@ class ArcheryEventCategoryDetail extends Model
 
     public function getMinAgeAttribute()
     {
-        $age = ArcheryEventMasterAgeCategory::where('id', $this->age_category_id)->first();
+        $age = ArcheryMasterAgeCategory::where('id', $this->age_category_id)->first();
         if (!$age) {
             return $this->attributes['min_age'] = 0;
         }
