@@ -4,7 +4,6 @@ namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEventMasterAgeCategory;
 use App\Models\ArcheryMasterAgeCategory;
 use DAI\Utils\Exceptions\BLoCException;
 use DateTime;
@@ -36,6 +35,9 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
         $category = new ArcheryMasterAgeCategory;
         if ($type == "usia") {
             if ($is_age == 1) {
+                if (($min > 0 && $max > 0) && $min > $max) {
+                    throw new BLoCException("min harus lebih kecil dari max");
+                }
                 $category->min_age = $min;
                 $category->max_age = $max;
             } else {

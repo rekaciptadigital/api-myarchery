@@ -4,8 +4,6 @@ namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryEventMasterAgeCategory;
 use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Facades\Auth;
 
