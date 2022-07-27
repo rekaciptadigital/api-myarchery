@@ -2,11 +2,8 @@
 
 namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
-use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventCategoryDetail;
-use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEventMasterAgeCategory;
 use App\Models\ArcheryEventParticipant;
+use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryMasterAgeCategory;
 use DAI\Utils\Exceptions\BLoCException;
 use DateTime;
@@ -23,7 +20,7 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
     {
         $admin = Auth::user();
         $id = $parameters->get("id");
-        
+
         $type = $parameters->get("type");
         $label = trim($parameters->get("label"));
         $is_age = $parameters->get("is_age");
@@ -35,17 +32,34 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
             throw new BLoCException("age category not found");
         }
 
+
         if ($age_category->eo_id != $admin->id) {
             throw new BLoCException("forbiden");
-        }
-
-        if ($age_category->can_update == 0) {
-            throw new BLoCException("can't update");
         }
 
         $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)->first();
         if ($is_exist) {
             throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
+        }
+        $can_update_label = 1;
+        $time_now = time();
+        $participant_register = ArcheryEventParticipant::select("archery_event_participants.*")
+            ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+            ->where("age_category_id", $age_category->id)
+            ->where(function ($query) use ($time_now) {
+                $query->where("archery_event_participants.status", 1);
+                $query->orWhere(function ($q) use ($time_now) {
+                    $q->where("archery_event_participants.status", 4);
+                    $q->where("transaction_logs.expired_time", ">", $time_now);
+                });
+            })->get();
+
+        if ($participant_register->count() > 0) {
+            $can_update_label = 0;
+        }
+
+        if ($age_category->label != $label && $can_update_label == 0) {
+            throw new BLoCException("can't update label");
         }
 
         if ($type == "usia") {
