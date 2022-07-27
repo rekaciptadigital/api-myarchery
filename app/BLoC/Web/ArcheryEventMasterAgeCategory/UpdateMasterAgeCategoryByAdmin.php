@@ -117,8 +117,7 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "id" => "required",
-            "event_id" => "required"
+            "id" => "required"
         ];
     }
 }
