@@ -72,7 +72,7 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
 
         $is_exist = ArcheryEventMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)->first();
         if ($is_exist) {
-            throw new BLoCException("category sudah dibuat sebelumnya");
+            throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
 
         if ($type == "usia") {
@@ -98,8 +98,8 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
                     throw new BLoCException("invalid 3");
                 }
 
-                $age_category->min_date_of_birth = $min;
-                $age_category->max_date_of_birth = $max;
+                $age_category->min_date_of_birth = $min == 0 ? null : $min;
+                $age_category->max_date_of_birth = $max != 0 ? $max : null;
             }
         } else {
             $age_category->min_date_of_birth = null;
