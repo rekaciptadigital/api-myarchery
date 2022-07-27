@@ -53,8 +53,8 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
                     throw new BLoCException("invalid 3");
                 }
 
-                $category->min_date_of_birth = $min;
-                $category->max_date_of_birth = $max;
+                $category->min_date_of_birth = $min == 0 ? null : $min;
+                $category->max_date_of_birth = $max == 0 ? null : $max;
                 $category->is_age = $is_age;
             }
         }
