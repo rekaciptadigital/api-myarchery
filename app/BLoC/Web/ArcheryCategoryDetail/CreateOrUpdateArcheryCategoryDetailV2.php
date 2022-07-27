@@ -47,6 +47,10 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                 throw new BLoCException("Age category tidak tersedia");
             }
 
+            if ($age_category->is_hide == 1) {
+                throw new BLoCException("kategori umur ini tidak dapat digunakan");
+            }
+
             $distance_category = ArcheryMasterDistanceCategory::find($category['distance_category_id']);
             if (!$distance_category) {
                 throw new BLoCException("Distance category tidak ditemukan");
