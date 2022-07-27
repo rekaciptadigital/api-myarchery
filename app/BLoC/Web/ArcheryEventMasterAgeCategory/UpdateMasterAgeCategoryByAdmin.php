@@ -23,17 +23,12 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
     {
         $admin = Auth::user();
         $id = $parameters->get("id");
-        $event_id = $parameters->get("event_id");
+        
         $type = $parameters->get("type");
         $label = trim($parameters->get("label"));
         $is_age = $parameters->get("is_age");
         $min = $parameters->get("min");
         $max = $parameters->get("max");
-
-        $event = ArcheryEvent::find($event_id);
-        if (!$event) {
-            throw new BLoCException("event not found");
-        }
 
         $age_category = ArcheryMasterAgeCategory::find($id);
         if (!$age_category) {
