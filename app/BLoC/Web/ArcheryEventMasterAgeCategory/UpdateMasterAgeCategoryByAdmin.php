@@ -35,7 +35,7 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
             throw new BLoCException("event not found");
         }
 
-        $age_category = ArcheryEventMasterAgeCategory::find($id);
+        $age_category = ArcheryMasterAgeCategory::find($id);
         if (!$age_category) {
             throw new BLoCException("age category not found");
         }
@@ -70,7 +70,7 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
             throw new BLoCException("tidak dapat diubah karena telah ada yang mendaftar di kategori umur tersebut");
         }
 
-        $is_exist = ArcheryEventMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)->first();
+        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)->first();
         if ($is_exist) {
             throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
