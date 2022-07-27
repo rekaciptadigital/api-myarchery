@@ -19,14 +19,19 @@ class VenuePlace extends Model
         return $data;
     }
 
-    protected function listVenueByEoId($limit, $offset, $eo_id)
+    protected function listVenueByEoId($limit, $offset, $eo_id, $filter_status = '')
     {
-        $datas = VenuePlace::where('eo_id', $eo_id)
-                ->limit($limit)->offset($offset)
-                ->get();  
-                
+        $datas = VenuePlace::where('eo_id', $eo_id);  
+
+        // filter by status
+        $datas->when($filter_status, function ($query) use ($filter_status) {
+            return $query->where("status", $filter_status);
+        });
+
+        $data_collection = $datas->limit($limit)->offset($offset)->get();
+   
         $output = [];
-        foreach ($datas as $data) {
+        foreach ($data_collection as $data) {
             $galleries = VenuePlaceGallery::where("place_id", "=", $data->id)->get();   
             $galleries_data = [];
             if ($galleries) {

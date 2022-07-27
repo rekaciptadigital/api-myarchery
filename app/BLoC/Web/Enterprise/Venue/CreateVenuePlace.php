@@ -6,11 +6,15 @@ use App\Models\VenuePlace;
 use App\Models\VenuePlaceFacility;
 use App\Models\VenuePlaceGallery;
 use App\Models\VenueMasterPlaceFacility;
+use App\Models\Provinces;
+use App\Models\City;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Libraries\Upload;
+use App\Jobs\VenuePlaceSubmissionEmailJob;
+use Queue;
 
 class CreateVenuePlace extends Transactional
 {
@@ -28,6 +32,7 @@ class CreateVenuePlace extends Transactional
         $venue_place->eo_id = $admin->eo_id;
         $venue_place->name = $parameters->get('name');
         $venue_place->place_type = $parameters->get('type');
+        $venue_place->status = $parameters->get('status');
         $venue_place->description = $parameters->get('description');
         $venue_place->phone_number = $parameters->get('phone_number');
         $venue_place->address = $parameters->get('address');
@@ -84,7 +89,14 @@ class CreateVenuePlace extends Transactional
             }
         }
 
-        return VenuePlace::detailVenueById($venue_place->id);
+        $data = VenuePlace::detailVenueById($venue_place->id);
+
+        // send email submission
+        if ($venue_place->status == 1) {
+            $this->sendMail($data, $admin);
+        }
+
+        return $data;
     }
 
     protected function validation($parameters)
@@ -95,6 +107,7 @@ class CreateVenuePlace extends Transactional
             "latitude" => "required",
             "longitude" => "required",
             "province_id" => "required",
+            "status" => "required|integer",
             "city_id" => "required",
             "type" => "required|in:Indoor,Outdoor,Both",
             "facilities" => "array",
@@ -102,4 +115,23 @@ class CreateVenuePlace extends Transactional
             "galleries" => "array"
         ];
     }
+
+    private function sendMail($data, $admin) 
+    {
+        $data = [
+            'email' => 'fitrianggraini96@gmail.com',
+            'vm_name' => $admin->name,
+            'place_name' => $data->name,
+            'description' => $data->description,
+            'type' => $data->place_type,
+            'phone_number' => $data->phone_number,
+            'address' => $data->address,
+            'province' => Provinces::find($data->province_id),
+            'city' => City::find($data->city_id),
+            'facilities' => $data->facilities,
+            'galleries' => $data->galleries,
+        ];
+        return Queue::push(new VenuePlaceSubmissionEmailJob($data));
+    }
+
 }
