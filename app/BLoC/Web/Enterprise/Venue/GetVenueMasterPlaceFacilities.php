@@ -5,7 +5,7 @@ namespace App\BLoC\Web\Enterprise\Venue;
 
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\DB;
-use App\Models\VenueMasterPlaceFacilities;
+use App\Models\VenueMasterPlaceFacility;
 use Illuminate\Support\Facades\Auth;
 
 class GetVenueMasterPlaceFacilities extends Retrieval
@@ -19,7 +19,7 @@ class GetVenueMasterPlaceFacilities extends Retrieval
     {
         $admin = Auth::user();
        
-        $place_facilities = VenueMasterPlaceFacilities::where("eo_id","0")->get();
+        $place_facilities = VenueMasterPlaceFacility::where("eo_id","0")->get();
     
         return $place_facilities;
     }
