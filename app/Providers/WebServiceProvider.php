@@ -156,6 +156,7 @@ use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
 use App\BLoC\Web\Enterprise\Venue\GetListVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\GetVenuePlaceOtherFacilitiesByEoId;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -362,6 +363,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getVenuePlace", GetVenuePlace::class);
         $this->registerService("getVenueListFacilities", GetVenueMasterPlaceFacilities::class);
         $this->registerService("getListVenuePlace", GetListVenuePlace::class);
+        $this->registerService("getVenuePlaceOtherFacilitiesByEoId", GetVenuePlaceOtherFacilitiesByEoId::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //

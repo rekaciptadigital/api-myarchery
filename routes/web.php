@@ -490,6 +490,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
                 $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
                 $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
+                $router->get('/list-facilities-by-eo-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlaceOtherFacilitiesByEoId']);
 
             });
 
