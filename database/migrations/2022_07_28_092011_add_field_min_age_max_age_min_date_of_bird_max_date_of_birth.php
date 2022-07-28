@@ -18,6 +18,7 @@ class AddFieldMinAgeMaxAgeMinDateOfBirdMaxDateOfBirth extends Migration
             $table->dateTime("max_date_of_birth")->nullable()->comment("tanggal lahir maksimal user yang bisa daftar event");
             $table->integer("min_age")->default(0);
             $table->integer("max_age")->default(0);
+            $table->smallInteger("is_age")->default(1)->comment("apakah event itu menggunakan usia atau tidak");
         });
     }
 
@@ -29,7 +30,7 @@ class AddFieldMinAgeMaxAgeMinDateOfBirdMaxDateOfBirth extends Migration
     public function down()
     {
         Schema::table('archery_event_category_details', function (Blueprint $table) {
-            $table->dropColumn(['min_date_of_birth', 'max_date_of_birth', 'min_age', 'max_age']);
+            $table->dropColumn(['min_date_of_birth', 'max_date_of_birth', 'min_age', 'max_age', 'is_age']);
         });
     }
 }
