@@ -82,7 +82,7 @@
                                                     <tr>
                                                         <td>Alamat</td>
                                                         <td>:</td>
-                                                        <td>{{ $data['address'] }}</td>
+                                                        <td>{{ $data['address'] }}, {{ $data['city']->name }}, {{ $data['province']->name }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Tipe Lapangan</td>
@@ -92,9 +92,29 @@
                                                     <tr>
                                                         <td>Fasilitas</td>
                                                         <td>:</td>
-                                                        <td></td>
+                                                        <td>
+                                                            @foreach ($data['facilities'] as $facility)
+                                                                {{ $facility->name }},
+                                                            @endforeach
+                                                        </td>
                                                     </tr>
+                                                    <!-- <tr>
+                                                        <td>Galeri Venue</td>
+                                                        <td>:</td>
+                                                        <td>
+                                                            <ol>
+                                                            @foreach ($data['galleries'] as $gallery)
+                                                                <li> <a href="{{ $gallery->file }}">{{ $gallery->file }}</a></li>
+                                                            @endforeach
+                                                            </ol>
+                                                        </td>
+                                                    </tr> -->
                                                 </table>
+                                                <br>
+                                                <p class="text-mode" style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 15px; color: #4c4c4c; line-height: 18px; text-align: justify; ">
+                                                    Silahkan kunjungi <a href="{{env('WEB_DOMAIN').'/enterprise/fldryepswqpxrat'}}">Dashboard Pengajuan Venue</a> untuk menyetujui permintaan ini.
+                                                </p>
+                                                <br />
                                                 <div class="spacer" style="line-height: 55px;">&zwnj;</div>
                                                 <p style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 15px; color: #4c4c4c; line-height: 18px; text-align: right; ">
                                                     Terima Kasih

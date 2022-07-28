@@ -126,8 +126,8 @@ class CreateVenuePlace extends Transactional
             'type' => $data->place_type,
             'phone_number' => $data->phone_number,
             'address' => $data->address,
-            'province' => Provinces::find($data->province_id),
-            'city' => City::find($data->city_id),
+            'province' => Provinces::select('name')->where('id', $data->province_id)->first(),
+            'city' => City::select('name')->where('id', $data->city_id)->first(),
             'facilities' => $data->facilities,
             'galleries' => $data->galleries,
         ];

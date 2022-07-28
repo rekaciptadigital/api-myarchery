@@ -499,7 +499,7 @@ $router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id
             throw new Exception("data venue not found", 404);
         }
         $data->update([
-            "status" => 3
+            "status" => $request->status
         ]);
 
         return redirect('enterprise/fldryepswqpxrat');
