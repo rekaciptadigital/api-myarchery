@@ -102,6 +102,10 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
             $archery_category_detail->event_id = $event->id;
             $archery_category_detail->age_category_id = $age_category->id;
+            $archery_category_detail->min_age = $age_category->min_age;
+            $archery_category_detail->max_age = $age_category->max_age;
+            $archery_category_detail->min_date_of_birth = $age_category->min_date_of_birth;
+            $archery_category_detail->max_date_of_birth = $age_category->max_date_of_birth;
             $archery_category_detail->competition_category_id = $competitio_category->id;
             $archery_category_detail->distance_id  = $distance_category->id;
             $archery_category_detail->team_category_id  = $team_category->id;
