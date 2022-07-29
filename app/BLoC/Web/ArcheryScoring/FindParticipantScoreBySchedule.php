@@ -369,6 +369,14 @@ class FindParticipantScoreBySchedule extends Retrieval
             $scores[] = $output;
         }
 
+        if (count($scores) == 1) {
+            if ($get_participant_match[0]->index == 0) {
+                array_push($scores, []);
+            } else {
+                array_unshift($scores, []);
+            }
+        }
+
         return $scores;
     }
 }
