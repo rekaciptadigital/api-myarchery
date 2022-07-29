@@ -112,7 +112,7 @@
                                                 </table>
                                                 <br>
                                                 <p class="text-mode" style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 15px; color: #4c4c4c; line-height: 18px; text-align: justify; ">
-                                                    Silahkan kunjungi <a href="{{env('WEB_DOMAIN').'/enterprise/fldryepswqpxrat'}}">Dashboard Pengajuan Venue</a> untuk menyetujui permintaan ini.
+                                                    Silahkan kunjungi <a href="{{env('APP_HOSTNAME').'enterprise/fldryepswqpxrat'}}">Dashboard Pengajuan Venue</a> untuk menyetujui permintaan ini.
                                                 </p>
                                                 <br />
                                                 <div class="spacer" style="line-height: 55px;">&zwnj;</div>

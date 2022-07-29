@@ -14,7 +14,13 @@ class VenuePlace extends Model
         $data['facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
                                 ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                                 ->where("venue_place_facilities.place_id", "=", $id)
+                                ->where("venue_master_place_facilities.eo_id", "=", 0)
                                 ->get();  
+        $data['other_facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
+                                ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
+                                ->where("venue_place_facilities.place_id", "=", $id)
+                                ->where("venue_master_place_facilities.eo_id", "!=", 0)
+                                ->get();                        
         $data['galleries'] = VenuePlaceGallery::where("place_id", "=", $id)->get();                        
         return $data;
     }
