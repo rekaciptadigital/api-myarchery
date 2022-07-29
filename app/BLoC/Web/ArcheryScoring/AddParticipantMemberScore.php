@@ -448,18 +448,20 @@ class AddParticipantMemberScore extends Transactional
             ->where("round", $round)
             ->where("match", $match)
             ->get();
-        if (count($get_participant_match) != 2) {
+        if (count($get_participant_match) > 2 && count($get_participant_match) < 1) {
             throw new BLoCException("match tidak valid");
         }
 
         foreach ($get_participant_match as $key => $value) //check valid members 
         {
-            if ($value->win == 1) {
-                throw new BLoCException("match have winner");
-            }
+            if (count($get_participant_match) == 2) {
+                if ($value->win == 1) {
+                    throw new BLoCException("match have winner");
+                }
 
-            if ($value->participant_id != $participants[0]["participant_id"] && $value->participant_id != $participants[1]["participant_id"]) {
-                $valid = 0;
+                if ($value->participant_id != $participants[0]["participant_id"] && $value->participant_id != $participants[1]["participant_id"]) {
+                    $valid = 0;
+                }
             }
         }
 
