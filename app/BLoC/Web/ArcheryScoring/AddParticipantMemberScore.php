@@ -179,29 +179,45 @@ class AddParticipantMemberScore extends Transactional
             ->where("round", $round)
             ->where("match", $match)
             ->get();
-        if (count($get_member_match) != 2) {
+        if (count($get_member_match) < 1 || count($get_member_match) > 2) {
             throw new BLoCException("match tidak valid");
         }
 
         foreach ($get_member_match as $key => $value) //check valid members 
         {
-            if ($value->win == 1) {
-                throw new BLoCException("match have winner");
-            }
+            if (count($get_member_match) == 2) {
+                if ($value->win == 1) {
+                    throw new BLoCException("match have winner");
+                }
 
-            if ($value->member_id != $members[0]["member_id"] && $value->member_id != $members[1]["member_id"]) {
-                $valid = 0;
+                if ($value->member_id != $members[0]["member_id"] && $value->member_id != $members[1]["member_id"]) {
+                    $valid = 0;
+                }
             }
         }
 
         if (!$valid) {
             throw new BLoCException("member tidak valid");
         }
+
         if ($get_elimination->elimination_scoring_type == 1) {
-            $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0], $members[1], $save_permanent);
+            if ($members[0] != [] && $members[1] == []) {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[0]);
+            } elseif ($members[1] != [] && $members[0] == []) {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[1]);
+            } else {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0], $members[1], $save_permanent);
+            }
         }
+
         if ($get_elimination->elimination_scoring_type == 2) {
-            $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent);
+            if ($members[0] != [] && $members[1] == []) {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[0]);
+            } elseif ($members[1] != [] && $members[0] == []) {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[1]);
+            } else {
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent);
+            }
         }
 
 
@@ -232,24 +248,24 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->save();
             $elimination_match = ArcheryEventEliminationMatch::where("id", $value->id)->first();
             $elimination_match->result = $result;
-            if ($save_permanent == 1) {
-                $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant, $round, $match, $win);
-                if ($champion != 0) {
-                    ArcherySeriesUserPoint::setPoint($participant_member_id, "elimination", $champion);
-                    ArcheryEventEliminationMember::where("id", $value->elimination_member_id)->update(["elimination_ranked" => $champion]);
-                }
-                if ($win == 1) {
-                    $elimination_match->win = $win;
-                }
-                $next = EliminationFormat::NextMatch($get_elimination->count_participant, $round, $match, $win);
-                if (count($next) > 0) {
-                    ArcheryEventEliminationMatch::where("round", $next["round"])
-                        ->where("match", $next["match"])
-                        ->where("index", $next["index"])
-                        ->where("event_elimination_id", $elimination_id)
-                        ->update(["elimination_member_id" => $value->elimination_member_id]);
-                }
-            }
+            // if ($save_permanent == 1) {
+            //     $champion = EliminationFormat::EliminationChampion($get_elimination->count_participant, $round, $match, $win);
+            //     if ($champion != 0) {
+            //         ArcherySeriesUserPoint::setPoint($participant_member_id, "elimination", $champion);
+            //         ArcheryEventEliminationMember::where("id", $value->elimination_member_id)->update(["elimination_ranked" => $champion]);
+            //     }
+            //     if ($win == 1) {
+            //         $elimination_match->win = $win;
+            //     }
+            //     $next = EliminationFormat::NextMatch($get_elimination->count_participant, $round, $match, $win);
+            //     if (count($next) > 0) {
+            //         ArcheryEventEliminationMatch::where("round", $next["round"])
+            //             ->where("match", $next["match"])
+            //             ->where("index", $next["index"])
+            //             ->where("event_elimination_id", $elimination_id)
+            //             ->update(["elimination_member_id" => $value->elimination_member_id]);
+            //     }
+            // }
             $elimination_match->save();
         }
         return true;
@@ -446,7 +462,8 @@ class AddParticipantMemberScore extends Transactional
             ->where("round", $round)
             ->where("match", $match)
             ->get();
-        if (count($get_participant_match) > 2 && count($get_participant_match) < 1) {
+
+        if (count($get_participant_match) > 2 || count($get_participant_match) < 1) {
             throw new BLoCException("match tidak valid");
         }
 
