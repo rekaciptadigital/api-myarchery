@@ -160,6 +160,7 @@ use App\BLoC\Web\Enterprise\Venue\GetVenuePlaceOtherFacilitiesByEoId;
 use App\BLoC\Web\Enterprise\Venue\UpdateIsHideOtherFacilities;
 use App\BLoC\Web\Enterprise\Venue\DeleteImageVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\UpdateVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\DeleteDraftVenuePlace;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -370,6 +371,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("updateIsHideOtherFacilities", UpdateIsHideOtherFacilities::class);
         $this->registerService("deleteImageVenuePlace", DeleteImageVenuePlace::class);
         $this->registerService("updateVenuePlace", UpdateVenuePlace::class);
+        $this->registerService("deleteDraftVenuePlace", DeleteDraftVenuePlace::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //

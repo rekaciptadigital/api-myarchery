@@ -24,24 +24,8 @@ class DeleteImageVenuePlace extends Retrieval
         if (!$gallery) throw new BLoCException("Data not found");
 
         try {
-            $explode = explode(env('APP_HOSTNAME'), $gallery->file); 
-
-            if (count($explode) === 2) {
-                $image_path = $explode[1];
-            } else {
-                $image_path = $explode[0];
-            }
-
-            $explode_file_path = explode('#', $image_path);
-            
-            if(File::exists($explode_file_path[0])) {
-                File::delete($explode_file_path[0]);
-            }
-
-            $gallery->delete();
-
+            VenuePlaceGallery::deleteImage($gallery);
             return true;
-
         } catch (\Exception $e) {            
             return $e->getMessage();
         }
