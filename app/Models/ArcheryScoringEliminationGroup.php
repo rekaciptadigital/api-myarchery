@@ -351,7 +351,6 @@ class ArcheryScoringEliminationGroup extends Model
         $scores = self::$elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_score_1 = 0;
-        $win_1 = 0;
 
         foreach ($scores["shot"] as $k => $shot) {
             $scoring_1_total_score_per_rambahan = 0;

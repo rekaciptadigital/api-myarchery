@@ -284,6 +284,43 @@ class ArcheryScoring extends Model
         ];
     }
 
+    protected function calculateEliminationScoringTypePointFormatBye(array $scoring_1)
+    {
+        $scores = $this->elimination_scores_format_by_type[1];
+        $total_point_1 = 0;
+        $total_score_1 = 0;
+
+        foreach ($scores["shot"] as $k => $shot) {
+            $scoring_1_total_score_per_rambahan = 0;
+            
+            $point_1_per_rambahan = 0;
+            
+            foreach ($shot["score"] as $i => $s) {
+                $s1 = $this->score_value[$scoring_1["scores"]["shot"][$k]["score"][$i]];
+                $scoring_1_total_score_per_rambahan = $scoring_1_total_score_per_rambahan + $s1;
+            }
+            $total_score_1 = $total_score_1 + $scoring_1_total_score_per_rambahan;
+            $scoring_1["scores"]["shot"][$k]["total"] = $scoring_1_total_score_per_rambahan;
+   
+            $total_point_1 = $total_point_1 + $point_1_per_rambahan; 
+            $scoring_1["scores"]["shot"][$k]["point"] = $point_1_per_rambahan;
+        }
+
+        $scoring_1["scores"]["total"] = $total_score_1;
+        
+
+        $scoring_1["scores"]["result"] = $total_point_1;
+        
+
+        $scoring_1["scores"]["eliminationt_score_type"] = 1;
+        
+
+        return [
+            $scoring_1["member_id"] => $scoring_1,
+            
+        ];
+    }
+
     protected function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent)
     {
         $scores = $this->elimination_scores_format_by_type[2];
@@ -383,6 +420,35 @@ class ArcheryScoring extends Model
         return [
             $scoring_1["member_id"] => $scoring_1,
             $scoring_2["member_id"] => $scoring_2,
+        ];
+    }
+
+    protected function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1)
+    {
+        $scores = $this->elimination_scores_format_by_type[2];
+        $total_score_1 = 0;
+
+        foreach ($scores["shot"] as $k => $shot) {
+            $scoring_1_total_score_per_rambahan = 0;
+            foreach ($shot["score"] as $i => $s) {
+                $s1 = $this->score_value[$scoring_1["scores"]["shot"][$k]["score"][$i]];
+                $scoring_1_total_score_per_rambahan = $scoring_1_total_score_per_rambahan + $s1;
+            }
+
+            $total_score_1 = $total_score_1 + $scoring_1_total_score_per_rambahan;
+            
+            $scoring_1["scores"]["shot"][$k]["total"] = $scoring_1_total_score_per_rambahan;
+            
+        }
+
+        $scoring_1["scores"]["total"] = $total_score_1;
+
+        $scoring_1["scores"]["result"] = $total_score_1;
+
+        $scoring_1["scores"]["eliminationt_score_type"] = 2;
+
+        return [
+            $scoring_1["member_id"] => $scoring_1,
         ];
     }
 
