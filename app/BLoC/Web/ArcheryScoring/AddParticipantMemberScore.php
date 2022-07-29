@@ -19,9 +19,7 @@ use App\Libraries\EliminationFormat;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
-use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryScoringEliminationGroup;
-use Illuminate\Support\Facades\Validator;
 
 class AddParticipantMemberScore extends Transactional
 {
@@ -470,10 +468,23 @@ class AddParticipantMemberScore extends Transactional
         }
 
         if ($get_elimination_group->elimination_scoring_type == 1) {
-            $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormat($participants[0], $participants[1], $save_permanent);
+            if ($participants[0] != [] && $participants[1] == []) {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[0]);
+            } elseif ($participants[1] != [] && $participants[0] == []) {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[1]);
+            } else {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormat($participants[0], $participants[1], $save_permanent);
+            }
         }
+
         if ($get_elimination_group->elimination_scoring_type == 2) {
-            $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormat($participants[0], $participants[1], $save_permanent);
+            if ($participants[0] != [] && $participants[1] == []) {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[0]);
+            } elseif ($participants[1] != [] && $participants[0] == []) {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[1]);
+            } else {
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormat($participants[0], $participants[1], $save_permanent);
+            }
         }
 
 
@@ -497,23 +508,23 @@ class AddParticipantMemberScore extends Transactional
             $participant_scoring->save();
             $elimination_group_match = ArcheryEventEliminationGroupMatch::where("id", $value->id)->first();
             $elimination_group_match->result = $result;
-            if ($save_permanent == 1) {
-                $champion = EliminationFormat::EliminationChampion($get_elimination_group->count_participant, $round, $match, $win);
-                if ($champion != 0) {
-                    ArcheryEventEliminationGroupTeams::where("id", $value->group_team_id)->update(["elimination_ranked" => $champion]);
-                }
-                if ($win == 1) {
-                    $elimination_group_match->win = $win;
-                }
-                $next = EliminationFormat::NextMatch($get_elimination_group->count_participant, $round, $match, $win);
-                if (count($next) > 0) {
-                    ArcheryEventEliminationGroupMatch::where("round", $next["round"])
-                        ->where("match", $next["match"])
-                        ->where("index", $next["index"])
-                        ->where("elimination_group_id", $elimination_group_id)
-                        ->update(["group_team_id" => $value->group_team_id]);
-                }
-            }
+            // if ($save_permanent == 1) {
+            //     $champion = EliminationFormat::EliminationChampion($get_elimination_group->count_participant, $round, $match, $win);
+            //     if ($champion != 0) {
+            //         ArcheryEventEliminationGroupTeams::where("id", $value->group_team_id)->update(["elimination_ranked" => $champion]);
+            //     }
+            //     if ($win == 1) {
+            //         $elimination_group_match->win = $win;
+            //     }
+            //     $next = EliminationFormat::NextMatch($get_elimination_group->count_participant, $round, $match, $win);
+            //     if (count($next) > 0) {
+            //         ArcheryEventEliminationGroupMatch::where("round", $next["round"])
+            //             ->where("match", $next["match"])
+            //             ->where("index", $next["index"])
+            //             ->where("elimination_group_id", $elimination_group_id)
+            //             ->update(["group_team_id" => $value->group_team_id]);
+            //     }
+            // }
             $elimination_group_match->save();
         }
         return true;
