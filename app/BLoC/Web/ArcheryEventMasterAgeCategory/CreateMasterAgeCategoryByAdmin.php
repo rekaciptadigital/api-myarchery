@@ -26,7 +26,9 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
         $max = $parameters->get("max");
         $eo_id = $admin->id;
 
-        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)->first();
+        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)
+            ->where("is_hide", 0)
+            ->first();
         if ($is_exist) {
             throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
