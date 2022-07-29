@@ -66,7 +66,7 @@
                                 <input type="submit" value="Approve" class="btn btn-success">
                             </form> <br>
                             <form action="/enterprise/fldryepswqpxrat/{{ $data->id }}" method="post">
-                                <input type="hidden" name="status" value="4">
+                                <input type="hidden" name="status" value="5">
                                 <input type="submit" value="Reject" class="btn btn-danger">
                             </form>
                         </td>
