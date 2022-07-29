@@ -133,7 +133,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             $result['rank'][] = $rank;
             $result['club'][] = $club;
 
-            $category = ArcheryEventCertificateTemplates::getCategoryLabel($detail_member['participant_id'], $detail_member['user_id']);
+            $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
             if ($category == "") {
                 throw new BLoCException("Kategori tidak ditemukan");
             }
@@ -264,7 +264,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             $result["athlete"][] = $array_athlete;
             $result["budrest"][] = $bud_rest_number;
 
-            $category = ArcheryEventCertificateTemplates::getCategoryLabel($participant->id, $participant->user_id);
+            $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
             if ($category == "") {
                 throw new BLoCException("Kategori tidak ditemukan");
             }
