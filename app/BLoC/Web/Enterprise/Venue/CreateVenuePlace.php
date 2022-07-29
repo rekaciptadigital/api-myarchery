@@ -44,7 +44,9 @@ class CreateVenuePlace extends Transactional
 
     
         // place's facilities
-        $facilities = $parameters->get('facilities', []); 
+        $main_facilities = $parameters->get('facilities', []); 
+        $current_other_facilities = $parameters->get('current_other_facilities', []); 
+        $facilities = array_merge($main_facilities, $current_other_facilities);
         if (count($facilities) > 0) {
             foreach ($facilities as $key => $value) {
                 $venue_facilities = new VenuePlaceFacility();
