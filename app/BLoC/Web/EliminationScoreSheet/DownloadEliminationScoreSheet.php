@@ -105,27 +105,33 @@ class DownloadEliminationScoreSheet extends Retrieval
         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
 
         foreach ($data_member as $data) {
+            $name = "";
+            $rank = "";
+            $club = "";
             $elimination_member = ArcheryEventEliminationMember::find($data->elimination_member_id);
-            if (!$elimination_member) {
-                throw new BLoCException("elimination member not found");
+            if ($elimination_member) {
+                $participant_member_id = $elimination_member->member_id;
+
+                $detail_member = ArcheryEventParticipantMember::select(
+                    'archery_event_participant_members.name as name',
+                    'archery_clubs.name as club_name',
+                    'archery_event_participants.id as participant_id',
+                    'archery_event_participants.user_id as user_id',
+                    'archery_event_participants.event_id'
+                )
+                    ->where('archery_event_participant_members.id', $participant_member_id)
+                    ->leftJoin('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
+                    ->leftJoin('archery_clubs', 'archery_clubs.id', 'archery_event_participants.club_id')
+                    ->first();
+                $name = $detail_member['name'];
+                $rank = $elimination_member->elimination_ranked;
+                $club = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
             }
-            $participant_member_id = $elimination_member->member_id;
 
-            $detail_member = ArcheryEventParticipantMember::select(
-                'archery_event_participant_members.name as name',
-                'archery_clubs.name as club_name',
-                'archery_event_participants.id as participant_id',
-                'archery_event_participants.user_id as user_id',
-                'archery_event_participants.event_id'
-            )
-                ->where('archery_event_participant_members.id', $participant_member_id)
-                ->leftJoin('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
-                ->leftJoin('archery_clubs', 'archery_clubs.id', 'archery_event_participants.club_id')
-                ->first();
 
-            $result['name_athlete'][] = $detail_member['name'];
-            $result['rank'][] = $elimination_member->elimination_ranked;
-            $result['club'][] = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
+            $result['name_athlete'][] = $name;
+            $result['rank'][] = $rank;
+            $result['club'][] = $club;
 
             $category = ArcheryEventCertificateTemplates::getCategoryLabel($detail_member['participant_id'], $detail_member['user_id']);
             if ($category == "") {
