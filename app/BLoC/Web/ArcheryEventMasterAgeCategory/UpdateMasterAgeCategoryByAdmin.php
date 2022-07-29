@@ -37,7 +37,9 @@ class UpdateMasterAgeCategoryByAdmin extends Retrieval
             throw new BLoCException("forbiden");
         }
 
-        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)->first();
+        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $admin->id)->where("id", "!=", $age_category->id)
+            ->where("is_hide", 0)
+            ->first();
         if ($is_exist) {
             throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
