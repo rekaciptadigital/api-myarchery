@@ -12,6 +12,7 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\AdminNotifTopic;
 
 class Register extends Transactional
 {
@@ -43,7 +44,7 @@ class Register extends Transactional
             'phone_number' => $parameters->get('phone_number'),
             "intro" => json_encode($intro)
         ]);
-
+        AdminNotifTopic::saveTopic("ADMIN_".$admin_id, $admin_id);
         $role = Role::where('name', 'event_organizer')->first();
 
         $admin_role = new AdminRole();
