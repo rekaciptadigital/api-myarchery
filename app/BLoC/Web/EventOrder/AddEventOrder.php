@@ -106,19 +106,24 @@ class AddEventOrder extends Transactional
             throw new BLoCException("club harus diisi");
         }
 
+
+
         // cek apakah user sudah tergabung dalam club atau belum
         if ($parameters->get('club_id') != 0) {
+
             $club_member = ClubMember::where('club_id', $parameters->get('club_id'))->where('user_id', $user->id)->first();
             if (!$club_member) {
                 throw new BLoCException("member not joined this club");
             }
         } else {
+
             $club_member = null;
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice);
         } else {
+
             return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $team_name, $price);
         }
     }
@@ -126,6 +131,7 @@ class AddEventOrder extends Transactional
     private function registerIndividu($event_category_detail, $user, $club_member, $team_name, $event, $price, $is_marathon, $day_choice)
     {
         $time_now = time();
+
 
         $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
         if (!$qualification_time) {
@@ -161,20 +167,14 @@ class AddEventOrder extends Transactional
             throw new BLoCException($msg);
         }
 
-        // cek jika memiliki syarat max umur
 
-        if ($event_category_detail->max_age != 0) {
-            if ($user->age == null) {
-                throw new BLoCException("tgl lahir anda belum di set");
-            }
+        if ($event_category_detail->is_age == 1) {
+            // cek jika memiliki syarat max umur
+            if ($event_category_detail->max_age > 0) {
+                if ($user->age == null) {
+                    throw new BLoCException("tgl lahir anda belum di set");
+                }
 
-            if (
-                !empty($event_category_detail->limit_birthday_register)
-                && $event_category_detail->limit_birthday_register != "0000-00-00"
-                && $user->date_of_birth < $event_category_detail->limit_birthday_register
-            ) {
-                throw new BLoCException("tidak memenuhi syarat usia, batas kelahiran " . $event_category_detail->limit_birthday_register . " ");
-            } else {
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
                 if ($check_date["y"] > $event_category_detail->max_age) {
@@ -184,18 +184,31 @@ class AddEventOrder extends Transactional
                     throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age . " tahun");
                 }
             }
-        }
 
-        // cek jika memiliki syarat minimal umur
-        if ($event_category_detail->min_age != 0) {
-            if ($user->age == null) {
-                throw new BLoCException("tgl lahir anda belum di set");
+            // cek jika memiliki syarat minimal umur
+            if ($event_category_detail->min_age > 0) {
+                if ($user->age == null) {
+                    throw new BLoCException("tgl lahir anda belum di set");
+                }
+                $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+                // cek apakah usia user memenuhi syarat categori event
+                $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+                if ($check_date["y"] < $event_category_detail->min_age) {
+                    throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
+                }
             }
-            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
-            // cek apakah usia user memenuhi syarat categori event
-            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
-            if ($check_date["y"] < $event_category_detail->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
+        } else {
+            // cek jika ada persyaratan tanggal minimal kelahiran
+            if ($event_category_detail->min_date_of_birth != null) {
+                if (strtotime($user->date_of_birth) < strtotime($event_category_detail->min_date_of_birth)) {
+                    throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($event_category_detail->min_date_of_birth)));
+                }
+            }
+
+            if ($event_category_detail->max_date_of_birth != null) {
+                if (strtotime($user->date_of_birth) > strtotime($event_category_detail->max_date_of_birth)) {
+                    throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($event_category_detail->max_date_of_birth)));
+                }
             }
         }
 
@@ -208,7 +221,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
             }
         }
-
 
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
