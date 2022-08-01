@@ -11,6 +11,20 @@ class VenuePlace extends Model
     protected function detailVenueById($id)
     {
         $data = VenuePlace::where('venue_places.id', $id)->first();        
+
+        $city = City::find($data->city_id);
+        $data->city = [
+            "id" => $city ? $city->id : 0, 
+            "name" => $city ? $city->name : ""
+        ];
+
+        $province_id = $city ? $city->province_id : 0;
+        $province = Provinces::find($province_id);
+        $data->province = [
+                        "id" => $province ? $province->id : 0 , 
+                        "name" => $province ? $province->name : ""
+        ];
+
         $data['facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
                                 ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                                 ->where("venue_place_facilities.place_id", "=", $id)
