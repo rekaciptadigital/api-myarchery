@@ -3,6 +3,7 @@
 namespace App\BLoC\App\UserAuth;
 
 use App\Models\User;
+use App\Models\UserNotifTopic;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +30,7 @@ class UserRegister extends Transactional
             'email' => $parameters->get('email'),
             'password' => $parameters->get('password'),
         ]);
+        UserNotifTopic::saveTopic("USER_".$user->id,$user->id);
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
