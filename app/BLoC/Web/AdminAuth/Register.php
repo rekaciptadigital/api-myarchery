@@ -12,6 +12,8 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\RegisterSuccessEmailJob;
+use Queue;
 use App\Models\AdminNotifTopic;
 
 class Register extends Transactional
@@ -59,6 +61,9 @@ class Register extends Transactional
             'eo_id' => $archery_event_organizer->id
         ]);
 
+        // send email registration success
+        $this->sendMail($admin);
+
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
             'password' => $parameters->get('password'),
@@ -81,5 +86,15 @@ class Register extends Transactional
             "city_id" => "required",
             "intro" => "required"
         ];
+    }
+
+    private function sendMail($admin) 
+    {
+        $data = [
+            'email' => $admin->email,
+            'name' => $admin->name,
+            'type' => 'admin'
+        ];
+        return Queue::push(new RegisterSuccessEmailJob($data));
     }
 }
