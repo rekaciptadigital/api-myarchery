@@ -253,6 +253,14 @@ class FindParticipantScoreBySchedule extends Retrieval
             $scores[] = $output;
         }
 
+        if (count($scores) == 1) {
+            if ($members[0]->index == 0) {
+                array_push($scores, []);
+            } else {
+                array_unshift($scores, []);
+            }
+        }
+
         return $scores;
     }
 
@@ -367,6 +375,14 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->category = $category_response;
             $output->budrest_number = $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . $value->target_face : "";
             $scores[] = $output;
+        }
+
+        if (count($scores) == 1) {
+            if ($get_participant_match[0]->index == 0) {
+                array_push($scores, []);
+            } else {
+                array_unshift($scores, []);
+            }
         }
 
         return $scores;

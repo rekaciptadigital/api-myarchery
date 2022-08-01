@@ -79,6 +79,7 @@ class GenerateTask extends Command
         // $cat_id = $this->argument('category');
         // $elimination = ArcheryEventElimination::where("gender","none")->get();
         // foreach ($elimination as $key => $value) {
+            ArcherySeriesUserPoint::setMemberQualificationPoint($value->event_category_id);
         //     $match = ArcheryEventEliminationMatch::where("event_elimination_id",$value->id)->where("elimination_member_id","!=",0)->get();
         //     foreach ($match as $m => $mat) {
         //         $member = ArcheryEventEliminationMember::find($mat->elimination_member_id);
