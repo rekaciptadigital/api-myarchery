@@ -21,11 +21,11 @@ class GetArcheryEvent extends Retrieval
 
         $output = [];
         foreach ($archery_event as $key => $value) {
-            $total_participant = ArcheryEventParticipant::where("event_id",$value->id)->where("status",1)->count();
+            $total_participant = ArcheryEventParticipant::where("event_id", $value->id)->where("status", 1)->count();
             $output[] = array(
-                            "event" => $value,
-                            "total_participant" => $total_participant
-                        );
+                "event" => $value,
+                "total_participant" => $total_participant
+            );
         }
         return $output;
     }

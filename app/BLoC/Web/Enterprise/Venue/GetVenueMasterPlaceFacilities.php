@@ -1,13 +1,14 @@
 <?php
 
-namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
+namespace App\BLoC\Web\Enterprise\Venue;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryMasterAgeCategory;
+use Illuminate\Support\Facades\DB;
+use App\Models\VenueMasterPlaceFacilities;
 use Illuminate\Support\Facades\Auth;
 
-class GetArcheryEventMasterAgeCategory extends Retrieval
+class GetVenueMasterPlaceFacilities extends Retrieval
 {
     public function getDescription()
     {
@@ -18,9 +19,9 @@ class GetArcheryEventMasterAgeCategory extends Retrieval
     {
         $admin = Auth::user();
        
-        $age_categories = ArcheryMasterAgeCategory::all();
+        $place_facilities = VenueMasterPlaceFacilities::where("eo_id","0")->get();
     
-        return $age_categories;
+        return $place_facilities;
     }
 
     protected function validation($parameters)
