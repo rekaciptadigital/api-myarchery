@@ -48,7 +48,7 @@ class VenuePlace extends Model
             return $query->where("status", $filter_status);
         });
 
-        $data_collection = $datas->limit($limit)->offset($offset)->get();
+        $data_collection = $datas->orderBy('created_at', 'DESC')->limit($limit)->offset($offset)->get();
    
         $output = [];
         foreach ($data_collection as $data) {
