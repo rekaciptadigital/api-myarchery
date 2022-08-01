@@ -50,7 +50,7 @@ class Login extends Transactional
             $admin->update([
                 'eo_id' => $archery_event_organizer->id
             ]);
-        }        
+        }
         
         return [
             'profile' => $admin,
