@@ -22,7 +22,7 @@ class AlterTableVenuePlaces extends Migration
         Schema::table('venue_places', function (Blueprint $table) {
             $table->dropColumn('type');
             $table->enum('place_type', ['Indoor', 'Outdoor', 'Both'])->after('type');
-            $table->tinyInteger('status')->default(0)->comment("0: draft, 1: diajukan, 2: aktif, 3: non-aktif, 4: ditolak")->after('city_id');
+            $table->tinyInteger('status')->default(1)->comment("1: draft, 2: diajukan, 3: aktif, 4: non-aktif, 5: ditolak")->after('city_id');
         });
     }
 

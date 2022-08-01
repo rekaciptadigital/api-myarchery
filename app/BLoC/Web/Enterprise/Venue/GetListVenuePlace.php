@@ -22,7 +22,9 @@ class GetListVenuePlace extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $venue_places = VenuePlace::listVenueByEoId($limit, $offset, $admin->eo_id);
+        $filter_status = $parameters->get("status");
+
+        $venue_places = VenuePlace::listVenueByEoId($limit, $offset, $admin->eo_id, $filter_status);
 
         return $venue_places;
     }
@@ -31,7 +33,8 @@ class GetListVenuePlace extends Retrieval
     {
         return [
             'limit' => 'required|integer',
-            'page' => 'required|integer'
+            'page' => 'required|integer',
+            'status' => 'integer'
         ];
     }
 }

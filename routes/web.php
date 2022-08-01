@@ -20,6 +20,7 @@ use App\Models\ArcheryUserAthleteCode;
 use App\Models\City;
 use App\Models\Provinces;
 use App\Models\User;
+use App\Models\VenuePlace;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -478,10 +479,49 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
+                $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlace']);
                 $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
                 $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
+                $router->get('/list-facilities-by-eo-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlaceOtherFacilitiesByEoId']);
+                $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
+                $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
+                $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
+
             });
         });
     });
     // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
 });
+
+
+// ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
+$router->get('enterprise/fldryepswqpxrat', function () {
+    $new_submission = VenuePlace::getAllListVenue(2);
+    $submission_approved = VenuePlace::getAllListVenue(3);
+    
+    return view('enterprise/venue_submission_index', [
+        "datas" => $new_submission,
+        "data_approved" => $submission_approved
+    ]);
+});
+
+$router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id) {
+    try {
+        $data = VenuePlace::find($id);
+        if (!$data) {
+            throw new Exception("data venue not found", 404);
+        }
+        $data->update([
+            "status" => $request->status
+        ]);
+
+        return redirect('enterprise/fldryepswqpxrat');
+
+    } catch (\Throwable $th) {
+        return response()->json([
+            "status" => "error",
+            "message" => $th->getMessage()
+        ], $th->getCode());
+    }
+});
+// ------------------------------------------------------------- End Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
