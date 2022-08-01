@@ -119,7 +119,7 @@
                     <td>{{ $tim2_category }}</td>
                     <td style="width:200px;"></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
-                        rowspan="3">{{ $tim_1_rank }}</td>
+                        rowspan="3">{{ $tim_2_rank }}</td>
                 </tr>
                 <tr>
                     <td style="">Athlete</td>
