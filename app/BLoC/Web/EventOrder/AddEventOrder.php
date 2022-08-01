@@ -167,20 +167,14 @@ class AddEventOrder extends Transactional
             throw new BLoCException($msg);
         }
 
-        // cek jika memiliki syarat max umur
 
-        if ($event_category_detail->max_age != 0) {
-            if ($user->age == null) {
-                throw new BLoCException("tgl lahir anda belum di set");
-            }
+        if ($event_category_detail->is_age == 1) {
+            // cek jika memiliki syarat max umur
+            if ($event_category_detail->max_age > 0) {
+                if ($user->age == null) {
+                    throw new BLoCException("tgl lahir anda belum di set");
+                }
 
-            if (
-                !empty($event_category_detail->limit_birthday_register)
-                && $event_category_detail->limit_birthday_register != "0000-00-00"
-                && $user->date_of_birth < $event_category_detail->limit_birthday_register
-            ) {
-                throw new BLoCException("tidak memenuhi syarat usia, batas kelahiran " . $event_category_detail->limit_birthday_register . " ");
-            } else {
                 $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
                 // cek apakah usia user memenuhi syarat categori event
                 if ($check_date["y"] > $event_category_detail->max_age) {
@@ -190,18 +184,31 @@ class AddEventOrder extends Transactional
                     throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $event_category_detail->max_age . " tahun");
                 }
             }
-        }
 
-        // cek jika memiliki syarat minimal umur
-        if ($event_category_detail->min_age != 0) {
-            if ($user->age == null) {
-                throw new BLoCException("tgl lahir anda belum di set");
+            // cek jika memiliki syarat minimal umur
+            if ($event_category_detail->min_age > 0) {
+                if ($user->age == null) {
+                    throw new BLoCException("tgl lahir anda belum di set");
+                }
+                $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+                // cek apakah usia user memenuhi syarat categori event
+                $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+                if ($check_date["y"] < $event_category_detail->min_age) {
+                    throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
+                }
             }
-            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
-            // cek apakah usia user memenuhi syarat categori event
-            $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
-            if ($check_date["y"] < $event_category_detail->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $event_category_detail->min_age . " tahun");
+        } else {
+            // cek jika ada persyaratan tanggal minimal kelahiran
+            if ($event_category_detail->min_date_of_birth != null) {
+                if (strtotime($user->date_of_birth) < strtotime($event_category_detail->min_date_of_birth)) {
+                    throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($event_category_detail->min_date_of_birth)));
+                }
+            }
+
+            if ($event_category_detail->max_date_of_birth != null) {
+                if (strtotime($user->date_of_birth) > strtotime($event_category_detail->max_date_of_birth)) {
+                    throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($event_category_detail->max_date_of_birth)));
+                }
             }
         }
 

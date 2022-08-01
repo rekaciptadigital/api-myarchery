@@ -4,7 +4,7 @@ namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEventMasterAgeCategory;
+use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Facades\Auth;
 
 class GetArcheryMasterAgeCategoryByAdmin extends Retrieval
@@ -17,10 +17,16 @@ class GetArcheryMasterAgeCategoryByAdmin extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $show_all = $parameters->get("show_all");
 
-        $age_categories = ArcheryEventMasterAgeCategory::where("eo_id", 0)
-            ->orWhere("eo_id", $admin->id)
-            ->orderBy("eo_id")
+        $age_categories = ArcheryMasterAgeCategory::where(function ($q) use ($admin) {
+            $q->where("eo_id", 0)
+                ->orWhere("eo_id", $admin->id);
+        })->where(function ($query) use ($show_all) {
+            if (!isset($show_all) || !$show_all == 1) {
+                $query->where("is_hide", 0);
+            }
+        })->orderBy("eo_id")
             ->orderBy("id")
             ->get();
 

@@ -4,8 +4,7 @@ namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryEventMasterAgeCategory;
+use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Facades\Auth;
 
 class GetArcheryEventMasterAgeCategory extends Retrieval
@@ -19,7 +18,7 @@ class GetArcheryEventMasterAgeCategory extends Retrieval
     {
         $admin = Auth::user();
        
-        $age_categories = ArcheryEventMasterAgeCategory::all();
+        $age_categories = ArcheryMasterAgeCategory::all();
     
         return $age_categories;
     }

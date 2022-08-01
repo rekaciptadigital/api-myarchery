@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use DAI\Utils\Traits\ApiResponse;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use App\Models\UserLoginToken;
 
 class UserAuthenticate
 {
@@ -40,6 +41,10 @@ class UserAuthenticate
         if ($this->auth->guard('app-api')->guest()) {
             return $this::unauthorized();
         }
+        $private_signature = $this->auth->payload()["jti"];
+        $check_private_signature = UserLoginToken::where("private_signature",$private_signature)->first();
+        if(!$check_private_signature)
+            return $this::unauthorized();
 
         return $next($request);
     }

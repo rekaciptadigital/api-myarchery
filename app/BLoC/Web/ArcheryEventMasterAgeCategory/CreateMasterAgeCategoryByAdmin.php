@@ -4,7 +4,6 @@ namespace App\BLoC\Web\ArcheryEventMasterAgeCategory;
 
 
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEventMasterAgeCategory;
 use App\Models\ArcheryMasterAgeCategory;
 use DAI\Utils\Exceptions\BLoCException;
 use DateTime;
@@ -27,31 +26,40 @@ class CreateMasterAgeCategoryByAdmin extends Retrieval
         $max = $parameters->get("max");
         $eo_id = $admin->id;
 
-        $is_exist = ArcheryEventMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)->first();
+        $is_exist = ArcheryMasterAgeCategory::where("label", $label)->where("eo_id", $eo_id)
+            ->where("is_hide", 0)
+            ->first();
         if ($is_exist) {
-            throw new BLoCException("category sudah dibuat sebelumnya");
+            throw new BLoCException("category " . $label . " sudah dibuat sebelumnya");
         }
         $digits = 4;
         $id = rand(pow(10, $digits - 1), pow(10, $digits) - 1);
         $category = new ArcheryMasterAgeCategory;
         if ($type == "usia") {
             if ($is_age == 1) {
+                if (($min > 0 && $max > 0) && $min > $max) {
+                    throw new BLoCException("min harus lebih kecil dari max");
+                }
                 $category->min_age = $min;
                 $category->max_age = $max;
             } else {
                 $datetime_min = DateTime::createFromFormat("Y-m-d H:i:s", $min);
                 $datetime_max = DateTime::createFromFormat("Y-m-d H:i:s", $max);
-                if (!$datetime_min || !$datetime_max) {
-                    throw new BLoCException("date invalid");
+                if ($datetime_min && $datetime_max) {
+                    if ($datetime_min > $datetime_max) {
+                        throw new BLoCException("date min must be lower than date max");
+                    }
+                } elseif ($datetime_min && $max != 0) {
+                    throw new BLoCException("invalid 1");
+                } elseif ($datetime_max && $min != 0) {
+                    throw new BLoCException("invalid 2");
+                } elseif (!$datetime_min && !$datetime_max) {
+                    throw new BLoCException("invalid 3");
                 }
 
-                if ($datetime_min > $datetime_max) {
-                    throw new BLoCException("date min must be lower than date max");
-                }
-
-
-                $category->min_date_of_birth = $min;
-                $category->max_date_of_birth = $max;
+                $category->min_date_of_birth = $min == 0 ? null : $min;
+                $category->max_date_of_birth = $max == 0 ? null : $max;
+                $category->is_age = $is_age;
             }
         }
         $category->id = $id;
