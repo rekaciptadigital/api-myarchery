@@ -39,7 +39,7 @@ class AddVenueScheduleOperational extends Transactional
     protected function validation($parameters)
     {
         return [
-            "place_id" => "required",
+            "place_id" => "required|integer",
             "day" => "required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu",
         ];
     }
