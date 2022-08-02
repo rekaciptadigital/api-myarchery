@@ -21,7 +21,16 @@ class BookingTemporary extends Retrieval
         $category_id = $parameters->get("category_id");
         $user = Auth::guard('app-api')->user();
         $category = ArcheryEventCategoryDetail::find($category_id);
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), null, $category, 6, 0, null);
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), null, $category, 6, 0, null, 15);
+        
+        return [
+            "participant_id" => $participant->id,
+            "category_id" => $category_id,
+            "expired_booking_time" => $participant->expired_booking_time
+        ];
     }
 
     protected function validation($parameters)
