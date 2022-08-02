@@ -486,6 +486,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
                 $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
                 $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
+
+                $router->group(['prefix' => 'schedule'], function () use ($router) {
+                    $router->group(['prefix' => 'operational'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleOperational']);
+                    });
+                });
             });
         });
     });
