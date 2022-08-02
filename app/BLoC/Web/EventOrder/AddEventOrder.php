@@ -131,7 +131,6 @@ class AddEventOrder extends Transactional
 
         // hitung jumlah participant pada category yang didaftarkan user
         $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
-        return $participant_count; // hapus
         if ($participant_count >= $event_category_detail->quota) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
