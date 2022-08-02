@@ -111,12 +111,16 @@ class User extends Model implements JWTSubject, AuthenticatableContract
             "ktp_kk" => $this->ktp_kk,
             "address" => $this->address,
             "address_province_id" => $this->address_province_id,
+            "detail_province" => Provinces::getDetailProvince($this->address_province_id),
             "address_city_id" => $this->address_city_id,
+            "detail_city" => City::getDetailCity($this->address_city_id),
             "passport_number" => $this->passport_number,
             "is_wna" => $this->is_wna,
             "country_id" => $this->country_id,
             "city_of_country_id" => $this->city_of_country_id,
-            "passport_img" => $this->passport_img
+            "passport_img" => $this->passport_img,
+            "detail_country" => Country::getDetailCountry($this->country_id),
+            "detail_city_country" => CityCountry::getDetailCityCountry($this->city_of_country_id)
         ];
     }
 }
