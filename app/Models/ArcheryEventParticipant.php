@@ -161,7 +161,7 @@ class ArcheryEventParticipant extends Model
       'unique_id' => $unique_id,
       'event_category_id' => $event_category_detail->id,
       'day_choice' => $day_choice,
-      "expired_booking_time" => strtotime("+" . $expired_time . " minutes", time())
+      "expired_booking_time" => strtotime("+" . env("EXPIRED_BOOKING_TIME", 15), time())
     ]);
   }
 }
