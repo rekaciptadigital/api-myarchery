@@ -21,7 +21,6 @@ use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
 use App\Models\ArcherySeriesUserPoint;
-use Carbon\Carbon as CarbonCarbon;
 use DateTime;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -64,15 +63,10 @@ class AddEventOrder extends Transactional
             $price = $event_category_detail->early_bird;
         }
 
+        $is_marathon = 0;
         $event = ArcheryEvent::find($event_category_detail->event_id);
         if (!$event) {
             throw new BLoCException("event tidak tersedia");
-        }
-
-        $is_marathon = 0;
-        $event = ArcheryEvent::find($event->id);
-        if (!$event) {
-            throw new BLoCException("event not found");
         }
 
         if ($event->event_type == "Marathon") {
@@ -81,11 +75,11 @@ class AddEventOrder extends Transactional
         }
 
         // cek apakah event butuh verifikasi user atau tidak
-        if ($event->need_verify == 1) {
-            if ($user->verify_status != 1) {
-                throw new BLoCException("akun anda belum terverifikasi");
-            }
-        }
+        // if ($event->need_verify == 1) {
+        //     if ($user->verify_status != 1) {
+        //         throw new BLoCException("akun anda belum terverifikasi");
+        //     }
+        // }
 
         // cek waktu pendaftaran sudah berakhir atau belum
         $carbon_registration_start_datetime = Carbon::parse($event->registration_start_datetime);
@@ -116,7 +110,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("member not joined this club");
             }
         } else {
-
             $club_member = null;
         }
 

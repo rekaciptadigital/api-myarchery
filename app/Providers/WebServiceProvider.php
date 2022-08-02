@@ -163,6 +163,8 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\AddVenueScheduleOperationa
 use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetVenueScheduleOperationalDetailById;
 use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetListVenueScheduleOperationalByPlaceId;
 use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\UpdateVenueScheduleOperational;
+use App\BLoC\Web\EventOrder\BookingTemporary;
+use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -202,8 +204,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventParticipantScore", GetArcheryEventParticipantScore::class);
         $this->registerService("findParticipantScoreBySchedule", FindParticipantScoreBySchedule::class);
         $this->registerService("getArcheryEventScoringSytem", GetArcheryEventScoringSytem::class);
+
         $this->registerService("addEventOrder", AddEventOrder::class);
         $this->registerService("detailEventOrder", DetailEventOrder::class);
+        $this->registerService("bookingTemporary", BookingTemporary::class);
+        $this->registerService("deleteBookingTemporary", DeleteBookingTemporary::class);
+        
         $this->registerService("getEventOrder", GetEventOrder::class);
         $this->registerService("callbackMidtrans", CallbackMidtrans::class);
         $this->registerService("getEventPrice", GetEventPrice::class);
