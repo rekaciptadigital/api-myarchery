@@ -165,6 +165,8 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetListVenueScheduleOperat
 use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\UpdateVenueScheduleOperational;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\AddVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\GetVenueScheduleHolidayDetailById;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -386,6 +388,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getVenueScheduleOperationalDetailById", GetVenueScheduleOperationalDetailById::class);
         $this->registerService("getListVenueScheduleOperationalByPlaceId", GetListVenueScheduleOperationalByPlaceId::class);
         $this->registerService("updateVenueScheduleOperational", UpdateVenueScheduleOperational::class);
+        $this->registerService("addVenueScheduleHoliday", AddVenueScheduleHoliday::class);
+        $this->registerService("getVenueScheduleHolidayDetailById", GetVenueScheduleHolidayDetailById::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
