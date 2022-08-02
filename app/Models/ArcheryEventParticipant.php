@@ -136,7 +136,6 @@ class ArcheryEventParticipant extends Model
   public static function insertParticipant(
     $user,
     $unique_id,
-    $team_name,
     $event_category_detail,
     $status,
     $club_id,
@@ -161,7 +160,6 @@ class ArcheryEventParticipant extends Model
       'transaction_log_id' => 0,
       'unique_id' => $unique_id,
       'event_category_id' => $event_category_detail->id,
-      'team_name' => $team_name,
       'day_choice' => $day_choice,
       "expired_booking_time" => strtotime("+" . $expired_time . " minutes", time())
     ]);
