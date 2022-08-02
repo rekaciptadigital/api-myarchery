@@ -22,7 +22,6 @@ use App\Models\TransactionLog;
 use App\Models\User;
 use App\Models\ArcherySeriesUserPoint;
 use DateTime;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redis;
 
@@ -82,12 +81,11 @@ class AddEventOrder extends Transactional
         }
 
         $today = date('Y-m-d H:i:s');
-        $registration_start_datetime = date("Y-m-d H:i:s", $event->registration_start_datetime);
-        $registration_end_datetime = date("Y-m-d H:i:s", $event->registration_end_datetime);
+        $registration_start_datetime = date("Y-m-d H:i:s", strtotime($event->registration_start_datetime));
+        $registration_end_datetime = date("Y-m-d H:i:s", strtotime($event->registration_end_datetime));
         if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
             throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
-
 
         if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
             throw new BLoCException("club harus diisi");
@@ -133,7 +131,7 @@ class AddEventOrder extends Transactional
 
         // hitung jumlah participant pada category yang didaftarkan user
         $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
-
+        return $participant_count; // hapus
         if ($participant_count >= $event_category_detail->quota) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
@@ -204,7 +202,6 @@ class AddEventOrder extends Transactional
                 throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
             }
         }
-
         // cek apakah user telah pernah mendaftar di categori tersebut
         $isExist = ArcheryEventParticipant::where('event_category_id', $event_category_detail->id)
             ->where('user_id', $user->id)
@@ -226,8 +223,20 @@ class AddEventOrder extends Transactional
             }
         }
 
-        // insert data participant
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null);
+        // cek apakah user telah booking
+        $participant = ArcheryEventParticipant::where("user_id", $user->id)
+            ->where("status", 6)
+            ->where("expired_booking_time", ">", time())
+            ->where("event_category_id", $event_category_detail->id)
+            ->first();
+
+        if ($participant) {
+            $participant->status = 4;
+            $participant->save();
+        } else {
+            // insert data participant
+            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null);
+        }
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
 
