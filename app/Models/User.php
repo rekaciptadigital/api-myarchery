@@ -100,4 +100,23 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         }
         return $data;
     }
+
+    public function getDataVerifikasiUser()
+    {
+        return [
+            "user_id" => $this->id,
+            "name" => $this->name,
+            "email" => $this->email,
+            "nik" => $this->nik,
+            "ktp_kk" => $this->ktp_kk,
+            "address" => $this->address,
+            "address_province_id" => $this->address_province_id,
+            "address_city_id" => $this->address_city_id,
+            "passport_number" => $this->passport_number,
+            "is_wna" => $this->is_wna,
+            "country_id" => $this->country_id,
+            "city_of_country_id" => $this->city_of_country_id,
+            "passport_img" => $this->passport_img
+        ];
+    }
 }

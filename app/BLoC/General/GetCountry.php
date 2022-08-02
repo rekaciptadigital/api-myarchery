@@ -2,10 +2,10 @@
 
 namespace App\BLoC\General;
 
-use App\Models\Provinces;
+use App\Models\Country;
 use DAI\Utils\Abstracts\Retrieval;
 
-class GetProvince extends Retrieval
+class GetCountry extends Retrieval
 {
     public function getDescription()
     {
@@ -17,9 +17,9 @@ class GetProvince extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $province = Provinces::orderBy("name")->limit($limit)->offset($offset)->get();
+        $country = Country::orderBy("name")->limit($limit)->offset($offset)->get();
 
-        return $province;
+        return $country;
     }
 
     protected function validation($parameters)
