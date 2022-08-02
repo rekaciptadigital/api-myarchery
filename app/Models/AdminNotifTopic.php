@@ -15,7 +15,7 @@ class AdminNotifTopic extends Model
     {
         return self::firstOrNew(array(
             'topic' => $topic,
-            'admin_id' => $user_id
+            'admin_id' => $admin_id
         ))->save();
     }
 }
