@@ -140,7 +140,8 @@ class ArcheryEventParticipant extends Model
     $event_category_detail,
     $status,
     $club_id,
-    $day_choice
+    $day_choice,
+    $expired_time = 0
   ) {
     return self::create([
       'club_id' => $club_id,
@@ -162,7 +163,7 @@ class ArcheryEventParticipant extends Model
       'event_category_id' => $event_category_detail->id,
       'team_name' => $team_name,
       'day_choice' => $day_choice,
-      // "expired_booking_time" => 
+      "expired_booking_time" => strtotime("+" . $expired_time . " minutes", time())
     ]);
   }
 }
