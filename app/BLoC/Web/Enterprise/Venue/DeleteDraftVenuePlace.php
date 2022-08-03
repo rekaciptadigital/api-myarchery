@@ -26,7 +26,7 @@ class DeleteDraftVenuePlace extends Retrieval
         if (!$venue_place) throw new BLoCException("Data not found");
         if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this event");
 
-        // 1: draft, 2: diajukan, 3: aktif, 4: non-aktif, 5: ditolak
+        // 1: draft, 2: diajukan, 3: lengkapi-data, 4: aktif, 5: non-aktif, 6:ditolak
         if ($venue_place->status == 1) {
 
             // delete all current facilities
