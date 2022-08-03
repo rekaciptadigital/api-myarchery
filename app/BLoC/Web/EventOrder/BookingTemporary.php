@@ -25,7 +25,7 @@ class BookingTemporary extends Retrieval
             throw new BLoCException("category not found");
         }
 
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $category, 6, 0, null);
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $category, 6, 0, null, strtotime(env("EXPIRED_BOOKING_TIME", "+15 minutes"), time()));
 
         return [
             "participant_id" => $participant->id,
