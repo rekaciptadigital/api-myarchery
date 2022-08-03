@@ -64,7 +64,7 @@
                                                     Halo <strong>{{ $data['name'] }}</strong>, <br /><br /></p>
                                                 <p class="text-mode"
                                                     style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 15px; color: #4c4c4c; line-height: 18px; text-align: justify; margin: 20px 70px;">
-                                                    Anda telah melakukan permintaan Lupa Kata Sandi untuk MyArchery.
+                                                    Anda telah melakukan registrasi akun MyArchery.
                                                     Masukkan kode di bawah ini
                                                     untuk verifikasi akun Anda. Kode ini berlaku selama 10 menit.</p>
                                                 <br />
