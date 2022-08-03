@@ -20,12 +20,14 @@ class ForgotPassword extends Retrieval
     protected function process($parameters)
     {
         $admin = Admin::where('email', $parameters->get('email'))->first();
-        if(!$admin) throw new BLoCException("Email tidak ditemukan");
+        if (!$admin) {
+            throw new BLoCException("Email tidak ditemukan");
+        }
 
         $keyForADay = env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:day:" . $admin->email;
         $keyForTenMinutes = env("KEY_FORGOT_PASSWORD_PREFIX") . ":email:verify:code:10minutes:" . $admin->email;
 
-        $code = ForgetPassword::getCode($keyForADay,$keyForTenMinutes,$admin);
+        $code = ForgetPassword::getCode($keyForADay, $keyForTenMinutes, $admin);
         $send_email = ForgetPassword::setEmail($admin->email)->setName($admin->name)->setCode($code)->sendMail();
         return ["code" => 1, "msg" => "Kode sudah dikirim ke alamat email anda"];
     }
@@ -36,5 +38,4 @@ class ForgotPassword extends Retrieval
             'email' => 'required',
         ];
     }
-
 }

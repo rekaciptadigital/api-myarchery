@@ -17,7 +17,7 @@ class UserLogin extends Transactional
 
     protected function process($parameters)
     {
-        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt(["email"=>$parameters->email,"password"=>$parameters->password]);
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt(["email" => $parameters->email, "password" => $parameters->password]);
         $error_message = "Password salah";
         if (!$token) {
             $user = User::where("email", $parameters->get("email"))->first();
@@ -30,13 +30,13 @@ class UserLogin extends Transactional
         $private_signature = Auth::payload()["jti"];
 
         $platform = isset($_SERVER["HTTP_X_PLATFORM"]) ? $_SERVER["HTTP_X_PLATFORM"] : "web";
-        UserLoginToken::where("user_id",$user->id)->where("platform",$platform)->delete();
+        UserLoginToken::where("user_id", $user->id)->where("platform", $platform)->delete();
 
-        $login_token = new UserLoginToken ;
-        $login_token->platform = $platform;        
+        $login_token = new UserLoginToken;
+        $login_token->platform = $platform;
         $login_token->firebase_token = $parameters->get("firebase_token");
         $login_token->private_signature = $private_signature;
-        $login_token->expired_at = date('Y-m-d H:i:s', strtotime('+'.Auth::factory()->getTTL().' minutes'));
+        $login_token->expired_at = date('Y-m-d H:i:s', strtotime('+' . Auth::factory()->getTTL() . ' minutes'));
         $login_token->user_id = $user->id;
         $login_token->save();
         return [
