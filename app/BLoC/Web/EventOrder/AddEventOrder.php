@@ -234,7 +234,7 @@ class AddEventOrder extends Transactional
             $participant->save();
         } else {
             // insert data participant
-            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null);
+            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0);
         }
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
@@ -392,7 +392,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id, null);
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $team_name, $event_category_detail, 4, $club_member->club_id, null, 0);
 
         if ($price < 1) {
             $participant_new->status = 1;
@@ -572,7 +572,7 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null);
+        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0);
 
         if ($price < 1) {
             $participant_new->status = 1;
