@@ -17,9 +17,15 @@ class GetCountry extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $country = Country::orderBy("name")->limit($limit)->offset($offset)->get();
+        $name = $parameters->get("name");
 
-        return $country;
+        $country = Country::query();
+        
+        $country->when($name, function ($query) use ($name) {
+            return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
+        });
+
+        return $country->orderBy("name")->limit($limit)->offset($offset)->get();
     }
 
     protected function validation($parameters)
