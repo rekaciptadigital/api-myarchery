@@ -101,7 +101,7 @@ class CreateArcheryEventV2 extends Transactional
             "event_location_type" => "required|in:Indoor,Outdoor,Both",
             "event_start_register" => "required|after_or_equal:today",
             "event_end_register" => "required",
-            "event_start" => "required|after:event_end_register",
+            "event_start" => "required",
             "event_end" => "required|after:event_start",
             "more_information" => "array"
         ];

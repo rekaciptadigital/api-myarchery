@@ -233,7 +233,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:logout']);
             $router->put('/password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:password']);
-            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
+            // $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
             $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProfile']);
@@ -493,6 +493,14 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                         $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleOperational']);
                         $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleOperationalDetailById']);
                         $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleOperationalByPlaceId']);
+                    });
+
+                    $router->group(['prefix' => 'holiday'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleHoliday']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleHoliday']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleHolidayDetailById']);
+                        $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleHolidayByPlaceId']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
                     });
                 });
             });
