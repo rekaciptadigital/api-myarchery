@@ -58,18 +58,6 @@ class UserRegister extends Transactional
         ]));
 
         return "email success dikirimkan";
-
-
-        // $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
-        //     'email' => $parameters->get('email'),
-        //     'password' => $parameters->get('password'),
-        // ]);
-        // UserNotifTopic::saveTopic("USER_" . $user->id, $user->id);
-        // return [
-        //     'access_token' => $token,
-        //     'token_type' => 'Bearer',
-        //     'expires_in' => Auth::factory()->getTTL()
-        // ];
     }
 
     protected function validation($parameters)
