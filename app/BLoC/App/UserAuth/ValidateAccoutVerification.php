@@ -12,7 +12,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class UserRegister extends Transactional
+class ValidateAccoutVerification extends Transactional
 {
     public function getDescription()
     {
@@ -22,13 +22,16 @@ class UserRegister extends Transactional
     protected function process($parameters)
     {
         $email = $parameters->get("email");
-        $otp_code = OtpVerificationCode::where("email", $email)->first();
+        $code = $parameters->get("code");
+        $otp_code = OtpVerificationCode::where("email", $email)
+            ->where("otp_code", $code)
+            ->first();
         if (!$otp_code) {
             throw new BLoCException("code not found");
         }
 
         if ($otp_code->expired_time < time()) {
-            throw new BLoCException("code expired");
+            // throw new BLoCException("code expired");
         }
 
         $user = User::find($otp_code->user_id);
@@ -40,10 +43,13 @@ class UserRegister extends Transactional
         $user->save();
 
 
-        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
-            'email' => $email,
-            'password' => $parameters->get('password'),
-        ]);
+        // $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->login($user);
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt(["email" => $parameters->email, "password" => "12345678"]);
+
+        // $token = ($user_login = Auth::getProvider()->retrieveByCredentials(["email" => $email]))
+        //     ? Auth::login($user_login)
+        //     : false;
+
         UserNotifTopic::saveTopic("USER_" . $user->id, $user->id);
         return [
             'access_token' => $token,
@@ -55,7 +61,7 @@ class UserRegister extends Transactional
     protected function validation($parameters)
     {
         return [
-            'code' => 'required|integer',
+            'code' => 'required',
             'email' => 'required|string',
         ];
     }
