@@ -46,7 +46,7 @@ class Register extends Transactional
             'phone_number' => $parameters->get('phone_number'),
             "intro" => json_encode($intro)
         ]);
-        AdminNotifTopic::saveTopic("ADMIN_".$admin_id, $admin_id);
+        AdminNotifTopic::saveTopic("ADMIN_" . $admin->id, $admin->id);
         $role = Role::where('name', 'event_organizer')->first();
 
         $admin_role = new AdminRole();
@@ -88,7 +88,7 @@ class Register extends Transactional
         ];
     }
 
-    private function sendMail($admin) 
+    private function sendMail($admin)
     {
         $data = [
             'email' => $admin->email,
