@@ -31,7 +31,7 @@ class ValidateAccoutVerification extends Transactional
         }
 
         if ($otp_code->expired_time < time()) {
-            // throw new BLoCException("code expired");
+            throw new BLoCException("code expired");
         }
 
         $user = User::find($otp_code->user_id);
@@ -43,12 +43,7 @@ class ValidateAccoutVerification extends Transactional
         $user->save();
 
 
-        // $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->login($user);
-        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt(["email" => $parameters->email, "password" => "12345678"]);
-
-        // $token = ($user_login = Auth::getProvider()->retrieveByCredentials(["email" => $email]))
-        //     ? Auth::login($user_login)
-        //     : false;
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->login($user);
 
         UserNotifTopic::saveTopic("USER_" . $user->id, $user->id);
         return [
