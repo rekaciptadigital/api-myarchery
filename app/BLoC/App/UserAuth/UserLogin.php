@@ -17,7 +17,11 @@ class UserLogin extends Transactional
 
     protected function process($parameters)
     {
-        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt(["email" => $parameters->email, "password" => $parameters->password]);
+        $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
+            "email" => $parameters->email,
+            "password" => $parameters->password,
+            "email_verified" => 1
+        ]);
         $error_message = "Password salah";
         if (!$token) {
             $user = User::where("email", $parameters->get("email"))->first();
