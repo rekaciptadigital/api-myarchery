@@ -34,8 +34,21 @@ class VenuePlace extends Model
                                 ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                                 ->where("venue_place_facilities.place_id", "=", $id)
                                 ->where("venue_master_place_facilities.eo_id", "!=", 0)
-                                ->get();                        
-        $data['galleries'] = VenuePlaceGallery::where("place_id", "=", $id)->get();                        
+                                ->get();                       
+                                 
+        $data['galleries'] = VenuePlaceGallery::where("place_id", "=", $id)->get();
+                                        
+        $data['capacity_area'] = VenuePlaceCapacityArea::select('venue_place_capacity_area.master_place_capacity_area_id as id', 'venue_master_place_capacity_area.distance as distance')
+                                ->leftJoin("venue_master_place_capacity_area", "venue_master_place_capacity_area.id", "=", "venue_place_capacity_area.master_place_capacity_area_id")
+                                ->where("venue_place_capacity_area.place_id", "=", $id)
+                                ->where("venue_master_place_capacity_area.eo_id", "=", 0)
+                                ->get();  
+        $data['other_capacity_area'] = VenuePlaceCapacityArea::select('venue_place_capacity_area.master_place_capacity_area_id as id', 'venue_master_place_capacity_area.distance as distance')
+                                ->leftJoin("venue_master_place_capacity_area", "venue_master_place_capacity_area.id", "=", "venue_place_capacity_area.master_place_capacity_area_id")
+                                ->where("venue_place_capacity_area.place_id", "=", $id)
+                                ->where("venue_master_place_capacity_area.eo_id", "!=", 0)
+                                ->get();  
+                       
         return $data;
     }
 
@@ -108,9 +121,24 @@ class VenuePlace extends Model
                 }
             }
 
+            $capacity_area = VenuePlaceCapacityArea::select('venue_place_capacity_area.master_place_capacity_area_id as id', 'venue_master_place_capacity_area.distance as distance')
+                            ->leftJoin("venue_master_place_capacity_area", "venue_master_place_capacity_area.id", "=", "venue_place_capacity_area.master_place_capacity_area_id")
+                            ->where("venue_place_facilities.place_id", "=", $data->id)
+                            ->get(); 
+            $capacity_area_data = [];
+            if ($capacity_area) {
+                foreach ($capacity_area as $key => $value) {
+                    $capacity_area_data[] = [
+                        'id' => $value->id,
+                        'distance' => $value->distance
+                    ];
+                }
+            }
+
             $data['admin'] = $admin_venue;
             $data['facilities'] = $facilities_data;
             $data['galleries'] = $galleries_data;
+            $data['capacity_area'] = $capacity_area_data;
             array_push($result, $data);
         }
         return $result;
