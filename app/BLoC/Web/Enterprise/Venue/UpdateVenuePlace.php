@@ -16,7 +16,7 @@ use App\Libraries\Upload;
 use App\Jobs\VenuePlaceSubmissionEmailJob;
 use Queue;
 
-class CreateVenuePlace extends Transactional
+class UpdateVenuePlace extends Transactional
 {
     public function getDescription()
     {
@@ -27,34 +27,48 @@ class CreateVenuePlace extends Transactional
     {
         $admin = Auth::user();
 
+        $venue_place = VenuePlace::find($parameters->get('id'));
+        if (!$venue_place) throw new BLoCException("Data not found");
+        if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this event");
+
         // venue place
-        $venue_place = new VenuePlace();
-        $venue_place->eo_id = $admin->eo_id;
-        $venue_place->name = $parameters->get('name');
-        $venue_place->place_type = $parameters->get('type');
-        $venue_place->status = $parameters->get('status');
-        $venue_place->description = $parameters->get('description');
-        $venue_place->phone_number = $parameters->get('phone_number');
-        $venue_place->address = $parameters->get('address');
-        $venue_place->latitude = $parameters->get('latitude');
-        $venue_place->longitude = $parameters->get('longitude');
-        $venue_place->province_id = $parameters->get('province_id');
-        $venue_place->city_id = $parameters->get('city_id');
-        $venue_place->save();
+        $venue_place->update([
+            'eo_id' => $admin->eo_id,
+            'name' => $parameters->get('name'),
+            'place_type' => $parameters->get('type'),
+            'status' => $parameters->get('status'),
+            'description' => $parameters->get('description'),
+            'phone_number' => $parameters->get('phone_number'),
+            'address' => $parameters->get('address'),
+            'latitude' => $parameters->get('latitude'),
+            'longitude' => $parameters->get('longitude'),
+            'province_id' => $parameters->get('province_id'),
+            'city_id' => $parameters->get('city_id'),
+        ]);
 
     
-        // place's facilities
-        $main_facilities = $parameters->get('facilities', []); 
-        $current_other_facilities = $parameters->get('current_other_facilities', []); 
-        $facilities = array_merge($main_facilities, $current_other_facilities);
-        if (count($facilities) > 0) {
-            foreach ($facilities as $key => $value) {
-                $venue_facilities = new VenuePlaceFacility();
-                $venue_facilities->place_id = $venue_place->id;
-                $venue_facilities->master_place_facility_id = $value;
-                $venue_facilities->save();
+        // -------------------------------- add place's facilities -------------------------------- //
+
+            // delete all current facilities
+            $current_venue_facilities = VenuePlaceFacility::where('place_id', $venue_place->id)->get();
+            foreach ($current_venue_facilities as $venue_facilities) {
+                $venue_facilities->delete();
             }
-        }
+
+            // add new facilities
+            $main_facilities = $parameters->get('facilities', []); 
+            $current_other_facilities = $parameters->get('current_other_facilities', []); 
+            $facilities = array_merge($main_facilities, $current_other_facilities);
+            if (count($facilities) > 0) {
+                foreach ($facilities as $key => $value) {
+                    $venue_facilities = new VenuePlaceFacility();
+                    $venue_facilities->place_id = $venue_place->id;
+                    $venue_facilities->master_place_facility_id = $value;
+                    $venue_facilities->save();
+                }
+            }
+
+        // -------------------------------- end add place's facilities -------------------------------- //
 
 
         // place's other facilities
@@ -82,7 +96,8 @@ class CreateVenuePlace extends Transactional
                 if ($ext_file_upload != "png" && $ext_file_upload != "jpg" && $ext_file_upload != "jpeg") {
                     throw new BLoCException("mohon inputkan tipe data gambar");
                 }
-                $gallery_result = Upload::setPath("asset/venue_place/")->setFileName("venue_place_" . $parameters->get("name") . "_" .$key)->setBase64($value)->save();
+                
+                $gallery_result = Upload::setPath("asset/venue_place/")->setFileName("venue_place_" . $parameters->get("name") . "_" .date("YmdHis"))->setBase64($value)->save();
 
                 $gallery = new VenuePlaceGallery();
                 $gallery->place_id = $venue_place->id;
@@ -104,6 +119,7 @@ class CreateVenuePlace extends Transactional
     protected function validation($parameters)
     {
         return [
+            "id" => "required|integer",
             "name" => "required",
             "address" => "required",
             "latitude" => "required",

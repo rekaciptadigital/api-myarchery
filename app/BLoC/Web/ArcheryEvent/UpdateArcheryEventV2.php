@@ -94,7 +94,6 @@ class UpdateArcheryEventV2 extends Transactional
             "event_location" => "string",
             "event_city" => "integer",
             "event_location_type" => "in:Indoor,Outdoor,Both",
-            "event_start" => "after:event_end_register",
             "event_end" => "after:event_start",
             "more_information" => "array"
         ];

@@ -7,8 +7,9 @@ use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\DB;
 use App\Models\VenueMasterPlaceFacility;
 use Illuminate\Support\Facades\Auth;
+use DAI\Utils\Exceptions\BLoCException;
 
-class GetVenueMasterPlaceFacilities extends Retrieval
+class GetVenuePlaceOtherFacilitiesByEoId extends Retrieval
 {
     public function getDescription()
     {
@@ -18,10 +19,10 @@ class GetVenueMasterPlaceFacilities extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
-       
-        $place_facilities = VenueMasterPlaceFacility::where("eo_id","0")->get();
-    
-        return $place_facilities;
+        $datas = VenueMasterPlaceFacility::where('eo_id', $admin->eo_id)->where('is_hide', false)->get();
+        if (!$datas) throw new BLoCException("Data not found");
+
+        return $datas;
     }
 
     protected function validation($parameters)

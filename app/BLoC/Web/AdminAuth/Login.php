@@ -7,6 +7,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 use App\Models\AdminLoginToken;
+use App\Models\ArcheryEventOrganizer;
 
 class Login extends Transactional
 {
@@ -40,6 +41,16 @@ class Login extends Transactional
         $login_token->expired_at = date('Y-m-d H:i:s', strtotime('+'.Auth::factory()->getTTL().' minutes'));
         $login_token->admin_id = $admin->id;
         $login_token->save();
+
+        // update eo_id for archery enterprise
+        if ($parameters->get("login_from") == "enterprise" && $admin->eo_id == 0) {
+            $archery_event_organizer = new ArcheryEventOrganizer();
+            $archery_event_organizer->eo_name = $admin->name;
+            $archery_event_organizer->save();
+            $admin->update([
+                'eo_id' => $archery_event_organizer->id
+            ]);
+        }
         
         return [
             'profile' => $admin,
