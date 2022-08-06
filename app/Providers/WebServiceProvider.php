@@ -154,13 +154,13 @@ use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
 use App\BLoC\Web\Enterprise\Venue\GetListVenuePlace;
-use App\BLoC\Web\EventOrder\BookingTemporary;
-use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlaceOtherFacilitiesByEoId;
 use App\BLoC\Web\Enterprise\Venue\UpdateIsHideOtherFacilities;
 use App\BLoC\Web\Enterprise\Venue\DeleteImageVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\UpdateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\DeleteDraftVenuePlace;
+use App\BLoC\Web\EventOrder\BookingTemporary;
+use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
 class WebServiceProvider extends ServiceProvider
 {

@@ -90,7 +90,7 @@ class UpdateArcheryEventV2 extends Transactional
             "event_competition" => "in:Tournament,Games",
             // "status" => "integer|in:1,0",
             "event_banner" => "string",
-            "event_name" => "string",
+            "event_name" => "required|string",
             "event_location" => "string",
             "event_city" => "integer",
             "event_location_type" => "in:Indoor,Outdoor,Both",
