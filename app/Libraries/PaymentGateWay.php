@@ -105,8 +105,21 @@ class PaymentGateWay
         return array($first_name, $last_name);
     }
 
-    public static function createSnap()
+    public static function createSnap($gateway = "midtrans")
     {
+        switch ($gateway) {
+            case 'midtrans':
+                return self::createSnapMidtrans();
+                break;
+            case 'oy':
+                return self::createSnapOy();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static function createSnapMidtrans(){
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
@@ -131,7 +144,7 @@ class PaymentGateWay
             $transaction_log->status = 4;
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
-            $transaction_log->save();
+            // $transaction_log->save();
         }
         return (object)[
             "order_id" => $transaction_details["order_id"],
@@ -142,6 +155,74 @@ class PaymentGateWay
             "client_key" => env("MIDTRANS_CLIENT_KEY"),
             "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK")
         ];
+    }
+
+    private static function createSnapOy(){
+        $transaction_details = self::$transaction_details;
+        $customer_details = self::$customer_details;
+        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
+        $params = [
+        "partner_tx_id" => $transaction_details["order_id"],
+        "child_balance" => "child123",
+        "description" => "description",
+        "notes" => "-",
+        "sender_name" => $customer_details["first_name"]." ".$customer_details["last_name"],
+        "amount" => $transaction_details["gross_amount"],
+        "email" => $customer_details["email"],
+        "phone_number" => $customer_details["phone"],
+        "is_open" => false,
+        "include_admin_fee" => false,
+        "list_disabled_payment_methods" => "",
+        "list_enabled_banks" => "",
+        "expiration" => $expired_time,
+        "due_date" => time(),
+        "va_display_name" => $customer_details["first_name"]];
+
+        require_once 'HTTP/Request2.php';
+        $request = new HTTP_Request2();
+        $request->setUrl('https://api-stg.oyindonesia.com/api/payment-checkout/create-v2');
+        $request->setMethod(HTTP_Request2::METHOD_POST);
+        $request->setConfig(array(
+        'follow_redirects' => TRUE
+        ));
+        $request->setHeader(array(
+        'Content-Type' => 'application/json',
+        'x-oy-username' => 'myarchery',
+        'x-api-key' => '4044e330-90e2-4a01-8afa-1c432a8c140e'
+        ));
+        $request->setBody(json_encode($params));
+        try {
+        $response = $request->send();
+        if ($response->getStatus() == 200) {
+            $resp = $response->getBody();
+            $activity = array("request_snap_token" => array("params" => $params, "response" => $resp));
+            $transaction_log = new TransactionLog;
+            $transaction_log->order_id = $transaction_details["order_id"];
+            $transaction_log->transaction_log_activity = json_encode($activity);
+            $transaction_log->amount = $transaction_details["gross_amount"];
+            $transaction_log->status = 4;
+            $transaction_log->expired_time = $expired_time;
+            $transaction_log->token = $resp->payment_link_id;
+            $transaction_log->save();
+            return (object)[
+                "order_id" => $transaction_details["order_id"],
+                "total" => $transaction_details["gross_amount"],
+                "status" => TransactionLog::getStatus(0),
+                "transaction_log_id" => $transaction_log->id,
+                "snap_token" => $resp->payment_link_id,
+                "client_key" => env("MIDTRANS_CLIENT_KEY"),
+                "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK"),
+                "payment_link" => $resp->url,
+            ];
+        }
+        else {
+            echo 'Unexpected HTTP status: ' . $response->getStatus() . ' ' .
+            $response->getReasonPhrase();
+        }
+        }
+        catch(HTTP_Request2_Exception $e) {
+        echo 'Error: ' . $e->getMessage();
+        }
     }
 
     public static function transactionLogPaymentInfo($transaction_log_id)

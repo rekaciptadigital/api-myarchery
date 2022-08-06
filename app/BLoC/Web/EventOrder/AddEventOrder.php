@@ -281,10 +281,10 @@ class AddEventOrder extends Transactional
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->createSnap();
+            ->createSnap("oy");
 
         $participant->transaction_log_id = $payment->transaction_log_id;
-        $participant->save();
+        // $participant->save();
 
         $res = [
             "archery_event_participant_id" => $participant->id,
