@@ -99,6 +99,117 @@ class ReportMedalClub extends Retrieval
 
         // =============================== data ======================================
         foreach ($data_medal_standing['datatable'] as $key => $dms) {
+            // dms
+            /*{
+                "message": "Success",
+                "errors": null,
+                "data": {
+                    "clubName": "PRO ARCHERY CLUB",
+                    "totalGold": 12,
+                    "totalSilver": 12,
+                    "totalBronze": 13,
+                    "category": {
+                        "Recurve": {
+                            "ageCategory": {
+                                "U-15": {
+                                    "gold": 1,
+                                    "silver": 3,
+                                    "bronze": 0
+                                },
+                                "Umum": {
+                                    "gold": 2,
+                                    "silver": 4,
+                                    "bronze": 3
+                                }
+                            }
+                        },
+                        "Nasional": {
+                            "ageCategory": {
+                                "U-12": {
+                                    "gold": 0,
+                                    "silver": 0,
+                                    "bronze": 1
+                                },
+                                "U-15": {
+                                    "gold": 2,
+                                    "silver": 2,
+                                    "bronze": 1
+                                },
+                                "U-9": {
+                                    "gold": 0,
+                                    "silver": 0,
+                                    "bronze": 0
+                                },
+                                "Umum": {
+                                    "gold": 0,
+                                    "silver": 0,
+                                    "bronze": 0
+                                }
+                            }
+                        },
+                        "Compound": {
+                            "ageCategory": {
+                                "37+": {
+                                    "gold": 4,
+                                    "silver": 0,
+                                    "bronze": 1
+                                },
+                                "U-15": {
+                                    "gold": 1,
+                                    "silver": 1,
+                                    "bronze": 3
+                                },
+                                "Umum": {
+                                    "gold": 2,
+                                    "silver": 2,
+                                    "bronze": 4
+                                }
+                            }
+                        },
+                        "Barebow": {
+                            "ageCategory": {
+                                "Umum": {
+                                    "gold": 0,
+                                    "silver": 0,
+                                    "bronze": 0
+                                }
+                            }
+                        }
+                    },
+                    "medalArray": [
+                        1,
+                        3,
+                        0,
+                        2,
+                        4,
+                        3,
+                        0,
+                        0,
+                        1,
+                        2,
+                        2,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        4,
+                        0,
+                        1,
+                        1,
+                        1,
+                        3,
+                        2,
+                        2,
+                        4,
+                        0,
+                        0,
+                        0
+                    ]
+                }
+            }*/
             $pages[] = view('report_medal_club/dataTable', [
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
@@ -107,6 +218,10 @@ class ReportMedalClub extends Retrieval
                 'event_location_report' => $event_location_report,
                 'headers' => $data_medal_standing['title_header']['category'],
                 "rank" => $key + 1,
+                "club_name" => $dms["club_name"],
+                "total_gold" => $dms["total_gold"],
+                "total_silver" => $dms["total_silver"],
+                "total_bronze" => $dms["total_bronze"],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
                 'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
             ]);
