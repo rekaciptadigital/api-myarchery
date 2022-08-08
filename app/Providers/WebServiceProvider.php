@@ -150,6 +150,8 @@ use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\ArcheryReport\ReportMedalClub;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
+use App\BLoC\Web\EventOrder\BookingTemporary;
+use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
@@ -160,8 +162,17 @@ use App\BLoC\Web\Enterprise\Venue\UpdateIsHideOtherFacilities;
 use App\BLoC\Web\Enterprise\Venue\DeleteImageVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\UpdateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\DeleteDraftVenuePlace;
-use App\BLoC\Web\EventOrder\BookingTemporary;
-use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\AddVenueScheduleOperational;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetVenueScheduleOperationalDetailById;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetListVenueScheduleOperationalByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\UpdateVenueScheduleOperational;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\AddVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\GetVenueScheduleHolidayDetailById;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\GetListVenueScheduleHolidayByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
+use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
 
 class WebServiceProvider extends ServiceProvider
 {
