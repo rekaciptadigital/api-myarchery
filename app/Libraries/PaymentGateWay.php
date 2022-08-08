@@ -96,16 +96,19 @@ class PaymentGateWay
             ];
             
         $enabled_payments = [];
+        $fee = 0;
         if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
             $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]["list"]);
             if($have_fee){
                 if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
                     $transaction_details = self::$transaction_details;
-                    self::$payment_gateway_fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
+                    $fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
                 }else{
-                    self::$payment_gateway_fee = $list[self::$gateway][$payment_methode]["fee"];
+                    $fee = $list[self::$gateway][$payment_methode]["fee"];
                 }
             }
+            self::$payment_gateway_fee = $fee;
+            self::$transaction_details["gross_amount"] = $transaction_details["gross_amount"] + $fee;
         }
         self::$enabled_payments = $enabled_payments;
         return (new self);
