@@ -22,15 +22,17 @@ class GetArcheryEventGlobal extends Retrieval
         $offset = ($page - 1) * $limit;
         $event_name = $parameters->get('event_name');
 
-        $archery_event = ArcheryEvent::select('*', DB::raw("if(now()>event_end_datetime,'selesai',if(now()<event_start_datetime,'akan berlangsung',if(now()> event_start_datetime && now()< event_end_datetime,'sedang berlangsung','false'))) as acara "))
-                         ->orderBy('event_end_datetime', 'desc')
+        $archery_event = ArcheryEvent::select('archery_events.*', DB::raw("if(now()>archery_events.event_end_datetime,'selesai',if(now()<archery_events.event_start_datetime,'akan berlangsung',if(now()> archery_events.event_start_datetime && now()< archery_events.event_end_datetime,'sedang berlangsung','false'))) as acara "))
+                         ->orderBy('archery_events.event_end_datetime', 'desc')
+                         ->join('archery_event_category_details', 'archery_event_category_details.event_id', '=', 'archery_events.id')
                          ->where('status',1)
                          ->where(function ($query) use ($event_name){
-                            if(!empty($event_name)){
-                                $query->where('archery_events.event_name', 'like', '%'.$event_name.'%');
-                            }
-                         });
-
+                             if(!empty($event_name)){
+                                 $query->where('archery_events.event_name', 'like', '%'.$event_name.'%');
+                                }
+                            })
+                        ->groupBy('archery_events.id');
+                            
         $total_page = ceil($archery_event->count() / $limit);
         $data = $archery_event->limit($limit)->offset($offset)->get();
 
