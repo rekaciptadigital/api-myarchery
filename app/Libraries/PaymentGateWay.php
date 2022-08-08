@@ -101,7 +101,7 @@ class PaymentGateWay
             if($have_fee){
                 if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
                     $transaction_details = self::$transaction_details;
-                    self::$payment_gateway_fee = round($transaction_details["gross_amount"]/$list[self::$gateway][$payment_methode]["fee"]);
+                    self::$payment_gateway_fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
                 }else{
                     self::$payment_gateway_fee = $list[self::$gateway][$payment_methode]["fee"];
                 }
