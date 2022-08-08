@@ -99,12 +99,16 @@ class PaymentGateWay
         if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
             $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]["list"]);
             if($have_fee){
+                $fee = 0;
                 if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
                     $transaction_details = self::$transaction_details;
-                    self::$payment_gateway_fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
+                    $fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
                 }else{
-                    self::$payment_gateway_fee = $list[self::$gateway][$payment_methode]["fee"];
+                    $fee = $list[self::$gateway][$payment_methode]["fee"];
                 }
+                self::$payment_gateway_fee = $fee;
+                if($fee > 0)
+                    self::addItemDetail(1, $fee, "payment methode fee", "", 1, "", "");
             }
         }
         self::$enabled_payments = $enabled_payments;
@@ -195,7 +199,7 @@ class PaymentGateWay
             $transaction_log = new TransactionLog;
             $transaction_log->order_id = $transaction_details["order_id"];
             $transaction_log->transaction_log_activity = json_encode($activity);
-            $transaction_log->amount = $transaction_details["gross_amount"] + self::$payment_gateway_fee;
+            $transaction_log->amount = $transaction_details["gross_amount"];
             $transaction_log->status = 4;
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
