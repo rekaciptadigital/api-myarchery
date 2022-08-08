@@ -37,7 +37,6 @@ class ArcheryEventParticipant extends Model
       ->where('event_category_id', $category_detail_id)
       ->leftJoin('transaction_logs', 'transaction_logs.id', 'archery_event_participants.transaction_log_id')
       ->get();
-
     foreach (array($count_participant) as $key => $count) {
       $total = $count[0]['total'];
     }

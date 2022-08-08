@@ -25,6 +25,5 @@ class DatabaseSeeder extends Seeder
         $this->call(DistrictsSeeder::class);
         $this->call(VillagesSeeder::class);
         $this->call(VenueMasterPlaceFacilitiesSeeder::class);
-        $this->call(VenueMasterPlaceCapacityAreaSeeder::class);
     }
 }
