@@ -26,9 +26,11 @@ class PaymentGateWay
 
     static $transaction_details = array();
     static $customer_details = array();
+    static $payment_gateway_fee = 0;
+    static $fee_myarchery = 0;
+    static $gateway = "midtrans";
     static $enabled_payments = [
-        "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
-        "bca_va", "bni_va", "bri_va", "other_va", "indomaret"
+        "bank_transfer"
     ];
     static $item_details = array();
 
@@ -58,14 +60,54 @@ class PaymentGateWay
         return (new self);
     }
 
+    public static function setMyarcheryFee(Double $amount)
+    {
+        self::$fee_myarchery = $amount;
+        return (new self);
+    }
+
+    public static function setGateway(string $gateway)
+    {
+        self::$gateway = $gateway;
+        return (new self);
+    }
+
     // sampel payments
     // ["credit_card", "cimb_clicks",
     // "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
     // "bca_va", "bni_va", "bri_va", "other_va", "gopay", "indomaret",
     // "danamon_online", "akulaku", "shopeepay"]
-    public static function enabledPayments(array $payments)
+    public static function enabledPayments(string $payment_methode,bool $have_fee = false)
     {
-        self::$enabled_payments = $payments;
+        
+        $list = [
+            "midtrans" => [
+                "bank_transfer" => [
+                    "list" => ["bank_transfer"],
+                    "fee_type" => "nominal",
+                    "fee" => 4000
+                ],
+                "gopay" => [
+                    "list" => ["gopay"],
+                    "fee_type" => "percentage",
+                    "fee" => 2
+                ],
+                ]
+            ];
+            
+        $enabled_payments = [];
+        if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
+            $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]);
+            if($have_fee){
+                if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
+                    $transaction_details = self::$transaction_details;
+                    self::$payment_gateway_fee = round($transaction_details["gross_amount"]/$list[self::$gateway][$payment_methode]["fee"]);
+                }else{
+                    self::$payment_gateway_fee = $list[self::$gateway][$payment_methode]["fee"];
+                }
+            }
+        }
+        self::$enabled_payments = $enabled_payments;
         return (new self);
     }
 
@@ -127,10 +169,11 @@ class PaymentGateWay
             $transaction_log = new TransactionLog;
             $transaction_log->order_id = $transaction_details["order_id"];
             $transaction_log->transaction_log_activity = json_encode($activity);
-            $transaction_log->amount = $transaction_details["gross_amount"];
+            $transaction_log->amount = $transaction_details["gross_amount"] + self::$payment_gateway_fee;
             $transaction_log->status = 4;
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
+            $transaction_log->include_payment_gateway_fee = self::$payment_gateway_fee;
             $transaction_log->save();
         }
         return (object)[
