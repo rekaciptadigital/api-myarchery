@@ -97,7 +97,7 @@ class PaymentGateWay
             
         $enabled_payments = [];
         if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
-            $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]);
+            $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]["list"]);
             if($have_fee){
                 if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
                     $transaction_details = self::$transaction_details;
