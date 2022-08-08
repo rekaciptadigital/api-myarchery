@@ -16,7 +16,7 @@ class DeleteBookingTemporary extends Retrieval
     protected function process($parameters)
     {
         $participant_id = $parameters->get("participant_id");
-        $participant = ArcheryEventParticipant::find($participant_id);
+        $participant = ArcheryEventParticipant::where("status", 6)->where("id", $participant_id)->first();
         if (!$participant) {
             throw new BLoCException("participant not found");
         }
