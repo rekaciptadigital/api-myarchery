@@ -123,7 +123,7 @@ class VenuePlace extends Model
 
             $capacity_area = VenuePlaceCapacityArea::select('venue_place_capacity_area.master_place_capacity_area_id as id', 'venue_master_place_capacity_area.distance as distance')
                             ->leftJoin("venue_master_place_capacity_area", "venue_master_place_capacity_area.id", "=", "venue_place_capacity_area.master_place_capacity_area_id")
-                            ->where("venue_place_facilities.place_id", "=", $data->id)
+                            ->where("venue_place_capacity_area.place_id", "=", $data->id)
                             ->get(); 
             $capacity_area_data = [];
             if ($capacity_area) {
