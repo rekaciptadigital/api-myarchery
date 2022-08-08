@@ -82,7 +82,88 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
-        // return $data_medal_standing['title_header']['category']; die;
+        /*
+         "category": {
+                "Recurve": {
+                    "ageCategory": {
+                        "U-15": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "Umum": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        }
+                    },
+                    "0": {
+                        "countColspan": 6
+                    }
+                },
+                "Nasional": {
+                    "ageCategory": {
+                        "U-12": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "U-15": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "U-9": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "Umum": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        }
+                    },
+                    "0": {
+                        "countColspan": 12
+                    }
+                },
+                "Compound": {
+                    "ageCategory": {
+                        "37+": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "U-15": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        },
+                        "Umum": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        }
+                    },
+                    "0": {
+                        "countColspan": 9
+                    }
+                },
+                "Barebow": {
+                    "ageCategory": {
+                        "Umum": {
+                            "gold": null,
+                            "silver": null,
+                            "bronze": null
+                        }
+                    },
+                    "0": {
+                        "countColspan": 3
+                    }
+                }
+            } 
+        */
         $pages[] = view('report_result/club_rank_medals_standing', [
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
@@ -212,12 +293,14 @@ class ReportMedalClub extends Retrieval
             }*/
             $pages[] = view('report_medal_club/dataTable', [
                 'logo_event' => $logo_event,
+                "dms" => $dms,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
                 'event_date_report' => $event_date_report,
                 'event_location_report' => $event_location_report,
                 'headers' => $data_medal_standing['title_header']['category'],
                 "rank" => $key + 1,
+                "category" => $data_medal_standing["title_header"]["category"],
                 "club_name" => $dms["club_name"],
                 "total_gold" => $dms["total_gold"],
                 "total_silver" => $dms["total_silver"],
@@ -296,7 +379,10 @@ class ReportMedalClub extends Retrieval
             $count_colspan = [
                 'count_colspan' => count($age_category) * 3
             ];
-            array_push($title_header['category'][$competition->competition_category], $count_colspan);
+            $count_rowspan = [
+                "count_rowspan" => count($age_category)
+            ];
+            array_push($title_header['category'][$competition->competition_category], $count_colspan, $count_rowspan);
         }
 
         $result = [];
