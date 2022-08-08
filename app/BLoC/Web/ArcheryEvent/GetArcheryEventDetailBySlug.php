@@ -27,7 +27,7 @@ class GetArcheryEventDetailBySlug extends Retrieval
         
         $have_paymentgateway_fee =false;
         if($archery_event->include_payment_gateway_fee_to_user == 1)
-            $have_fee_payment_gateway = true;
+            $have_paymentgateway_fee = true;
         $archery_event_detail["payment_methode"] = PaymentGateWay::getPaymentMethode($have_paymentgateway_fee);
         return $archery_event_detail;
     }
