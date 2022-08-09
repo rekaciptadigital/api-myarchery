@@ -43,10 +43,10 @@ class AdminAuthenticate
         }
 
         $private_signature = $this->auth->payload()["jti"];
-        $check_private_signature = AdminLoginToken::where("private_signature",$private_signature)->first();
-        if(!$check_private_signature)
+        $check_private_signature = AdminLoginToken::where("private_signature", $private_signature)->first();
+        if (!$check_private_signature)
             return $this::unauthorized();
-            
+
         return $next($request);
     }
 }

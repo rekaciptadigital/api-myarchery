@@ -18,5 +18,4 @@ class UserNotifTopic extends Model
             'user_id' => $user_id
         ))->save();
     }
-
 }
