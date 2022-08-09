@@ -323,7 +323,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
                 $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
                 $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
-                $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
@@ -498,7 +497,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 $router->get('enterprise/fldryepswqpxrat', function () {
     $new_submission = VenuePlace::getAllListVenue(2);
     $submission_approved = VenuePlace::getAllListVenue(3);
-
+    
     return view('enterprise/venue_submission_index', [
         "datas" => $new_submission,
         "data_approved" => $submission_approved
@@ -516,6 +515,7 @@ $router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id
         ]);
 
         return redirect('enterprise/fldryepswqpxrat');
+
     } catch (\Throwable $th) {
         return response()->json([
             "status" => "error",
