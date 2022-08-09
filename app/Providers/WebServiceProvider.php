@@ -147,6 +147,7 @@ use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
+use App\BLoC\Web\ArcheryReport\ReportMedalClub;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
@@ -268,6 +269,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("acceptVerifyUser", AcceptVerifyUser::class);
         $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
         $this->registerService("downloadPdf", DownloadPdf::class);
+        $this->registerService("reportMedalClub", ReportMedalClub::class);
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
 
