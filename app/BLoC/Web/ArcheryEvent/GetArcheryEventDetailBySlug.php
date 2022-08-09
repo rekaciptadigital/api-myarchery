@@ -6,6 +6,7 @@ use App\Models\ArcheryEvent;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
+use App\Libraries\PaymentGateWay;
 
 class GetArcheryEventDetailBySlug extends Retrieval
 {
@@ -23,6 +24,11 @@ class GetArcheryEventDetailBySlug extends Retrieval
         }
 
         $archery_event_detail = ArcheryEvent::detailEventById($archery_event->id, 1);
+        
+        $have_paymentgateway_fee =false;
+        if($archery_event->include_payment_gateway_fee_to_user == 1)
+            $have_paymentgateway_fee = true;
+        $archery_event_detail["payment_methode"] = PaymentGateWay::getPaymentMethode($have_paymentgateway_fee);
         return $archery_event_detail;
     }
 
