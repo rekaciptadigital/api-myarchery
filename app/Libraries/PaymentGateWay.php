@@ -26,9 +26,11 @@ class PaymentGateWay
 
     static $transaction_details = array();
     static $customer_details = array();
+    static $payment_gateway_fee = 0;
+    static $fee_myarchery = 0;
+    static $gateway = "midtrans";
     static $enabled_payments = [
-        "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
-        "bca_va", "bni_va", "bri_va", "other_va", "indomaret"
+        "bank_transfer"
     ];
     static $item_details = array();
 
@@ -58,12 +60,24 @@ class PaymentGateWay
         return (new self);
     }
 
+    public static function setMyarcheryFee(Double $amount)
+    {
+        self::$fee_myarchery = $amount;
+        return (new self);
+    }
+
+    public static function setGateway(string $gateway)
+    {
+        self::$gateway = $gateway;
+        return (new self);
+    }
+
     // sampel payments
     // ["credit_card", "cimb_clicks",
     // "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
     // "bca_va", "bni_va", "bri_va", "other_va", "gopay", "indomaret",
     // "danamon_online", "akulaku", "shopeepay"]
-    public static function enabledPayments(array $payments)
+    public static function enabledPayments(string $payment_methode,bool $have_fee = false)
     {
         
         $list = [
@@ -189,6 +203,7 @@ class PaymentGateWay
             $transaction_log->status = 4;
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
+            $transaction_log->include_payment_gateway_fee = self::$payment_gateway_fee;
             $transaction_log->save();
         }
         return (object)[
