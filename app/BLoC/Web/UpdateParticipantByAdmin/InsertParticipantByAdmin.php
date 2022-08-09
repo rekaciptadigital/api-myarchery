@@ -120,13 +120,11 @@ class InsertParticipantByAdmin extends Transactional
             }
 
             $gender_category = $category->gender_category;
-            if ($event->event_type == "Full_day") {
-                if ($user->gender != $gender_category) {
-                    if (empty($user->gender))
-                        throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+            if ($user->gender != $gender_category) {
+                if (empty($user->gender))
+                    throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
 
-                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
-                }
+                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category . " dan user dengan email " . $value . " gender tidak sesuai");
             }
 
             // cek apakah user telah pernah mendaftar di categori tersebut

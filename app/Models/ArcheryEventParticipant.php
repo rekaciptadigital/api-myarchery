@@ -126,21 +126,17 @@ class ArcheryEventParticipant extends Model
           $q->where("archery_event_participants.status", 4);
           $q->where("transaction_logs.expired_time", ">", $time_now);
         });
-        $query->orWhere(function ($q) use ($time_now) {
-          $q->where("archery_event_participants.status", 6);
-          $q->where("archery_event_participants.expired_booking_time", ">", $time_now);
-        });
       })->count();
   }
 
   public static function insertParticipant(
     $user,
     $unique_id,
+    $team_name,
     $event_category_detail,
     $status,
     $club_id,
-    $day_choice,
-    $expired_booking_time = 0
+    $day_choice
   ) {
     return self::create([
       'club_id' => $club_id,
@@ -160,8 +156,8 @@ class ArcheryEventParticipant extends Model
       'transaction_log_id' => 0,
       'unique_id' => $unique_id,
       'event_category_id' => $event_category_detail->id,
-      'day_choice' => $day_choice,
-      "expired_booking_time" => $expired_booking_time
+      'team_name' => $team_name,
+      'day_choice' => $day_choice
     ]);
   }
 }

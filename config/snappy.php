@@ -32,22 +32,24 @@ return [
     |    The environment variables to set while running the wkhtmltopdf process.
     |
     */
-    
+
     'pdf' => [
         'enabled' => true,
         'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
+        // 'binary' => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf"',
         'timeout' => 3600,
         'options' => [
             'enable-local-file-access' => true
         ],
         'env'     => [],
     ],
-    
+
     'image' => [
         'enabled' => true,
         'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
+        // 'binary' => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf"',
         'timeout' => 3600,
         'options' => [
             'enable-local-file-access' => true
