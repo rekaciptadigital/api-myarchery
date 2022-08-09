@@ -137,9 +137,9 @@ class ReportMedalClub extends Retrieval
         ]);
 
         $digits = 3;
-        $fileName   = 'report_result_' . date("YmdHis") . '.pdf';
+        $fileName   = 'report_result_medal_club' . date("YmdHis") . '.pdf';
         // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
-        $path = 'asset/report-result';
+        $path = 'asset/report-result_medal_club';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
