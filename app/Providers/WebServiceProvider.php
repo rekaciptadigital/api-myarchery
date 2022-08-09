@@ -147,7 +147,6 @@ use App\BLoC\Web\EventElimination\CleanScoringQualification;
 use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
-use App\BLoC\Web\ArcheryReport\ReportMedalClub;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 
@@ -160,6 +159,8 @@ use App\BLoC\Web\Enterprise\Venue\UpdateIsHideOtherFacilities;
 use App\BLoC\Web\Enterprise\Venue\DeleteImageVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\UpdateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\DeleteDraftVenuePlace;
+use App\BLoC\Web\EventOrder\BookingTemporary;
+use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -199,8 +200,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getArcheryEventParticipantScore", GetArcheryEventParticipantScore::class);
         $this->registerService("findParticipantScoreBySchedule", FindParticipantScoreBySchedule::class);
         $this->registerService("getArcheryEventScoringSytem", GetArcheryEventScoringSytem::class);
+
         $this->registerService("addEventOrder", AddEventOrder::class);
         $this->registerService("detailEventOrder", DetailEventOrder::class);
+        $this->registerService("bookingTemporary", BookingTemporary::class);
+        $this->registerService("deleteBookingTemporary", DeleteBookingTemporary::class);
+        
         $this->registerService("getEventOrder", GetEventOrder::class);
         $this->registerService("callbackMidtrans", CallbackMidtrans::class);
         $this->registerService("getEventPrice", GetEventPrice::class);
@@ -272,7 +277,6 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResultV2::class);
-        $this->registerService("reportMedalClub", ReportMedalClub::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 

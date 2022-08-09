@@ -2,10 +2,10 @@
 
 namespace App\BLoC\General;
 
-use App\Models\Provinces;
+use App\Models\Country;
 use DAI\Utils\Abstracts\Retrieval;
 
-class GetProvince extends Retrieval
+class GetCountry extends Retrieval
 {
     public function getDescription()
     {
@@ -17,9 +17,15 @@ class GetProvince extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $province = Provinces::orderBy("name")->limit($limit)->offset($offset)->get();
+        $name = $parameters->get("name");
 
-        return $province;
+        $country = Country::query();
+        
+        $country->when($name, function ($query) use ($name) {
+            return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
+        });
+
+        return $country->orderBy("name")->limit($limit)->offset($offset)->get();
     }
 
     protected function validation($parameters)
