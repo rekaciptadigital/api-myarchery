@@ -506,6 +506,18 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                         $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
                     });
                 });
+
+                $router->group(['prefix' => 'product'], function () use ($router) {
+                    $router->post('/update-pricelist', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlacePricelist']);
+
+                    $router->group(['prefix' => 'session'], function () use ($router) {
+
+                    });
+
+                    $router->group(['prefix' => 'custom'], function () use ($router) {
+
+                    });
+                });
             });
         });
     });
