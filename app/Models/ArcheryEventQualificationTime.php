@@ -41,7 +41,7 @@ class ArcheryEventQualificationTime extends Model
         $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*")
             ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
             ->where("archery_event_category_details.event_id", $event_id)
-            ->whereDate("archery_event_qualification_time.event_start_datetime", $date)
+            ->whereDate("archery_event_qualification_time.event_start_datetime", "<=", $date)
             ->get();
 
         return $category;

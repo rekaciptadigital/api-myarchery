@@ -33,9 +33,13 @@ class Upp extends Retrieval
     protected function process($parameters)
     {
 
-        $today = "2022-07-2";
+        $today = date("Y-m-d");
         $event_id = $parameters->get('event_id');
-        return ArcheryEventQualificationTime::getCategoryByDate($today, $event_id);
+        $list_category = ArcheryEventQualificationTime::getCategoryByDate($today, $event_id);
+
+        foreach ($list_category as $key => $value) {
+             $value->getCategoryType();
+        }
     }
 
     protected function validation($parameters)
