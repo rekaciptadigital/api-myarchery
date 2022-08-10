@@ -150,7 +150,10 @@ use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\ArcheryReport\ReportMedalClub;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
+use App\BLoC\Web\EventOrder\BookingTemporary;
+use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
+// Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
@@ -160,8 +163,18 @@ use App\BLoC\Web\Enterprise\Venue\UpdateIsHideOtherFacilities;
 use App\BLoC\Web\Enterprise\Venue\DeleteImageVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\UpdateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\DeleteDraftVenuePlace;
-use App\BLoC\Web\EventOrder\BookingTemporary;
-use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\AddVenueScheduleOperational;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetVenueScheduleOperationalDetailById;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\GetListVenueScheduleOperationalByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\ScheduleOperational\UpdateVenueScheduleOperational;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\AddVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\GetVenueScheduleHolidayDetailById;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\GetListVenueScheduleHolidayByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
+use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
+use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
+// End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -380,6 +393,17 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteImageVenuePlace", DeleteImageVenuePlace::class);
         $this->registerService("updateVenuePlace", UpdateVenuePlace::class);
         $this->registerService("deleteDraftVenuePlace", DeleteDraftVenuePlace::class);
+        $this->registerService("addVenueScheduleOperational", AddVenueScheduleOperational::class);
+        $this->registerService("getVenueScheduleOperationalDetailById", GetVenueScheduleOperationalDetailById::class);
+        $this->registerService("getListVenueScheduleOperationalByPlaceId", GetListVenueScheduleOperationalByPlaceId::class);
+        $this->registerService("updateVenueScheduleOperational", UpdateVenueScheduleOperational::class);
+        $this->registerService("addVenueScheduleHoliday", AddVenueScheduleHoliday::class);
+        $this->registerService("getVenueScheduleHolidayDetailById", GetVenueScheduleHolidayDetailById::class);
+        $this->registerService("getListVenueScheduleHolidayByPlaceId", GetListVenueScheduleHolidayByPlaceId::class);
+        $this->registerService("updateVenueScheduleHoliday", UpdateVenueScheduleHoliday::class);
+        $this->registerService("deleteVenueScheduleHoliday", DeleteVenueScheduleHoliday::class);
+        $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
+        $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //

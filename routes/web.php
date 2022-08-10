@@ -487,6 +487,25 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
                 $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
                 $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
+                $router->get('/list-capacity-area', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListCapacityArea']);
+                $router->post('/complete-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:completeVenuePlace']);
+
+                $router->group(['prefix' => 'schedule'], function () use ($router) {
+                    $router->group(['prefix' => 'operational'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleOperational']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleOperational']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleOperationalDetailById']);
+                        $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleOperationalByPlaceId']);
+                    });
+
+                    $router->group(['prefix' => 'holiday'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleHoliday']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleHoliday']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleHolidayDetailById']);
+                        $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleHolidayByPlaceId']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
+                    });
+                });
             });
         });
     });
@@ -497,7 +516,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
     $new_submission = VenuePlace::getAllListVenue(2);
-    $submission_approved = VenuePlace::getAllListVenue(3);
+    $submission_approved = VenuePlace::getAllListVenue(4);
 
     return view('enterprise/venue_submission_index', [
         "datas" => $new_submission,
