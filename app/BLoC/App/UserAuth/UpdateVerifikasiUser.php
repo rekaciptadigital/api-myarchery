@@ -49,11 +49,6 @@ class UpdateVerifikasiUser extends Retrieval
         }
 
         if ($is_wna == 0) {
-            Validator::make($parameters->all(), [
-                'nik' => [
-                    Rule::unique('users')->ignore($user->id),
-                ],
-            ])->validate();
             $user->nik = $nik;
 
             $province = Provinces::find($province_id);
@@ -90,11 +85,6 @@ class UpdateVerifikasiUser extends Retrieval
                 $user->ktp_kk = $ktp_kk;
             }
         } else {
-            Validator::make($parameters->all(), [
-                'passport_number' => [
-                    Rule::unique('users')->ignore($user->id),
-                ],
-            ])->validate();
             $user->passport_number = $passport_number;
 
             $country = Country::find($country_id);
@@ -158,13 +148,16 @@ class UpdateVerifikasiUser extends Retrieval
     {
         return [
             "user_id" => 'required|integer',
-            'address' => 'string',
+            'address' => 'sometimes|required|string|string|min:1',
             "ktp_kk" => 'string',
-            "nik" => 'string|min:16|max:16',
+            "nik" => 'sometimes|required|string|unique:users,nik,' . $parameters->get("nik"),
             "province_id" => "integer",
             "city_id" => "integer",
-            "name" => 'string',
-            "is_wna" => "required|in:0,1"
+            "name" => 'sometimes|required|string|min:1|max:200',
+            "is_wna" => "required|in:0,1",
+            "country_id" => "integer",
+            "passport_number" => 'sometimes|required|string|unique:users,passport_number,' . $parameters->get("user_id"),
+            "city_of_country_id" => "integer"
         ];
     }
 }
