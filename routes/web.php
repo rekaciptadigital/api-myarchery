@@ -511,7 +511,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                     $router->post('/update-pricelist', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlacePricelist']);
 
                     $router->group(['prefix' => 'session'], function () use ($router) {
-
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueProductSession']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueProductSession']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductSessionDetailById']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueProductSession']);
                     });
 
                     $router->group(['prefix' => 'custom'], function () use ($router) {

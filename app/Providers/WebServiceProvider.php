@@ -175,6 +175,10 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\AddVenueProductSession;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\GetVenueProductSessionDetailById;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\UpdateVenueProductSession;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\DeleteVenueProductSession;
 
 // End of Archery Enterprise Section //
 
@@ -407,6 +411,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
         $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
         $this->registerService("updateVenuePlacePricelist", UpdateVenuePlacePricelist::class);
+        $this->registerService("addVenueProductSession", AddVenueProductSession::class);
+        $this->registerService("getVenueProductSessionDetailById", GetVenueProductSessionDetailById::class);
+        $this->registerService("updateVenueProductSession", UpdateVenueProductSession::class);
+        $this->registerService("deleteVenueProductSession", DeleteVenueProductSession::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
