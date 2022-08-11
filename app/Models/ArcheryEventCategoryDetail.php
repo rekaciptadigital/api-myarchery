@@ -22,7 +22,11 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
-    // dapatkan type category apakah individual atau team
+    /*
+        digunakan untuk menangkap type category tersebut
+
+        return: "Individual" || "Team"
+    */
     public function getCategoryType()
     {
         $type = null;
