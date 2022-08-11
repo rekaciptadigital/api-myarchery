@@ -28,9 +28,11 @@ class VenuePlaceProductSession extends Model
             } else {
                 $result[$operational->day] = [];
                 foreach ($product_sessions as $key) {
+                    $session['id'] = $key->id;
+                    $session['schedule_operational_id'] = $key->schedule_operational_id;
                     $session['start_time'] = $key->start_time;
                     $session['end_time'] = $key->end_time;
-                    $session['capacity'] = $key->max_capacity;
+                    $session['max_capacity'] = $key->max_capacity;
                     array_push($result[$operational->day], $session);
                 }
             }
