@@ -136,7 +136,9 @@ class AddEventOrder extends Transactional
             // check kalo ada pembayaran yang pending
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where("event_category_id", $event_category_detail->id)
-                ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", $time_now)
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->where("event_id", $event_category_detail->event_id)->count();
 
             if ($participant_count_pending > 0) {
