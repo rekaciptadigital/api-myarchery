@@ -53,9 +53,9 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
-        <h1>Day {{ $day }}</h1>
+        <h1 style="text-align: center">Day {{ $day }}</h1>
         @foreach ($data_report as $item)
-            @if ($item['team'] == 'individual')
+            @if ($item['team'] == 'individual' && $item['type'] == 'qualification')
                 <p style="text-align: center; font-size: 30px;"><strong>{{ $item['data'][0][0]['category'] }}</strong>
                 </p>
                 <h2 style="text-align: center">Qualification</h2>
@@ -148,7 +148,7 @@
                 </table>
             @endif
 
-            @if ($item['team'] == 'team')
+            @if ($item['team'] == 'team' && $item['type'] == 'qualification')
                 @if ($item['data'] != [])
                     <p style="text-align: center; font-size: 30px;">
                         <strong>{{ $item['category_label'] }}</strong>
@@ -207,6 +207,146 @@
                                 </tr>
                             @endforeach
 
+                        </tbody>
+                    </table>
+                @endif
+            @endif
+
+            @if ($item['type'] == 'elimination' && $item['team'] == 'individual')
+                @if ($item['data'][0] != [])
+                    <p style="text-align: center; font-size: 30px;">
+                        <strong>{{ $item['category_label'] }}</strong>
+                    </p>
+                    <h2 style="text-align: center">Elimination</h2>
+                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                        <thead>
+                            <!-- <tr><th>Table Heading</th></tr> -->
+                        </thead>
+                        <tbody style="font-size: 24px;">
+                            <tr style="border: 1px solid black;">
+                                <th style="text-align: center;border: 1px solid black; " colspan="5">
+                                    <strong>Medalist by Event</strong>
+                                </th>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <th style="text-align: center;border: 1px solid black;">
+                                    <strong>Category</strong>
+                                </th>
+                                <th style="text-align: center; border: 1px solid black;">
+                                    <strong>Date</strong>
+                                </th>
+                                <th style="text-align: center;border: 1px solid black; ">
+                                    <strong>Medal</strong>
+                                </th>
+                                <th style="text-align: center;border: 1px solid black; ">
+                                    <strong>Athlete</strong>
+                                </th>
+                                <th style="text-align: center;border: 1px solid black; ">
+                                    <strong>Club</strong>
+                                </th>
+                            </tr>
+                            @php
+                                $rowid = 0;
+                                $rowspan = 0;
+                            @endphp
+                            @foreach ($item['data'][0] as $key => $data)
+                                @php
+                                    $rowid += 1;
+                                @endphp
+                                <tr style="border: 1px solid black;">
+                                    @if ($key == 0 || $rowspan == $rowid)
+                                        @php
+                                            $rowid = 0;
+                                            $rowspan = count($item['data'][0]);
+                                        @endphp
+                                        <td style="text-align: center;border: 1px solid black;"
+                                            rowspan="{{ $rowspan }}">
+                                            {{ $data['category'] ? $data['category'] : '-' }}</td>
+                                        <td style="text-align: center;border: 1px solid black;"
+                                            rowspan="{{ $rowspan }}">
+                                            {{ $data['date'] ? $data['date'] : '-' }}</td>
+                                    @endif
+                                    <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
+                                    <!-- start initiate medals -->
+
+                                    <!-- end medals -->
+                                    <td style="text-align: center;border: 1px solid black;">
+                                        {{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
+                                    <td style="text-align: center;border: 1px solid black;">
+                                        {{ $data['club'] ? $data['club'] : '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            @endif
+
+            @if ($item['type'] == 'elimination' && $item['team'] == 'team')
+                @if ($item['data'] != [])
+                    <p style="text-align: center; font-size: 30px;">
+                        <strong>{{ $item['category_label'] }}</strong>
+                    </p>
+                    <h2 style="text-align: center">Elimination</h2>
+                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                        <thead>
+                            <!-- <tr><th>Table Heading</th></tr> -->
+                        </thead>
+                        <tbody style="font-size: 24px;">
+                            <tr style="border: 1px solid black;">
+                                <th style="text-align: center;border: 1px solid black; " colspan="5">
+                                    <strong>Medalist by Event</strong>
+                                </th>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <th style="text-align: center;border: 1px solid black;">
+                                    <strong>Category</strong>
+                                </th>
+                                <th style="text-align: center; border: 1px solid black;">
+                                    <strong>Date</strong>
+                                </th>
+                                <th style="text-align: center;border: 1px solid black; ">
+                                    <strong>Medal</strong>
+                                </th>
+                                <th style="text-align: center;border: 1px solid black; ">
+                                    <strong>Club</strong>
+                                </th>
+                            </tr>
+                            @php
+                                $rowid = 0;
+                                $rowspan = 0;
+                            @endphp
+                            @foreach ($item['data']->take(3) as $key => $data)
+                                @php
+                                    $rowid += 1;
+                                @endphp
+                                <tr style="border: 1px solid black;">
+                                    @if ($key == 0 || $rowspan == $rowid)
+                                        @php
+                                            $rowid = 0;
+                                            $rowspan = count($item["data"]);
+                                        @endphp
+                                        <td style="text-align: center;border: 1px solid black;"
+                                            rowspan="{{ $rowspan }}">
+                                            {{ $data['category'] ? $data['category'] : '-' }}</td>
+                                        <td style="text-align: center;border: 1px solid black;"
+                                            rowspan="{{ $rowspan }}">
+                                            {{ $data['date'] ? $data['date'] : '-' }}</td>
+                                    @endif
+                                    <!-- start initiate medals -->
+                                    @if ($data['elimination_ranked'] == '1')
+                                        <td style="text-align: left;border: 1px solid black;">Gold</td>
+                                    @elseif ($data['elimination_ranked'] == '2')
+                                        <td style="text-align: left;border: 1px solid black;">Silver</td>
+                                    @elseif ($data['elimination_ranked'] == '3')
+                                        <td style="text-align: left;border: 1px solid black;">Bronze </td>
+                                    @else
+                                        <td style="text-align: left;border: 1px solid black;">Bronze</td>
+                                    @endif
+                                    <!-- end medals -->
+                                    <td style="text-align: center;border: 1px solid black;">
+                                        {{ $data['team_name'] ? $data['team_name'] : '-' }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 @endif
