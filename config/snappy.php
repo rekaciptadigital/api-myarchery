@@ -35,7 +35,7 @@ return [
 
     'pdf' => [
         'enabled' => true,
-        // 'binary' => '/usr/local/bin/wkhtmltopdf',
+        'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
         'binary' => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf"',
         'timeout' => 3600,
@@ -47,9 +47,9 @@ return [
 
     'image' => [
         'enabled' => true,
-        // 'binary' => '/usr/local/bin/wkhtmltopdf',
+        'binary' => '/usr/local/bin/wkhtmltopdf',
         // 'binary' => base_path('vendor\wemersonjanuario\wkhtmltopdf-windows\bin\64bit\wkhtmltopdf'),
-        'binary' => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf"',
+        // 'binary' => '"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf"',
         'timeout' => 3600,
         'options' => [
             'enable-local-file-access' => true
