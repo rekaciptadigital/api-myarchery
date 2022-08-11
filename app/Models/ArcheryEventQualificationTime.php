@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventCategoryDetail;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 
 class ArcheryEventQualificationTime extends Model
@@ -36,14 +39,34 @@ class ArcheryEventQualificationTime extends Model
         return $qualification_collection;
     }
 
-    public static function getCategoryByDate($date, $event_id)
+    public static function getCategoryByDate($event_id)
     {
-        $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*")
-            ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->whereDate("archery_event_qualification_time.event_start_datetime", "<=", $date)
-            ->get();
+        $event = ArcheryEvent::find($event_id);
+        // Start date
+        $start = strtotime($event->event_start_datetime);
+        // End date
+        $end = strtotime($event->event_end_datetime);
 
-        return $category;
+        $response = [];
+        $data = [];
+
+        $sort_day = 1;
+        for ($i = $start; $i <= $end; $i += 86400) {
+            $day = date("Y-m-d", $i);
+
+            $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.event_start_datetime")
+                ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->whereDate("archery_event_qualification_time.event_start_datetime", $day)
+                ->get();
+
+            $response["day"] = $sort_day;
+            $response["date"] = $day;
+            $response["category"] = $category;
+            $data[] = $response;
+            $sort_day++;
+        }
+
+        return $data;
     }
 }
