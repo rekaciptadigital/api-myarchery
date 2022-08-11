@@ -324,6 +324,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
                 $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
                 $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
+                $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
+                $router->get('/upp', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:upp']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {

@@ -138,14 +138,23 @@ class AddEventOrder extends Transactional
             }
         }
 
+        // cek apakah user telah booking
+        $participant = ArcheryEventParticipant::where("user_id", $user->id)
+            ->where("status", 6)
+            ->where("expired_booking_time", ">", time())
+            ->where("event_category_id", $event_category_detail->id)
+            ->first();
+
         // hitung jumlah participant pada category yang didaftarkan user
         $participant_count = ArcheryEventParticipant::countEventUserBooking($event_category_detail->id);
-        if ($participant_count >= $event_category_detail->quota) {
+        if ($participant_count > $event_category_detail->quota) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where("event_category_id", $event_category_detail->id)
-                ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", $time_now)
+                ->where("archery_event_participants.status", 4)
+                ->where("transaction_logs.status", 4)
+                ->where("transaction_logs.expired_time", ">", $time_now)
                 ->where("event_id", $event_category_detail->event_id)->count();
 
             if ($participant_count_pending > 0) {
@@ -230,13 +239,6 @@ class AddEventOrder extends Transactional
                 }
             }
         }
-
-        // cek apakah user telah booking
-        $participant = ArcheryEventParticipant::where("user_id", $user->id)
-            ->where("status", 6)
-            ->where("expired_booking_time", ">", time())
-            ->where("event_category_id", $event_category_detail->id)
-            ->first();
 
         if ($participant) {
             $participant->status = 4;
