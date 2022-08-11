@@ -153,6 +153,7 @@ use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 
+// Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceFacilities;
@@ -173,6 +174,15 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
+use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\AddVenueProductSession;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\GetVenueProductSessionDetailById;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\UpdateVenueProductSession;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\DeleteVenueProductSession;
+use App\BLoC\Web\Enterprise\Venue\Products\Session\GetListProductSessionByPlaceId;
+
+// End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
 {
@@ -402,6 +412,14 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteVenueScheduleHoliday", DeleteVenueScheduleHoliday::class);
         $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
         $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
+        $this->registerService("updateVenuePlacePricelist", UpdateVenuePlacePricelist::class);
+        $this->registerService("addVenueProductSession", AddVenueProductSession::class);
+        $this->registerService("getVenueProductSessionDetailById", GetVenueProductSessionDetailById::class);
+        $this->registerService("updateVenueProductSession", UpdateVenueProductSession::class);
+        $this->registerService("deleteVenueProductSession", DeleteVenueProductSession::class);
+        $this->registerService("getListProductSessionByPlaceId", GetListProductSessionByPlaceId::class);
+        $this->registerService("getAllProductVenuePlace", GetAllProductVenuePlace::class);
+
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
 

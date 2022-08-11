@@ -62,7 +62,7 @@ class Register extends Transactional
         ]);
 
         // send email registration success
-        // $this->sendMail($admin);
+        // $this->sendMail($admin); // email content not ready yet
 
         $token = Auth::setTTL(60 * 24 * 7)->attempt([
             'email' => $parameters->get('email'),
