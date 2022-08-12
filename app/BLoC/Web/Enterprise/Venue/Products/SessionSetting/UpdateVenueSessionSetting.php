@@ -1,16 +1,16 @@
 <?php
 
-namespace App\BLoC\Web\Enterprise\Venue\Products\Session;
+namespace App\BLoC\Web\Enterprise\Venue\Products\SessionSetting;
 
 use App\Models\VenuePlace;
-use App\Models\VenuePlaceProductSession;
+use App\Models\VenuePlaceScheduleOperationalSession;
 use App\Models\VenuePlaceScheduleOperational;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 
-class UpdateVenueProductSession extends Transactional
+class UpdateVenueSessionSetting extends Transactional
 {
     public function getDescription()
     {
@@ -21,7 +21,7 @@ class UpdateVenueProductSession extends Transactional
     {
         $admin = Auth::user();
     
-        $product_session = VenuePlaceProductSession::find($parameters->get('id'));
+        $product_session = VenuePlaceScheduleOperationalSession::find($parameters->get('id'));
         if (!$product_session) throw new BLoCException("Data not found");
 
         $schedule_operational = VenuePlaceScheduleOperational::find($product_session->schedule_operational_id);

@@ -513,12 +513,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                     $router->post('/update-pricelist', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlacePricelist']);
                     $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
 
-                    $router->group(['prefix' => 'session'], function () use ($router) {
-                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueProductSession']);
-                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueProductSession']);
-                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductSessionDetailById']);
-                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueProductSession']);
-                        $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListProductSessionByPlaceId']);
+                    $router->group(['prefix' => 'session-setting'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueSessionSetting']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
+                        $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
                     });
 
                     $router->group(['prefix' => 'custom'], function () use ($router) {
