@@ -182,6 +182,8 @@ use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetVenueSessionSetting
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\UpdateVenueSessionSetting;
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSetting;
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\Products\AddVenueProductPlace;
+use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 
 // End of Archery Enterprise Section //
 
@@ -422,6 +424,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteVenueSessionSetting", DeleteVenueSessionSetting::class);
         $this->registerService("getListSessionSettingByPlaceId", GetListSessionSettingByPlaceId::class);
         $this->registerService("getAllProductVenuePlace", GetAllProductVenuePlace::class);
+        $this->registerService("addProductVenuePlace", AddProductVenuePlace::class);
+        $this->registerService("getVenueProductDetailById", GetVenueProductDetailById::class);
 
         
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
