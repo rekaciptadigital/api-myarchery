@@ -321,7 +321,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
                 $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
                 $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
-                $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
                 $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
                 $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
                 $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);

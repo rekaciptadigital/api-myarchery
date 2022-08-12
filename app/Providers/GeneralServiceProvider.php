@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\BLoC\General\GetCityCountry;
+use App\BLoC\General\GetCountry;
 use Illuminate\Support\ServiceProvider;
 
 class GeneralServiceProvider extends ServiceProvider
@@ -14,6 +16,8 @@ class GeneralServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
+        $this->registerService("getCityCountry", GetCityCountry::class);
+        $this->registerService("getCountry", GetCountry::class);
     }
 
     private function registerService($serviceName, $className)
