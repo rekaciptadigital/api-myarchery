@@ -176,11 +176,11 @@ use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
 use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
-use App\BLoC\Web\Enterprise\Venue\Products\Session\AddVenueProductSession;
-use App\BLoC\Web\Enterprise\Venue\Products\Session\GetVenueProductSessionDetailById;
-use App\BLoC\Web\Enterprise\Venue\Products\Session\UpdateVenueProductSession;
-use App\BLoC\Web\Enterprise\Venue\Products\Session\DeleteVenueProductSession;
-use App\BLoC\Web\Enterprise\Venue\Products\Session\GetListProductSessionByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\AddVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetVenueSessionSettingDetailById;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\UpdateVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
 
 // End of Archery Enterprise Section //
 
@@ -413,11 +413,11 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
         $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
         $this->registerService("updateVenuePlacePricelist", UpdateVenuePlacePricelist::class);
-        $this->registerService("addVenueProductSession", AddVenueProductSession::class);
-        $this->registerService("getVenueProductSessionDetailById", GetVenueProductSessionDetailById::class);
-        $this->registerService("updateVenueProductSession", UpdateVenueProductSession::class);
-        $this->registerService("deleteVenueProductSession", DeleteVenueProductSession::class);
-        $this->registerService("getListProductSessionByPlaceId", GetListProductSessionByPlaceId::class);
+        $this->registerService("addVenueSessionSetting", AddVenueSessionSetting::class);
+        $this->registerService("getVenueSessionSettingDetailById", GetVenueSessionSettingDetailById::class);
+        $this->registerService("updateVenueSessionSetting", UpdateVenueSessionSetting::class);
+        $this->registerService("deleteVenueSessionSetting", DeleteVenueSessionSetting::class);
+        $this->registerService("getListSessionSettingByPlaceId", GetListSessionSettingByPlaceId::class);
         $this->registerService("getAllProductVenuePlace", GetAllProductVenuePlace::class);
 
         

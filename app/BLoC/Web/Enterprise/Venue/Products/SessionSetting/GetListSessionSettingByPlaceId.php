@@ -1,16 +1,16 @@
 <?php
 
-namespace App\BLoC\Web\Enterprise\Venue\Products\Session;
+namespace App\BLoC\Web\Enterprise\Venue\Products\SessionSetting;
 
 use App\Models\VenuePlace;
-use App\Models\VenuePlaceProductSession;
+use App\Models\VenuePlaceScheduleOperationalSession;
 use App\Models\VenuePlaceScheduleOperational;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 
-class GetListProductSessionByPlaceId extends Transactional
+class GetListSessionSettingByPlaceId extends Transactional
 {
     public function getDescription()
     {
@@ -24,7 +24,7 @@ class GetListProductSessionByPlaceId extends Transactional
         $venue_place = VenuePlace::find($parameters->get('place_id'));
         if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this venue");
 
-        $result = VenuePlaceProductSession::getListProductSessionByPlaceId($parameters->get('place_id'));
+        $result = VenuePlaceScheduleOperationalSession::getListScheduleOperationalSessionByPlaceId($parameters->get('place_id'));
         return $result;
     }
 

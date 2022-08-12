@@ -1,16 +1,16 @@
 <?php
 
-namespace App\BLoC\Web\Enterprise\Venue\Products\Session;
+namespace App\BLoC\Web\Enterprise\Venue\Products\SessionSetting;
 
 use App\Models\VenuePlace;
-use App\Models\VenuePlaceProductSession;
+use App\Models\VenuePlaceScheduleOperationalSession;
 use App\Models\VenuePlaceScheduleOperational;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
 
-class AddVenueProductSession extends Transactional
+class AddVenueSessionSetting extends Transactional
 {
     public function getDescription()
     {
@@ -28,17 +28,17 @@ class AddVenueProductSession extends Transactional
         $venue_place = VenuePlace::find($schedule_operational->place_id);
         if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this event");
 
-        $product_session = new VenuePlaceProductSession();
-        $product_session->schedule_operational_id = $parameters->get('schedule_operational_id');
-        $product_session->start_time = $parameters->get('start_time');
-        $product_session->end_time = $parameters->get('end_time');
-        $product_session->total_budrest = $parameters->get('total_budrest');
-        $product_session->total_target = $parameters->get('total_target');
-        $product_session->max_capacity = $parameters->get('max_capacity');
+        $session_setting = new VenuePlaceScheduleOperationalSession();
+        $session_setting->schedule_operational_id = $parameters->get('schedule_operational_id');
+        $session_setting->start_time = $parameters->get('start_time');
+        $session_setting->end_time = $parameters->get('end_time');
+        $session_setting->total_budrest = $parameters->get('total_budrest');
+        $session_setting->total_target = $parameters->get('total_target');
+        $session_setting->max_capacity = $parameters->get('max_capacity');
 
-        $product_session->save();
+        $session_setting->save();
 
-        return $product_session;
+        return $session_setting;
     }
 
     protected function validation($parameters)
