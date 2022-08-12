@@ -124,6 +124,7 @@ class ArcheryEventParticipant extends Model
         $query->where("archery_event_participants.status", 1);
         $query->orWhere(function ($q) use ($time_now) {
           $q->where("archery_event_participants.status", 4);
+          $q->where("transaction_logs.status", 4);
           $q->where("transaction_logs.expired_time", ">", $time_now);
         });
       })->count();
