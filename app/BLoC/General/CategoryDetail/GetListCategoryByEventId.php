@@ -94,7 +94,6 @@ class GetListCategoryByEventId extends Retrieval
                 }
 
                 $total_participant = ArcheryEventParticipant::getTotalPartisipantByEventByCategory($category->id);
-                $countUserBooking = ArcheryEventParticipant::countEventUserBooking($category->id);
 
                 $response["id"] = $category->id;
                 $response["event_id"] = $category->event_id;
@@ -115,7 +114,6 @@ class GetListCategoryByEventId extends Retrieval
                 $response["default_elimination_count"] = $category->default_elimination_count;
                 $response["elimination_lock"] = $event_elimination_lock;
                 $response["session_in_qualification"] = $category->session_in_qualification;
-                $response["count_user_booking"] = $countUserBooking;
 
                 if ($category_dos == 'true') {
                     if ($total_participant > 0) {

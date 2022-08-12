@@ -52,6 +52,7 @@ use App\BLoC\App\Series\GetListSeries;
 use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
+use App\BLoC\General\GetEventClubRanked;
 
 class AppServiceProvider extends ServiceProvider
 {
