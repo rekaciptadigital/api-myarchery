@@ -12,13 +12,9 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoring;
-use App\Models\ArcheryEventElimination;
 use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
-use App\Libraries\EliminationFormatPDF;
-use App\Libraries\EliminationFormatPDFV2;
-use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
@@ -37,7 +33,6 @@ class ReportMedalClub extends Retrieval
 
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
-        $date_filter = $parameters->get('date');
 
         $pages = array();
         $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';

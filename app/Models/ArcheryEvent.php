@@ -271,8 +271,6 @@ class ArcheryEvent extends Model
 
         $datas = ArcheryEvent::select(
             '*',
-            'archery_events.include_payment_gateway_fee_to_user as include_payment_gateway_fee_to_user',
-            'archery_events.include_my_archery_fee_to_user as include_my_archery_fee_to_user',
             'archery_events.id as id_event',
             'cities.id as cities_id',
             'cities.name as cities_name',
@@ -362,8 +360,6 @@ class ArcheryEvent extends Model
 
 
                 $detail['id'] = $data->id_event;
-                $detail['include_payment_gateway_fee_to_user'] = $data->include_payment_gateway_fee_to_user;
-                $detail['include_my_archery_fee_to_user'] = $data->include_my_archery_fee_to_user;
                 $detail['event_type'] = $data->event_type;
                 $detail['event_competition'] = $data->event_competition;
                 $detail['public_information'] = [
