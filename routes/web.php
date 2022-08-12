@@ -508,8 +508,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 });
 
                 $router->group(['prefix' => 'product'], function () use ($router) {
-                    $router->post('/update-pricelist', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlacePricelist']);
                     $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
+                    $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
+                    $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
 
                     $router->group(['prefix' => 'session-setting'], function () use ($router) {
                         $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
@@ -517,10 +518,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                         $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
                         $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
                         $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
-                    });
-
-                    $router->group(['prefix' => 'custom'], function () use ($router) {
-
                     });
                 });
             });
