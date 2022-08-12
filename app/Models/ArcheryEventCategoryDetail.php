@@ -22,6 +22,22 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
+    /*
+        digunakan untuk menangkap type category tersebut
+
+        return: "Individual" || "Team"
+    */
+    public function getCategoryType()
+    {
+        $type = null;
+        $team = ArcheryEventMasterTeamCategory::where('id', $this->team_category_id)->first();
+        if ($team) {
+            $type = $team->type;
+        }
+
+        return $type;
+    }
+
     public function getCategoryDetailById($category_id)
     {
         $user = Auth::guard('app-api')->user();

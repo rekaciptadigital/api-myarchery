@@ -148,6 +148,7 @@ use App\BLoC\Web\ScheduleFullDay\DownloadMemberBudrest;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventList;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportClubRanked;
 use App\BLoC\Web\ArcheryReport\ReportMedalClub;
+use App\BLoC\Web\ArcheryReport\Upp;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\EventOrder\BookingTemporary;
@@ -283,6 +284,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadArcheryEventOfficial", GetDownloadArcheryEventOfficial::class);
         $this->registerService("downloadPdf", DownloadPdf::class);
         $this->registerService("reportMedalClub", ReportMedalClub::class);
+        $this->registerService("upp", Upp::class);
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
 
