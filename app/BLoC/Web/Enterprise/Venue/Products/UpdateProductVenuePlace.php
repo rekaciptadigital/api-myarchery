@@ -27,7 +27,7 @@ class UpdateProductVenuePlace extends Transactional
         if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this venue");
 
         $product->update([
-            'place_id' => $product->schedule_operational_id,
+            'place_id' => $product->place_id,
             'product_name' => $parameters->get('product_name'),
             'description' => $parameters->get('description'),
             'base_product' => $parameters->get('base_product'),
