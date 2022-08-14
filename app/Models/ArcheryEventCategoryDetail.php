@@ -22,6 +22,22 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
+    /*
+        digunakan untuk menangkap type category tersebut
+
+        return: "Individual" || "Team"
+    */
+    public function getCategoryType()
+    {
+        $type = null;
+        $team = ArcheryEventMasterTeamCategory::where('id', $this->team_category_id)->first();
+        if ($team) {
+            $type = $team->type;
+        }
+
+        return $type;
+    }
+
     public function getCategoryDetailById($category_id)
     {
         $user = Auth::guard('app-api')->user();
@@ -219,7 +235,21 @@ class ArcheryEventCategoryDetail extends Model
             $is_marathon = 1;
         }
 
-        $datas = ArcheryEventCategoryDetail::select('archery_event_category_details.id', 'event_id', 'age_category_id', 'competition_category_id', 'distance_id', 'team_category_id', 'quota', 'archery_event_category_details.created_at', 'archery_event_category_details.updated_at', 'fee', 'early_bird', "end_date_early_bird", "archery_master_team_categories.type")
+        $datas = ArcheryEventCategoryDetail::select(
+            'archery_event_category_details.id',
+            'event_id',
+            'age_category_id',
+            'competition_category_id',
+            'distance_id',
+            'team_category_id',
+            'quota',
+            'archery_event_category_details.created_at',
+            'archery_event_category_details.updated_at',
+            'fee',
+            'early_bird',
+            "end_date_early_bird",
+            "archery_master_team_categories.type"
+        )
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
             ->orderBy('archery_master_team_categories.short', 'asc')
@@ -259,6 +289,20 @@ class ArcheryEventCategoryDetail extends Model
                 $category->range_date = $range_date;
                 $category->total_participant = $count_participant;
                 $category->category_label = self::getCategoryLabel($category->id);
+
+                $category_detail = ArcheryEventCategoryDetail::find($category->id);
+                $age_config = [];
+                if ($category_detail->is_age == 1) {
+                    $age_config["is_age"] = $category_detail->is_age;
+                    $age_config["min_age"] = $category_detail->min_age;
+                    $age_config["max_age"] = $category_detail->max_age;
+                } else {
+                    $age_config["is_age"] = $category_detail->is_age;
+                    $age_config["min_date_of_birth"] = $category_detail->min_date_of_birth;
+                    $age_config["max_date_of_birth"] = $category_detail->max_date_of_birth;
+                }
+
+                $category->age_config = $age_config;
 
                 $category_team_detail = DB::table('archery_master_team_categories')->where('id', $category->team_category_id)->first();
                 $category->team_category_detail = [
