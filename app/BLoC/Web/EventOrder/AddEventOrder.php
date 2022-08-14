@@ -274,9 +274,10 @@ class AddEventOrder extends Transactional
         }
 
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $participant->transaction_log_id = $payment->transaction_log_id;
@@ -422,9 +423,10 @@ class AddEventOrder extends Transactional
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -589,9 +591,10 @@ class AddEventOrder extends Transactional
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();

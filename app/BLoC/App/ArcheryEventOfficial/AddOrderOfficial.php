@@ -144,6 +144,7 @@ class AddOrderOfficial extends Retrieval
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
+           // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;
