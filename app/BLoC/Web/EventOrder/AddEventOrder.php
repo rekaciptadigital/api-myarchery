@@ -283,7 +283,8 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $participant->transaction_log_id = $payment->transaction_log_id;
@@ -431,7 +432,8 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -598,7 +600,8 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();

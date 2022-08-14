@@ -151,7 +151,8 @@ class AddOrderOfficial extends Retrieval
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
-            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;
