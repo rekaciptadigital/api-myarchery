@@ -513,6 +513,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                     $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
                     $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
                     $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
+                    $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProductVenuePlace']);
+                    $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteProductVenuePlace']);
 
                     $router->group(['prefix' => 'session-setting'], function () use ($router) {
                         $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
