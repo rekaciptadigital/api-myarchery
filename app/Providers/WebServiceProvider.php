@@ -182,7 +182,7 @@ use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetVenueSessionSetting
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\UpdateVenueSessionSetting;
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSetting;
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
-use App\BLoC\Web\Enterprise\Venue\Products\AddVenueProductPlace;
+use App\BLoC\Web\Enterprise\Venue\Products\AddProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
