@@ -40,6 +40,7 @@ class GetUserProfile extends Retrieval
         ];
 
         return $output;
+        
     }
 
     protected function validation($parameters)

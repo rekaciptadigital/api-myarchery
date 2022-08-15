@@ -153,6 +153,7 @@ use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
+use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -267,6 +268,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+        
 
         // ==================================== master age category ======================================
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
@@ -306,7 +308,6 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResultV2::class);
-        $this->registerService("reportMedalClub", ReportMedalClub::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
@@ -373,6 +374,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("changeIsPresent", ChangeIsPresent::class);
         $this->registerService("insertParticipantByAdmin", InsertParticipantByAdmin::class);
 
+
         // ================================== event-elimination v2 ==========================
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
@@ -396,6 +398,7 @@ class WebServiceProvider extends ServiceProvider
         // ======================================== Fats Open 3 ==========================================
         // ================================================================================================
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
+        $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
         

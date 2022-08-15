@@ -49,7 +49,7 @@ class DetailEventOrder extends Retrieval
     protected function validation($parameters)
     {
         return [
-            'id' => 'required',
+            'id' => 'required|exists:archery_event_participants,id',
         ];
     }
 }

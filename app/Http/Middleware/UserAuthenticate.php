@@ -42,8 +42,8 @@ class UserAuthenticate
             return $this::unauthorized();
         }
         $private_signature = $this->auth->payload()["jti"];
-        $check_private_signature = UserLoginToken::where("private_signature", $private_signature)->first();
-        if (!$check_private_signature)
+        $check_private_signature = UserLoginToken::where("private_signature",$private_signature)->first();
+        if(!$check_private_signature)
             return $this::unauthorized();
 
         return $next($request);
