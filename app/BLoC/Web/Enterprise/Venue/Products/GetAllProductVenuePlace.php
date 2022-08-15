@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\Enterprise\Venue\Products;
 
 use App\Models\VenuePlace;
+use App\Models\VenuePlaceProduct;
 use App\Models\VenuePlaceScheduleOperationalSession;
 use App\Models\VenuePlaceScheduleOperational;
 use DAI\Utils\Abstracts\Transactional;
@@ -25,7 +26,7 @@ class GetAllProductVenuePlace extends Transactional
         if ($venue_place->eo_id != $admin->eo_id) throw new BLoCException("You're not the owner of this venue");
         
         $result['session'] = VenuePlaceScheduleOperationalSession::getListScheduleOperationalSessionByPlaceId($parameters->get('place_id'));
-        $result['product'] = null;
+        $result['product'] = VenuePlaceProduct::where('place_id', $parameters->get('place_id'))->get();
 
         return $result;
     }
