@@ -175,6 +175,8 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
+use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
+
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
@@ -255,6 +257,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+        
 
         // ==================================== master age category ======================================
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
@@ -360,6 +363,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("changeIsPresent", ChangeIsPresent::class);
         $this->registerService("insertParticipantByAdmin", InsertParticipantByAdmin::class);
 
+
         // ================================== event-elimination v2 ==========================
         $this->registerService("setEventEliminationV2", SetEventEliminationV2::class);
         $this->registerService("setEventEliminationCountParticipant", SetEventEliminationCountParticipant::class);
@@ -383,6 +387,7 @@ class WebServiceProvider extends ServiceProvider
         // ======================================== Fats Open 3 ==========================================
         // ================================================================================================
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
+        $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
         
