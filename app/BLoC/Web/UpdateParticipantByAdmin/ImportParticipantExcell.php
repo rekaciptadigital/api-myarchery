@@ -31,13 +31,17 @@ class ImportParticipantExcell extends Transactional
             }
             $data[] = $collection;
         }
-        
-        Excel::store(new ParticipantExport($data), 'users.csv');
-        return Excel::import(new ParticipantImport, 'users.csv');
+
+        $file_name = "import_participant_excell/users_" . time() . ".csv";
+        Excel::store(new ParticipantExport($data), $file_name);
+        Excel::import(new ParticipantImport, $file_name);
+        return "success";
     }
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            "csv_file" => "required|string"
+        ];
     }
 }

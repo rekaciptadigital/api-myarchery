@@ -44,8 +44,6 @@ class ParticipantImport implements WithValidation, ToCollection
                     "name" => $user->name,
                     "password" => $password,
                 ]));
-
-                print_r($password);
             }
 
             $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $row[4])->first();
