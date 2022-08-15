@@ -32,7 +32,7 @@ class ImportParticipantExcell extends Transactional
             $data[] = $collection;
         }
         
-        // Excel::store(new ParticipantExport($data), 'users.csv',);
+        Excel::store(new ParticipantExport($data), 'users.csv');
         return Excel::import(new ParticipantImport, 'users.csv');
     }
 
