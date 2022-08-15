@@ -17,13 +17,11 @@ class ImportParticipantExcell extends Transactional
 
     protected function process($parameters)
     {
-        $file = $parameters->get("provinces");
+        // $file = $parameters->get("provinces");
         $base_64 = base64_decode($parameters->get("csv_file"), true);
-        if ($base_64 === false) {
-            throw new BLoCException("is not base64");
-        }
 
         $rows = explode("\n", $base_64);
+
         $data = [];
         foreach ($rows as $key => $row) {
             $array_string = explode(",", $row);
@@ -33,13 +31,9 @@ class ImportParticipantExcell extends Transactional
             }
             $data[] = $collection;
         }
-
-        // membuat nama file unik
-        $nama_file = rand() . $file->getClientOriginalName();
-
-        $file->move('file_siswa', $nama_file);
+        
         // Excel::store(new ParticipantExport($data), 'users.csv',);
-        Excel::import(new ParticipantImport, public_path('/file_siswa/' . $nama_file));
+        return Excel::import(new ParticipantImport, 'users.csv');
     }
 
     protected function validation($parameters)
