@@ -3,33 +3,21 @@
 namespace App\BLoC\Web\ArcheryReport;
 
 use App\Models\ArcheryEventEliminationMember;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryClub;
-use Mpdf\Mpdf;
-
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventEliminationSchedule;
-use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryMasterTeamCategory;
-use DAI\Utils\Helpers\BLoC;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
-use App\Http\Services\PDFService;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\App;
-use Response;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Libraries\EliminationFormatPDF;
 use App\Libraries\EliminationFormatPDFV2;
-use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
-use Illuminate\Support\Collection;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
@@ -53,11 +41,13 @@ class GetArcheryReportResultV2 extends Retrieval
         // $id = array();
 
         $pages = array();
-        $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
-        if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+        if (!$archery_event) {
+            throw new BLoCException("event tidak terdaftar");
+        }
+        $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -71,10 +61,9 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = '<img src="' . Storage::disk('public')->path("logo/logo-event-series-2.png") . '" alt="" width="25%"></img>';
         $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
         $cover_page = view('report_result/cover', [
-            'cover_event' => $logo_event_cover,
+            'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
             'event_date_report' => $event_date_report,
@@ -377,10 +366,10 @@ class GetArcheryReportResultV2 extends Retrieval
             'images' => true,
             'cover' => $cover_page,
             // 'header-html' => $header_html,
-            'footer-html' => $footer_html,
-            'toc' => true,
-            'toc-level-indentation' => '2rem',
-            'enable-toc-back-links' => true,
+            // 'footer-html' => $footer_html,
+            // 'toc' => true,
+            // 'toc-level-indentation' => '2rem',
+            // 'enable-toc-back-links' => true,
         ]);
 
         $digits = 3;

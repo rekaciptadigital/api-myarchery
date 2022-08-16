@@ -89,6 +89,7 @@ use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
+use App\BLoC\Web\ArcheryEvent\AddLogoEvent;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
@@ -153,6 +154,7 @@ use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
+use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -175,8 +177,6 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
-use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
-
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
@@ -205,12 +205,16 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryCategory", AddArcheryCategory::class);
         $this->registerService("editArcheryCategory", EditArcheryCategory::class);
         $this->registerService("getArcheryCategory", GetArcheryCategory::class);
+
+        // ============================= Event ==============================
         $this->registerService("editArcheryEvent", EditArcheryEvent::class);
         $this->registerService("deleteArcheryEvent", DeleteArcheryEvent::class);
         $this->registerService("getArcheryEvent", GetArcheryEvent::class);
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
+        $this->registerService("addLogoEvent", AddLogoEvent::class);
+
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
         $this->registerService("editArcheryEventParticipantScore", EditArcheryEventParticipantScore::class);
         $this->registerService("getArcheryEventParticipant", GetArcheryEventParticipant::class);
@@ -222,7 +226,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("detailEventOrder", DetailEventOrder::class);
         $this->registerService("bookingTemporary", BookingTemporary::class);
         $this->registerService("deleteBookingTemporary", DeleteBookingTemporary::class);
-        
+
         $this->registerService("getEventOrder", GetEventOrder::class);
         $this->registerService("callbackMidtrans", CallbackMidtrans::class);
         $this->registerService("getEventPrice", GetEventPrice::class);
@@ -257,7 +261,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
-        
+
 
         // ==================================== master age category ======================================
         $this->registerService("getArcheryEventMasterAgeCategory", GetArcheryEventMasterAgeCategory::class);
@@ -390,7 +394,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
-        
+
         $this->registerService("createVenuePlace", CreateVenuePlace::class);
         $this->registerService("getVenuePlace", GetVenuePlace::class);
         $this->registerService("getVenueListFacilities", GetVenueMasterPlaceFacilities::class);
@@ -412,7 +416,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
         $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
 
-        
+
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
 
 
