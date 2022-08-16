@@ -6,7 +6,6 @@ use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
@@ -21,7 +20,6 @@ use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventQualificationTime;
-use DateTime;
 use Illuminate\Support\Carbon;
 
 class Upp extends Retrieval
@@ -37,12 +35,13 @@ class Upp extends Retrieval
         $today = date("Y-m-d");
         $event_id = $parameters->get('event_id');
         $pages = array();
-        $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
         }
+
+        $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -52,10 +51,9 @@ class Upp extends Retrieval
         $list_category_with_day = ArcheryEventQualificationTime::getCategoryByDate($event_id);
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = '<img src="' . Storage::disk('public')->path("logo/logo-event-series-2.png") . '" alt="" width="25%"></img>';
         $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
         $cover_page = view('upp/cover', [
-            'cover_event' => $logo_event_cover,
+            'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
             'event_date_report' => $event_date_report,

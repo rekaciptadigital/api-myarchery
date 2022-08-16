@@ -30,7 +30,9 @@
             <tbody>
                 <tr style="height: 40px;">
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
+                    <td style="width: 10%; height: 50px;" rowspan="2">
+                        <img src="{{ $logo_event }}" alt="" srcset="" width="80%">
+                    </td>
                     <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
@@ -323,7 +325,7 @@
                                     @if ($key == 0 || $rowspan == $rowid)
                                         @php
                                             $rowid = 0;
-                                            $rowspan = count($item["data"]);
+                                            $rowspan = count($item['data']);
                                         @endphp
                                         <td style="text-align: center;border: 1px solid black;"
                                             rowspan="{{ $rowspan }}">
