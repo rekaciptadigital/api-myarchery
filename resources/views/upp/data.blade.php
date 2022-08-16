@@ -131,7 +131,7 @@
                                     {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;">
-                                    {{ $data['scoring']['sessions']['2'] ? $data['scoring']['sessions']['2']['total'] : '-' }}
+                                    {{ isset($data['scoring']['sessions']['2']) ? $data['scoring']['sessions']['2']['total'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;">
                                     {{ $data['scoring'] ? $data['scoring']['total'] : '-' }}
