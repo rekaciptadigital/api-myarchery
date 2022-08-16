@@ -47,7 +47,7 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
         }
-        $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';
+        $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -61,10 +61,9 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = $archery_event->logo;
         $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
         $cover_page = view('report_result/cover', [
-            'cover_event' => $logo_event_cover,
+            'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
             'event_date_report' => $event_date_report,
