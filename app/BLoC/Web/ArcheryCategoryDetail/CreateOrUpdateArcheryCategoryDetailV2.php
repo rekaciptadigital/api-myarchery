@@ -33,7 +33,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
         $event->include_payment_gateway_fee_to_user = empty($parameters->get("include_payment_gateway_fee_to_user")) ? 0 : $parameters->get("include_payment_gateway_fee_to_user");
         $event->include_my_archery_fee_to_user = empty($parameters->get("include_my_archery_fee_to_user")) ? 0 : $parameters->get("include_my_archery_fee_to_user");
-        $event->save();
+
 
         $list_category = $parameters->get("categories", []);
         if (count($list_category) == 0) {

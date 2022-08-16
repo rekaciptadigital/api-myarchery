@@ -30,12 +30,12 @@ class PaymentGateWay
     static $have_payment_gateway_fee = false;
     static $fee_myarchery = 0;
     static $have_fee_myarchery = false;
-    static $gateway = 0;
     static $token = "";
     static $expired_time = "";
+    static $fee_myarchery = 0;
+    static $gateway = "midtrans";
     static $enabled_payments = [
-        "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
-        "bca_va", "bni_va", "bri_va", "other_va", "indomaret"
+        "bank_transfer"
     ];
     static $item_details = array();
 
@@ -77,18 +77,12 @@ class PaymentGateWay
         return (new self);
     }
 
-    public static function enabledPayments(array $payments)
-    {
-        self::$enabled_payments = $payments;
-        return (new self);
-    }
-
     // sampel payments
     // ["credit_card", "cimb_clicks",
     // "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
     // "bca_va", "bni_va", "bri_va", "other_va", "gopay", "indomaret",
     // "danamon_online", "akulaku", "shopeepay"]
-    public static function enabledPaymentWithFee(string $payment_methode,bool $have_fee = false)
+    public static function enabledPayments(string $payment_methode,bool $have_fee = false)
     {
         
         $list = [
@@ -106,6 +100,7 @@ class PaymentGateWay
                 ]
             ];
         self::$have_payment_gateway_fee = $have_fee;
+            
         $enabled_payments = [];
         if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
             $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]["list"]);
@@ -124,6 +119,31 @@ class PaymentGateWay
         }
         self::$enabled_payments = $enabled_payments;
         return (new self);
+    }
+
+    public static function getPaymentMethode(bool $have_fee = false)
+    {
+        
+        $list = [
+            "midtrans" => [
+                "bank_transfer" => [
+                    "label" => "Transfer Bank",
+                    "list" => [""],
+                    "fee_type" => "nominal",
+                    "fee" => 4000,
+                    "active" => $have_fee
+                ],
+                "gopay" => [
+                    "label" => "Gopay",
+                    "list" => ["gopay"],
+                    "fee_type" => "percentage",
+                    "fee" => 2,
+                    "active" => $have_fee
+                ],
+                ]
+            ];
+    
+        return $list[self::$gateway];
     }
 
     public static function addItemDetail($id, $price, $name, $brand = "", $quantity = 1, $category = "", $merchant_name = "")
@@ -256,6 +276,7 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
+        $transaction_details["gross_amount"] = $transaction_details["gross_amount"] + self::$payment_gateway_fee;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
         $params = array(
             "expiry" => array(
@@ -279,6 +300,7 @@ class PaymentGateWay
             $transaction_log->status = 4;
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
+            $transaction_log->include_payment_gateway_fee = self::$payment_gateway_fee;
             $transaction_log->save();
         }
         return (object)[

@@ -121,7 +121,7 @@ class CreateVenuePlace extends Transactional
     private function sendMail($data, $admin) 
     {
         $data = [
-            'email' => 'fitrianggraini96@gmail.com',
+            'email' => env('RCD_EMAIL'),
             'vm_name' => $admin->name,
             'place_name' => $data->name,
             'description' => $data->description,

@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Redis;
 
 class AddEventOrder extends Transactional
 {
+    var $payment_methode = "bank_transfer";
+    var $have_fee_payment_gateway = false;
     public function getDescription()
     {
         return "";
@@ -48,6 +50,9 @@ class AddEventOrder extends Transactional
         $event_category_id = $parameters->get('event_category_id');
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
+        if(!empty($parameters->get("payment_methode"))){
+            $this->payment_methode = $parameters->get("payment_methode");
+        }
 
 
         // get event_category_detail by id
@@ -64,10 +69,14 @@ class AddEventOrder extends Transactional
 
         $is_marathon = 0;
         $event = ArcheryEvent::find($event_category_detail->event_id);
+    
         if (!$event) {
             throw new BLoCException("event tidak tersedia");
         }
 
+        if($event->include_payment_gateway_fee_to_user == 1)
+            $this->have_fee_payment_gateway = true;
+        
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
@@ -276,8 +285,7 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $participant->transaction_log_id = $payment->transaction_log_id;
@@ -425,8 +433,7 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -593,8 +600,7 @@ class AddEventOrder extends Transactional
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();
