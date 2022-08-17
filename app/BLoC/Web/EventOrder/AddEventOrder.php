@@ -279,7 +279,9 @@ class AddEventOrder extends Transactional
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
-
+        if(!$payment->status)
+            throw new BLoCException($payment->message);
+            
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
 

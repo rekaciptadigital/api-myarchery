@@ -30,7 +30,7 @@ class PaymentGateWay
     static $have_payment_gateway_fee = false;
     static $fee_myarchery = 0;
     static $have_fee_myarchery = false;
-    static $gateway = 0;
+    static $gateway = "midtrans";
     static $token = "";
     static $expired_time = "";
     static $enabled_payments = [
@@ -49,6 +49,7 @@ class PaymentGateWay
         \Midtrans\Config::$isSanitized = true;
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
+        self::$gateway = env("PAYMENT_GATEWAY","midtrans");
     }
 
     public static function setTransactionDetail($gross_amount, $order_id = "")
@@ -128,9 +129,26 @@ class PaymentGateWay
 
     public static function getPaymentMethode(bool $have_fee = false)
     {
+        self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         
         $list = [
             "midtrans" => [
+                "bank_transfer" => [
+                    "label" => "Transfer Bank",
+                    "list" => [""],
+                    "fee_type" => "nominal",
+                    "fee" => 4000,
+                    "active" => $have_fee
+                ],
+                "gopay" => [
+                    "label" => "Gopay",
+                    "list" => ["gopay"],
+                    "fee_type" => "percentage",
+                    "fee" => 2,
+                    "active" => $have_fee
+                ],
+            ],
+            "OY" => [
                 "bank_transfer" => [
                     "label" => "Transfer Bank",
                     "list" => [""],
@@ -189,8 +207,7 @@ class PaymentGateWay
 
     public static function createSnap()
     {
-        $gateway = env("PAYMENT_GATEWAY","midtrans");
-        self::setGateway($gateway);
+        $gateway = self::$gateway;
         switch ($gateway) {
             case 'midtrans':
                 return self::createLinkPaymentMidtrans();
@@ -206,11 +223,22 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
-        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
+        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
-
+        
+        $desc = "my archery product";
+        $invoice_items = [];
+        foreach (self::$item_details as $key => $value) {
+            $invoice_items[] = (object)[
+                  "item"=>$value["name"], 
+                  "description"=>$value["id"]." | ".$value["name"], 
+                  "quantity"=> $value["quantity"], 
+                  "date_of_purchase"=>date('Y-m-d H:i:s', time()), 
+                  "price_per_item"=> $value["price"]  
+            ];
+        }
         $body = [
-            "description" => isset(self::$item_details[0])&& isset(self::$item_details[0]["name"]) ? self::$item_details[0]["name"]." - ".self::$item_details[0]["name"] : "my archery product",
+            "description" => $desc,
             "partner_tx_id" => $transaction_details["order_id"],
             "notes" => "",
             "sender_name" => $customer_details["first_name"]." ".$customer_details["last_name"],
@@ -222,12 +250,12 @@ class PaymentGateWay
             "include_admin_fee" => self::$have_payment_gateway_fee,
             "list_enabled_banks" => "002, 008, 009, 013, 022",
             "list_enabled_ewallet" => "shopeepay_ewallet, dana_ewallet, linkaja_ewallet, ovo_ewallet",
-            "expiration" => $expired_time,
+            "expiration" => date('Y-m-d H:i:s', $expired_time),
         ];
 
         // Session::forget('_old_order_id');
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', env('OYID_BASEURL') . '/api/payment-checkout/create-v2', [
+        $response = $client->request('POST', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/create-v2', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-oy-username' => env('OYID_USERNAME',"myarchery"),
@@ -241,9 +269,10 @@ class PaymentGateWay
 
         $result = json_decode($response_body);
 
-        if ($snap_token) {
+        if ($result->status) {
             return self::saveLog($body,$result);
         }
+        return (object)["status" => false, "message" => $result->message];
     }
 
     private static function saveLog($payment_gateway_params, $payment_gateway_response){
@@ -252,23 +281,27 @@ class PaymentGateWay
             $transaction_log = new TransactionLog;
             $transaction_log->order_id = self::$transaction_details["order_id"];
             $transaction_log->transaction_log_activity = json_encode($activity);
+            $transaction_log->opt = json_encode($payment_gateway_response);
             $transaction_log->amount = self::$transaction_details["gross_amount"];
             $transaction_log->status = $status;
             $transaction_log->expired_time = self::$expired_time;
+            $transaction_log->gateway = self::$gateway;
             $transaction_log->token = self::$token;
             $transaction_log->include_payment_gateway_fee = self::$payment_gateway_fee;
             $transaction_log->include_my_archery_fee = self::$fee_myarchery;
             $transaction_log->save();
 
-            return self::result($transaction_log->id, $status, $opt);
+            return self::result($transaction_log->id, $status, $payment_gateway_response);
     }
 
     private static function result($transaction_log_id,$status, $opt = []){
         return (object)[
+            "status" => true,
+            "gateway" => self::$gateway,
             "order_id" => self::$transaction_details["order_id"],
             "total" => self::$transaction_details["gross_amount"],
             "status" => TransactionLog::getStatus($status),
-            "transaction_log_id" => $transaction_log->id,
+            "transaction_log_id" => $transaction_log_id,
             "snap_token" => self::$token,
             "gateway" => self::$gateway,
             "optional" => $opt,
@@ -305,16 +338,19 @@ class PaymentGateWay
             $transaction_log->expired_time = $expired_time;
             $transaction_log->token = $snap_token;
             $transaction_log->save();
-        }
+        
         return (object)[
             "order_id" => $transaction_details["order_id"],
             "total" => $transaction_details["gross_amount"],
             "status" => TransactionLog::getStatus(0),
             "transaction_log_id" => $transaction_log->id,
             "snap_token" => $snap_token,
+            "status" => true,
             "client_key" => env("MIDTRANS_CLIENT_KEY"),
             "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK")
         ];
+        }
+        return (object)["status" => false, "message" => $result->message];
     }
 
     public static function transactionLogPaymentInfo($transaction_log_id)
@@ -328,6 +364,8 @@ class PaymentGateWay
             "order_date" =>$transaction_log->created_at,
             "order_id" => $transaction_log->order_id,
             "total" => $transaction_log->amount,
+            "gateway" => $transaction_log->gateway,
+            "opt" => json_decode($transaction_log->opt),
             "status_id" => $status,
             "status" => TransactionLog::getStatus($status),
             "transaction_log_id" => $transaction_log->id,
