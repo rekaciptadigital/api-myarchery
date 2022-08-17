@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
+use App\Libraries\PaymentGateWay;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
