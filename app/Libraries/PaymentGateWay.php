@@ -126,6 +126,31 @@ class PaymentGateWay
         return (new self);
     }
 
+    public static function getPaymentMethode(bool $have_fee = false)
+    {
+        
+        $list = [
+            "midtrans" => [
+                "bank_transfer" => [
+                    "label" => "Transfer Bank",
+                    "list" => [""],
+                    "fee_type" => "nominal",
+                    "fee" => 4000,
+                    "active" => $have_fee
+                ],
+                "gopay" => [
+                    "label" => "Gopay",
+                    "list" => ["gopay"],
+                    "fee_type" => "percentage",
+                    "fee" => 2,
+                    "active" => $have_fee
+                ],
+                ]
+            ];
+    
+        return $list[self::$gateway];
+    }
+
     public static function addItemDetail($id, $price, $name, $brand = "", $quantity = 1, $category = "", $merchant_name = "")
     {
         self::$item_details[] = array(
