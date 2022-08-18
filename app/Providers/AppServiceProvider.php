@@ -52,6 +52,7 @@ use App\BLoC\App\Series\GetListSeries;
 use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
+use App\BLoC\App\UserAuth\ValidateAccoutVerification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerService("validateAccoutVerification", ValidateAccoutVerification::class);
         $this->registerService("userForgotPassword", UserForgotPassword::class);
         $this->registerService("userLogin", UserLogin::class);
         $this->registerService("userRegister", UserRegister::class);
