@@ -37,7 +37,6 @@ class ArcheryEventParticipant extends Model
       ->where('event_category_id', $category_detail_id)
       ->leftJoin('transaction_logs', 'transaction_logs.id', 'archery_event_participants.transaction_log_id')
       ->get();
-
     foreach (array($count_participant) as $key => $count) {
       $total = $count[0]['total'];
     }
@@ -125,6 +124,7 @@ class ArcheryEventParticipant extends Model
         $query->where("archery_event_participants.status", 1);
         $query->orWhere(function ($q) use ($time_now) {
           $q->where("archery_event_participants.status", 4);
+          $q->where("transaction_logs.status", 4);
           $q->where("transaction_logs.expired_time", ">", $time_now);
         });
         $query->orWhere(function ($q) use ($time_now) {

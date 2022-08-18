@@ -132,7 +132,7 @@ class ReportMedalClub extends Retrieval
         ]);
 
         $digits = 3;
-        $fileName   = 'report_result_medal_club_' . $event_id . '.pdf';
+        $fileName   = 'report_result_medal_club_' . $event_id . "_" . time() . '.pdf';
         // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/report_result_medal_club';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');

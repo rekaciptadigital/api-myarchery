@@ -3,33 +3,21 @@
 namespace App\BLoC\Web\ArcheryReport;
 
 use App\Models\ArcheryEventEliminationMember;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryClub;
-use Mpdf\Mpdf;
-
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventEliminationSchedule;
-use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryMasterTeamCategory;
-use DAI\Utils\Helpers\BLoC;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventElimination;
-use App\Http\Services\PDFService;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\App;
-use Response;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Libraries\EliminationFormatPDF;
 use App\Libraries\EliminationFormatPDFV2;
-use App\BLoC\Web\EventElimination\GetEventEliminationTemplate;
-use Illuminate\Support\Collection;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
@@ -53,11 +41,13 @@ class GetArcheryReportResultV2 extends Retrieval
         // $id = array();
 
         $pages = array();
-        $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
-        if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+        if (!$archery_event) {
+            throw new BLoCException("event tidak terdaftar");
+        }
+        $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -71,10 +61,9 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = '<img src="' . Storage::disk('public')->path("logo/logo-event-series-2.png") . '" alt="" width="25%"></img>';
         $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
         $cover_page = view('report_result/cover', [
-            'cover_event' => $logo_event_cover,
+            'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
             'event_date_report' => $event_date_report,
@@ -90,18 +79,19 @@ class GetArcheryReportResultV2 extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
-        // return $data_medal_standing['title_header']['category']; die;
-        $pages[] = view('report_result/club_rank_medals_standing', [
-            'logo_event' => $logo_event,
-            'logo_archery' => $logo_archery,
-            'event_name_report' => $event_name_report,
-            'event_date_report' => $event_date_report,
-            'event_location_report' => $event_location_report,
-            'headers' => $data_medal_standing['title_header']['category'],
-            'datatables' => $data_medal_standing['datatable'],
-            'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-            'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
-        ]);
+        if (count($data_medal_standing) > 0) {
+            $pages[] = view('report_result/club_rank_medals_standing', [
+                'logo_event' => $logo_event,
+                'logo_archery' => $logo_archery,
+                'event_name_report' => $event_name_report,
+                'event_date_report' => $event_date_report,
+                'event_location_report' => $event_location_report,
+                'headers' => $data_medal_standing['title_header']['category'],
+                'datatables' => $data_medal_standing['datatable'],
+                'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
+                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+            ]);
+        }
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
@@ -314,26 +304,23 @@ class GetArcheryReportResultV2 extends Retrieval
                                 if (strtolower($category_of_team->type) == "team") {
                                     $elimination_team = ArcheryEventEliminationGroup::where("category_id", $category_detail->id)->first();
 
-                                    if ($elimination_team) {
-                                        //print bagan eliminasi
-                                        if ($data_elimination['updated'] == false) {
-                                            if ($elimination_team->count_participant == 4) {
-                                                // return ($data_elimination); die;
-                                                $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
-                                                $view_path = 'report_result/elimination_graph/team/graph_four';
-                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
-                                                $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
-                                            } else if ($elimination_team->count_participant == 8) {
-                                                $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigEight($data_elimination);
-                                                $view_path = 'report_result/elimination_graph/team/graph_eight';
-                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
-                                                $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigEight($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
-                                            }
-                                        } else {
-                                            continue;
+                                    //print bagan eliminasi
+                                    if ($data_elimination['updated'] == false) {
+                                        if ($elimination_team->count_participant == 4) {
+                                            // return ($data_elimination); die;
+                                            $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
+                                            $view_path = 'report_result/elimination_graph/team/graph_four';
+                                            $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                            $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                                        } else if ($elimination_team->count_participant == 8) {
+                                            $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigEight($data_elimination);
+                                            $view_path = 'report_result/elimination_graph/team/graph_eight';
+                                            $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                            $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigEight($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                                         }
+                                    } else {
+                                        continue;
                                     }
-
                                     //end print bagan eliminasi
 
                                     //print all result qualification
@@ -412,38 +399,10 @@ class GetArcheryReportResultV2 extends Retrieval
     protected function getMedalStanding($event_id)
     {
         $data = ClubRanked::getEventRanked($event_id);
-
-        $title_header = array();
-        $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
-            ->orderBy('competition_category_id', 'DESC')->get();
-
-        foreach ($competition_category as $competition) {
-            $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
-                ->where("competition_category_id", $competition->competition_category)
+        if (count($data) > 0) {
+            $title_header = array();
+            $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
                 ->orderBy('competition_category_id', 'DESC')->get();
-
-            foreach ($age_category as $age) {
-                $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
-                    'gold' => null,
-                    'silver' => null,
-                    'bronze' => null,
-                ];
-            }
-
-            // colspan header title
-            $count_colspan = [
-                'count_colspan' => count($age_category) * 3
-            ];
-            array_push($title_header['category'][$competition->competition_category], $count_colspan);
-        }
-
-        $result = [];
-        $detail_club_with_medal_response = [];
-        foreach ($data as $key => $d) {
-            $detail_club_with_medal_response["club_name"] = $d["club_name"];
-            $detail_club_with_medal_response["total_gold"] = $d["gold"];
-            $detail_club_with_medal_response["total_silver"] = $d["silver"];
-            $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
 
             foreach ($competition_category as $competition) {
                 $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
@@ -451,74 +410,105 @@ class GetArcheryReportResultV2 extends Retrieval
                     ->orderBy('competition_category_id', 'DESC')->get();
 
                 foreach ($age_category as $age) {
-                    $gold = 0;
-                    $silver = 0;
-                    $bronze = 0;
-
-                    if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
-                        $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
-                        $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
-                        $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
-                    };
-
-                    $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
-                        "gold" => $gold,
-                        "silver" => $silver,
-                        "bronze" => $bronze
+                    $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                        'gold' => null,
+                        'silver' => null,
+                        'bronze' => null,
                     ];
                 }
+
+                // colspan header title
+                $count_colspan = [
+                    'count_colspan' => count($age_category) * 3
+                ];
+                array_push($title_header['category'][$competition->competition_category], $count_colspan);
             }
-            $medal_array = [];
-            foreach ($detail_club_with_medal_response["category"] as $c) {
-                foreach ($c as $a) {
-                    foreach ($a as $s) {
-                        foreach ($s as $b) {
-                            array_push($medal_array, $b);
+
+            $result = [];
+            $detail_club_with_medal_response = [];
+            foreach ($data as $key => $d) {
+                $detail_club_with_medal_response["club_name"] = $d["club_name"];
+                $detail_club_with_medal_response["total_gold"] = $d["gold"];
+                $detail_club_with_medal_response["total_silver"] = $d["silver"];
+                $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+
+                foreach ($competition_category as $competition) {
+                    $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+                        ->where("competition_category_id", $competition->competition_category)
+                        ->orderBy('competition_category_id', 'DESC')->get();
+
+                    foreach ($age_category as $age) {
+                        $gold = 0;
+                        $silver = 0;
+                        $bronze = 0;
+
+                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
+                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
+                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
+                        };
+
+                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                            "gold" => $gold,
+                            "silver" => $silver,
+                            "bronze" => $bronze
+                        ];
+                    }
+                }
+                $medal_array = [];
+                foreach ($detail_club_with_medal_response["category"] as $c) {
+                    foreach ($c as $a) {
+                        foreach ($a as $s) {
+                            foreach ($s as $b) {
+                                array_push($medal_array, $b);
+                            }
                         }
                     }
                 }
+                $detail_club_with_medal_response["medal_array"] = $medal_array;
+                array_push($result, $detail_club_with_medal_response);
             }
-            $detail_club_with_medal_response["medal_array"] = $medal_array;
-            array_push($result, $detail_club_with_medal_response);
-        }
 
-        // start: total medal emas, perak, perunggu dari setiap kategori semua klub
-        $array_of_total_medal_by_category = [];
-        $total_array_category = count($result[0]['medal_array']);
-        for ($i = 0; $i < $total_array_category; $i++) {
-            $total_medal_by_category = 0;
-            for ($j = 0; $j < count($result); $j++) {
-                $total_medal_by_category += $result[$j]['medal_array'][$i];
+            // start: total medal emas, perak, perunggu dari setiap kategori semua klub
+            $array_of_total_medal_by_category = [];
+            $total_array_category = count($result[0]['medal_array']);
+            for ($i = 0; $i < $total_array_category; $i++) {
+                $total_medal_by_category = 0;
+                for ($j = 0; $j < count($result); $j++) {
+                    $total_medal_by_category += $result[$j]['medal_array'][$i];
+                }
+                array_push($array_of_total_medal_by_category, $total_medal_by_category);
             }
-            array_push($array_of_total_medal_by_category, $total_medal_by_category);
+            // end: total medal emas, perak, perunggu dari setiap kategori semua klub
+
+            // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
+            $array_of_total_medal_by_category_all_club = [];
+            $total_medal_by_category_gold = 0;
+            $total_medal_by_category_silver = 0;
+            $total_medal_by_category_bronze = 0;
+            for ($k = 0; $k < count($result); $k++) {
+                $total_medal_by_category_gold += $result[$k]['total_gold'];
+                $total_medal_by_category_silver += $result[$k]['total_silver'];
+                $total_medal_by_category_bronze += $result[$k]['total_bronze'];
+            }
+            $array_of_total_medal_by_category_all_club = [
+                'gold' => $total_medal_by_category_gold,
+                'silver' => $total_medal_by_category_silver,
+                'bronze' => $total_medal_by_category_bronze
+            ];
+            // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
+
+            $response = [
+                'title_header' => $title_header,
+                'datatable' => $result,
+                'total_medal_by_category' => $array_of_total_medal_by_category,
+                'total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
+            ];
+
+            return $response;
+        } else {
+            return [];
         }
-        // end: total medal emas, perak, perunggu dari setiap kategori semua klub
-
-        // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
-        $array_of_total_medal_by_category_all_club = [];
-        $total_medal_by_category_gold = 0;
-        $total_medal_by_category_silver = 0;
-        $total_medal_by_category_bronze = 0;
-        for ($k = 0; $k < count($result); $k++) {
-            $total_medal_by_category_gold += $result[$k]['total_gold'];
-            $total_medal_by_category_silver += $result[$k]['total_silver'];
-            $total_medal_by_category_bronze += $result[$k]['total_bronze'];
-        }
-        $array_of_total_medal_by_category_all_club = [
-            'gold' => $total_medal_by_category_gold,
-            'silver' => $total_medal_by_category_silver,
-            'bronze' => $total_medal_by_category_bronze
-        ];
-        // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
-
-        $response = [
-            'title_header' => $title_header,
-            'datatable' => $result,
-            'total_medal_by_category' => $array_of_total_medal_by_category,
-            'total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
-        ];
-
-        return $response;
     }
 
     protected function getData($category_detail_id, $type, $event_id)

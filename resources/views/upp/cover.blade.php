@@ -24,7 +24,7 @@
     <div style="margin-bottom: 150px;">
         <br>
         <h1 style="text-align: left; font-size: 50pt; font-family: helvetica;">LAPORAN</h1>
-        <h2 style="text-align: left; font-size: 30pt; font-family: helvetica;">HASIL PERTANDINGAN</h1>
+        <h2 style="text-align: left; font-size: 30pt; font-family: helvetica;">PENGHORMATAN PEMENANG (UPP)</h1>
             <hr style="border: 10px solid #E7EDF6; width: 40%; margin-left: 0;">
             </hr>
     </div>

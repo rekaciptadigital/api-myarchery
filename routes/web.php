@@ -233,7 +233,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/logout', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:logout']);
             $router->put('/password', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:password']);
-            // $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminProfile']);
             $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProfile']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProfile']);
@@ -297,6 +297,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
 
             $router->group(['prefix' => 'events'], function () use ($router) {
+                // ================================== Fast Open 3 =========================================================
+                $router->post('/add-logo-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addLogoEvent']);
+                // ================================== End Fast Open ===================================================
                 $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEvent']);
@@ -321,9 +324,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/bulk-download-card', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadCard']);
                 $router->get('/add-edit-idcard', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addUpdateArcheryEventIdCard']);
                 $router->get('/report-result', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportResult']);
-                $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
                 $router->get('/report-event-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventList']);
                 $router->get('/report-club-rank-excel', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportClubRanked']);
+                $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
+                $router->get('/upp', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:upp']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
@@ -445,6 +449,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             // ====================================== Fast Open 3 ======================================
             $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
+            $router->post('/import-participant-excell', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importParticipantExcell']);
         });
 
         $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -516,8 +521,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
     $new_submission = VenuePlace::getAllListVenue(2);
-    $submission_approved = VenuePlace::getAllListVenue(3);
-    
+    $submission_approved = VenuePlace::getAllListVenue(4);
+
     return view('enterprise/venue_submission_index', [
         "datas" => $new_submission,
         "data_approved" => $submission_approved
@@ -535,7 +540,6 @@ $router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id
         ]);
 
         return redirect('enterprise/fldryepswqpxrat');
-
     } catch (\Throwable $th) {
         return response()->json([
             "status" => "error",

@@ -30,7 +30,9 @@
             <tbody>
                 <tr style="height: 40px;">
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
+                    <td style="width: 10%; height: 50px;" rowspan="2">
+                        <img src="{{ $logo_event }}" alt="" srcset="" width="80%">
+                    </td>
                     <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
@@ -91,7 +93,7 @@
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['sessions']['1'] ? $data['sessions']['1']['total'] : '-' }}</td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['sessions']['2'] ? $data['sessions']['2']['total'] : '-' }}</td>
+                            {{ isset($data['sessions']['2']) ? $data['sessions']['2']['total'] : '-' }}</td>
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['total'] ? $data['total'] : '0' }}</td>
                         <td style="text-align: center;border: 1px solid black;">

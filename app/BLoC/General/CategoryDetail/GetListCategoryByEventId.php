@@ -126,6 +126,7 @@ class GetListCategoryByEventId extends Retrieval
                 } else {
                     array_push($output, $response);
                 }
+                
             }
         }
         return $output;

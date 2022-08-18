@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AddOrderOfficial extends Retrieval
 {
-    var $payment_methode = "bank_transfer";
-    var $have_fee_payment_gateway = false;
-
     public function getDescription()
     {
         return "";
@@ -29,9 +26,7 @@ class AddOrderOfficial extends Retrieval
     protected function process($parameters)
     {
         $user_login = Auth::guard('app-api')->user();
-        if(!empty($parameters->get("payment_methode"))){
-            $this->payment_methode = $parameters->get("payment_methode");
-        }
+
         $club_id = $parameters->get('club_id');
         $event_id = $parameters->get('event_id');
 
@@ -52,9 +47,6 @@ class AddOrderOfficial extends Retrieval
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
         }
-
-        if($event->include_payment_gateway_fee_to_user == 1)
-            $this->have_fee_payment_gateway = true;
 
         // cek apakah event telah berlangsung atau belum
         $now = Carbon::now();
@@ -149,9 +141,10 @@ class AddOrderOfficial extends Retrieval
 
 
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
-            ->enabledPayments($this->payment_methode, $this->have_fee_payment_gateway)
+           // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;
