@@ -63,6 +63,7 @@ class ArcheryEventQualificationTime extends Model
             $response["day"] = $sort_day;
             $response["date"] = $day;
             $response["category"] = $category;
+            $response["date_format"] = dateFormatTranslate(date("l-d-F-Y", $i));
             $data[] = $response;
             $sort_day++;
         }
