@@ -21,7 +21,8 @@
                                                     <a style="font-size: medium;" href="https://myarchery.id"
                                                         target="_blank" rel="noopener"><img class="img-sm"
                                                             src="https://api-staging.myarchery.id/logo-email-archery.png"
-                                                            width="56" /></a></p>
+                                                            width="56" /></a>
+                                                </p>
                                             </td>
                                             <td style="width: 37%; padding-right: 30px !important;">
                                                 <p class="text-mobile"
@@ -64,11 +65,16 @@
                                                 <p class="text-mode"
                                                     style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 15px; color: #4c4c4c; line-height: 18px; text-align: justify; margin: 20px 70px;">
                                                     Email anda telah didaftarkan di aplikasi my-archery.
-                                                    silahkan masuk ke aplikasi dengan menggunakan email dan password di bawah ini.</p>
+                                                    silahkan masuk ke aplikasi dengan menggunakan email dan password di
+                                                    bawah ini.</p>
                                                 <br />
                                                 <p class="text-mode"
                                                     style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 25px; color: #0d47a1; line-height: 18px; text-align: center; margin: 20px 70px;">
-                                                    <strong>{{ $data['password'] }}</strong>
+                                                    <strong>Email: {{ $data['email'] }}</strong>
+                                                </p>
+                                                <p class="text-mode"
+                                                    style="font-family: 'Open Sans', sans-serif, Verdana; font-size: 25px; color: #0d47a1; line-height: 18px; text-align: center; margin: 20px 70px;">
+                                                    <strong>Pass: {{ $data['password'] }}</strong>
                                                 </p>
                                                 <br />
                                                 <p class="text-mode"

@@ -5,7 +5,6 @@ namespace App\BLoC\Web\UpdateParticipantByAdmin;
 use App\Exports\ParticipantExport;
 use App\Imports\ParticipantImport;
 use DAI\Utils\Abstracts\Transactional;
-use DAI\Utils\Exceptions\BLoCException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportParticipantExcell extends Transactional
