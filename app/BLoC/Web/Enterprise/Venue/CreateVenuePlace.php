@@ -12,7 +12,7 @@ use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use DAI\Utils\Exceptions\BLoCException;
-use App\Libraries\Upload;
+use App\Libraries\upload;
 use App\Jobs\VenuePlaceSubmissionEmailJob;
 use Queue;
 
@@ -82,7 +82,7 @@ class CreateVenuePlace extends Transactional
                 if ($ext_file_upload != "png" && $ext_file_upload != "jpg" && $ext_file_upload != "jpeg") {
                     throw new BLoCException("mohon inputkan tipe data gambar");
                 }
-                $gallery_result = Upload::setPath("asset/venue_place/")->setFileName("venue_place_" . $parameters->get("name") . "_" .$key)->setBase64($value)->save();
+                $gallery_result = upload::setPath("asset/venue_place/")->setFileName("venue_place_" . $parameters->get("name") . "_" .$key)->setBase64($value)->save();
 
                 $gallery = new VenuePlaceGallery();
                 $gallery->place_id = $venue_place->id;
