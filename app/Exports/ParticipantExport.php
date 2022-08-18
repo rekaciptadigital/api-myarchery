@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Collection;
-use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
 class ParticipantExport implements FromCollection
