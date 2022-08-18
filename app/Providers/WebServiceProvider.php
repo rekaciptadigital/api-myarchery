@@ -301,6 +301,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addUpdateArcheryEventIdCard", AddUpdateArcheryEventIdCard::class);
         $this->registerService("deleteHandBook", DeleteHandBook::class);
         $this->registerService("getArcheryReportResult", GetArcheryReportResultV2::class);
+        $this->registerService("reportMedalClub", ReportMedalClub::class);
         $this->registerService("getArcheryReportEventList", GetArcheryReportEventList::class);
         $this->registerService("downloadMemberBudrest", DownloadMemberBudrest::class);
 
