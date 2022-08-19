@@ -288,7 +288,16 @@ class ArcheryEventParticipant extends Model
         }
         $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
 
-        $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring, "elimination_rank" => $elimination_rank);
+        $data_report[] = array(
+          "athlete" => $athlete,
+          "club" => $club,
+          "category" => $categoryLabel,
+          "medal" => $medal,
+          "date" => $date,
+          "scoring" => $scoring,
+          "elimination_rank" => $elimination_rank,
+          "participant_id" => $member->archery_event_participant_id
+        );
 
         $category_id = $member->category_details_id;
       }
@@ -319,13 +328,16 @@ class ArcheryEventParticipant extends Model
           if ($elimination_group_team->elimination_ranked <= 3) {
             $data[] = [
               'id' => $elimination_group_team->id,
+              'participant_id' => $elimination_group_team->participant_id,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
               'date' => $elimination_group->created_at->format('Y-m-d'),
-              "member_team" => ArcheryEventEliminationGroupMemberTeam::select("users.name")->where("participant_id", $elimination_group_team->participant_id)
+              "member_team" => ArcheryEventEliminationGroupMemberTeam::select("users.name", "archery_event_participant_members.id as member_id", "archery_event_participant_members.archery_event_participant_id as participant_id", "archery_clubs.name as club_name")->where("participant_id", $elimination_group_team->participant_id)
                 ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_elimination_group_member_team.member_id")
                 ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
+                ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_elimination_group_member_team.participant_id")
+                ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
                 ->get()
             ];
           } else {
@@ -338,6 +350,4 @@ class ArcheryEventParticipant extends Model
       return $sorted_data;
     }
   }
-
-  
 }
