@@ -4,6 +4,7 @@ namespace App\BLoC\General\Dos;
 
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Abstracts\Retrieval;
 
@@ -65,6 +66,9 @@ class GetMedalParticipantByEventId extends Retrieval
                                     "club_name" => $value["club_name"]
                                 ];
                                 array_push($athlete, $res_athlete);
+                                if (count($athlete) == 3) {
+                                    break;
+                                }
                             }
                             $res = [
                                 "type" => "team",
@@ -77,6 +81,7 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "category_label" => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id)
                             ];
                             $data_qualification_all[] = $res;
+                            $new_data_qualification_best_of_three[] = $res;
                             if (count($new_data_qualification_best_of_three) == 3) {
                                 break;
                             }
@@ -110,23 +115,28 @@ class GetMedalParticipantByEventId extends Retrieval
                     $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
                     if (!empty($data_elimination_team)) {
                         $response_tim = [];
-                        $array_member = [];
-                        foreach ($data_elimination_team as $key => $value) {
+                        foreach ($data_elimination_team as $key_r => $value) {
+                            
+                            $array_member = [];
                             $response_tim["winner_name"] = $value["team_name"];
                             $response_tim["participant_id"] = $value["participant_id"];
                             $response_tim["club_name"] = $value["club_name"];
-                            foreach ($value["member_team"] as $key => $value) {
+                            foreach ($value["member_team"] as $key => $value_a) {
+                                $participant_member = ArcheryEventParticipantMember::select("archery_event_participants.id", "archery_clubs.name")->where("archery_event_participant_members.id", $value_a["member_id"])
+                                    ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+                                    ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+                                    ->first();
                                 $res_athlete = [
-                                    "name" => $value["name"],
-                                    "participant_id" => $value["participant_id"],
-                                    "member_id" => $value["member_id"],
-                                    "club_name" => $value["club_name"]
+                                    "name" => $value_a["name"],
+                                    "participant_id" => $participant_member["id"],
+                                    "member_id" => $value_a["member_id"],
+                                    "club_name" => $participant_member["name"]
                                 ];
                                 $array_member[] = $res_athlete;
                             }
                             $response_tim["type"] = "team";
                             $response_tim["list_athlete"] = $array_member;
-                            $response_tim["rank"] = $key + 1;
+                            $response_tim["rank"] = $key_r + 1;
                             $response_tim["category_label"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
                             $response_tim["category_id"] = $category_detail->id;
                             $data_elimination_all[] = $response_tim;

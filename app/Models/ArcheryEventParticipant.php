@@ -343,11 +343,9 @@ class ArcheryEventParticipant extends Model
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
               'date' => $elimination_group->created_at->format('Y-m-d'),
-              "member_team" => ArcheryEventEliminationGroupMemberTeam::select("users.name", "archery_event_participant_members.id as member_id", "archery_event_participant_members.archery_event_participant_id as participant_id", "archery_clubs.name as club_name")->where("participant_id", $elimination_group_team->participant_id)
+              "member_team" => ArcheryEventEliminationGroupMemberTeam::select("users.name", "archery_event_participant_members.id as member_id")->where("participant_id", $elimination_group_team->participant_id)
                 ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_elimination_group_member_team.member_id")
                 ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
-                ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_elimination_group_member_team.participant_id")
-                ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
                 ->get()
             ];
           } else {
