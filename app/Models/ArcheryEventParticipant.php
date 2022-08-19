@@ -324,11 +324,21 @@ class ArcheryEventParticipant extends Model
 
         $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
 
+
         if ($elimination_group_team) {
           if ($elimination_group_team->elimination_ranked <= 3) {
+            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name")
+              ->where("archery_event_participants.id", $elimination_group_team->participant_id)
+              ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+              ->first();
+            $club_name = "";
+            if ($participant) {
+              $club_name = $participant->club_name;
+            }
             $data[] = [
               'id' => $elimination_group_team->id,
               'participant_id' => $elimination_group_team->participant_id,
+              'club_name' => $club_name,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
