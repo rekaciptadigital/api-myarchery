@@ -39,7 +39,7 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "type" => "individu",
                                 "category_id" => $category_detail->id,
                                 "winner_name" => $athlete["athlete"],
-                                "club" => $athlete["club"],
+                                "club_name" => $athlete["club"],
                                 "rank" => $key + 1,
                                 "participant_id" => $athlete["participant_id"],
                                 "category_label" => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id)
@@ -71,7 +71,8 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "participant_id" => $dq["participant_id"],
                                 "category_id" => $category_detail->id,
                                 "list_athlete" => $athlete,
-                                "club_name" => $dq["team"],
+                                "club_name" => $dq["club_name"],
+                                "winner_name" => $dq["team"],
                                 "rank" => $k + 1,
                                 "category_label" => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id)
                             ];
@@ -93,8 +94,8 @@ class GetMedalParticipantByEventId extends Retrieval
                         foreach ($data_report_elimination_individu[0] as $key => $value) {
                             $response_athlete = [
                                 "type" => "individu",
-                                "name" => $value["athlete"],
-                                "club" => $value["club"],
+                                "winner_name" => $value["athlete"],
+                                "club_name" => $value["club"],
                                 "rank" => $key + 1,
                                 "participant_id" => $value["participant_id"],
                                 "category_id" => $category_detail->id,
@@ -111,8 +112,9 @@ class GetMedalParticipantByEventId extends Retrieval
                         $response_tim = [];
                         $array_member = [];
                         foreach ($data_elimination_team as $key => $value) {
-                            $response_tim["club_name"] = $value["team_name"];
+                            $response_tim["winner_name"] = $value["team_name"];
                             $response_tim["participant_id"] = $value["participant_id"];
+                            $response_tim["club_name"] = $value["club_name"];
                             foreach ($value["member_team"] as $key => $value) {
                                 $res_athlete = [
                                     "name" => $value["name"],
