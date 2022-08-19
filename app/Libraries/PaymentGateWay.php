@@ -30,7 +30,7 @@ class PaymentGateWay
     static $have_payment_gateway_fee = false;
     static $fee_myarchery = 0;
     static $have_fee_myarchery = false;
-    static $gateway = "midtrans";
+    static $gateway = "";
     static $token = "";
     static $expired_time = "";
     static $enabled_payments = [
@@ -49,7 +49,6 @@ class PaymentGateWay
         \Midtrans\Config::$isSanitized = true;
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
-        self::$gateway = env("PAYMENT_GATEWAY","midtrans");
     }
 
     public static function setTransactionDetail($gross_amount, $order_id = "")
@@ -74,7 +73,10 @@ class PaymentGateWay
 
     public static function setGateway(string $gateway)
     {
-        self::$gateway = $gateway;
+        if(!empty($gateway))
+            self::$gateway = $gateway;
+        else
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         return (new self);
     }
 
@@ -91,6 +93,8 @@ class PaymentGateWay
     // "danamon_online", "akulaku", "shopeepay"]
     public static function enabledPaymentWithFee(string $payment_methode,bool $have_fee = false)
     {
+        if(empty(self::$gateway))
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         
         $list = [
             "midtrans" => [
@@ -129,7 +133,8 @@ class PaymentGateWay
 
     public static function getPaymentMethode(bool $have_fee = false)
     {
-        self::$gateway = env("PAYMENT_GATEWAY","midtrans");
+        if(empty(self::$gateway))
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         
         $list = [
             "midtrans" => [
@@ -207,6 +212,9 @@ class PaymentGateWay
 
     public static function createSnap()
     {
+        if(empty(self::$gateway))
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
+
         $gateway = self::$gateway;
         switch ($gateway) {
             case 'midtrans':
@@ -247,7 +255,7 @@ class PaymentGateWay
             "phone_number" => $customer_details["phone"],
             "is_open" => false,
             "step" => "select-payment-method",
-            "include_admin_fee" => self::$have_payment_gateway_fee,
+            "include_admin_fee" => self::$have_payment_gateway_fee ? false : true,
             "list_enabled_banks" => "002, 008, 009, 013, 022",
             "list_enabled_ewallet" => "shopeepay_ewallet, dana_ewallet, linkaja_ewallet, ovo_ewallet",
             "expiration" => date('Y-m-d H:i:s', $expired_time),
@@ -276,6 +284,9 @@ class PaymentGateWay
     }
 
     private static function saveLog($payment_gateway_params, $payment_gateway_response){
+        if(empty(self::$gateway))
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
+            
             $status = 4;
             $activity = array("request_snap_token" => array("params" => $payment_gateway_params, "response" => $payment_gateway_response));
             $transaction_log = new TransactionLog;
@@ -295,6 +306,9 @@ class PaymentGateWay
     }
 
     private static function result($transaction_log_id,$status, $opt = []){
+        if(empty(self::$gateway))
+            self::$gateway = env("PAYMENT_GATEWAY","midtrans");
+
         return (object)[
             "status" => true,
             "gateway" => self::$gateway,
