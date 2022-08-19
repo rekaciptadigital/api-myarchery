@@ -140,10 +140,25 @@ class VenuePlace extends Model
                 }
             }
 
+            $products = VenuePlaceProduct::where("place_id", "=", $data->id)->get();
+            $products_data = [];
+            if ($products) {
+                foreach ($products as $key => $value) {
+                    $products_data[] = [
+                        'id' => $value->id,
+                        'place_id' => $value->place_id,
+                        'product_name' => $value->product_name,
+                        'weekday_price' => $value->weekday_price,
+                        'weekend_price' => $value->weekend_price,
+                    ];
+                }
+            }
+
             $data['admin'] = $admin_venue;
             $data['facilities'] = $facilities_data;
             $data['galleries'] = $galleries_data;
             $data['capacity_area'] = $capacity_area_data;
+            $data['products'] = $products_data;
             array_push($result, $data);
         }
         return $result;
