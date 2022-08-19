@@ -17,6 +17,8 @@ class GetArcheryEventDetailBySlug extends Retrieval
 
     protected function process($parameters)
     {
+        $gateway = $parameters->get("gateway");
+
         $admin = Auth::user();
         $archery_event = ArcheryEvent::where('event_slug', $parameters->get('slug'))->first();
         if (!$archery_event) {
@@ -28,7 +30,8 @@ class GetArcheryEventDetailBySlug extends Retrieval
         $have_paymentgateway_fee =false;
         if($archery_event->include_payment_gateway_fee_to_user == 1)
             $have_paymentgateway_fee = true;
-        $archery_event_detail["payment_methode"] = PaymentGateWay::getPaymentMethode($have_paymentgateway_fee);
+            
+        $archery_event_detail["payment_methode"] = PaymentGateWay::setGateway($gateway)->getPaymentMethode($have_paymentgateway_fee);
         
         return $archery_event_detail;
     }
