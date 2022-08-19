@@ -82,7 +82,7 @@ class VenuePlace extends Model
         return $output;
     }
 
-    protected function getAllListVenue($filter_status = '')
+    protected function getAllListVenue($filter_status = '', $filter_type = '', $limit, $offset)
     {
         $datas = VenuePlace::query();  
 
@@ -91,7 +91,12 @@ class VenuePlace extends Model
             return $query->where("status", $filter_status);
         });
 
-        $data_collection = $datas->get();
+        // filter by place type
+        $datas->when($filter_type, function ($query) use ($filter_type) {
+            return $query->where("place_type", $filter_type);
+        });
+
+        $data_collection = $datas->orderBy('created_at', 'DESC')->limit($limit)->offset($offset)->get();
    
         $result = [];
         foreach ($data_collection as $data) {
