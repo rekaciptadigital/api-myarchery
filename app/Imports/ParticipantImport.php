@@ -17,7 +17,6 @@ use Queue;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -35,8 +34,7 @@ class ParticipantImport implements WithValidation, ToCollection
                 $user->email = $row[1];
                 $password = str_random(6);
                 $user->password = Hash::make($password);
-                $user->phone_number = $row[2];
-                $user->gender = $row[3];
+                $user->gender = $row[2];
                 $user->save();
 
                 Queue::push(new SuccessImportExcellJob([
@@ -46,12 +44,12 @@ class ParticipantImport implements WithValidation, ToCollection
                 ]));
             }
 
-            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $row[4])->first();
+            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $row[3])->first();
             if (!$qualification_time) {
                 throw new BLoCException('event belum bisa di daftar');
             }
 
-            $category = ArcheryEventCategoryDetail::find($row[4]);
+            $category = ArcheryEventCategoryDetail::find($row[3]);
 
             $event = ArcheryEvent::find($category->event_id);
             if (!$event) {
@@ -125,9 +123,8 @@ class ParticipantImport implements WithValidation, ToCollection
         return [
             "0" => "required|string",
             '1' => "required|email:rfc,dns",
-            "2" => "required|numeric",
-            "3" => "required|in:male,female",
-            '4' => 'exists:archery_event_category_details,id'
+            "2" => "required|in:male,female",
+            "3" => "exists:archery_event_category_details,id"
         ];
     }
     public function customValidationAttributes()
@@ -135,9 +132,8 @@ class ParticipantImport implements WithValidation, ToCollection
         return [
             "0" => "name",
             '1' => 'email',
-            "2" => "phone number",
-            "3" => "gender",
-            "4" => "category_id"
+            "2" => "gender",
+            "3" => "category_id"
         ];
     }
 }
