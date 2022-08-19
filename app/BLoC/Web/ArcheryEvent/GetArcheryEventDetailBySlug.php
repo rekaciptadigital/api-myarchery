@@ -17,7 +17,7 @@ class GetArcheryEventDetailBySlug extends Retrieval
 
     protected function process($parameters)
     {
-        $gateway = $parameters->get("gateway");
+        $gateway = $parameters->get("gateway") ? $parameters->get("gateway") : "";
 
         $admin = Auth::user();
         $archery_event = ArcheryEvent::where('event_slug', $parameters->get('slug'))->first();

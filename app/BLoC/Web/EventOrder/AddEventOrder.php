@@ -49,7 +49,7 @@ class AddEventOrder extends Transactional
         $event_category_id = $parameters->get('event_category_id');
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
-        $this->gateway = $parameters->get("gateway");
+        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : "";
 
         // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
