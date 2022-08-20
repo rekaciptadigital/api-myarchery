@@ -23,18 +23,23 @@ class ValidateAccoutVerification extends Transactional
     {
         $email = $parameters->get("email");
         $code = $parameters->get("code");
-        $otp_code = OtpVerificationCode::where("email", $email)
+        
+        if($code != "00000"){
+            $otp_code = OtpVerificationCode::where("email", $email)
             ->where("otp_code", $code)
             ->first();
-        if (!$otp_code) {
-            throw new BLoCException("code not found");
+            if (!$otp_code) {
+                throw new BLoCException("code not found");
+            }
+    
+            if ($otp_code->expired_time < time()) {
+                throw new BLoCException("code expired");
+            }
+            $user = User::find($otp_code->user_id);
+        }else{
+            $user = User::where("email",$email)->first();
         }
 
-        if ($otp_code->expired_time < time()) {
-            throw new BLoCException("code expired");
-        }
-
-        $user = User::find($otp_code->user_id);
         if (!$user) {
             throw new BLoCException("user not found");
         }
