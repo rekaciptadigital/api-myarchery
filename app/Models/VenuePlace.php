@@ -142,6 +142,7 @@ class VenuePlace extends Model
 
             $products = VenuePlaceProduct::where("place_id", "=", $data->id)->get();
             $products_data = [];
+            $product_prices = [];
             if ($products) {
                 foreach ($products as $key => $value) {
                     $products_data[] = [
@@ -151,14 +152,20 @@ class VenuePlace extends Model
                         'weekday_price' => $value->weekday_price,
                         'weekend_price' => $value->weekend_price,
                     ];
+
+                    array_push($product_prices, $value->weekday_price);
+                    array_push($product_prices, $value->weekend_price);
                 }
             }
+            $min_product_price = (!empty($product_prices)) == true ? min($product_prices) : 0;
 
             $data['admin'] = $admin_venue;
             $data['facilities'] = $facilities_data;
             $data['galleries'] = $galleries_data;
             $data['capacity_area'] = $capacity_area_data;
             $data['products'] = $products_data;
+            $data['min_product_price'] = $min_product_price;
+
             array_push($result, $data);
         }
         return $result;
