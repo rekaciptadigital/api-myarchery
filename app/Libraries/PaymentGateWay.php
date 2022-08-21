@@ -185,7 +185,7 @@ class PaymentGateWay
                     "label" => "Transfer Bank",
                     "list" => ["002","008","009","013","022"],
                     "fee_type" => "nominal",
-                    "fee" => 4000,
+                    "fee" => 4440,
                 ],
                 "dana" => [
                     "id" => "EWALLET",
@@ -259,6 +259,7 @@ class PaymentGateWay
 
     public static function createLinkOY()
     {
+        $payment_methode = ["QA","EWALLET","QRIS","CREDIT_CARD"];
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
@@ -271,10 +272,18 @@ class PaymentGateWay
         if($payment_methode_detail["id"] == "EWALLET"){
             $list_enabled_ewallet = $payment_methode_detail["list"];
         }
+        $payment_methode_disabled = [];
+        foreach ($payment_methode as $key => $value) {
+            if($payment_methode_detail["id"] != $value){
+                $payment_methode_disabled[] = $value;
+            }
+        }
         $desc = "my archery product";
         $invoice_items = [];
+        $amount = 0;
         foreach (self::$item_details as $key => $value) {
             if($value["id"] != "payment_fee"){
+                $amount = $amount + $value["price"];
                 $invoice_items[] = (object)[
                     "item"=>$value["name"], 
                     "description"=>$value["id"]." | ".$value["name"], 
@@ -285,7 +294,7 @@ class PaymentGateWay
             }
         }
         $total_amount = self::$transaction_details["gross_amount"];
-        if(!self::$have_payment_gateway_fee){
+        if(self::$have_payment_gateway_fee){
             $total_amount = $total_amount + self::$payment_gateway_fee;
         }
         if(self::$have_fee_myarchery){
@@ -299,7 +308,7 @@ class PaymentGateWay
             "notes" => "",
             "invoice_items" => $invoice_items,
             "sender_name" => $customer_details["first_name"]." ".$customer_details["last_name"],
-            "amount" => $total_amount,
+            "amount" => $amount,
             'email' => $customer_details["email"],
             "phone_number" => $customer_details["phone"],
             "is_open" => false,
@@ -314,6 +323,7 @@ class PaymentGateWay
 
         if($payment_methode_detail["id"] != "default"){
             $body["list_enable_payment_method"] = $payment_methode_detail["id"];
+            $body["list_disabled_payment_methods"] = count($payment_methode_disabled) > 0 ? implode(",",$payment_methode_disabled) : "";
         }
         // Session::forget('_old_order_id');
         $client = new \GuzzleHttp\Client();
