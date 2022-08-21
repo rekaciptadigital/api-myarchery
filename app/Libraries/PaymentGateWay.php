@@ -590,7 +590,7 @@ class PaymentGateWay
         if($status == 1){
             $event = ArcheryEvent::where('id',$participant->event_id)->first();
             $admin_have_event = Admin::where('id',$event->admin_id)->first();
-            $category_label = ArcheryEventCategoryDetail::getCategoryLabel($event_category_detail->id);
+            $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
             $note = $event->name." (".$category_label.")";
             $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
