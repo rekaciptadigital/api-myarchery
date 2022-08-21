@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Redis;
 class AddEventOrder extends Transactional
 {
     var $gateway = "";
+    var $payment_methode = "";
     public function getDescription()
     {
         return "";
@@ -45,11 +46,13 @@ class AddEventOrder extends Transactional
 
     protected function process($parameters)
     {
+        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bank_transfer";
+        
         $user = Auth::guard('app-api')->user();
         $event_category_id = $parameters->get('event_category_id');
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
-        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : "";
+        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY","midtrans");
 
         // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
@@ -278,8 +281,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
         if(!$payment->status)
             throw new BLoCException($payment->message);
@@ -430,8 +433,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -599,8 +602,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
         $participant_new->transaction_log_id = $payment->transaction_log_id;
         $participant_new->save();

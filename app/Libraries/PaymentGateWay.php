@@ -5,6 +5,7 @@ namespace App\Libraries;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventOfficial;
 use App\Models\TransactionLog;
+use App\Models\EoCashFlow;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
@@ -18,6 +19,9 @@ use App\Models\ArcherySeriesUserPoint;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TemporaryParticipantMember;
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\ArcheryEventOfficialDetail;
+use App\Models\ArcheryEvent;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Redis;
 
@@ -29,10 +33,12 @@ class PaymentGateWay
     static $payment_gateway_fee = 0;
     static $have_payment_gateway_fee = false;
     static $fee_myarchery = 0;
+    static $total_amount = 0;
     static $have_fee_myarchery = false;
     static $gateway = "";
     static $token = "";
     static $expired_time = "";
+    static $payment_methode_detail = [];
     static $enabled_payments = [
         "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", "permata_va",
         "bca_va", "bni_va", "bri_va", "other_va", "indomaret"
@@ -93,40 +99,31 @@ class PaymentGateWay
     // "danamon_online", "akulaku", "shopeepay"]
     public static function enabledPaymentWithFee(string $payment_methode,bool $have_fee = false)
     {
+        if(!$have_fee){
+            $payment_methode = "default";
+        }
+
         if(empty(self::$gateway))
             self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         
-        $list = [
-            "midtrans" => [
-                "bank_transfer" => [
-                    "list" => ["bank_transfer"],
-                    "fee_type" => "nominal",
-                    "fee" => 4000
-                ],
-                "gopay" => [
-                    "list" => ["gopay"],
-                    "fee_type" => "percentage",
-                    "fee" => 2
-                ],
-                ]
-            ];
+        $list = self::_listPaymentMethode($have_fee);
+
         self::$have_payment_gateway_fee = $have_fee;
         $enabled_payments = [];
         if(isset($list[self::$gateway]) && isset($list[self::$gateway][$payment_methode])){
             $enabled_payments = array_merge($enabled_payments,$list[self::$gateway][$payment_methode]["list"]);
-            if($have_fee){
-                $fee = 0;
-                if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
-                    $transaction_details = self::$transaction_details;
-                    $fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
-                }else{
-                    $fee = $list[self::$gateway][$payment_methode]["fee"];
-                }
-                self::$payment_gateway_fee = $fee;
-                if($fee > 0)
-                    self::addItemDetail(1, $fee, "payment methode fee", "", 1, "", "");
+            $fee = 0;
+            if($list[self::$gateway][$payment_methode]["fee_type"] == "percentage"){
+                $transaction_details = self::$transaction_details;
+                $fee = round($transaction_details["gross_amount"] * ($list[self::$gateway][$payment_methode]["fee"]/100));
+            }else{
+                $fee = $list[self::$gateway][$payment_methode]["fee"];
             }
+            self::$payment_gateway_fee = $fee;
+            if($have_fee && $fee > 0)
+                self::addItemDetail("payment_fee", $fee, "payment methode fee", "", 1, "", "");
         }
+        self::$payment_methode_detail = $list[self::$gateway][$payment_methode];
         self::$enabled_payments = $enabled_payments;
         return (new self);
     }
@@ -136,44 +133,77 @@ class PaymentGateWay
         if(empty(self::$gateway))
             self::$gateway = env("PAYMENT_GATEWAY","midtrans");
         
-        $list = [
-            "midtrans" => [
-                "bank_transfer" => [
-                    "label" => "Transfer Bank",
-                    "list" => [""],
-                    "fee_type" => "nominal",
-                    "fee" => 4000,
-                    "active" => $have_fee
-                ],
-                "gopay" => [
-                    "label" => "Gopay",
-                    "list" => ["gopay"],
-                    "fee_type" => "percentage",
-                    "fee" => 2,
-                    "active" => $have_fee
-                ],
-            ],
-            "OY" => [
-                "bank_transfer" => [
-                    "label" => "Transfer Bank",
-                    "list" => [""],
-                    "fee_type" => "nominal",
-                    "fee" => 4000,
-                    "active" => $have_fee
-                ],
-                "gopay" => [
-                    "label" => "Gopay",
-                    "list" => ["gopay"],
-                    "fee_type" => "percentage",
-                    "fee" => 2,
-                    "active" => $have_fee
-                ],
-                ]
-            ];
+        $list = self::_listPaymentMethode($have_fee);
     
         return $list[self::$gateway];
     }
 
+    private static function _listPaymentMethode(bool $have_fee = false){
+        return [
+            "midtrans" => [
+                "have_fee" => $have_fee,
+                "default" => [
+                    "id" => "default",
+                    "label" => "Default",
+                    "list" => ["bca_va", "bni_va", "bri_va", "gopay", "other_va"],
+                    "fee_type" => "nominal",
+                    "fee" => 0,
+                ],
+                "bank_transfer" => [
+                    "id" => "bank_transfer",
+                    "label" => "Transfer Bank",
+                    "list" => [""],
+                    "fee_type" => "nominal",
+                    "fee" => 4000,
+                ],
+                "gopay" => [
+                    "id" => "gopay",
+                    "label" => "Gopay",
+                    "list" => ["gopay"],
+                    "fee_type" => "percentage",
+                    "fee" => 2,
+                ],
+                "qris" => [
+                    "id" => "qris",
+                    "label" => "Qris",
+                    "list" => ["qris"],
+                    "fee_type" => "percentage",
+                    "fee" => 0.7
+                ],
+            ],
+            "OY" => [
+                "have_fee" => $have_fee,
+                "default" => [
+                    "id" => "default",
+                    "label" => "Default",
+                    "list" => ["bca_va", "bni_va", "bri_va", "gopay", "other_va"],
+                    "fee_type" => "nominal",
+                    "fee" => 0,
+                ],
+                "bank_transfer" => [
+                    "id" => "VA",
+                    "label" => "Transfer Bank",
+                    "list" => ["002","008","009","013","022"],
+                    "fee_type" => "nominal",
+                    "fee" => 4000,
+                ],
+                "dana" => [
+                    "id" => "EWALLET",
+                    "label" => "Dana",
+                    "list" => ["dana"],
+                    "fee_type" => "percentage",
+                    "fee" => 2,
+                ],
+                "qris" => [
+                    "id" => "QRIS",
+                    "label" => "Qris",
+                    "list" => ["qris"],
+                    "fee_type" => "percentage",
+                    "fee" => 0.7
+                ],
+                ]
+            ];
+    }
     public static function addItemDetail($id, $price, $name, $brand = "", $quantity = 1, $category = "", $merchant_name = "")
     {
         self::$item_details[] = array(
@@ -229,38 +259,63 @@ class PaymentGateWay
 
     public static function createLinkOY()
     {
-        $transaction_details = self::$transaction_details;
+        $payment_methode = ["QA","EWALLET","QRIS","CREDIT_CARD"];
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
-        
+        $payment_methode_detail = self::$payment_methode_detail;
+        $list_enabled_banks = [];
+        $list_enabled_ewallet = [];
+        if($payment_methode_detail["id"] == "VA"){
+            $list_enabled_banks = $payment_methode_detail["list"];
+        }
+        if($payment_methode_detail["id"] == "EWALLET"){
+            $list_enabled_ewallet = $payment_methode_detail["list"];
+        }
         $desc = "my archery product";
         $invoice_items = [];
         foreach (self::$item_details as $key => $value) {
-            $invoice_items[] = (object)[
-                  "item"=>$value["name"], 
-                  "description"=>$value["id"]." | ".$value["name"], 
-                  "quantity"=> $value["quantity"], 
-                  "date_of_purchase"=>date('Y-m-d H:i:s', time()), 
-                  "price_per_item"=> $value["price"]  
-            ];
+            if($value["id"] != "payment_fee"){
+                $invoice_items[] = (object)[
+                    "item"=>$value["name"], 
+                    "description"=>$value["id"]." | ".$value["name"], 
+                    "quantity"=> $value["quantity"], 
+                    "date_of_purchase"=>date('Y-m-d H:i:s', time()), 
+                    "price_per_item"=> $value["price"]  
+                ];
+            }
         }
+        $total_amount = self::$transaction_details["gross_amount"];
+        if(!self::$have_payment_gateway_fee){
+            $total_amount = $total_amount + self::$payment_gateway_fee;
+        }
+        if(self::$have_fee_myarchery){
+            $total_amount = $total_amount + self::$fee_myarchery;
+        }
+
+        self::$total_amount = $total_amount;
         $body = [
             "description" => $desc,
-            "partner_tx_id" => $transaction_details["order_id"],
+            "partner_tx_id" => self::$transaction_details["order_id"],
             "notes" => "",
+            "invoice_items" => $invoice_items,
             "sender_name" => $customer_details["first_name"]." ".$customer_details["last_name"],
-            "amount" => $transaction_details["gross_amount"],
+            "amount" => $total_amount,
             'email' => $customer_details["email"],
             "phone_number" => $customer_details["phone"],
             "is_open" => false,
             "step" => "select-payment-method",
             "include_admin_fee" => self::$have_payment_gateway_fee ? false : true,
-            "list_enabled_banks" => "002, 008, 009, 013, 022",
-            "list_enabled_ewallet" => "shopeepay_ewallet, dana_ewallet, linkaja_ewallet, ovo_ewallet",
+            "list_enabled_banks" => explode(",",$list_enabled_banks),
+            "list_enabled_ewallet" => explode(",",$list_enabled_ewallet),
             "expiration" => date('Y-m-d H:i:s', $expired_time),
         ];
+        if(self::$have_payment_gateway_fee)
+            self::$payment_gateway_fee = 0;
 
+        if($payment_methode_detail["id"] != "default"){
+            $body["list_enable_payment_method"] = $payment_methode_detail["id"];
+        }
         // Session::forget('_old_order_id');
         $client = new \GuzzleHttp\Client();
         $response = $client->request('POST', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/create-v2', [
@@ -298,6 +353,7 @@ class PaymentGateWay
             $transaction_log->expired_time = self::$expired_time;
             $transaction_log->gateway = self::$gateway;
             $transaction_log->token = self::$token;
+            $transaction_log->total_amount =self::$total_amount;
             $transaction_log->include_payment_gateway_fee = self::$payment_gateway_fee;
             $transaction_log->include_my_archery_fee = self::$fee_myarchery;
             $transaction_log->save();
@@ -313,7 +369,7 @@ class PaymentGateWay
             "status" => true,
             "gateway" => self::$gateway,
             "order_id" => self::$transaction_details["order_id"],
-            "total" => self::$transaction_details["gross_amount"],
+            "total" => self::$total_amount,
             "status" => TransactionLog::getStatus($status),
             "transaction_log_id" => $transaction_log_id,
             "snap_token" => self::$token,
@@ -342,27 +398,7 @@ class PaymentGateWay
         self::$expired_time = $expired_time;
         $snap_token = \Midtrans\Snap::getSnapToken($params);
         if ($snap_token) {
-            self::$token = $snap_token;
-            $activity = array("request_snap_token" => array("params" => $params, "response" => $snap_token));
-            $transaction_log = new TransactionLog;
-            $transaction_log->order_id = $transaction_details["order_id"];
-            $transaction_log->transaction_log_activity = json_encode($activity);
-            $transaction_log->amount = $transaction_details["gross_amount"];
-            $transaction_log->status = 4;
-            $transaction_log->expired_time = $expired_time;
-            $transaction_log->token = $snap_token;
-            $transaction_log->save();
-        
-        return (object)[
-            "order_id" => $transaction_details["order_id"],
-            "total" => $transaction_details["gross_amount"],
-            "status" => TransactionLog::getStatus(0),
-            "transaction_log_id" => $transaction_log->id,
-            "snap_token" => $snap_token,
-            "status" => true,
-            "client_key" => env("MIDTRANS_CLIENT_KEY"),
-            "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK")
-        ];
+            return self::saveLog($params,$snap_token);
         }
         return (object)["status" => false, "message" => $result->message];
     }
@@ -377,7 +413,7 @@ class PaymentGateWay
         return (object)[
             "order_date" =>$transaction_log->created_at,
             "order_id" => $transaction_log->order_id,
-            "total" => $transaction_log->amount,
+            "total" => $transaction_log->total_amount,
             "gateway" => $transaction_log->gateway,
             "opt" => json_decode($transaction_log->opt),
             "status_id" => $status,
@@ -430,7 +466,7 @@ class PaymentGateWay
         } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_ID_PREFIX"))) == env("ORDER_ID_PREFIX")) {
             ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
             if ($status == 1) {
-                return self::orderEvent($transaction_log);
+                return self::orderEvent($transaction_log, $status);
             }
         }
 
@@ -438,7 +474,7 @@ class PaymentGateWay
         return true;
     }
 
-    private static function orderEvent($transaction_log)
+    private static function orderEvent($transaction_log, $status)
     {
         $participant = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->first();
         if (!$participant) {
@@ -480,6 +516,40 @@ class PaymentGateWay
             ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $participant_member->id, "individual");
             ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id,$user->id);
         }
+
+        // create cash flow
+        if($status == 1){
+            $event = ArcheryEvent::where('id',$participant->event_id)->first();
+            $admin_have_event = Admin::where('id',$event->admin_id)->first();
+            $category_label = ArcheryEventCategoryDetail::getCategoryLabel($event_category_detail->id);
+            $note = $event->name." (".$category_label.")";
+            $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[register event] ".$note,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+            ];
+            if($transaction_log->include_payment_gateway_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[fee payment register event] ".$note,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => -1 * $transaction_log->include_payment_gateway_fee,
+                ];
+            }
+            if($transaction_log->include_my_archery_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[fee MyArchery register event] ".$note,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+                ];
+            }
+            EoCashFlow::insert($cash_flow);
+        }
     }
 
     private static function orderOfficial($transaction_log, $status)
@@ -492,5 +562,38 @@ class PaymentGateWay
         $archery_event_official->update([
             'status' => $status
         ]);
+
+        // create cash flow
+        if($status == 1){
+            $event_official_detail = ArcheryEventOfficialDetail::where('id',$archery_event_official->event_official_detail_id)->first();
+            $event = ArcheryEvent::where('id',$event_official_detail->event_id)->first();
+            $admin_have_event = Admin::where('id',$event->admin_id)->first();
+            $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[register official event] ".$event->name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+            ];
+            if($transaction_log->include_payment_gateway_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[fee payment register official event] ".$event->name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => -1 * $transaction_log->include_payment_gateway_fee,
+                ];
+            }
+            if($transaction_log->include_my_archery_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[fee MyArchery register official event] ".$event->name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+                ];
+            }
+            EoCashFlow::insert($cash_flow);
+        }
     }
 }
