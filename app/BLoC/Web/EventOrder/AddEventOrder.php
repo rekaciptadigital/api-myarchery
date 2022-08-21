@@ -47,7 +47,7 @@ class AddEventOrder extends Transactional
 
     protected function process($parameters)
     {
-        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bank_transfer";
+        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
         
         $user = Auth::guard('app-api')->user();
         $event_category_id = $parameters->get('event_category_id');
