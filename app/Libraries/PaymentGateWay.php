@@ -259,6 +259,7 @@ class PaymentGateWay
 
     public static function createLinkOY()
     {
+        $payment_methode = ["QA","EWALLET","QRIS","CREDIT_CARD"];
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
@@ -270,6 +271,12 @@ class PaymentGateWay
         }
         if($payment_methode_detail["id"] == "EWALLET"){
             $list_enabled_ewallet = $payment_methode_detail["list"];
+        }
+        $payment_methode_disabled = [];
+        foreach ($payment_methode as $key => $value) {
+            if($payment_methode_detail["id"] != $value){
+                $payment_methode_disabled[] = $value;
+            }
         }
         $desc = "my archery product";
         $invoice_items = [];
@@ -314,6 +321,7 @@ class PaymentGateWay
 
         if($payment_methode_detail["id"] != "default"){
             $body["list_enable_payment_method"] = $payment_methode_detail["id"];
+            $body["list_disabled_payment_methods"] = count($payment_methode_disabled) > 0 ? implode(",",$payment_methode_disabled) : "";
         }
         // Session::forget('_old_order_id');
         $client = new \GuzzleHttp\Client();
