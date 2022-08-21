@@ -185,7 +185,7 @@ class PaymentGateWay
                     "label" => "Transfer Bank",
                     "list" => ["002","008","009","013","022"],
                     "fee_type" => "nominal",
-                    "fee" => 4000,
+                    "fee" => 4440,
                 ],
                 "dana" => [
                     "id" => "EWALLET",
@@ -280,8 +280,10 @@ class PaymentGateWay
         }
         $desc = "my archery product";
         $invoice_items = [];
+        $amount = 0;
         foreach (self::$item_details as $key => $value) {
             if($value["id"] != "payment_fee"){
+                $amount = $amount + $value["price"];
                 $invoice_items[] = (object)[
                     "item"=>$value["name"], 
                     "description"=>$value["id"]." | ".$value["name"], 
@@ -292,7 +294,7 @@ class PaymentGateWay
             }
         }
         $total_amount = self::$transaction_details["gross_amount"];
-        if(!self::$have_payment_gateway_fee){
+        if(self::$have_payment_gateway_fee){
             $total_amount = $total_amount + self::$payment_gateway_fee;
         }
         if(self::$have_fee_myarchery){
@@ -306,7 +308,7 @@ class PaymentGateWay
             "notes" => "",
             "invoice_items" => $invoice_items,
             "sender_name" => $customer_details["first_name"]." ".$customer_details["last_name"],
-            "amount" => $total_amount,
+            "amount" => $amount,
             'email' => $customer_details["email"],
             "phone_number" => $customer_details["phone"],
             "is_open" => false,
