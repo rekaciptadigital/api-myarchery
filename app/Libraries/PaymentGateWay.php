@@ -259,7 +259,7 @@ class PaymentGateWay
 
     public static function createLinkOY()
     {
-        $payment_methode = ["QA","EWALLET","QRIS","CREDIT_CARD"];
+        $payment_methode = ["VA","CREDIT_CARD","DEBIT_CARD","QRIS","EWALLET","OFFLINE_CASH_IN"];
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
