@@ -32,7 +32,7 @@ class AddOrderOfficial extends Retrieval
 
         $club_id = $parameters->get('club_id');
         $event_id = $parameters->get('event_id');
-        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bank_transfer";
+        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
         $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY","midtrans");
         $time_now = time();
 

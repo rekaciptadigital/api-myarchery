@@ -149,7 +149,7 @@ class PaymentGateWay
                     "fee_type" => "nominal",
                     "fee" => 0,
                 ],
-                "bank_transfer" => [
+                "bankTransfer" => [
                     "id" => "bank_transfer",
                     "label" => "Transfer Bank",
                     "list" => [""],
@@ -180,7 +180,7 @@ class PaymentGateWay
                     "fee_type" => "nominal",
                     "fee" => 0,
                 ],
-                "bank_transfer" => [
+                "bankTransfer" => [
                     "id" => "VA",
                     "label" => "Transfer Bank",
                     "list" => ["002","008","009","013","022"],
