@@ -379,7 +379,7 @@ class PaymentGateWay
             "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK")
         ];
     }
-
+    
     public static function createLinkPaymentMidtrans()
     {
         $transaction_details = self::$transaction_details;
@@ -423,6 +423,57 @@ class PaymentGateWay
             "client_key" => env("MIDTRANS_CLIENT_KEY"),
             "client_lib_link" => env("MIDTRANS_CLIENT_LIB_LINK")
         ];
+    }
+
+    public static function notificationCallbackPaymnetOy($parameters){
+        $order_id = $parameters->get('partner_trx_id');
+
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', env('OYID_BASEURL') . '/api/payment-checkout/status?send_callback=true&partner_tx_id=' . $partner_trx_id, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'x-oy-username' => env('OYID_USERNAME',"myarchery"),
+                'x-api-key' => env('OYID_APIKEY',"4044e330-90e2-4a01-8afa-1c432a8c140e"),
+            ],
+            'timeout' => 50,
+        ]);
+
+        $result = json_decode((string) $response->getBody());
+        if (!$result->success) {
+            return false;
+        }
+        
+        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
+        if (!$transaction_log || $transaction_log->status == 1) {
+            return false;
+        }
+        if ($result->data->status == 'complete') {
+            $status = 1;
+        } else if ($result->data->status == 'processing') {
+            $status = 4;
+            // $transaction_log->expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
+        } else if ($result->data->status == 'failed') {
+            $status = 3;
+        }
+
+        $transaction_log->status = $status;
+        $activity = \json_decode($transaction_log->transaction_log_activity, true);
+        $activity["notification_callback_" . $status] = \json_encode($result);
+        $transaction_log->transaction_log_activity = \json_encode($activity);
+        $transaction_log->save();
+
+        if (substr($transaction_log->order_id, 0, strlen(env("ORDER_OFFICIAL_ID_PREFIX"))) == env("ORDER_OFFICIAL_ID_PREFIX")) {
+            if ($status == 1) {
+                return self::orderOfficial($transaction_log, $status);
+            }
+        } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_ID_PREFIX"))) == env("ORDER_ID_PREFIX")) {
+            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
+            if ($status == 1) {
+                return self::orderEvent($transaction_log, $status);
+            }
+        }
+
+        return true;
     }
 
     public static function notificationCallbackPaymnet()
