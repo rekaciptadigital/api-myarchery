@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Redis;
 class AddEventOrder extends Transactional
 {
     var $gateway = "";
+    var $have_fee_payment_gateway = false;
     var $payment_methode = "";
     public function getDescription()
     {
@@ -71,6 +72,8 @@ class AddEventOrder extends Transactional
         if (!$event) {
             throw new BLoCException("event tidak tersedia");
         }
+
+        $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
