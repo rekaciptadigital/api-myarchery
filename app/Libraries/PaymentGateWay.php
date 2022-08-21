@@ -147,6 +147,7 @@ class PaymentGateWay
                     "label" => "Default",
                     "list" => ["bca_va", "bni_va", "bri_va", "gopay", "other_va"],
                     "fee_type" => "nominal",
+                    "active" => $have_fee,
                     "fee" => 0,
                 ],
                 "bankTransfer" => [
@@ -154,6 +155,7 @@ class PaymentGateWay
                     "label" => "Transfer Bank",
                     "list" => [""],
                     "fee_type" => "nominal",
+                    "active" => $have_fee,
                     "fee" => 4000,
                 ],
                 "gopay" => [
@@ -161,6 +163,7 @@ class PaymentGateWay
                     "label" => "Gopay",
                     "list" => ["gopay"],
                     "fee_type" => "percentage",
+                    "active" => $have_fee,
                     "fee" => 2,
                 ],
                 "qris" => [
@@ -168,6 +171,7 @@ class PaymentGateWay
                     "label" => "Qris",
                     "list" => ["qris"],
                     "fee_type" => "percentage",
+                    "active" => $have_fee,
                     "fee" => 0.7
                 ],
             ],
@@ -178,6 +182,7 @@ class PaymentGateWay
                     "label" => "Default",
                     "list" => ["bca_va", "bni_va", "bri_va", "gopay", "other_va"],
                     "fee_type" => "nominal",
+                    "active" => $have_fee,
                     "fee" => 0,
                 ],
                 "bankTransfer" => [
@@ -185,6 +190,7 @@ class PaymentGateWay
                     "label" => "Transfer Bank",
                     "list" => ["002","008","009","013","022"],
                     "fee_type" => "nominal",
+                    "active" => $have_fee,
                     "fee" => 4440,
                 ],
                 "dana" => [
@@ -192,6 +198,7 @@ class PaymentGateWay
                     "label" => "Dana",
                     "list" => ["dana"],
                     "fee_type" => "percentage",
+                    "active" => $have_fee,
                     "fee" => 2,
                 ],
                 "qris" => [
@@ -199,6 +206,7 @@ class PaymentGateWay
                     "label" => "Qris",
                     "list" => ["qris"],
                     "fee_type" => "percentage",
+                    "active" => $have_fee,
                     "fee" => 0.7
                 ],
                 ]
