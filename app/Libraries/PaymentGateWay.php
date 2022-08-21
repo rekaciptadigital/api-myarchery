@@ -259,7 +259,6 @@ class PaymentGateWay
 
     public static function createLinkOY()
     {
-        $payment_methode = ["QA","EWALLET","QRIS","CREDIT_CARD"];
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
@@ -305,9 +304,9 @@ class PaymentGateWay
             "phone_number" => $customer_details["phone"],
             "is_open" => false,
             "step" => "select-payment-method",
-            "include_admin_fee" => self::$have_payment_gateway_fee ? false : true,
-            "list_enabled_banks" => explode(",",$list_enabled_banks),
-            "list_enabled_ewallet" => explode(",",$list_enabled_ewallet),
+            "include_admin_fee" => self::$have_payment_gateway_fee ? true : false,
+            "list_enabled_banks" => count($list_enabled_banks) > 0 ? implode(",",$list_enabled_banks) : "",
+            "list_enabled_ewallet" => count($list_enabled_ewallet) > 0 ? implode(",",$list_enabled_ewallet) : "",
             "expiration" => date('Y-m-d H:i:s', $expired_time),
         ];
         if(self::$have_payment_gateway_fee)
@@ -426,10 +425,10 @@ class PaymentGateWay
     }
 
     public static function notificationCallbackPaymnetOy($parameters){
-        $order_id = $parameters->get('partner_trx_id');
+        $order_id = $parameters->get('partner_tx_id');
 
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', env('OYID_BASEURL') . '/api/payment-checkout/status?send_callback=true&partner_tx_id=' . $partner_trx_id, [
+        $response = $client->request('GET', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=true&partner_tx_id=' . $order_id, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-oy-username' => env('OYID_USERNAME',"myarchery"),
@@ -447,13 +446,14 @@ class PaymentGateWay
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
+        $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
         } else if ($result->data->status == 'processing') {
             $status = 4;
             // $transaction_log->expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
-        } else if ($result->data->status == 'failed') {
-            $status = 3;
+        } else if ($result->data->status == 'expired') {
+            $status = 2;
         }
 
         $transaction_log->status = $status;
