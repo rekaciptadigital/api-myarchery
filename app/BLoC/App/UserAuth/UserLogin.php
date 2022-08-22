@@ -34,8 +34,10 @@ class UserLogin extends Transactional
             if ($user->email_verified != 1) {
                 $otp_code = User::sendOtpAccountVerification($user->id);
                 date_default_timezone_set("Asia/Jakarta");
-                $expired_datetime = date("l d-F-Y", $otp_code->expired_time);
-                return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $expired_datetime;
+
+                $expired_date = date("l-d-F-Y", $otp_code->expired_time);
+                $date_format = dateFormatTranslate($expired_date);
+                return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time);
             }
         }
         $user = Auth::guard('app-api')->user();
