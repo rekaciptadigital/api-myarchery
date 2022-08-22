@@ -84,13 +84,13 @@ class FindParticipantScoreBySchedule extends Retrieval
                 ->where("type", $type)
                 ->first();
             $output = (object)array();
-            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) array());
-            $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
-            $output->score = $s;
             $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
             if (!$category_detail) {
                 throw new BLoCException("kategori tidak ditemukan");
             }
+            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail),null, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->count_stage, $category_detail->count_shot_in_stage);
+            $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
+            $output->score = $s;
             $output->category = $category_detail->getCategoryDetailById($category_detail->id);
             $schedule = $value;
             $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
@@ -124,13 +124,13 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->first();
         $output = (object)array();
 
-        $s = isset($score) ? ArcheryScoring::makeScoringFormat((object)\json_decode($score->scoring_detail), $session) : ArcheryScoring::makeScoringFormat((object) array(), $session);
         $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
         $output->score = $s;
         $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category_detail) {
             throw new BLoCException("kategori tidak ditemukan");
         }
+        $s = isset($score) ? ArcheryScoring::makeScoringFormat((object)\json_decode($score->scoring_detail), $session, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), $session, $category_detail->count_stage, $category_detail->count_shot_in_stage);
         $output->category = $category_detail->getCategoryDetailById($category_detail->id);
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
@@ -159,13 +159,13 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->where("type", $type)
             ->first();
         $output = (object)array();
-        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail)) : ArcheryScoring::makeScoringFormat((object) array());
         $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
         $output->score = $s;
         $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category_detail) {
             throw new BLoCException("kategori tidak ditemukan");
         }
+        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->count_stage, $category_detail->count_shot_in_stage);
         $output->category = $category_detail->getCategoryDetailById($category_detail->id);
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
