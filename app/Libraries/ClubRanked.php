@@ -15,7 +15,7 @@ use DAI\Utils\Exceptions\BLoCException;
 class ClubRanked
 {
 
-    public static function getEventRanked($event_id, $age_category_id)
+    public static function getEventRanked($event_id, $age_category_id = null)
     {
         $output = [];
         $club_ids = [];
