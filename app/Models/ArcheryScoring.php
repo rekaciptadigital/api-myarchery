@@ -94,7 +94,7 @@ class ArcheryScoring extends Model
             "m" => 0,
         ];
     }
-    protected function makeScoringFormat(object $scoring, $session = null, $total_shot = 6, $total_rambahan = 6)
+    protected function makeScoringFormat(object $scoring, $session = null, $count_stage = 6, $count_shot_in_stage = 6)
     {
         $scores = [];
         // print_r(json_encode($scoring));
@@ -110,9 +110,9 @@ class ArcheryScoring extends Model
                 }
                 return $scores;
             }
-            for ($i=0; $i < $total_rambahan ; $i++) { 
+            for ($i=0; $i < $count_stage ; $i++) { 
                 $score_space = [];
-                for ($x=0; $x < $total_shot; $x++) { 
+                for ($x=0; $x < $count_shot_in_stage; $x++) { 
                     $score_space[] = "";
                 }
                 $scores[$i+1] = $score_space;
