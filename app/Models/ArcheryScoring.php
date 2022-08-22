@@ -123,11 +123,6 @@ class ArcheryScoring extends Model
         // throw new BLoCException($session);
         if ($session == 11) {
             foreach ($scoring as $key => $value) {
-                // print_r(json_encode($value));
-                // $score = [];
-                // foreach ($value as $k => $v) {
-                //     $score[] = (string)$v->id;
-                // }
                 $scores[$key] = $value;
             }
             return $scores;
