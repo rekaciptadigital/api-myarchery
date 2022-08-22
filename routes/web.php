@@ -489,8 +489,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
                 $router->get('/list-capacity-area', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListCapacityArea']);
                 $router->post('/complete-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:completeVenuePlace']);
-                $router->get('/list-venue-place-all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListAllVenuePlace']);
-
 
                 $router->group(['prefix' => 'schedule'], function () use ($router) {
                     $router->group(['prefix' => 'operational'], function () use ($router) {
