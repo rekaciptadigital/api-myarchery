@@ -446,7 +446,7 @@ class PaymentGateWay
         $order_id = $parameters->get('partner_tx_id');
 
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=true&partner_tx_id=' . $order_id, [
+        $response = $client->request('GET', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=false&partner_tx_id=' . $order_id, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-oy-username' => env('OYID_USERNAME',"myarchery"),
