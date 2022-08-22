@@ -82,7 +82,7 @@ class VenuePlace extends Model
         return $output;
     }
 
-    protected function getAllListVenue($filter_status = '')
+    protected function getAllListVenue($filter_status = '', $filter_type = '', $limit, $offset)
     {
         $datas = VenuePlace::query();  
 
@@ -91,7 +91,12 @@ class VenuePlace extends Model
             return $query->where("status", $filter_status);
         });
 
-        $data_collection = $datas->get();
+        // filter by place type
+        $datas->when($filter_type, function ($query) use ($filter_type) {
+            return $query->where("place_type", $filter_type);
+        });
+
+        $data_collection = $datas->orderBy('created_at', 'DESC')->limit($limit)->offset($offset)->get();
    
         $result = [];
         foreach ($data_collection as $data) {
@@ -135,10 +140,32 @@ class VenuePlace extends Model
                 }
             }
 
+            $products = VenuePlaceProduct::where("place_id", "=", $data->id)->get();
+            $products_data = [];
+            $product_prices = [];
+            if ($products) {
+                foreach ($products as $key => $value) {
+                    $products_data[] = [
+                        'id' => $value->id,
+                        'place_id' => $value->place_id,
+                        'product_name' => $value->product_name,
+                        'weekday_price' => $value->weekday_price,
+                        'weekend_price' => $value->weekend_price,
+                    ];
+
+                    array_push($product_prices, $value->weekday_price);
+                    array_push($product_prices, $value->weekend_price);
+                }
+            }
+            $min_product_price = (!empty($product_prices)) == true ? min($product_prices) : 0;
+
             $data['admin'] = $admin_venue;
             $data['facilities'] = $facilities_data;
             $data['galleries'] = $galleries_data;
             $data['capacity_area'] = $capacity_area_data;
+            $data['products'] = $products_data;
+            $data['min_product_price'] = $min_product_price;
+
             array_push($result, $data);
         }
         return $result;
