@@ -54,6 +54,7 @@ use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
 use App\BLoC\App\UserAuth\ValidateAccoutVerification;
 use App\BLoC\App\Enterprise\GetDetailVenuePlace;
+use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -122,7 +123,8 @@ class AppServiceProvider extends ServiceProvider
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
         $this->registerService("getDetailVenuePlace", GetDetailVenuePlace::class);
-        
+        $this->registerService("getListProductByVenuePlace", GetListProductByVenuePlace::class);
+
         // -------------------------------------------- End of Archery Enterprise Service --------------------------------------------- //
 
 
