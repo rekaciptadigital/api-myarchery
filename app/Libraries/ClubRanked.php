@@ -7,7 +7,6 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventEliminationGroup;
-use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryScoring;
 use App\Models\City;
@@ -16,7 +15,7 @@ use DAI\Utils\Exceptions\BLoCException;
 class ClubRanked
 {
 
-    public static function getEventRanked($event_id)
+    public static function getEventRanked($event_id, $age_category_id)
     {
         $output = [];
         $club_ids = [];
@@ -26,15 +25,30 @@ class ClubRanked
             "archery_event_elimination_members.*",
             "archery_event_participants.club_id",
             "archery_event_participants.event_category_id"
-        )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->join("archery_event_elimination_members", "archery_event_participant_members.id", "=", "archery_event_elimination_members.member_id")
-            ->where(function ($query) use ($max_pos) {
-                return $query->where('archery_event_elimination_members.position_qualification', '<', $max_pos)
-                    ->orWhere('archery_event_elimination_members.elimination_ranked', '<', $max_pos);
+        )->join(
+            "archery_event_participants",
+            "archery_event_participant_members.archery_event_participant_id",
+            "=",
+            "archery_event_participants.id"
+        )->join(
+            "archery_event_elimination_members",
+            "archery_event_participant_members.id",
+            "=",
+            "archery_event_elimination_members.member_id"
+        )->where(function ($query) use ($max_pos) {
+            return $query->where('archery_event_elimination_members.position_qualification', '<', $max_pos)
+                ->orWhere('archery_event_elimination_members.elimination_ranked', '<', $max_pos);
+        })->where("archery_event_participants.event_id", $event_id)
+            ->when($age_category_id, function ($query, $age_category_id) {
+                $query->where('age_category_id', $age_category_id);
             })
-            ->where("archery_event_participants.event_id", $event_id)
             ->where("archery_event_participants.club_id", "!=", 0)
-            ->where("archery_event_participants.status", 1)->get();
+            ->where("archery_event_participants.status", 1)
+            ->get();
+
+        // return $members;
+
+
 
         foreach ($members as $key => $value) {
             if (!isset($cat_detail[$value->event_category_id])) {
@@ -58,7 +72,12 @@ class ClubRanked
         }
 
         // TODO SEMENTARA
-        $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])->get();
+        $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)
+            ->whereIn("team_category_id", ["male_team", "female_team", "mix_team"])
+            ->when($age_category_id, function ($query, $age_category_id) {
+                $query->where('age_category_id', $age_category_id);
+            })
+            ->get();
 
         foreach ($teams as $t => $team) {
             if (!isset($cat_detail[$team->id]))
@@ -121,6 +140,9 @@ class ClubRanked
                     ->orWhere('archery_event_elimination_group_teams.elimination_ranked', '<', $max_pos);
             })
             ->where("archery_event_participants.event_id", $event_id)
+            ->when($age_category_id, function ($query, $age_category_id) {
+                $query->where('age_category_id', $age_category_id);
+            })
             ->where("archery_event_participants.club_id", "!=", 0)
             ->where("archery_event_participants.status", 1)
             ->get();
