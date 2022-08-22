@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\UserLoginToken;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 
 class UserLogin extends Transactional
@@ -22,13 +24,19 @@ class UserLogin extends Transactional
             "password" => $parameters->password,
             "email_verified" => 1
         ]);
-        $error_message = "Password salah";
+
         if (!$token) {
             $user = User::where("email", $parameters->get("email"))->first();
             if (!$user) {
-                $error_message = "Email anda belum terdaftar";
+                throw new BLoCException("Email anda belum terdaftar");
             }
-            throw new BLoCException($error_message);
+
+            if ($user->email_verified != 1) {
+                $otp_code = User::sendOtpAccountVerification($user->id);
+                date_default_timezone_set("Asia/Jakarta");
+                $expired_datetime = date("l d-F-Y", $otp_code->expired_time);
+                return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $expired_datetime;
+            }
         }
         $user = Auth::guard('app-api')->user();
         $private_signature = Auth::payload()["jti"];

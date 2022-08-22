@@ -39,23 +39,7 @@ class UserRegister extends Transactional
         $user->email_verified = 0;
         $user->save();
 
-        $code = substr(str_shuffle('1234567890'), 0, 5);
-
-        $otp_code = OtpVerificationCode::where("email", $user->email)->first();
-        if (!$otp_code) {
-            $otp_code = new OtpVerificationCode;
-        }
-        $otp_code->user_id = $user->id;
-        $otp_code->email = $user->email;
-        $otp_code->otp_code = $code;
-        $otp_code->expired_time = strtotime("+10 minutes", time());
-        $otp_code->save();
-
-        Queue::push(new AccountVerificationJob([
-            "code" => $code,
-            "email" => $user->email,
-            "name" => $user->name,
-        ]));
+        User::sendOtpAccountVerification($user->id);
 
         return "email success dikirimkan";
     }
