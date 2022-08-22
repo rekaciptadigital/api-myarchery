@@ -48,6 +48,8 @@ class VenuePlace extends Model
                                 ->where("venue_place_capacity_area.place_id", "=", $id)
                                 ->where("venue_master_place_capacity_area.eo_id", "!=", 0)
                                 ->get();  
+
+        $data['schedule_operational'] = VenuePlaceScheduleOperational::where("place_id", "=", $id)->get();
                        
         return $data;
     }

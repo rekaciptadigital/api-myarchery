@@ -53,6 +53,7 @@ use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
 use App\BLoC\App\UserAuth\ValidateAccoutVerification;
+use App\BLoC\App\Enterprise\GetDetailVenuePlace;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -117,6 +118,14 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getListParticipantByCategorySeriesId", GetListParticipantByCategorySeriesId::class);
         $this->registerService("getDetailSeriesById", GetDetailSeriesById::class);
         $this->registerService("getEventOrderV2", getEventOrderV2::class);
+
+
+        // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
+        $this->registerService("getDetailVenuePlace", GetDetailVenuePlace::class);
+        
+        // -------------------------------------------- End of Archery Enterprise Service --------------------------------------------- //
+
+
     }
 
     private function registerService($serviceName, $className)
