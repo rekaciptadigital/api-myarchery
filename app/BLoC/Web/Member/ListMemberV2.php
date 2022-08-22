@@ -58,6 +58,7 @@ class ListMemberV2 extends Retrieval
             ->leftJoin('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
             ->join("users", "users.id", "=", "archery_event_participants.user_id")
             ->where("archery_event_participants.event_id", $event_id)
+            ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.type", "individual");
 
 

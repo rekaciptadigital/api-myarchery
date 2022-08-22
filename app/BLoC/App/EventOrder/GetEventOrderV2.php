@@ -2,16 +2,12 @@
 
 namespace App\BLoC\App\EventOrder;
 
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventOfficial;
-use App\Models\ArcheryEventOfficialDetail;
 use App\Models\TransactionLog;
-use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Exceptions\BLoCException;
 
 class GetEventOrderV2 extends Retrieval
@@ -28,11 +24,14 @@ class GetEventOrderV2 extends Retrieval
         $output = [];
 
         // official
-        $archery_event_official = ArcheryEventOfficial::where('user_id', $user_login->id)->orderBy('id', 'DESC');
+        $archery_event_official = ArcheryEventOfficial::where('user_id', $user_login->id)->where("status", "!=", 6)->orderBy('id', 'DESC');
         $archery_event_official->when($status, function ($query) use ($status) {
             if ($status == 'pending') {
-                return $query->select('archery_event_official.*')->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_official.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '>', time());
+                return $query->select('archery_event_official.*')
+                    ->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_official.transaction_log_id')
+                    ->where("archery_event_official.status", 4)
+                    ->where('transaction_logs.status', 4)
+                    ->where('transaction_logs.expired_time', '>', time());
             }
             if ($status == 'success') {
                 return $query->where('archery_event_official.status', 1);
@@ -40,7 +39,13 @@ class GetEventOrderV2 extends Retrieval
 
             if ($status == 'expired') {
                 return $query->select('archery_event_official.*')->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_official.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '<', time());
+                    ->where(function ($q) {
+                        return $q->where("archery_event_official.status", 2)
+                            ->orWhere(function ($qr) {
+                                return $qr->where('transaction_logs.status', 4)
+                                    ->where('transaction_logs.expired_time', '<', time());
+                            });
+                    });
             }
         });
 
@@ -63,11 +68,13 @@ class GetEventOrderV2 extends Retrieval
         }
 
         // peserta
-        $participants = ArcheryEventParticipant::where("user_id", $user_login->id);
+        $participants = ArcheryEventParticipant::where("user_id", $user_login->id)->where("status", "!=", 6);
         $participants->when($status, function ($query) use ($status) {
             if ($status == 'pending') {
                 return $query->select('archery_event_participants.*')->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '>', time());
+                    ->where("archery_event_participants.status", 4)
+                    ->where('transaction_logs.status', 4)
+                    ->where('transaction_logs.expired_time', '>', time());
             }
             if ($status == 'success') {
                 return $query->where('archery_event_participants.status', 1);
@@ -75,7 +82,14 @@ class GetEventOrderV2 extends Retrieval
 
             if ($status == 'expired') {
                 return $query->select('archery_event_participants.*')->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-                    ->where('transaction_logs.status', 4)->where('transaction_logs.expired_time', '<', time());
+                    ->where(function ($q) {
+                        return $q->where("archery_event_participants.status", 2)
+                            ->orWhere(function ($qr) {
+                                return $qr->where("archery_event_participants.status", 4)
+                                    ->where("transaction_logs.status", 4)
+                                    ->where("transaction_logs.expired_time", "<", time());
+                            });
+                    });
             }
         });
 
