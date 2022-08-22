@@ -35,7 +35,6 @@ class ReportMedalClub extends Retrieval
         $event_id = $parameters->get('event_id');
 
         $pages = array();
-        $logo_event = '<img src="' . Storage::disk('public')->path('logo/logo-event-series-2.png') . '" alt="" width="80%"></img>';
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
@@ -57,10 +56,10 @@ class ReportMedalClub extends Retrieval
         }
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_event_cover = '<img src="' . Storage::disk('public')->path("logo/logo-event-series-2.png") . '" alt="" width="25%"></img>';
+        $logo_event = $archery_event->logo;
         $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
         $cover_page = view('report_medal_club/cover', [
-            'cover_event' => $logo_event_cover,
+            'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
             'event_name_report' => $event_name_report,
             'event_date_report' => $event_date_report,
