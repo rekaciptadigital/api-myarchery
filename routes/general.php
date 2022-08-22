@@ -49,6 +49,8 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);
         $router->get('/get-city-country', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCityCountry']);
         $router->get('/get-country', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCountry']);
+        $router->get('/get-winer-participant-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMedalParticipantByEventId']);
+        
     });
 });
 
