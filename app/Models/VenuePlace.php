@@ -63,9 +63,12 @@ class VenuePlace extends Model
             return $query->where("status", $filter_status);
         });
 
+        $result['total_data'] = count($datas->get());
+        $result['total_page'] = ceil(count($datas->get()) / $limit);
+        $result['data'] = [];
+
         $data_collection = $datas->orderBy('created_at', 'DESC')->limit($limit)->offset($offset)->get();
    
-        $output = [];
         foreach ($data_collection as $data) {
             $galleries = VenuePlaceGallery::where("place_id", "=", $data->id)->get();   
             $galleries_data = [];
@@ -79,9 +82,9 @@ class VenuePlace extends Model
             }
 
             $data['galleries'] = $galleries_data;
-            array_push($output, $data);
+            array_push($result['data'], $data);
         }
-        return $output;
+        return $result;
     }
 
     protected function getAllListVenue($filter_status = '', $filter_type = '', $limit, $offset)
@@ -98,9 +101,12 @@ class VenuePlace extends Model
             return $query->where("place_type", $filter_type);
         });
 
+        $result['total_data'] = count($datas->get());
+        $result['total_page'] = ceil(count($datas->get()) / $limit);
+        $result['data'] = [];
+
         $data_collection = $datas->orderBy('created_at', 'DESC')->limit($limit)->offset($offset)->get();
-   
-        $result = [];
+
         foreach ($data_collection as $data) {
             $admin_venue = Admin::where('eo_id', $data->eo_id)->first();
             $facilities = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
@@ -168,7 +174,7 @@ class VenuePlace extends Model
             $data['products'] = $products_data;
             $data['min_product_price'] = $min_product_price;
 
-            array_push($result, $data);
+            array_push($result['data'], $data);
         }
         return $result;
     }
