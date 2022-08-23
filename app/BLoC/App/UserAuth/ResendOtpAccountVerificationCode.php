@@ -3,10 +3,8 @@
 namespace App\BLoC\App\UserAuth;
 
 use App\Models\User;
-use App\Models\UserLoginToken;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class ResendOtpAccountVerificationCode extends Transactional
 {
@@ -18,13 +16,24 @@ class ResendOtpAccountVerificationCode extends Transactional
     protected function process($parameters)
     {
         $email = $parameters->get("email");
-        User::where
+        $user = User::where("email", $email)->where("email_verified", 0)->first();
+        if (!$user) {
+            throw new BLoCException("user not found");
+        }
+
+        $otp_code = User::sendOtpAccountVerification($user->id);
+
+        date_default_timezone_set("Asia/Jakarta");
+
+        $expired_date = date("l-d-F-Y", $otp_code->expired_time);
+        $date_format = dateFormatTranslate($expired_date);
+        return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time);
     }
 
     protected function validation($parameters)
     {
         return [
-            'email' => 'required',
+            'email' => "required|email:rfc,dns",
         ];
     }
 }
