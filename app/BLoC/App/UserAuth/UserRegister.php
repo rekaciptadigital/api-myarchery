@@ -39,25 +39,18 @@ class UserRegister extends Transactional
         $user->email_verified = 0;
         $user->save();
 
-        $code = substr(str_shuffle('1234567890'), 0, 5);
+        $otp_code = User::sendOtpAccountVerification($user->id);
 
-        $otp_code = OtpVerificationCode::where("email", $user->email)->first();
-        if (!$otp_code) {
-            $otp_code = new OtpVerificationCode;
-        }
-        $otp_code->user_id = $user->id;
-        $otp_code->email = $user->email;
-        $otp_code->otp_code = $code;
-        $otp_code->expired_time = strtotime("+10 minutes", time());
-        $otp_code->save();
+        date_default_timezone_set("Asia/Jakarta");
 
-        Queue::push(new AccountVerificationJob([
-            "code" => $code,
-            "email" => $user->email,
-            "name" => $user->name,
-        ]));
-
-        return "email success dikirimkan";
+        $expired_date = date("l-d-F-Y", $otp_code->expired_time);
+        $date_format = dateFormatTranslate($expired_date);
+        return [
+            "email_verified" => $user->email_verified,
+            "status" => $user->email_verified == 1 ? "Verified" : "Not Verified",
+            "time_verified" => $otp_code->expired_time,
+            "message" => "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time)
+        ];
     }
 
     protected function validation($parameters)
