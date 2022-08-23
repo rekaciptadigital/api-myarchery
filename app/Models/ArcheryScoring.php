@@ -94,7 +94,7 @@ class ArcheryScoring extends Model
             "m" => 0,
         ];
     }
-    protected function makeScoringFormat(object $scoring, $session = null)
+    protected function makeScoringFormat(object $scoring, $session = null, $count_stage = 6, $count_shot_in_stage = 6)
     {
         $scores = [];
         // print_r(json_encode($scoring));
@@ -110,24 +110,19 @@ class ArcheryScoring extends Model
                 }
                 return $scores;
             }
-            $scores = [
-                "1" => ["", "", "", "", "", ""],
-                "2" => ["", "", "", "", "", ""],
-                "3" => ["", "", "", "", "", ""],
-                "4" => ["", "", "", "", "", ""],
-                "5" => ["", "", "", "", "", ""],
-                "6" => ["", "", "", "", "", ""],
-            ];
+            for ($i=0; $i < $count_stage ; $i++) { 
+                $score_space = [];
+                for ($x=0; $x < $count_shot_in_stage; $x++) { 
+                    $score_space[] = "";
+                }
+                $scores[$i+1] = $score_space;
+            }
+            
             return $scores;
         }
         // throw new BLoCException($session);
         if ($session == 11) {
             foreach ($scoring as $key => $value) {
-                // print_r(json_encode($value));
-                // $score = [];
-                // foreach ($value as $k => $v) {
-                //     $score[] = (string)$v->id;
-                // }
                 $scores[$key] = $value;
             }
             return $scores;
