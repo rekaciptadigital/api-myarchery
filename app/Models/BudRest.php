@@ -126,6 +126,8 @@ class BudRest extends Model
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
+                    "total_shot_per_stage" => $category->count_shot_in_stage,
+                    "total_stage" => $category->count_stage,
                     "qr" => $base64,
                     "event" => $output['event']
                 ]);
@@ -151,6 +153,8 @@ class BudRest extends Model
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
                             "qr" => $base64,
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
                             "event" => $output['event']
                         ]);
                         $mpdf->WriteHTML($html);
