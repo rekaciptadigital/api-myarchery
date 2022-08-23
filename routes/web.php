@@ -536,8 +536,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
-    $new_submission = VenuePlace::getAllListVenue(2, null, 1000, 0);
-    $submission_approved = VenuePlace::getAllListVenue(4, null, 1000, 0);
+    $new_submission = VenuePlace::getAllListVenue(2, null, null, 1000, 0);
+    $submission_approved = VenuePlace::getAllListVenue(4, null, null, 1000, 0);
 
     return view('enterprise/venue_submission_index', [
         "datas" => $new_submission,
