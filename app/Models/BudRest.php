@@ -32,9 +32,9 @@ class BudRest extends Model
             }
         }
         $mpdf = new Mpdf([
-            'margin_left' => 3,
-            'margin_right' => 3,
-            'margin_top' => 3,
+            'margin_left' => 1,
+            'margin_right' => 1,
+            'margin_top' => 1,
             'mode' => 'utf-8',
             'format' => 'A4-p',
             'orientation' => 'P',
