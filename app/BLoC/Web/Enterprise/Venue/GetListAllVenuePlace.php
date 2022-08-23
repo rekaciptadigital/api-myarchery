@@ -24,9 +24,10 @@ class GetListAllVenuePlace extends Retrieval
         $offset = ($page - 1) * $limit;
         $filter_status = $parameters->get("status");
         $filter_type = $parameters->get("place_type");
+        $name = $parameters->get("name"); // search by name
 
 
-        $venue_places = VenuePlace::getAllListVenue($filter_status, $filter_type, $limit, $offset);
+        $venue_places = VenuePlace::getAllListVenue($filter_status, $filter_type, $name, $limit, $offset);
 
         return $venue_places;
     }

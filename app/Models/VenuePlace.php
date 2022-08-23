@@ -87,9 +87,14 @@ class VenuePlace extends Model
         return $result;
     }
 
-    protected function getAllListVenue($filter_status = '', $filter_type = '', $limit, $offset)
+    protected function getAllListVenue($filter_status = '', $filter_type = '', $name = '', $limit, $offset)
     {
         $datas = VenuePlace::query();  
+
+        // search by name
+        $datas->when($name, function ($query) use ($name) {
+            return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
+        });
 
         // filter by status
         $datas->when($filter_status, function ($query) use ($filter_status) {
