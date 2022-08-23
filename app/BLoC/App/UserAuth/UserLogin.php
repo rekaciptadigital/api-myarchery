@@ -37,7 +37,12 @@ class UserLogin extends Transactional
 
                 $expired_date = date("l-d-F-Y", $otp_code->expired_time);
                 $date_format = dateFormatTranslate($expired_date);
-                return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time);
+                return [
+                    "email_verified" => $user->email_verified,
+                    "status" => $user->email_verified == 1 ? "Verified" : "Not Verified",
+                    "time_verified" => $otp_code->expired_time,
+                    "message" => "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time)
+                ];
             }
         }
         $user = Auth::guard('app-api')->user();
@@ -56,7 +61,9 @@ class UserLogin extends Transactional
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => Auth::factory()->getTTL()
+            'expires_in' => Auth::factory()->getTTL(),
+            'email_verified' => $user->email_verified,
+            'status' => $user->email_verified == 1 ? "Verified" : "Not Verified",
         ];
     }
 

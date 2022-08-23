@@ -45,7 +45,12 @@ class UserRegister extends Transactional
 
         $expired_date = date("l-d-F-Y", $otp_code->expired_time);
         $date_format = dateFormatTranslate($expired_date);
-        return "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time);
+        return [
+            "email_verified" => $user->email_verified,
+            "status" => $user->email_verified == 1 ? "Verified" : "Not Verified",
+            "time_verified" => $otp_code->expired_time,
+            "message" => "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time)
+        ];
     }
 
     protected function validation($parameters)

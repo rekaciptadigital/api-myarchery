@@ -52,7 +52,9 @@ class ValidateAccoutVerification extends Transactional
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => Auth::factory()->getTTL()
+            'expires_in' => Auth::factory()->getTTL(),
+            'email_verified' => $user->email_verified,
+            'status' => $user->email_verified == 1 ? "Verified" : "Not Verified",
         ];
     }
 
