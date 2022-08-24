@@ -91,4 +91,21 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             });
         });
     });
+
+
+    // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
+    $router->group(['prefix' => 'enterprise'], function () use ($router) {
+        $router->group(['prefix' => 'v1'], function () use ($router) {
+
+            $router->group(['prefix' => 'venue', 'middleware' => 'auth.user'], function () use ($router) {
+                $router->get('/list-venue-place-all', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListAllVenuePlace']);
+                $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailVenuePlace']);
+                $router->get('/list-product', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListProductByVenuePlace']);
+                $router->get('/info-order-product', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getInfoOrderProduct']);
+
+            });
+            
+        });
+    });
+    // ----------------------------------------------------------- End Archery Enterprise ----------------------------------------------------------- //
 });
