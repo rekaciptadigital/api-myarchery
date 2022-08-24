@@ -464,6 +464,12 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         $time_now = time();
 
+        $participant = ArcheryEventParticipant::where("user_id", $user->id)
+            ->where("status", 6)
+            ->where("expired_booking_time", ">", time())
+            ->where("event_category_id", $event_category_detail->id)
+            ->first();
+
         // cek total pendaftar yang masih pending dan sukses
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
             ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
@@ -587,20 +593,28 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0);
+        if ($participant) {
+            $participant->status = 4;
+            $participant->save();
+        } else {
+            // insert data participant
+            // $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0);
+            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0);
+        }
+
 
         if ($price < 1) {
-            $participant_new->status = 1;
-            $participant_new->save();
+            $participant->status = 1;
+            $participant->save();
 
             $res = [
-                "archery_event_participant_id" => $participant_new->id,
+                "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
             return $this->composeResponse($res);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
@@ -608,10 +622,10 @@ class AddEventOrder extends Transactional
             // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
-        $participant_new->transaction_log_id = $payment->transaction_log_id;
-        $participant_new->save();
+        $participant->transaction_log_id = $payment->transaction_log_id;
+        $participant->save();
         $res = [
-            "archery_event_participant_id" => $participant_new->id,
+            "archery_event_participant_id" => $participant->id,
             "payment_info" => $payment
         ];
         return $this->composeResponse($res);
