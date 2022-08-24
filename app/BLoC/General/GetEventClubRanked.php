@@ -121,8 +121,4 @@ class GetEventClubRanked extends Retrieval
             "bronze" => $bronze_medal
         ];
     }
-
-    // private function getClubMedalEliminationIndividualAndTeam($club_id, $category){
-    //     ArcheryEventElimination::
-    // }
 }

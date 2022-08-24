@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
+use App\BLoC\General\GetAgeCategoryByEventId;
 use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use Illuminate\Support\ServiceProvider;
@@ -20,6 +21,7 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getCityCountry", GetCityCountry::class);
         $this->registerService("getCountry", GetCountry::class);
         $this->registerService("getMedalParticipantByEventId", GetMedalParticipantByEventId::class);
+        $this->registerService("getAgeCategoryByEventId", GetAgeCategoryByEventId::class);
     }
 
     private function registerService($serviceName, $className)
