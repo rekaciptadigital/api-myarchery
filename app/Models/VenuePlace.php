@@ -26,12 +26,12 @@ class VenuePlace extends Model
                         "name" => $province ? $province->name : ""
         ];
 
-        $data['facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
+        $data['facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name', 'venue_master_place_facilities.icon as icon')
                                 ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                                 ->where("venue_place_facilities.place_id", "=", $id)
                                 ->where("venue_master_place_facilities.eo_id", "=", 0)
                                 ->get();  
-        $data['other_facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
+        $data['other_facilities'] = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name', 'venue_master_place_facilities.icon as icon')
                                 ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                                 ->where("venue_place_facilities.place_id", "=", $id)
                                 ->where("venue_master_place_facilities.eo_id", "!=", 0)
@@ -117,7 +117,7 @@ class VenuePlace extends Model
 
         foreach ($data_collection as $data) {
             $admin_venue = Admin::where('eo_id', $data->eo_id)->first();
-            $facilities = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name')
+            $facilities = VenuePlaceFacility::select('venue_place_facilities.master_place_facility_id as id', 'venue_master_place_facilities.name as name', 'venue_master_place_facilities.icon as icon')
                             ->leftJoin("venue_master_place_facilities", "venue_master_place_facilities.id", "=", "venue_place_facilities.master_place_facility_id")
                             ->where("venue_place_facilities.place_id", "=", $data->id)
                             ->get(); 
@@ -126,7 +126,8 @@ class VenuePlace extends Model
                 foreach ($facilities as $key => $value) {
                     $facilities_data[] = [
                         'id' => $value->id,
-                        'name' => $value->name
+                        'name' => $value->name,
+                        'icon' => $value->icon
                     ];
                 }
             }
