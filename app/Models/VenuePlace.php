@@ -11,6 +11,7 @@ class VenuePlace extends Model
     protected function detailVenueById($id)
     {
         $data = VenuePlace::where('venue_places.id', $id)->first();        
+        $products = VenuePlaceProduct::where("place_id", "=", $data->id)->get();
 
         $city = City::find($data->city_id);
         $data->city = [
@@ -51,6 +52,7 @@ class VenuePlace extends Model
 
         $data['schedule_operational'] = VenuePlaceScheduleOperational::where("place_id", "=", $id)->get();
         $data['admin'] = Admin::where("eo_id", "=", $data->eo_id)->first();
+        $data['min_product_price'] = $this->getMinProductPrice($products);
 
         return $data;
     }
@@ -156,7 +158,6 @@ class VenuePlace extends Model
 
             $products = VenuePlaceProduct::where("place_id", "=", $data->id)->get();
             $products_data = [];
-            $product_prices = [];
             if ($products) {
                 foreach ($products as $key => $value) {
                     $products_data[] = [
@@ -166,22 +167,30 @@ class VenuePlace extends Model
                         'weekday_price' => $value->weekday_price,
                         'weekend_price' => $value->weekend_price,
                     ];
-
-                    array_push($product_prices, $value->weekday_price);
-                    array_push($product_prices, $value->weekend_price);
                 }
             }
-            $min_product_price = (!empty($product_prices)) == true ? min($product_prices) : 0;
 
             $data['admin'] = $admin_venue;
             $data['facilities'] = $facilities_data;
             $data['galleries'] = $galleries_data;
             $data['capacity_area'] = $capacity_area_data;
             $data['products'] = $products_data;
-            $data['min_product_price'] = $min_product_price;
+            $data['min_product_price'] = $this->getMinProductPrice($products);
 
             array_push($result['data'], $data);
         }
         return $result;
+    }
+
+    protected function getMinProductPrice($products)
+    {
+        $product_prices = [];
+        if ($products) {
+            foreach ($products as $key => $value) {
+                array_push($product_prices, $value->weekday_price);
+                array_push($product_prices, $value->weekend_price);
+            }
+        }
+        return (!empty($product_prices)) == true ? min($product_prices) : 0;
     }
 }
