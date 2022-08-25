@@ -50,7 +50,8 @@ class VenuePlace extends Model
                                 ->get();  
 
         $data['schedule_operational'] = VenuePlaceScheduleOperational::where("place_id", "=", $id)->get();
-                       
+        $data['admin'] = Admin::where("eo_id", "=", $data->eo_id)->first();
+
         return $data;
     }
 
