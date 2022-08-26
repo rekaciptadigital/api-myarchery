@@ -46,7 +46,9 @@ class GetListTabCategoryByEventId extends Retrieval
                         $group_category_name = "semua kategori";
                         $response_category["type"] = 1;
                         $response_category["label"] = $group_category_name;
-                        $response_category["param_request_rank"] = null;
+                        $response_category["param_request_rank"] = [
+                            "rules_rating_club" => $c->rules_rating_club,
+                        ];
                     }
 
                     if ($c->rating_flag == 2) {
@@ -73,7 +75,8 @@ class GetListTabCategoryByEventId extends Retrieval
                         $response_category["param_request_rank"] = [
                             "age_category_id" => $c->age_category_id,
                             "competition_category_id" => $c->competition_category_id,
-                            "distance_id" => $c->distance_id
+                            "distance_id" => $c->distance_id,
+                            "rules_rating_club" => $c->rules_rating_club
                         ];
                     }
 
@@ -98,7 +101,8 @@ class GetListTabCategoryByEventId extends Retrieval
                         $response_category["type"] = 3;
                         $response_category["label"] = $group_category_name;
                         $response_category["param_request_rank"] = [
-                            "group_category_id" => $group_category->id
+                            "group_category_id" => $group_category->id,
+                            "rules_rating_club" => $c->rules_rating_club
                         ];
                     }
 
