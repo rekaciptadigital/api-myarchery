@@ -22,6 +22,9 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\ArcheryEventOfficialDetail;
 use App\Models\ArcheryEvent;
+use App\Models\VenuePlace;
+use App\Models\VenuePlaceProduct;
+use App\Models\VenuePlaceProductOrder;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Redis;
 
@@ -489,6 +492,10 @@ class PaymentGateWay
             if ($status == 1) {
                 return self::orderEvent($transaction_log, $status);
             }
+        } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_VENUE_ID_PREFIX"))) == env("ORDER_VENUE_ID_PREFIX")) {
+            if ($status == 1) {
+                return self::orderVenue($transaction_log, $status);
+            }
         }
 
         return true;
@@ -657,6 +664,47 @@ class PaymentGateWay
                 $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
                     'note' => "[fee MyArchery register official event] ".$event->name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+                ];
+            }
+            EoCashFlow::insert($cash_flow);
+        }
+    }
+
+    private static function orderVenue($transaction_log, $status)
+    {
+        $product_order = VenuePlaceProductOrder::where('transaction_log_id', $transaction_log->id)->first();
+        if (!$product_order) {
+            throw new BLoCException("perubahan status venue product gagal");
+        }
+
+        // create cash flow
+        if($status == 1){
+            $venue_product = VenuePlaceProduct::where('id',$product_order->product_id)->first();
+            $venue = VenuePlace::where('id', $venue_product->place_id)->first();
+            $admin_have_venue = Admin::where('eo_id',$venue->eo_id)->first();
+            $cash_flow[] = [
+                    'eo_id' => $admin_have_venue->eo_id,
+                    'note' => "[order venue product] ". $venue->name . " - " . $venue_product->product_name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+            ];
+            if($transaction_log->include_payment_gateway_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_venue->eo_id,
+                    'note' => "[fee payment order venue product] ".$venue->name. " - " . $venue_product->product_name,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => -1 * $transaction_log->include_payment_gateway_fee,
+                ];
+            }
+            if($transaction_log->include_my_archery_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_venue->eo_id,
+                    'note' => "[fee MyArchery order venue product] ".$venue->name. " - " . $venue_product->product_name,
                     'gateway' => $transaction_log->gateway,
                     'transaction_log_id' => $transaction_log->id,
                     'amount' => $transaction_log->total_amount,

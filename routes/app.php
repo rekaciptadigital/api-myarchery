@@ -105,6 +105,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailVenuePlace']);
                 $router->get('/list-product', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListProductByVenuePlace']);
                 $router->get('/info-order-product', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getInfoOrderProduct']);
+                $router->post('/product-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderVenueProduct']);
 
             });
             
