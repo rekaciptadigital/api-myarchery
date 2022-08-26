@@ -32,9 +32,9 @@ class BudRest extends Model
             }
         }
         $mpdf = new Mpdf([
-            'margin_left' => 3,
-            'margin_right' => 3,
-            'margin_top' => 3,
+            'margin_left' => 1,
+            'margin_right' => 1,
+            'margin_top' => 1,
             'mode' => 'utf-8',
             'format' => 'A4-p',
             'orientation' => 'P',
@@ -126,6 +126,8 @@ class BudRest extends Model
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
+                    "total_shot_per_stage" => $category->count_shot_in_stage,
+                    "total_stage" => $category->count_stage,
                     "qr" => $base64,
                     "event" => $output['event']
                 ]);
@@ -151,6 +153,8 @@ class BudRest extends Model
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
                             "qr" => $base64,
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
                             "event" => $output['event']
                         ]);
                         $mpdf->WriteHTML($html);
