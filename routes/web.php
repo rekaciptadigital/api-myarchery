@@ -540,8 +540,8 @@ $router->get('enterprise/fldryepswqpxrat', function () {
     $submission_approved = VenuePlace::getAllListVenue(4, null, null, 1000, 0);
 
     return view('enterprise/venue_submission_index', [
-        "datas" => $new_submission,
-        "data_approved" => $submission_approved
+        "datas" => $new_submission['data'],
+        "data_approved" => $submission_approved['data']
     ]);
 });
 
