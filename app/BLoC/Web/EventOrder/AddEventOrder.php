@@ -240,6 +240,7 @@ class AddEventOrder extends Transactional
 
         if ($participant) {
             $participant->status = 4;
+            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
             $participant->save();
         } else {
             // insert data participant
@@ -595,6 +596,7 @@ class AddEventOrder extends Transactional
 
         if ($participant) {
             $participant->status = 4;
+            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
             $participant->save();
         } else {
             // insert data participant

@@ -20,9 +20,13 @@ class GetEventClubRanked extends Retrieval
     protected function process($parameters)
     {
         $event_id = $parameters->get("event_id");
+        $rules_rating_club = $parameters->get("rules_rating_club") == null ? 1 : $parameters->get("rules_rating_club");
+        $group_category_id = $parameters->get("group_category_id") == null ? 0 : $parameters->get("group_category_id");
         $age_category_id = $parameters->get("age_category_id");
+        $competition_category_id = $parameters->get("competition_category_id");
+        $distance_id = $parameters->get("distance_id");
 
-        return ClubRanked::getEventRanked($event_id, $age_category_id);
+        return ClubRanked::getEventRanked($event_id, $rules_rating_club, $group_category_id, $age_category_id, $competition_category_id, $distance_id);
     }
 
     protected function validation($parameters)
@@ -121,8 +125,4 @@ class GetEventClubRanked extends Retrieval
             "bronze" => $bronze_medal
         ];
     }
-
-    // private function getClubMedalEliminationIndividualAndTeam($club_id, $category){
-    //     ArcheryEventElimination::
-    // }
 }

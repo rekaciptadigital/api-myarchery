@@ -15,7 +15,7 @@ use DAI\Utils\Exceptions\BLoCException;
 class ClubRanked
 {
 
-    public static function getEventRanked($event_id, $age_category_id = null)
+    public static function getEventRanked($event_id, $rules_rating_club, $group_category_id, $age_category_id, $competition_category_id, $distance_id)
     {
         $output = [];
         $club_ids = [];
@@ -31,6 +31,11 @@ class ClubRanked
             "=",
             "archery_event_participants.id"
         )->join(
+            "archery_event_category_details",
+            "archery_event_category_details.id",
+            "=",
+            "archery_event_participants.event_category_id"
+        )->join(
             "archery_event_elimination_members",
             "archery_event_participant_members.id",
             "=",
@@ -40,15 +45,19 @@ class ClubRanked
                 ->orWhere('archery_event_elimination_members.elimination_ranked', '<', $max_pos);
         })->where("archery_event_participants.event_id", $event_id)
             ->when($age_category_id, function ($query, $age_category_id) {
-                $query->where('age_category_id', $age_category_id);
+                $query->where('archery_event_category_details.age_category_id', $age_category_id);
             })
+            ->when($competition_category_id, function ($query, $competition_category_id) {
+                $query->where('archery_event_category_details.competition_category_id', $competition_category_id);
+            })
+            ->when($distance_id, function ($query, $distance_id) {
+                $query->where('archery_event_category_details.distance_id', $distance_id);
+            })
+            ->where("archery_event_category_details.group_category_id", $group_category_id)
+            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club)
             ->where("archery_event_participants.club_id", "!=", 0)
             ->where("archery_event_participants.status", 1)
             ->get();
-
-        // return $members;
-
-
 
         foreach ($members as $key => $value) {
             if (!isset($cat_detail[$value->event_category_id])) {
@@ -77,6 +86,14 @@ class ClubRanked
             ->when($age_category_id, function ($query, $age_category_id) {
                 $query->where('age_category_id', $age_category_id);
             })
+            ->when($competition_category_id, function ($query, $competition_category_id) {
+                $query->where('archery_event_category_details.competition_category_id', $competition_category_id);
+            })
+            ->when($distance_id, function ($query, $distance_id) {
+                $query->where('archery_event_category_details.distance_id', $distance_id);
+            })
+            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club)
+            ->where("archery_event_category_details.group_category_id", $group_category_id)
             ->get();
 
         foreach ($teams as $t => $team) {
@@ -135,15 +152,27 @@ class ClubRanked
             "archery_event_participants.event_category_id"
         )
             ->join("archery_event_elimination_group_teams", "archery_event_participants.id", "=", "archery_event_elimination_group_teams.participant_id")
-            ->where(function ($query) use ($max_pos) {
+            ->join(
+                "archery_event_category_details",
+                "archery_event_category_details.id",
+                "=",
+                "archery_event_participants.event_category_id"
+            )->where(function ($query) use ($max_pos) {
                 return $query->where('archery_event_elimination_group_teams.position', '<', $max_pos)
                     ->orWhere('archery_event_elimination_group_teams.elimination_ranked', '<', $max_pos);
-            })
-            ->where("archery_event_participants.event_id", $event_id)
+            })->where("archery_event_participants.event_id", $event_id)
             ->when($age_category_id, function ($query, $age_category_id) {
-                $query->where('age_category_id', $age_category_id);
+                $query->where('archery_event_category_details.age_category_id', $age_category_id);
             })
+            ->when($competition_category_id, function ($query, $competition_category_id) {
+                $query->where('archery_event_category_details.competition_category_id', $competition_category_id);
+            })
+            ->when($distance_id, function ($query, $distance_id) {
+                $query->where('archery_event_category_details.distance_id', $distance_id);
+            })
+            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club)
             ->where("archery_event_participants.club_id", "!=", 0)
+            ->where("archery_event_category_details.group_category_id", $group_category_id)
             ->where("archery_event_participants.status", 1)
             ->get();
 
