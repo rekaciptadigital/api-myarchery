@@ -6,6 +6,7 @@ namespace App\BLoC\App\Enterprise;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\DB;
 use App\Models\VenuePlaceProduct;
+use App\Models\VenuePlaceProductOrder;
 use App\Models\VenuePlaceScheduleOperational;
 use App\Models\VenuePlaceScheduleOperationalSession;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class GetInfoOrderProduct extends Retrieval
         $day = dayTranslate(date('l', strtotime($booking_date)));
 
         $schedule_operational = VenuePlaceScheduleOperational::where('place_id', $venue_place_product->place_id)->where('day', $day)->first();
-        if (!$schedule_operational) throw new BLoCException("Schedule operational not found");
+        if (!$schedule_operational) throw new BLoCException("Jadwal operasional tidak tersedia");
 
         if ($venue_place_product->has_session == true) {
             $operational_sessions = VenuePlaceScheduleOperationalSession::where('schedule_operational_id', $schedule_operational->id)->get();
@@ -35,11 +36,12 @@ class GetInfoOrderProduct extends Retrieval
 
             $sessions = [];
             foreach($operational_sessions as $value) {
+                $product_order = VenuePlaceProductOrder::where('product_id', $parameters->get('id'))->where('operational_session_id', $value->id)->whereDate('booking_date', $parameters->get('booking_date'))->get();
                 $session['id'] = $value->id;
                 $session['schedule_operational_id'] = $value->schedule_operational_id;
                 $session['start_time'] = $value->start_time;
                 $session['end_time'] = $value->end_time;
-                $session['quota'] = $value->max_capacity;
+                $session['quota'] = $value->max_capacity - count($product_order);
                 array_push($sessions, $session);
             }
         }
