@@ -14,7 +14,7 @@ class AddFieldRatingFlagToCategoryDetail extends Migration
     public function up()
     {
         Schema::table('archery_event_category_details', function (Blueprint $table) {
-            $table->smallInteger("rating_flag")->default(1)->comment("1 untuk dimasukkan ke semua pemeringkatan, 2 untuk pemeringkatan khusus diluar semua pemeringkatan");
+            $table->smallInteger("rating_flag")->default(1)->comment("1 untuk semua kategori, 2 untuk satuan khusus, 3 kategori gabungan");
         });
     }
 
