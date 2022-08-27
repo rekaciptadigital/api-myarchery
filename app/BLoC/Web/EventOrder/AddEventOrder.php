@@ -498,7 +498,7 @@ class AddEventOrder extends Transactional
                 ->count();
 
             if ($check_success_category_mix > 3) {
-                throw new BLoCException("club anda sudah terdaftar 2 kali pada kategori ini");
+                throw new BLoCException("club anda sudah terdaftar 3 kali pada kategori ini");
             }
 
             $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $event_category_detail->id)
