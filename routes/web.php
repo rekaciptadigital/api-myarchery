@@ -390,6 +390,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/download-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationDashboardDos']);
             $router->get('/scorer-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationDos']);
         });
+
+        $router->group(['prefix' => 'event-club-ranked', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigClubRanked']);
+        });
     });
 
     // ============================================ v2 =======================================================
