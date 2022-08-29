@@ -54,11 +54,24 @@ class ClubRanked
             ->when($distance_id, function ($query, $distance_id) {
                 $query->where('archery_event_category_details.distance_id', $distance_id);
             })
-            // ->where("archery_event_category_details.group_category_id", $group_category_id)
-            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club)
-            ->where(function($query) use ($rules_rating_club, $group_category_id){
-                if ($rules_rating_club != 1) {
-                    return $query->where("archery_event_category_details.group_category_id", $group_category_id);
+            ->where(function ($query) use ($rules_rating_club, $group_category_id) {
+                // if ($rules_rating_club == 1 && $group_category_id != 0) {
+                //     return $query->where("archery_event_category_details.group_category_id", $group_category_id)
+                //         ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                // } elseif ($rules_rating_club == 1 && $group_category_id == 0) {
+                //     return $query->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                // }
+
+                if ($rules_rating_club == 1) {
+                    if ($group_category_id == 0) {
+                        return $query->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                    } else {
+                        return $query->where("archery_event_category_details.group_category_id", $group_category_id)
+                            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                    }
+                } else {
+                    return $query->where("archery_event_category_details.group_category_id", $group_category_id)
+                        ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
                 }
             })
             ->where("archery_event_participants.club_id", "!=", 0)
@@ -98,10 +111,18 @@ class ClubRanked
             ->when($distance_id, function ($query, $distance_id) {
                 $query->where('archery_event_category_details.distance_id', $distance_id);
             })
-            ->where("rules_rating_club", $rules_rating_club)
-            ->where(function($query) use ($rules_rating_club, $group_category_id){
-                if ($rules_rating_club != 1) {
-                    return $query->where("group_category_id", $group_category_id);
+
+            ->where(function ($query) use ($rules_rating_club, $group_category_id) {
+                if ($rules_rating_club == 1) {
+                    if ($group_category_id == 0) {
+                        return $query->where("rules_rating_club", $rules_rating_club);
+                    } else {
+                        return $query->where("group_category_id", $group_category_id)
+                            ->where("rules_rating_club", $rules_rating_club);
+                    }
+                } else {
+                    return $query->where("group_category_id", $group_category_id)
+                        ->where("rules_rating_club", $rules_rating_club);
                 }
             })
             ->get();
@@ -180,10 +201,17 @@ class ClubRanked
             ->when($distance_id, function ($query, $distance_id) {
                 $query->where('archery_event_category_details.distance_id', $distance_id);
             })
-            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club)
-            ->where(function($query) use ($rules_rating_club, $group_category_id){
-                if ($rules_rating_club != 1) {
-                    return $query->where("archery_event_category_details.group_category_id", $group_category_id);
+            ->where(function ($query) use ($rules_rating_club, $group_category_id) {
+                if ($rules_rating_club == 1) {
+                    if ($group_category_id == 0) {
+                        return $query->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                    } else {
+                        return $query->where("archery_event_category_details.group_category_id", $group_category_id)
+                            ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
+                    }
+                } else {
+                    return $query->where("archery_event_category_details.group_category_id", $group_category_id)
+                        ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
                 }
             })
             ->where("archery_event_participants.club_id", "!=", 0)
