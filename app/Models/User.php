@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Jobs\AccountVerificationJob;
+use Queue;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -125,5 +128,30 @@ class User extends Model implements JWTSubject, AuthenticatableContract
             "detail_country" => Country::getDetailCountry($this->country_id),
             "detail_city_country" => CityCountry::getDetailCityCountry($this->city_of_country_id)
         ];
+    }
+
+    public static function sendOtpAccountVerification($user_id)
+    {
+        $user = User::find($user_id);
+        $code = substr(str_shuffle('1234567890'), 0, 5);
+
+        $otp_code = OtpVerificationCode::where("email", $user->email)->where("expired_time", ">", time())->get();
+        if ($otp_code->count() >= 3) {
+            throw new BLoCException("anda sudah melewati batas maksimal pengiriman otp, periksa kembali email anda");
+        }
+        $otp_code = new OtpVerificationCode();
+        $otp_code->user_id = $user->id;
+        $otp_code->email = $user->email;
+        $otp_code->otp_code = $code;
+        $otp_code->expired_time = strtotime("+1 day", time());
+        $otp_code->save();
+
+        Queue::push(new AccountVerificationJob([
+            "code" => $code,
+            "email" => $user->email,
+            "name" => $user->name,
+        ]));
+
+        return $otp_code;
     }
 }

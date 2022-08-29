@@ -23,22 +23,18 @@ class ValidateAccoutVerification extends Transactional
     {
         $email = $parameters->get("email");
         $code = $parameters->get("code");
-        
-        if($code != "00000"){
-            $otp_code = OtpVerificationCode::where("email", $email)
+
+        $otp_code = OtpVerificationCode::where("email", $email)
             ->where("otp_code", $code)
             ->first();
-            if (!$otp_code) {
-                throw new BLoCException("code not found");
-            }
-    
-            if ($otp_code->expired_time < time()) {
-                throw new BLoCException("code expired");
-            }
-            $user = User::find($otp_code->user_id);
-        }else{
-            $user = User::where("email",$email)->first();
+        if (!$otp_code) {
+            throw new BLoCException("code not found");
         }
+
+        if ($otp_code->expired_time < time()) {
+            throw new BLoCException("code expired");
+        }
+        $user = User::find($otp_code->user_id);
 
         if (!$user) {
             throw new BLoCException("user not found");
@@ -47,6 +43,8 @@ class ValidateAccoutVerification extends Transactional
         $user->email_verified = 1;
         $user->save();
 
+        OtpVerificationCode::where("user_id", $user->id)->delete();
+
 
         $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->login($user);
 
@@ -54,7 +52,9 @@ class ValidateAccoutVerification extends Transactional
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => Auth::factory()->getTTL()
+            'expires_in' => Auth::factory()->getTTL(),
+            'email_verified' => $user->email_verified,
+            'status' => $user->email_verified == 1 ? "Verified" : "Not Verified",
         ];
     }
 

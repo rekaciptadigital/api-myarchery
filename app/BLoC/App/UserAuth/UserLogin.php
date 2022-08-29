@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\UserLoginToken;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 
 class UserLogin extends Transactional
@@ -22,13 +24,26 @@ class UserLogin extends Transactional
             "password" => $parameters->password,
             "email_verified" => 1
         ]);
-        $error_message = "Password salah";
+
         if (!$token) {
             $user = User::where("email", $parameters->get("email"))->first();
             if (!$user) {
-                $error_message = "Email anda belum terdaftar";
+                throw new BLoCException("Email anda belum terdaftar");
             }
-            throw new BLoCException($error_message);
+
+            if ($user->email_verified != 1) {
+                $otp_code = User::sendOtpAccountVerification($user->id);
+                date_default_timezone_set("Asia/Jakarta");
+
+                $expired_date = date("l-d-F-Y", $otp_code->expired_time);
+                $date_format = dateFormatTranslate($expired_date);
+                return [
+                    "email_verified" => $user->email_verified,
+                    "status" => $user->email_verified == 1 ? "Verified" : "Not Verified",
+                    "time_verified" => $otp_code->expired_time,
+                    "message" => "otp success dikirimkan, cek email anda dan masukkan 5 digit code verifikasi sebelum " . $date_format . " pukul " . date("H:i", $otp_code->expired_time)
+                ];
+            }
         }
         $user = Auth::guard('app-api')->user();
         $private_signature = Auth::payload()["jti"];
@@ -46,7 +61,9 @@ class UserLogin extends Transactional
         return [
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'expires_in' => Auth::factory()->getTTL()
+            'expires_in' => Auth::factory()->getTTL(),
+            'email_verified' => $user->email_verified,
+            'status' => $user->email_verified == 1 ? "Verified" : "Not Verified",
         ];
     }
 

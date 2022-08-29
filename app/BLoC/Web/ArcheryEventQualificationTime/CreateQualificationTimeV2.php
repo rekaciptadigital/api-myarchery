@@ -101,7 +101,7 @@ class CreateQualificationTimeV2 extends Transactional
                         $jadwal->event_end_datetime =  $qualification_time['event_end_datetime'];
                         $jadwal->save();
                     } else {
-                        throw new BLoCException("tidak bisa ganti jadwal karena sudah ada peserta");
+                        // throw new BLoCException("tidak bisa ganti jadwal karena sudah ada peserta");
                     }
                 }
             } else {
