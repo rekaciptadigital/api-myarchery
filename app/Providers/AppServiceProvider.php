@@ -58,6 +58,7 @@ use App\BLoC\App\Enterprise\GetDetailVenuePlace;
 use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
 use App\BLoC\App\Enterprise\GetInfoOrderProduct;
 use App\BLoC\App\Enterprise\AddOrderVenueProduct;
+use App\BLoC\App\Enterprise\GetTransactionVenueUser;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -132,6 +133,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getListProductByVenuePlace", GetListProductByVenuePlace::class);
         $this->registerService("getInfoOrderProduct", GetInfoOrderProduct::class);
         $this->registerService("addOrderVenueProduct", AddOrderVenueProduct::class);
+        $this->registerService("getTransactionVenueUser", GetTransactionVenueUser::class);
 
         // -------------------------------------------- End of Archery Enterprise Service --------------------------------------------- //
 
