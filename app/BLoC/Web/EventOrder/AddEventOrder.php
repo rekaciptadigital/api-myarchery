@@ -30,6 +30,7 @@ class AddEventOrder extends Transactional
     var $gateway = "";
     var $have_fee_payment_gateway = false;
     var $payment_methode = "";
+    var $myarchery_fee = 0;
     public function getDescription()
     {
         return "";
@@ -73,6 +74,9 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
+        if($event->my_archery_fee_percentage > 0)
+            $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage/100));
+        
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
         if ($event->event_type == "Marathon") {
@@ -285,8 +289,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->feePaymentsToUser($this->have_fee_payment_gateway)
+            ->setMyarcheryFee($this->myarchery_fee)
             ->createSnap();
         if(!$payment->status)
             throw new BLoCException($payment->message);
@@ -437,8 +441,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->feePaymentsToUser($this->have_fee_payment_gateway)
+            ->setMyarcheryFee($this->myarchery_fee)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -621,8 +625,8 @@ class AddEventOrder extends Transactional
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            // ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
-            ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->feePaymentsToUser($this->have_fee_payment_gateway)
+            ->setMyarcheryFee($this->myarchery_fee)
             ->createSnap();
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
