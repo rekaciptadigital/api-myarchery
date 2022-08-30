@@ -34,20 +34,27 @@ class SetConfigClubRanked extends Transactional
 
         $categoriy_detail = ArcheryEventCategoryDetail::where("event_id", $event->id)->get();
 
+        $response = [];
+
         if ($rating_flag == 1) {
             $this->setNormalRules($event->id);
         } elseif ($rating_flag == 2 || $rating_flag == 3) {
             $this->setNormalRules($event->id);
+
+            $response["type"] = $rating_flag;
+            $list_categories = [];
+            $response_category = [];
             $group_category_id = 0;
             if ($rating_flag == 3) {
                 $group_category = new GroupCategory;
                 $group_category->group_category_name = $group_name;
                 $group_category->event_id = $event->id;
                 $group_category->save();
+                $response["group_name"] = $group_name;
                 $group_category_id = $group_category->id;
             }
-            foreach ($categoriy_detail as $cd) {
-                foreach ($categories as $c) {
+            foreach ($categories as $c) {
+                foreach ($categoriy_detail as $cd) {
                     if (
                         $cd->competition_category_id == $c["competition_category_id"]
                         && $cd->age_category_id == $c["age_category_id"]
@@ -57,12 +64,27 @@ class SetConfigClubRanked extends Transactional
                         $cd->rules_rating_club = $rules_rating_club;
                         $cd->group_category_id = $group_category_id;
                         $cd->save();
+
+                        $response["rules_rating_club"] = $rules_rating_club;
+
+                        $response_category["id"] = $cd->id;
+                        $response_category["event_id"] = $cd->event_id;
+                        $response_category["competition_category_id"] = $cd->competition_category_id;
+                        $response_category["age_category_id"] = $cd->age_category_id;
+                        $response_category["distance_id"] = $cd->distance_id;
+                        $response_category["team_category_id"] = $cd->team_category_id;
+                        $response_category["rules_rating_club"] = $cd->rules_rating_club;
+                        $response_category["rating_flag"] = $cd->rating_flag;
+                        $response_category["group_category_id"] = $cd->group_category_id;
+                        $list_categories[] = $response_category;
                     }
                 }
             }
+
+            $response["list_category"] = $list_categories;
         }
 
-        return $categoriy_detail;
+        return $response;
     }
 
     protected function validation($parameters)
@@ -93,6 +115,12 @@ class SetConfigClubRanked extends Transactional
         foreach ($categories as $c) {
             $c->rating_flag = 1;
             $c->rules_rating_club = 1;
+            if ($c->group_category_id != 0) {
+                $group_category = GroupCategory::find($c->group_category_id);
+                if ($group_category) {
+                    $group_category->delete();
+                }
+            }
             $c->group_category_id = 0;
             $c->save();
         }
