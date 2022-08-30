@@ -59,6 +59,7 @@ class ListMemberV2 extends Retrieval
             ->join("users", "users.id", "=", "archery_event_participants.user_id")
             ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.event_id", $event_id)
+            ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.type", "individual");
 
 

@@ -43,7 +43,8 @@ class ListMemberTeamV2 extends Retrieval
         $participant_query = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.status as status_payment", "transaction_logs.expired_time")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->where("archery_event_participants.event_id", $event_id)
-            ->where("archery_event_participants.type", "team");
+            ->where("archery_event_participants.type", "team")
+            ->where("archery_event_participants.status", "!=", 6);
 
         // filter by name
         $participant_query->when($name, function ($query) use ($name) {

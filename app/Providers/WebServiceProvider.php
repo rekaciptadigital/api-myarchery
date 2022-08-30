@@ -152,6 +152,8 @@ use App\BLoC\Web\ArcheryReport\ReportMedalClub;
 use App\BLoC\Web\ArcheryReport\Upp;
 use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
+use App\BLoC\Web\ClubRanked\GetConfigClubRanked;
+use App\BLoC\Web\ClubRanked\SetConfigClubRanked;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
@@ -390,9 +392,11 @@ class WebServiceProvider extends ServiceProvider
 
 
         // ======================================== Fats Open 3 ==========================================
-        // ================================================================================================
+        $this->registerService("setConfigClubRanked", SetConfigClubRanked::class);
+        $this->registerService("getConfigClubRanked", GetConfigClubRanked::class);
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
         $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
+        // ================================================================================================
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
 
