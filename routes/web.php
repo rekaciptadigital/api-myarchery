@@ -393,6 +393,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'event-club-ranked', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/set-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigClubRanked']);
+            $router->get('/get-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigClubRanked']);
         });
     });
 
