@@ -41,6 +41,7 @@ class ValidateAccoutVerification extends Transactional
         }
 
         $user->email_verified = 1;
+        $user->verify_status = 4;
         $user->save();
 
         OtpVerificationCode::where("user_id", $user->id)->delete();
