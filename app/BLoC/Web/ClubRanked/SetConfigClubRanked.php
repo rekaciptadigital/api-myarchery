@@ -33,14 +33,22 @@ class SetConfigClubRanked extends Transactional
         }
 
         $categoriy_detail = ArcheryEventCategoryDetail::where("event_id", $event->id)->get();
-
+        foreach ($categoriy_detail as $c) {
+            $c->rating_flag = 1;
+            $c->rules_rating_club = 1;
+            if ($c->group_category_id != 0) {
+                $group_category = GroupCategory::find($c->group_category_id);
+                if ($group_category) {
+                    $group_category->delete();
+                }
+            }
+            $c->group_category_id = 0;
+            $c->save();
+        }
         $response = [];
 
-        if ($rating_flag == 1) {
-            $this->setNormalRules($event->id);
-        } elseif ($rating_flag == 2 || $rating_flag == 3) {
-            $this->setNormalRules($event->id);
 
+        if ($rating_flag == 2 || $rating_flag == 3) {
             $response["type"] = $rating_flag;
             $list_categories = [];
             $response_category = [];
