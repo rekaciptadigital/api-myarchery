@@ -107,7 +107,12 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/info-order-product', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getInfoOrderProduct']);
                 $router->post('/product-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addOrderVenueProduct']);
 
+                $router->group(['prefix' => 'activity'], function () use ($router) {
+                    $router->get('/transactions', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTransactionVenueUser']);
+                });
             });
+
+            
             
         });
     });
