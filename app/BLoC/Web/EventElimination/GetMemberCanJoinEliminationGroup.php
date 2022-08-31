@@ -53,43 +53,67 @@ class GetMemberCanJoinEliminationGroup extends Transactional
             // dapatkan participant dari param
             $participant_group = ArcheryEventParticipant::find($participant_id);
 
+            $club_id = $participant_group->club_id;
             // cari semua participant yang ikut kategori beregu yang satu club dengan participant dari param
-            $participant_group_join_elimination = ArcheryEventParticipant::where("event_category_id", $category_detail_group_id)
-                ->where("club_id", $participant_group->club_id)
+            $participant_group_order_tema = ArcheryEventParticipant::where("event_category_id", $category_detail_group_id)
+                ->where("club_id", $club_id)
                 ->where("status", 1)
                 ->where("is_present", 1)
                 ->get();
 
+            // return $participant_group_order_tema;
+
             // buat variabel array untuk nampung id
             $member_id_join_elimination_group = [];
+            $egmt = [];
 
             // insertkan member id 
-            foreach ($participant_group_join_elimination as $p_g_j_e) {
-                $elimination_group_member_team =  ArcheryEventEliminationGroupMemberTeam::where("participant_id", $p_g_j_e->id)
+            foreach ($participant_group_order_tema as $p_g_j_e) {
+                $elimination_group_member_team =  ArcheryEventEliminationGroupMemberTeam::select("archery_event_elimination_group_member_team.*")->join("archery_event_elimination_group_teams", "archery_event_elimination_group_teams.participant_id", "=", "archery_event_elimination_group_member_team.participant_id")->where("archery_event_elimination_group_member_team.participant_id", $p_g_j_e->id)
                     ->get();
                 foreach ($elimination_group_member_team as $emt) {
                     $member_id_join_elimination_group[] = $emt->member_id;
                 }
             }
 
-            return $member_id_join_elimination_group;
 
             $team_cat = ($category_detail_group->team_category_id) == "male_team" ? "individu male" : "individu female";
-            if ($team_cat == "individu male") {
-                ArcheryEventParticipant::select(
+            if ($team_cat == "individu female") {
+                $members_list = ArcheryEventParticipant::select(
                     "archery_event_participant_members.id as member_id",
                     "users.id as user_id",
                     "users.name",
                     "archery_event_participants.club_id as club_id",
                     "archery_clubs.name as club_name"
                 )
-                ->("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+                    ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
                     ->join("users", "users.id", "=", "archery_event_participants.user_id")
                     ->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-                    ->where("event_category_id", $category_detail_male)
-                    ->where("status", 1)->where("is_present", 1)
+                    ->where("archery_event_participants.event_category_id", $category_detail_female->id)
+                    ->where("archery_event_participants.status", 1)
+                    ->where("archery_event_participants.is_present", 1)
+                    ->where("archery_clubs.id", $club_id)
+                    ->whereNotIn("archery_event_participant_members.id", $member_id_join_elimination_group)
+                    ->get();
+            } else {
+                $members_list = ArcheryEventParticipant::select(
+                    "archery_event_participant_members.id as member_id",
+                    "users.id as user_id",
+                    "users.name",
+                    "archery_event_participants.club_id as club_id",
+                    "archery_clubs.name as club_name"
+                )
+                    ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+                    ->join("users", "users.id", "=", "archery_event_participants.user_id")
+                    ->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+                    ->where("archery_event_participants.event_category_id", $category_detail_male->id)
+                    ->where("archery_event_participants.status", 1)
+                    ->where("archery_event_participants.is_present", 1)
+                    ->where("archery_clubs.id", $club_id)
+                    ->whereNotIn("archery_event_participant_members.id", $member_id_join_elimination_group)
                     ->get();
             }
+            return $members_list;
         }
     }
 
