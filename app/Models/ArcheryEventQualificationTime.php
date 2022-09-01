@@ -54,15 +54,40 @@ class ArcheryEventQualificationTime extends Model
         for ($i = $start; $i <= $end; $i += 86400) {
             $day = date("Y-m-d", $i);
 
+            $day_complit = date("Y-m-d H:i:s", $i);
+
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.event_start_datetime")
-                ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
+                ->leftJoin("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
                 ->where("archery_event_category_details.event_id", $event_id)
-                ->whereDate("archery_event_qualification_time.event_start_datetime", $day)
+                // ->whereDate("archery_event_qualification_time.event_start_datetime", $day)
                 ->get();
+
+            $cat_fix = [];
+            foreach ($category as $cat) {
+                if ($cat->event_start_datetime == $day_complit) {
+                    $cat_fix[] = $cat;
+                } elseif ($cat->event_start_datetime == null) {
+                    $cat_individu = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.event_start_datetime")
+                        ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+                        ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
+                        ->where("event_id", $cat->event_id)
+                        ->where("age_category_id", $cat->age_category_id)
+                        ->where("distance_id", $cat->distance_id)
+                        ->where("competition_category_id", $cat->competition_category_id)
+                        ->where("archery_master_team_categories.type", "Individual")
+                        ->first();
+
+                    if ($cat_individu) {
+                        if ($cat_individu->event_start_datetime == $day_complit) {
+                            $cat_fix[] = $cat;
+                        }
+                    }
+                }
+            }
 
             $response["day"] = $sort_day;
             $response["date"] = $day;
-            $response["category"] = $category;
+            $response["category"] = $cat_fix;
             $response["date_format"] = dateFormatTranslate(date("l-d-F-Y", $i));
             $data[] = $response;
             $sort_day++;
