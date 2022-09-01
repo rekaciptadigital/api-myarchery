@@ -398,7 +398,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
     protected function getMedalStanding($event_id)
     {
-        $data = ClubRanked::getEventRanked($event_id);
+        $data = ClubRanked::getEventRanked($event_id, 1, null);
         if (count($data) > 0) {
             $title_header = array();
             $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
