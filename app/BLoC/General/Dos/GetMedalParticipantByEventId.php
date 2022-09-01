@@ -7,7 +7,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Abstracts\Retrieval;
-
+use DAI\Utils\Exceptions\BLoCException;
 
 class GetMedalParticipantByEventId extends Retrieval
 {
@@ -27,7 +27,10 @@ class GetMedalParticipantByEventId extends Retrieval
             $data_elimination_all = [];
             foreach ($value1["category"] as $key2 => $value2) {
                 $category_detail = ArcheryEventCategoryDetail::find($value2->id);
-                $category_team_type = $value2->getCategoryType();
+                if (!$category_detail) {
+                    throw new BLoCException("category not found");
+                }
+                $category_team_type = $category_detail->getCategoryType();
 
                 $data_report_qualification_individu = ArcheryEventParticipant::getData($category_detail->id, "qualification", $event_id);
 
