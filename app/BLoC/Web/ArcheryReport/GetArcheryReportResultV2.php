@@ -266,11 +266,10 @@ class GetArcheryReportResultV2 extends Retrieval
                                                 $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
                                                 $pages[] = EliminationFormatPDFV2::renderPageGraphIndividuOfBigTwentyTwo($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                                             } else if ($elimination_individu->count_participant == 16) {
-                                                if ($data_graph) {
-                                                    $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
-                                                    $view_path = 'report_result/graph_sixteen';
-                                                    $pages[] = EliminationFormatPDF::renderPageGraph16_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition);
-                                                }
+                                                $data_graph_individu = EliminationFormatPDFV2::getViewDataGraphIndividuOfBigSixteen($data_elimination);
+                                                $view_path = 'report_result/elimination_graph/individu/graph_sixteen';
+                                                $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                                                $pages[] = EliminationFormatPDFV2::renderPageGraphIndividuOfBigSixteen($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                                             } else if ($elimination_individu->count_participant == 8) {
                                                 if ($data_graph) {
                                                     $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
@@ -398,7 +397,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
     protected function getMedalStanding($event_id)
     {
-        $data = ClubRanked::getEventRanked($event_id);
+        $data = ClubRanked::getEventRanked($event_id, 1, null);
         if (count($data) > 0) {
             $title_header = array();
             $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)

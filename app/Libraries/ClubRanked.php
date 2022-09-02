@@ -6,6 +6,7 @@ use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryScoring;
@@ -15,7 +16,7 @@ use DAI\Utils\Exceptions\BLoCException;
 class ClubRanked
 {
 
-    public static function getEventRanked($event_id, $rules_rating_club, $group_category_id, $age_category_id, $competition_category_id, $distance_id)
+    public static function getEventRanked($event_id, $rules_rating_club = null, $group_category_id = null, $age_category_id = null, $competition_category_id = null, $distance_id = null)
     {
         // dd($rules_rating_club."-".$group_category_id);
         $output = [];
@@ -135,13 +136,36 @@ class ClubRanked
             if ($elimination_group) {
                 continue;
             }
+
             $session = [];
             for ($i = 0; $i < $team->session_in_qualification; $i++) {
                 $session[] = $i + 1;
             }
 
+            $category_detail_male = ArcheryEventCategoryDetail::where("event_id", $team->event_id)
+                ->where("age_category_id", $team->age_category_id)
+                ->where("competition_category_id", $team->competition_category_id)
+                ->where("distance_id", $team->distance_id)
+                ->where("team_category_id", "individu male")->first();
+
+            $category_detail_femaie = ArcheryEventCategoryDetail::where("event_id", $team->event_id)
+                ->where("age_category_id", $team->age_category_id)
+                ->where("competition_category_id", $team->competition_category_id)
+                ->where("distance_id", $team->distance_id)
+                ->where("team_category_id", "individu female")->first();
+
             // dapatin rank kualifikasi beregu
             if ($team->team_category_id == "mix_team") {
+                if ($category_detail_male && $category_detail_femaie) {
+                    $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
+                    $elimination_individu_female = ArcheryEventElimination::where("event_category_id", $category_detail_femaie->id)->first();
+                    if (!$elimination_individu_male || !$elimination_individu_female) {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+
                 $mix_ranked = self::getRankedMixTeam($team, $session);
                 $mix_pos = 0;
                 foreach ($mix_ranked as $mr => $mrank) {
@@ -157,6 +181,28 @@ class ClubRanked
                     if ($mix_pos >= 3) break;
                 }
             } else {
+                if ($team->team_category_id == "male_team") {
+                    if ($category_detail_male) {
+                        $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
+                        if (!$elimination_individu_male) {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
+                if ($team->team_category_id == "female_team") {
+                    if ($category_detail_femaie) {
+                        $elimination_individu_female = ArcheryEventElimination::where("event_category_id", $category_detail_femaie->id)->first();
+                        if (!$elimination_individu_female) {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
                 $ranked = self::getRankedTeam($team, $session);
                 $pos = 0;
                 foreach ($ranked as $r => $rank) {
