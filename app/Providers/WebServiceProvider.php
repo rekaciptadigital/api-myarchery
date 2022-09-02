@@ -179,6 +179,9 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
+use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
+use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
@@ -215,7 +218,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
+
+        // ========================= Fast Open ========================
         $this->registerService("addLogoEvent", AddLogoEvent::class);
+        $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
+        $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
+        // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
         $this->registerService("editArcheryEventParticipantScore", EditArcheryEventParticipantScore::class);
