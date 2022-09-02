@@ -54,8 +54,6 @@ class ArcheryEventQualificationTime extends Model
         for ($i = $start; $i <= $end; $i += 86400) {
             $day = date("Y-m-d", $i);
 
-            $day_complit = date("Y-m-d H:i:s", $i);
-
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.event_start_datetime")
                 ->leftJoin("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "archery_event_category_details.id")
                 ->where("archery_event_category_details.event_id", $event_id)
@@ -64,7 +62,7 @@ class ArcheryEventQualificationTime extends Model
 
             $cat_fix = [];
             foreach ($category as $cat) {
-                if ($cat->event_start_datetime == $day_complit) {
+                if (date("Y-m-d", strtotime($cat->event_start_datetime)) == $day) {
                     $cat_fix[] = $cat;
                 } elseif ($cat->event_start_datetime == null) {
                     $cat_individu = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.event_start_datetime")
@@ -78,7 +76,7 @@ class ArcheryEventQualificationTime extends Model
                         ->first();
 
                     if ($cat_individu) {
-                        if ($cat_individu->event_start_datetime == $day_complit) {
+                        if (date("Y-m-d", strtotime($cat->event_start_datetime)) == $day) {
                             $cat_fix[] = $cat;
                         }
                     }
