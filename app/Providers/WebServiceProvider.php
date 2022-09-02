@@ -155,6 +155,7 @@ use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\ClubRanked\GetConfigClubRanked;
 use App\BLoC\Web\ClubRanked\SetConfigClubRanked;
 use App\BLoC\Web\EliminationScoreSheet\BulkDownloadScooresSheetElimination;
+use App\BLoC\Web\EliminationScoreSheet\DownloadEmptyScoreSheetElimination;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
@@ -237,6 +238,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addLogoEvent", AddLogoEvent::class);
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
+        $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
