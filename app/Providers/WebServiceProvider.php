@@ -154,6 +154,7 @@ use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\ClubRanked\GetConfigClubRanked;
 use App\BLoC\Web\ClubRanked\SetConfigClubRanked;
+use App\BLoC\Web\EliminationScoreSheet\BulkDownloadScooresSheetElimination;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
@@ -417,6 +418,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getConfigClubRanked", GetConfigClubRanked::class);
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
         $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
+        $this->registerService("bulkDownloadScooresSheetElimination", BulkDownloadScooresSheetElimination::class);
         // ================================================================================================
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //

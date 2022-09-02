@@ -75,39 +75,41 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
-        $pages[] = view('report_result/club_rank_medals_standing', [
-            'logo_event' => $logo_event,
-            'logo_archery' => $logo_archery,
-            'event_name_report' => $event_name_report,
-            'event_date_report' => $event_date_report,
-            'event_location_report' => $event_location_report,
-            'headers' => $data_medal_standing['title_header']['category'],
-            'datatables' => $data_medal_standing['datatable'],
-            'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-            'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
-        ]);
-        // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
-
-
-        // =============================== data ======================================
-        foreach ($data_medal_standing['datatable'] as $key => $dms) {
-            $pages[] = view('report_medal_club/dataTable', [
+        if (count($data_medal_standing) > 0) {
+            $pages[] = view('report_result/club_rank_medals_standing', [
                 'logo_event' => $logo_event,
-                "dms" => $dms,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
                 'event_date_report' => $event_date_report,
                 'event_location_report' => $event_location_report,
                 'headers' => $data_medal_standing['title_header']['category'],
-                "rank" => $key + 1,
-                "category" => $data_medal_standing["title_header"]["category"],
-                "club_name" => $dms["club_name"],
-                "total_gold" => $dms["total_gold"],
-                "total_silver" => $dms["total_silver"],
-                "total_bronze" => $dms["total_bronze"],
+                'datatables' => $data_medal_standing['datatable'],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
                 'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
             ]);
+            // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
+
+
+            // =============================== data ======================================
+            foreach ($data_medal_standing['datatable'] as $key => $dms) {
+                $pages[] = view('report_medal_club/dataTable', [
+                    'logo_event' => $logo_event,
+                    "dms" => $dms,
+                    'logo_archery' => $logo_archery,
+                    'event_name_report' => $event_name_report,
+                    'event_date_report' => $event_date_report,
+                    'event_location_report' => $event_location_report,
+                    'headers' => $data_medal_standing['title_header']['category'],
+                    "rank" => $key + 1,
+                    "category" => $data_medal_standing["title_header"]["category"],
+                    "club_name" => $dms["club_name"],
+                    "total_gold" => $dms["total_gold"],
+                    "total_silver" => $dms["total_silver"],
+                    "total_bronze" => $dms["total_bronze"],
+                    'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
+                    'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                ]);
+            }
         }
         // =============================== enddata ===================================
 
@@ -156,7 +158,7 @@ class ReportMedalClub extends Retrieval
 
     protected function getMedalStanding($event_id)
     {
-        $data = ClubRanked::getEventRanked($event_id);
+        $data = ClubRanked::getEventRanked($event_id, 1, null);
 
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
