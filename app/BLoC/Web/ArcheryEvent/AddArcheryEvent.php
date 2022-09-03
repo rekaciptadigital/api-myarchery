@@ -32,6 +32,7 @@ class AddArcheryEvent extends Transactional
             $archery_event->event_type = $event_type;
             $archery_event->event_competition = $parameters->get('event_competition');
             $archery_event->status = $parameters->get('status');
+            $archery_event->is_private = $parameters->get('is_private') ?? false;
 
             $public_informations = $parameters->get('public_information');
 
