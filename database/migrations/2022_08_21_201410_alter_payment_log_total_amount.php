@@ -20,6 +20,7 @@ class AlterPaymentLogTotalAmount extends Migration
             $table->string('gateway',10)->index();
             $table->integer('transaction_log_id')->unsigned()->index();
             $table->double('amount');
+            $table->timestamps();
         });
 
         Schema::table('transaction_logs', function (Blueprint $table) {
