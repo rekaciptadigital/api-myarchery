@@ -6,12 +6,13 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
+use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
-use App\Models\ArcheryEventEliminationSchedule;
+use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class SetBudRestElimination extends Transactional
 {
@@ -27,6 +28,8 @@ class SetBudRestElimination extends Transactional
         $round = $parameters->get("round");
         $budrest_number = $parameters->get("budrest_number");
         $category_id = $parameters->get("category_id");
+        $member_id = $parameters->get("member_id");
+        $participant_id = $parameters->get("participant_id");
 
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) {
@@ -56,11 +59,17 @@ class SetBudRestElimination extends Transactional
         }
 
         if (strtolower($team_category->type) == "team") {
-            return $this->setBudrestTeam($elimination_id, $match, $round, $bud_rest, $target_face);
+            Validator::make($parameters->all(), [
+                "participant_id" => "required|integer"
+            ])->validate();
+            return $this->setBudrestTeam($elimination_id, $match, $round, $bud_rest, $target_face, $participant_id);
         }
 
         if (strtolower($team_category->type) == "individual") {
-            return $this->setBudrestIndividu($elimination_id, $match, $round, $bud_rest, $target_face);
+            Validator::make($parameters->all(), [
+                "member_id" => "required|integer"
+            ])->validate();
+            return $this->setBudrestIndividu($elimination_id, $match, $round, $bud_rest, $target_face, $member_id);
         }
 
         throw new BLoCException("set bud rest failed");
@@ -77,52 +86,60 @@ class SetBudRestElimination extends Transactional
         ];
     }
 
-    private function setBudrestIndividu($elimination_individu_id, $match, $round, $bud_rest, $target_face)
+    private function setBudrestIndividu($elimination_individu_id, $match, $round, $bud_rest, $target_face, $member_id)
     {
         $elimination = ArcheryEventElimination::find($elimination_individu_id);
         if (!$elimination) {
             throw new BLoCException("elimination data tidak ditemukan");
         }
 
+        $elimination_member = ArcheryEventEliminationMember::where("member_id", $member_id)->first();
+        if (!$elimination_member) {
+            throw new BLoCException("elimination member not found");
+        }
+
         $match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_individu_id)
             ->where("match", $match)
             ->where("round", $round)
-            ->get();
+            ->where("elimination_member_id", $elimination_member->id)
+            ->first();
 
-        if ($match->count() != 2) {
-            throw new BLoCException("match invalid");
+        if (!$match) {
+            throw new BLoCException("match not found");
         }
 
-        foreach ($match as $key => $value) {
-            $value->bud_rest = $bud_rest;
-            $value->target_face = $target_face;
-            $value->save();
-        }
+        $match->bud_rest = $bud_rest;
+        $match->target_face = $target_face;
+        $match->save();
 
         return "success";
     }
 
-    private function setBudrestTeam($elimination_group_id, $match, $round, $bud_rest, $target_face)
+    private function setBudrestTeam($elimination_group_id, $match, $round, $bud_rest, $target_face, $participant_id)
     {
         $elimination_group = ArcheryEventEliminationGroup::find($elimination_group_id);
         if (!$elimination_group) {
             throw new BLoCException("elimination group data tidak ditemukan");
         }
 
+        $elimination_group_team = ArcheryEventEliminationGroupTeams::where("participant_id", $participant_id)->first();
+        if (!$elimination_group_team) {
+            throw new BLoCException("elimination group team tidak ditemukan");
+        }
+
         $match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination_group_id)
             ->where("match", $match)
             ->where("round", $round)
-            ->get();
+            ->where("group_team_id", $elimination_group_team->id)
+            ->first();
 
-        if ($match->count() != 2) {
-            throw new BLoCException("match invalid");
+        if (!$match) {
+            throw new BLoCException("match team not found");
         }
 
-        foreach ($match as $key => $value) {
-            $value->bud_rest = $bud_rest;
-            $value->target_face = $target_face;
-            $value->save();
-        }
+        $match->bud_rest = $bud_rest;
+        $match->target_face = $target_face;
+        $match->save();
 
         return "success";
     }
