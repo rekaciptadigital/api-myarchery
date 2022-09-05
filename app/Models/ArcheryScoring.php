@@ -575,6 +575,11 @@ class ArcheryScoring extends Model
         }
 
         $total_fix = $total + $total_shot_off;
+
+        $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
+        $total_arrow = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
+        $total_irat = round(($total / $total_arrow), 3);
+        
         $output = [
             "sessions" => $sessions,
             "total_shot_off" => $participant->is_present == 1 ? $total_shot_off : 0,
@@ -584,6 +589,8 @@ class ArcheryScoring extends Model
             "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
             "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
+            "total_arrow" => $total_arrow,
+            "total_irat" => $total_irat
         ];
         return $output;
     }
