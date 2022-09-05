@@ -76,7 +76,7 @@ class UpdateArcheryEventV2 extends Transactional
         $event->event_start_datetime = $parameters->get("event_start");
         $event->event_end_datetime = $parameters->get("event_end");
         $event->event_slug = $time . '-' . Str::slug($parameters->get("event_name"));
-        $archery_event->is_private = $parameters->get('is_private');
+        $event->is_private = $parameters->get('is_private') ?? false;
         $event->admin_id = $admin->id;
         $event->save();
 
