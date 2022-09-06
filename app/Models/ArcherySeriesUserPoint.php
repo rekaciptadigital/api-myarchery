@@ -108,7 +108,7 @@ class ArcherySeriesUserPoint extends Model
                     ->on("archery_event_participants.team_category_id", "=", "archery_serie_categories.team_category_id");
             })
             ->where(function ($query) use ($user_id) {
-                if($user_id != 0)
+                if ($user_id != 0)
                     return $query->where('archery_event_participant_members.user_id', $user_id);
             })
             ->where("archery_event_participants.event_id", $event_id)
@@ -213,7 +213,7 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name","email", "avatar", "address_city_id")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id")->where("id", $u)->first();
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
@@ -221,8 +221,8 @@ class ArcherySeriesUserPoint extends Model
                 if (in_array($x, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "x"])) {
                     $score_value = $x == "x" ? 10 : $x;
                     $total_score = $total_score + ($score_value * $v);
-                    if($x == "x" || $x == 10)
-                        $x_y_qualification = $x_y_qualification+$v;
+                    if ($x == "x" || $x == 10)
+                        $x_y_qualification = $x_y_qualification + $v;
                 }
             }
             if (!empty($user_detail->address_city_id)) {
@@ -242,8 +242,8 @@ class ArcherySeriesUserPoint extends Model
                 "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail_qualification"], $total_score, 0.001),
                 "total_point" => $user["total_point"],
                 "point_details" => $user["point_details"],
-                "total_score_qualification" => $total_score, 
-                "x_y_qualification" => $x_y_qualification, 
+                "total_score_qualification" => $total_score,
+                "x_y_qualification" => $x_y_qualification,
                 "user" => $user_profile,
             ];
         }
