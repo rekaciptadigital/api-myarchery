@@ -36,7 +36,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     protected function process($parameters)
     {
-        $score_type = 1;
+        $score_type = $parameters->get('score_type') ?? 1;
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');

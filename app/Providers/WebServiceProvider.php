@@ -161,6 +161,7 @@ use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadQualificationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -405,6 +406,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setBudRestElimination", SetBudRestElimination::class);
         $this->registerService("cleanEliminationMatch", CleanEliminationMatch::class);
         $this->registerService("cleanScoringQualification", CleanScoringQualification::class);
+        $this->registerService("getParticipantScoreEliminationSelection", GetParticipantScoreEliminationSelection::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
