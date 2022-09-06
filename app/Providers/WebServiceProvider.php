@@ -160,6 +160,7 @@ use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadQualificationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -322,6 +323,7 @@ class WebServiceProvider extends ServiceProvider
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
         $this->registerService("downloadQualificationSelectionScoresheet", DownloadQualificationSelectionScoresheet::class);
+        $this->registerService("downloadEliminationSelectionScoresheet", DownloadEliminationSelectionScoresheet::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
         $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);

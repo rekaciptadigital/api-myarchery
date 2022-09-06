@@ -234,6 +234,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             // ================================ End =========================================
 
             $router->get('/download-qualification-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadQualificationSelectionScoresheet']);
+            $router->get('/download-elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationSelectionScoresheet']);
 
         });
 
