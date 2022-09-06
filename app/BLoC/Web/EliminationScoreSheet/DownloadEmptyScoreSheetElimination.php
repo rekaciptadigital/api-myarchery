@@ -78,7 +78,7 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
                 "budrest_2" => "",
                 'tim1_category' => $label,
                 'tim2_category' => $label,
-                "qr" => $base64,
+                "qr" => "",
                 "event_name" => $event_name,
                 "location" => $location_event
             ]);
@@ -92,7 +92,7 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
                 'peserta2_rank' => "",
                 'peserta1_category' => $label,
                 'peserta2_category' => $label,
-                "qr" => $base64,
+                "qr" => "",
                 "event_name" => $event_name,
                 "location" => $location_event
             ]);
