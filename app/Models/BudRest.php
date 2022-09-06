@@ -389,7 +389,7 @@ class BudRest extends Model
                 // return $data_get_qr_code;
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                 // return $base64;
-                $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                $html = \view('template.event_selection.score_sheet_qualification_group_by_budrest', [
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
@@ -415,7 +415,7 @@ class BudRest extends Model
                         // return $data_get_qr_code;
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         // return $base64;
-                        $html = \view('template.score_sheet_qualification', [
+                        $html = \view('template.event_selection.score_sheet_qualification', [
                             "data" => $m,
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
