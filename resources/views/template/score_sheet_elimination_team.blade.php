@@ -89,9 +89,11 @@
                     <td style="">Athlete</td>
                     <td>:</td>
                     <td>
-                        @foreach ($athlete_1 as $item)
-                            {{ $item }},
-                        @endforeach
+                        @if ($athlete_1 != '')
+                            @foreach ($athlete_1 as $item)
+                                {{ $item }},
+                            @endforeach
+                        @endif
                     </td>
                     <td style="width:200px;"></td>
                 </tr>
@@ -125,9 +127,11 @@
                     <td style="">Athlete</td>
                     <td>:</td>
                     <td>
-                        @foreach ($athlete_2 as $item)
-                            {{ $item }},
-                        @endforeach
+                        @if ($athlete_2 != '')
+                            @foreach ($athlete_2 as $item)
+                                {{ $item }},
+                            @endforeach
+                        @endif
                     </td>
                     <td style="width:200px;"></td>
                 </tr>
