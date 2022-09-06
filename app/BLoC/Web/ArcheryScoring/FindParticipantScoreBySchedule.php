@@ -52,6 +52,15 @@ class FindParticipantScoreBySchedule extends Retrieval
                 return $this->eliminationTeam($elimination_id, $match, $round);
             }
             return $this->elimination($elimination_id, $match, $round);
+        } elseif ($type_code == 3) {
+            if (isset($array_code[3])) {
+                return $this->qualificationFullDayByBudrest($parameters);
+            }
+            $session = $array_code[2];
+            if ($session == 11) {
+                return $this->shootOffQualification($parameters);
+            }
+            return $this->qualificationFullDay($parameters);
         }
         throw new BLoCException("gagal find score");
     }
