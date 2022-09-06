@@ -243,9 +243,9 @@ class ArcherySeriesUserPoint extends Model
             foreach ($event_series as $series_event) {
                 $output2 = [];
                 $evennt = ArcheryEvent::find($series_event->event_id);
-                $output2[$series_event->id]["event_name"] = $evennt->event_name;
+                $output2["event_name"] = $evennt->event_name;
                 $total_per_series = self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) != null ? self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) : 0;
-                $output2[$series_event->id]["total"] = $total_per_series[$user_profile["id"]]["total_point"];
+                $output2["total"] = $total_per_series[$user_profile["id"]]["total_point"];
                 $data3[] = $output2;
             }
 
