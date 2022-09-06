@@ -231,6 +231,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             // =============================== fast open 3 ===================================
             $router->get('/bulk-score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadScooresSheetElimination']);
             // ================================ End =========================================
+
+            $router->get('/download-qualification-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadQualificationSelectionScoresheet']);
+
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
