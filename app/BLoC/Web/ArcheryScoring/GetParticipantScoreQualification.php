@@ -42,7 +42,7 @@ class GetParticipantScoreQualification extends Retrieval
         $competition_category_id = $parameters->get('competition_category_id');
         $age_category_id = $parameters->get('age_category_id');
         $gender = $parameters->get('gender');
-        $score_type = 1;
+        $score_type = $parameters->get('score_type') ?? 1;
         $event_id = $parameters->get('event_id');
         $distance_id = $parameters->get('distance_id');
         $event_category_id = $parameters->get('event_category_id');
