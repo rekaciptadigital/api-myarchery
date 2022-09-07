@@ -7,6 +7,7 @@ use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use App\BLoC\General\GetListTabCategoryByEventId;
 use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use Illuminate\Support\ServiceProvider;
 
 class GeneralServiceProvider extends ServiceProvider
@@ -23,9 +24,11 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getCountry", GetCountry::class);
         $this->registerService("getMedalParticipantByEventId", GetMedalParticipantByEventId::class);
         $this->registerService("getListTabCategoryByEventId", GetListTabCategoryByEventId::class);
-        // ==================================== Fast Open 3 ========================================
-        $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
-        // ==================================== End ================================================
+        $this->registerService("getParticipantScoreEliminationSelectionLiveScore", GetParticipantScoreEliminationSelectionLiveScore::class);
+
+         // ==================================== Fast Open 3 ========================================
+         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
+         // ==================================== End ================================================
     }
 
     private function registerService($serviceName, $className)
