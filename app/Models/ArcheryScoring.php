@@ -533,11 +533,9 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
-                    if($arrows->value === "m" || $arrows->value === "x") {
-                        $count_shot_arrows += 1;
-                    } else if ($arrows->value === "") {
+                    if ($arrows->id == "") {
                         continue;
-                    } else if ($arrows->value <= 10) {
+                    } else {
                         $count_shot_arrows += 1;
                     }
                     $get_score[] = $arrows->id;
@@ -1299,11 +1297,9 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
-                    if($arrows->value === "m" || $arrows->value === "x") {
-                        $count_shot_arrows += 1;
-                    } else if ($arrows->value === "") {
+                    if ($arrows->id == "") {
                         continue;
-                    } else if ($arrows->value <= 10) {
+                    } else {
                         $count_shot_arrows += 1;
                     }
                     $get_score[] = $arrows->id;
