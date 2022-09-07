@@ -490,7 +490,7 @@ class BudRest extends Model
         // return $output;
 
         $array_pesrta_baru = [];
-        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id, $category->distance_id] : [
+        $distance = env('COUNT_STAGE_ELIMINATION_SELECTION') <= 2  ? [$category->distance_id, $category->distance_id] : [
             substr($category->distance_id, 0, 2),
             substr($category->distance_id, 2, 2),
             substr($category->distance_id, 4, 2)
@@ -499,7 +499,8 @@ class BudRest extends Model
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
-                    $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
+                    // $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
+                    $code_sesi['sesi'] = '';
                     $code_sesi['code'] = "4-" . $pmt->member_id . "-" . $i;
                     array_push($array_pesrta_baru, $code_sesi);
                 }
@@ -521,7 +522,7 @@ class BudRest extends Model
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
                 $i++;
             }
-            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
+            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "4-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
         }
 
         foreach ($member_in_budrest as $key => $data) {
