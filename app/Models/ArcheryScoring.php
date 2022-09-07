@@ -584,7 +584,7 @@ class ArcheryScoring extends Model
 
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
         $total_arrow = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
-        $total_irat = round(($total / $count_shot_arrows), 3);
+        $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
         
         $output = [
             "sessions" => $sessions,
@@ -1348,7 +1348,7 @@ class ArcheryScoring extends Model
 
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
         $total_arrow = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION')* env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
-        $total_irat = round(($total / $count_shot_arrows), 3);
+        $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
         
         $output = [
             "sessions" => $sessions,
