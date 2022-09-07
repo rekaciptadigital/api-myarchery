@@ -244,8 +244,8 @@ class ArcherySeriesUserPoint extends Model
                 $output2 = [];
                 $evennt = ArcheryEvent::find($series_event->event_id);
                 $output2["event_name"] = $evennt->event_name;
-                $total_per_series = self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) != null ? self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) : 0;
-                $output2["total"] = $total_per_series[$user_profile["id"]]["total_point"];
+                $total_per_series = self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) != [] ? self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) : 0;
+                $output2["total"] = isset($total_per_series[$user_profile["id"]]["total_point"]) ? $total_per_series[$user_profile["id"]]["total_point"] : $total_per_series;
                 $data3[] = $output2;
             }
 
@@ -278,7 +278,6 @@ class ArcherySeriesUserPoint extends Model
         $category_series = ArcherySeriesCategory::find($category_series_id);
         $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)->where("status", 1)->where("event_serie_id", $event_series_id)->where("user_id", $user_id)->get();
         $users = [];
-        $output = [];
         foreach ($archery_user_point as $key => $value) {
             $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
             $member_score_detail_qualification = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail_qualification"]) ? $users[$value->user_id]["score_detail_qualification"] : ArcheryScoring::ArcheryScoringDetailPoint();
@@ -309,6 +308,48 @@ class ArcherySeriesUserPoint extends Model
             $users[$value->user_id]["score_detail_qualification"] = $member_score_detail_qualification;
             $users[$value->user_id]["total_point"] = isset($users[$value->user_id]["total_point"]) ? $users[$value->user_id]["total_point"] + $value->point : $value->point;
             $users[$value->user_id]["point_details"][$value->type] = isset($users[$value->user_id]["point_details"][$value->type]) ? $users[$value->user_id]["point_details"][$value->type] + $value->point : $value->point;
+        }
+        // return $users;
+
+        $all_category_series = ArcherySeriesCategory::where("serie_id", $category_series->serie_id)->get();
+
+        if ($users == []) {
+            $event_series =  ArcheryEventSerie::find($event_series_id);
+            $event = ArcheryEvent::find($event_series->event_id);
+            $array_cat = [];
+            $coun_array_cat = 0;
+            foreach ($all_category_series as $acs) {
+                $participant_join_series = ArcheryEventParticipant::where("user_id", $user_id)
+                    ->where("age_category_id", $acs->age_category_id)
+                    ->where("distance_id", $acs->distance_id)
+                    ->where("competition_category_id", $acs->competition_category_id)
+                    ->where("team_category_id", $acs->team_category_id)
+                    ->where("status", 1)
+                    ->where("event_id", $event_series->event_id)
+                    ->first();
+
+                if ($participant_join_series) {
+                    $array_cat[] = $participant_join_series;
+                }
+            }
+
+            $coun_array_cat = count($array_cat);
+            if ($coun_array_cat > 1) {
+                $users = "lebih dari satu";
+                return $users;
+            }
+
+            if ($coun_array_cat == 1) {
+                if (
+                    $category_series->age_category_id == $array_cat[0]->age_category_id
+                    && $category_series->distance_id == $array_cat[0]->distance_id
+                    && $category_series->competition_category_id == $array_cat[0]->competition_category_id
+                    && $category_series->team_category_id == $array_cat[0]->team_category_id
+                ) {
+                    $users = "belum tentukan pemeringkatan series";
+                    return $users;
+                }
+            }
         }
 
         return $users;
