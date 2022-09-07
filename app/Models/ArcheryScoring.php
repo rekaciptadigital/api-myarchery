@@ -525,6 +525,7 @@ class ArcheryScoring extends Model
         }
         $total = 0;
         $total_tmp = 0;
+        $count_shot_arrows = 0;
         foreach ($member_scors as $k => $score) {
             $score_detail = json_decode($score->scoring_detail);
             $score_rambahan = [];
@@ -532,6 +533,7 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
+                    $count_shot_arrows += 1;
                     $get_score[] = $arrows->id;
                     $total = $total + $arrows->value;
                     $total_per_session = $total_per_session + $arrows->value;
@@ -578,7 +580,7 @@ class ArcheryScoring extends Model
 
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
         $total_arrow = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
-        $total_irat = round(($total / $total_arrow), 3);
+        $total_irat = round(($total / $count_shot_arrows), 3);
         
         $output = [
             "sessions" => $sessions,
@@ -589,7 +591,7 @@ class ArcheryScoring extends Model
             "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
             "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
-            "total_arrow" => $total_arrow,
+            "total_arrow" => $count_shot_arrows,
             "total_irat" => $total_irat
         ];
         return $output;
@@ -1283,6 +1285,7 @@ class ArcheryScoring extends Model
         }
         $total = 0;
         $total_tmp = 0;
+        $count_shot_arrows = 0;
         foreach ($member_scors as $k => $score) {
             $score_detail = json_decode($score->scoring_detail);
             $score_rambahan = [];
@@ -1290,6 +1293,7 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
+                    $count_shot_arrows += 1;
                     $get_score[] = $arrows->id;
                     $total = $total + $arrows->value;
                     $total_per_session = $total_per_session + $arrows->value;
@@ -1336,7 +1340,7 @@ class ArcheryScoring extends Model
 
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
         $total_arrow = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION')* env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
-        $total_irat = round(($total / $total_arrow), 3);
+        $total_irat = round(($total / $count_shot_arrows), 3);
         
         $output = [
             "sessions" => $sessions,
@@ -1347,7 +1351,7 @@ class ArcheryScoring extends Model
             "total_per_points" => $total_per_points,
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
             "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
-            "total_arrow" => $total_arrow,
+            "total_arrow" => $count_shot_arrows,
             "total_irat" => $total_irat
         ];
         return $output;
