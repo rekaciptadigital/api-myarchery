@@ -112,7 +112,7 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule) {
             throw new BLoCException("jadwal belum di set");
         }
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 1)->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
             throw new BLoCException("scoring sudah dikunci");
 
@@ -322,7 +322,7 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule) {
             throw new BLoCException("jadwal belum di set");
         }
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 1)->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
             throw new BLoCException("scoring sudah dikunci");
 
@@ -598,7 +598,7 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule) {
             throw new BLoCException("jadwal belum di set");
         }
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 3)->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
             throw new BLoCException("scoring sudah dikunci");
 
@@ -676,7 +676,7 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule) 
             throw new BLoCException("jadwal belum di set");
         
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 4)->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
             throw new BLoCException("scoring sudah dikunci");
 
