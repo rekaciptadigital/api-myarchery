@@ -537,7 +537,7 @@ class ArcheryScoring extends Model
                         $count_shot_arrows += 1;
                     } else if ($arrows->value === "") {
                         continue;
-                    } else {
+                    } else if ($arrows->value <= 10) {
                         $count_shot_arrows += 1;
                     }
                     $get_score[] = $arrows->id;
@@ -1303,7 +1303,7 @@ class ArcheryScoring extends Model
                         $count_shot_arrows += 1;
                     } else if ($arrows->value === "") {
                         continue;
-                    } else {
+                    } else if ($arrows->value <= 10) {
                         $count_shot_arrows += 1;
                     }
                     $get_score[] = $arrows->id;
