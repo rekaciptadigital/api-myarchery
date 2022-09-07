@@ -230,6 +230,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
             // =============================== fast open 3 ===================================
             $router->get('/bulk-score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadScooresSheetElimination']);
+            $router->get('/download-empty-score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEmptyScoreSheetElimination']);
             // ================================ End =========================================
         });
 
@@ -386,7 +387,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
 
         $router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {
-            //$router->group(['prefix' => 'event-certificate-templates'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addArcheryEventCertificateTemplates']);
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventCertificateTemplates']);
         });
