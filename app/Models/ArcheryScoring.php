@@ -533,7 +533,11 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
-                    $count_shot_arrows += 1;
+                    if($arrows->value == "") {
+                        continue;
+                    } else {
+                        $count_shot_arrows += 1;
+                    }
                     $get_score[] = $arrows->id;
                     $total = $total + $arrows->value;
                     $total_per_session = $total_per_session + $arrows->value;
@@ -1293,7 +1297,11 @@ class ArcheryScoring extends Model
             foreach ($score_detail as $ks => $sd) {
                 $get_score = [];
                 foreach ($sd as $rambahan => $arrows) {
-                    $count_shot_arrows += 1;
+                    if($arrows->value == "") {
+                        continue;
+                    } else {
+                        $count_shot_arrows += 1;
+                    }
                     $get_score[] = $arrows->id;
                     $total = $total + $arrows->value;
                     $total_per_session = $total_per_session + $arrows->value;
