@@ -88,7 +88,11 @@ class GetParticipantScoreEventSelection extends Retrieval
         
         $data_collection = collect($data_scoring);
         $sorted_data = $data_collection->sortByDesc("all_total_irat")->toArray();
-        return $sorted_data;
+        $response = [];
+        foreach ($sorted_data as $data) {
+            array_push($response, $data);
+        }
+        return $response;
     }
 
 }
