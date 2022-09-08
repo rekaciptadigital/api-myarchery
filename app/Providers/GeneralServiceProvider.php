@@ -26,6 +26,7 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getMedalParticipantByEventId", GetMedalParticipantByEventId::class);
         $this->registerService("getListTabCategoryByEventId", GetListTabCategoryByEventId::class);
         $this->registerService("getParticipantScoreEliminationSelectionLiveScore", GetParticipantScoreEliminationSelectionLiveScore::class);
+        $this->registerService("getParticipantScoreEventSelectionLiveScore", GetParticipantScoreEventSelectionLiveScore::class);
 
           // ==================================== Fast Open 3 ========================================
           $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
