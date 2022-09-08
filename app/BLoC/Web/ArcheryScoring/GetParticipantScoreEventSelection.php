@@ -36,7 +36,6 @@ class GetParticipantScoreEventSelection extends Retrieval
 
     protected function process($parameters)
     {
-        $score_type = 4;
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
@@ -70,7 +69,7 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
 
         if ($category_detail->category_team == "Individual") {
-            return $this->getListMemberScoringIndividual($event_category_id, $score_type, $session_qualification, $session_elimination, $name, $event->id);
+            return $this->getListMemberScoringIndividual($event_category_id, $session_qualification, $session_elimination, $name, $event->id);
         }
     }
 
@@ -82,26 +81,14 @@ class GetParticipantScoreEventSelection extends Retrieval
         ];
     }
 
-    public function getListMemberScoringIndividual($category_id, $score_type, $session_qualification, $session_elimination, $name, $event_id)
+    public function getListMemberScoringIndividual($category_id, $session_qualification, $session_elimination, $name, $event_id)
     {
-        $qualification_member = ArcheryScoring::getScoringRankByCategoryIdForEventSelection($category_id, $score_type, $session_qualification, $session_elimination, true, $name);
+        $data_scoring = ArcheryScoring::getScoringRankByCategoryIdForEventSelection($category_id, $session_qualification, $session_elimination, true, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
-        // $qualification_rank = ArcheryScoring::getScoringRankForEliminationSelection($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);
-
-        // $response = [];
-
-        // foreach ($qualification_member as $key1 => $value1) {
-        //     foreach ($qualification_rank as $key2 => $value2) {
-        //         if ($value1["member"]["id"] === $value2["member"]["id"]) {
-        //             $value1["rank"] = $key2 + 1;
-        //             $value1["have_shoot_off"] = $value2["have_shoot_off"];
-        //             array_push($response, $value1);
-        //             break;
-        //         }
-        //     }
-        // }
-
-        return $qualification_member;
+        
+        $data_collection = collect($data_scoring);
+        $sorted_data = $data_collection->sortByDesc("all_total_irat")->toArray();
+        return $sorted_data;
     }
 
 }

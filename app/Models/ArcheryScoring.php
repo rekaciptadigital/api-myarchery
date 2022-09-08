@@ -1366,7 +1366,7 @@ class ArcheryScoring extends Model
     }
 
     // All result of qualification & elimination to get total irat for event selection
-    protected function getScoringRankByCategoryIdForEventSelection($event_category_id, $score_type, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $orderByBudrestNumber = false, $name = null, $is_present = false)
+    protected function getScoringRankByCategoryIdForEventSelection($event_category_id, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $orderByBudrestNumber = false, $name = null, $is_present = false)
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
