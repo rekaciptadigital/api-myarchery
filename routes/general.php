@@ -42,6 +42,8 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
         $router->get('/archery/scorer/qualificaiton', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualification']);
         $router->get('/archery/scorer/elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelectionLiveScore']);
+        $router->get('/archery/scorer/all-result-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelectionLiveScore']);
+
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
