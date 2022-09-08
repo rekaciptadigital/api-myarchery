@@ -1365,4 +1365,72 @@ class ArcheryScoring extends Model
         return $output;
     }
 
+    // All result of qualification & elimination to get total irat for event selection
+    protected function getScoringRankByCategoryIdForEventSelection($event_category_id, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $orderByBudrestNumber = false, $name = null, $is_present = false)
+    {
+        $participants_query = ArcheryEventParticipantMember::select(
+            "archery_event_participant_members.id",
+            "archery_event_participant_members.have_shoot_off",
+            "users.name",
+            "archery_event_participant_members.user_id",
+            "users.gender",
+            "archery_event_participants.id as participant_id",
+            "archery_event_participants.event_id",
+            "archery_event_participants.is_present",
+            "archery_clubs.name as club_name",
+            "archery_clubs.id as club_id",
+            "archery_event_qualification_schedule_full_day.bud_rest_number",
+            "archery_event_qualification_schedule_full_day.target_face"
+        )
+            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
+            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+            ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+            ->where('archery_event_participants.status', 1)
+            ->where('archery_event_participants.event_category_id', $event_category_id);
+
+        if ($name) {
+            $participants_query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
+        }
+
+
+        if ($orderByBudrestNumber) {
+            $participants_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
+                ->orderBy("archery_event_qualification_schedule_full_day.target_face");
+        }
+
+        if ($is_present) {
+            $participants_query->where("archery_event_participants.is_present", 1);
+        }
+
+        $participants_collection = $participants_query->get();
+        $archery_event_score = [];
+        foreach ($participants_collection as $key => $value) {
+            $score_qualification = $this->generateScoreBySession($value->id, 3, $session_qualification);
+            $score_elimination = $this->generateScoreBySessionEliminationSelection($value->id, 4, $session_elimination);
+            $score["qualification"] = $score_qualification;
+            $score["elimination"] = $score_elimination;
+            $score["club_id"] = $value->club_id;
+            $score["club_name"] = $value->club_name;
+            $score["member"] = $value;
+            $score["have_shoot_off"] = $value->have_shoot_off;
+            $score["all_total_irat"] = $score_qualification['total_irat'] + $score_elimination['total_irat'];
+            $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
+            $archery_event_score[] = $score;
+        }
+
+        if (!$orderByBudrestNumber) {
+            usort($archery_event_score, function ($a, $b) {
+                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                    }
+                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                }
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            });
+        }
+
+        return $archery_event_score;
+    }
 }

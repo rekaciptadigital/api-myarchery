@@ -162,6 +162,7 @@ use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadQualificationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -412,6 +413,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
         $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
+        $this->registerService("getParticipantScoreEventSelection", GetParticipantScoreEventSelection::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
