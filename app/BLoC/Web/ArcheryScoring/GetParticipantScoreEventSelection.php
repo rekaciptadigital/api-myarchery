@@ -39,6 +39,8 @@ class GetParticipantScoreEventSelection extends Retrieval
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
+        $standings_type = $parameters->get("standings_type");
+
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category_detail) {
             throw new BLoCException("category tidak ditemukan");
@@ -69,7 +71,14 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
 
         if ($category_detail->category_team == "Individual") {
-            return $this->getListMemberScoringIndividual($event_category_id, $session_qualification, $session_elimination, $name, $event->id);
+            //filter klasemen
+            if ($standings_type == 3) {
+                return ArcheryScoring::getScoringRankByCategoryId($event_category_id, 3, $session_qualification);
+            } else if ($standings_type == 4) {
+                return app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($event_category_id, 4, $session_elimination, $name, $event->id);
+            } else {
+                return $this->getListMemberScoringIndividual($event_category_id, $session_qualification, $session_elimination, $name, $event->id);
+            }
         }
     }
 
