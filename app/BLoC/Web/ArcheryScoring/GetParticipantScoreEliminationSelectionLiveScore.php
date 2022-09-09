@@ -93,6 +93,15 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         }
 
         return $response;
+
+        // sorting by total irat
+        // $data_collection = collect($response);
+        // $sorted_data = $data_collection->sortByDesc("total_irat")->toArray();
+        // $output = [];
+        // foreach ($sorted_data as $data) {
+        //     array_push($output, $data);
+        // }
+        // return $output;
     }
 
 }

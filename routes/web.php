@@ -415,6 +415,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
+            $router->get('/download-selection-report', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventSelection']);
         });
 
         $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
