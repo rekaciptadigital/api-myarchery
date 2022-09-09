@@ -26,6 +26,7 @@ class GetArcheryEventGlobal extends Retrieval
                          ->orderBy('archery_events.event_end_datetime', 'desc')
                          ->join('archery_event_category_details', 'archery_event_category_details.event_id', '=', 'archery_events.id')
                          ->where('status',1)
+                         ->where('is_private',false)
                          ->where(function ($query) use ($event_name){
                              if(!empty($event_name)){
                                  $query->where('archery_events.event_name', 'like', '%'.$event_name.'%');
