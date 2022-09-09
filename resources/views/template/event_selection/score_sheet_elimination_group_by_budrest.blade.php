@@ -123,6 +123,7 @@
                         <?php for ($i=0; $i < $total_stage; $i++) { ?>
                             <tr <?php if(($i%2==0)){echo 'style="background-color: #e3e2de;"'; } ?>>
                                 <td class="border" style="height: 25px; width: 17px;" rowspan="1">{{$i+1}}</td>
+                                <td class="border" style="height: 25px; width: 17px;" rowspan="1"></td>
                                 <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
                                 <?php if($total_shot_per_stage > 2){ ?>
                                 <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>

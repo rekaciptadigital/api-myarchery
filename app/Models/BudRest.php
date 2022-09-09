@@ -550,35 +550,36 @@ class BudRest extends Model
                     "event" => $output['event']
                 ]);
                 $mpdf->WriteHTML($html);
-            } else {
-                foreach ($data["members"] as $group_member) {
-                    foreach ($group_member as $m) {
-                        $qrCode = new QrCode($m['code']);
-                        $output_qrcode = new Output\Png();
-                        // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-                        $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
-                        $full_path = $path . $qrCode_name_file;
-                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                        // return $type;
-                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                        // return $data_get_qr_code;
-                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                        // return $base64;
-                        $html = \view('template.event_selection.score_sheet_elimination', [
-                            "data" => $m,
-                            "category" => $output['category'],
-                            "category_label" => $output['category_label'],
-                            "qr" => $base64,
-                            "total_shot_per_stage" => env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION'),
-                            "total_stage" => env('COUNT_STAGE_ELIMINATION_SELECTION'),
-                            "event" => $output['event']
-                        ]);
-                        $mpdf->WriteHTML($html);
-                    }
-                }
             }
+            //  else {
+            //     foreach ($data["members"] as $group_member) {
+            //         foreach ($group_member as $m) {
+            //             $qrCode = new QrCode($m['code']);
+            //             $output_qrcode = new Output\Png();
+            //             // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
+            //             $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
+            //             $full_path = $path . $qrCode_name_file;
+            //             $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+            //             file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+
+            //             // return $type;
+            //             $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+            //             // return $data_get_qr_code;
+            //             $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
+            //             // return $base64;
+            //             $html = \view('template.event_selection.score_sheet_elimination', [
+            //                 "data" => $m,
+            //                 "category" => $output['category'],
+            //                 "category_label" => $output['category_label'],
+            //                 "qr" => $base64,
+            //                 "total_shot_per_stage" => env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION'),
+            //                 "total_stage" => env('COUNT_STAGE_ELIMINATION_SELECTION'),
+            //                 "event" => $output['event']
+            //             ]);
+            //             $mpdf->WriteHTML($html);
+            //         }
+            //     }
+            // }
         }
 
         $full_path = $path . "score_sheet_elimination_selection" . $category->id . ".pdf";
