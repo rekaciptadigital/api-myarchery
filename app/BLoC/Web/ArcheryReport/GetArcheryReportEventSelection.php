@@ -41,13 +41,14 @@ class GetArcheryReportEventSelection extends Retrieval
         // $id = array();
 
         $pages = array();
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="50%"></img>';
+        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="70%"></img>';
+        $logo_event = '<img src="' . Storage::disk('public')->path("logo/perpani-jkt.png") . '" alt="" width="70%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
         }
-        $logo_event = $archery_event->logo;
+        // $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);

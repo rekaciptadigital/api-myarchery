@@ -28,9 +28,8 @@
         <table style="width: 50%; height: 20%;" border="0">
             <tbody>
                 <tr style="height: 20px;">
-                    <td style="width: 10%; height: 30px;" rowspan="2">
-                        <img src="{{ $logo_event }}" alt="" width="80%">
-                    </td>
+                    <td style="width: 2%; height: 50px;" rowspan="2"></td>
+                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
                     <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
                     <td style="width: 42%; height: 30px; ">
                         <p style="text-align: left; font-size: 14pt; font-family: helvetica;">
@@ -48,11 +47,11 @@
         <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; margin-bottom: 25px;">
             <thead>
                 <tr>
-                    <th style="text-align: center;border: 1px solid black; font-size: 20px;" colspan="11">{{ $elimination['category'] }}</th>
+                    <th style="text-align: center;border: 1px solid black; font-size: 20px; background-color: lightgray;" colspan="11">{{ $elimination['category'] }}</th>
                 </tr>
             </thead>
             <tbody style="font-size: 18px;">
-                <tr style="border: 1px solid black;">
+                <tr style="border: 1px solid black; background-color: lightgray;">
                     <th style="text-align: center;border: 1px solid black; ">
                         <strong>Pos.</strong>
                     </th>
