@@ -76,7 +76,7 @@ class ArcheryEventQualificationTime extends Model
                         ->first();
 
                     if ($cat_individu) {
-                        if (date("Y-m-d", strtotime($cat->event_start_datetime)) == $day) {
+                        if (date("Y-m-d", strtotime($cat_individu->event_start_datetime)) == $day) {
                             $cat_fix[] = $cat;
                         }
                     }
