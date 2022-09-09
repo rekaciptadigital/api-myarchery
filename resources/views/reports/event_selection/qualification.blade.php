@@ -25,17 +25,16 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
-        <table style="width: 100%; height: 40px;" border="0">
+        <table style="width: 50%; height: 20%;" border="0">
             <tbody>
-                <tr style="height: 40px;">
-                    <td style="width: 10%; height: 50px;" rowspan="2">
+                <tr style="height: 20px;">
+                    <td style="width: 10%; height: 30px;" rowspan="2">
                         <img src="{{ $logo_event }}" alt="" width="80%">
                     </td>
                     <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
-                    <td style="width: 42%; height: 50px; ">
+                    <td style="width: 42%; height: 30px; ">
                         <p style="text-align: left; font-size: 14pt; font-family: helvetica;">
-                            <strong><span style="font-size: 20px;">{{ $event_name_report }}</span></strong> <br /><br />
+                            <strong><span style="font-size: 20px;">{{ $event_name_report }}</span></strong> <br />
                             {{ $event_location_report }}<br />
                             {{ $event_date_report }}
                         </p>
@@ -43,7 +42,7 @@
                 </tr>
             </tbody>
         </table>
-        <h2 style="text-align: center; font-size: 30px;">Qualification</h2>
+        <h2 style="text-align: center; font-size: 24px;">Qualification</h2>
         @foreach ($datas as $key => $qualification)
         <p style="font-size: 18px; text-align: right; margin-bottom: 5px;"><b>After {{ $qualification['total_arrow'] }} arrows</b></p>
         <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; margin-bottom: 25px;">
