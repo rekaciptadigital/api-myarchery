@@ -47,6 +47,11 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
+        // =============================== Fast Open 3 ============================================
+        $router->group(["prefix" => "series"], function () use ($router) {
+            $router->get("download-excell-member-series-rank", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberSeriesRank']);
+        });
+        // ================================= End ====================================================
         $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
         $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
         $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);
