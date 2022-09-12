@@ -370,6 +370,7 @@ class ArcheryEvent extends Model
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
                     'handbook' => $data->handbook,
+                    'logo' => $data->logo,
                     'event_description' => $data->description,
                     'event_location' => $data->location,
                     'event_city' => [
