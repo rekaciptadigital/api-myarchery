@@ -23,9 +23,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
     {
         $admin = Auth::user();
         $event = ArcheryEvent::find($parameters->get("event_id"));
-        if (!$event) {
-            throw new BLoCException("Event tidak ditemukan");
-        }
 
         if ($event->admin_id != $admin->id) {
             throw new BLoCException("Forbiden");
@@ -42,28 +39,14 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
         foreach ($list_category as $key => $category) {
             $competitio_category = ArcheryEventMasterCompetitionCategory::find($category['competition_category_id']);
-            if (!$competitio_category) {
-                throw new BLoCException("Competition category tidak tersedia");
-            }
-
             $age_category = ArcheryMasterAgeCategory::find($category['age_category_id']);
-            if (!$age_category) {
-                throw new BLoCException("Age category tidak tersedia");
-            }
 
             if ($age_category->is_hide == 1) {
                 throw new BLoCException("kategori umur ini tidak dapat digunakan");
             }
 
             $distance_category = ArcheryMasterDistanceCategory::find($category['distance_category_id']);
-            if (!$distance_category) {
-                throw new BLoCException("Distance category tidak ditemukan");
-            }
-
             $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);
-            if (!$team_category) {
-                throw new BLoCException("Team category tidak ditemukan");
-            }
 
             $date_time_event_start_datetime = strtotime($event->event_start_datetime);
             $today = strtotime("now");
@@ -120,6 +103,8 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             $archery_category_detail->fee = $category['fee'];
             $archery_category_detail->is_show = $category["is_show"];
             $archery_category_detail->early_bird = $category["early_bird"];
+            $archery_category_detail->start_registration = $category["start_registration"];
+            $archery_category_detail->end_registration = $category["end_registration"];
             $archery_category_detail->end_date_early_bird = $end_early_bird;
             $archery_category_detail->save();
         }
@@ -132,15 +117,17 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
     protected function validation($parameters)
     {
         return [
-            'event_id' => 'required',
+            'event_id' => 'required|integer|exists:archery_events,id',
             "categories" => "required|array|min:1",
-            'categories.*.age_category_id' => 'required',
-            'categories.*.competition_category_id' => 'required',
-            'categories.*.distance_category_id' => 'required',
-            'categories.*.team_category_id' => 'required',
+            'categories.*.age_category_id' => 'required|exists:archery_master_age_categories,id',
+            'categories.*.competition_category_id' => 'required|exists:archery_master_competition_categories,id',
+            'categories.*.distance_category_id' => 'required|exists:archery_master_distances,id',
+            'categories.*.team_category_id' => 'required|exists:archery_master_team_categories,id',
             'categories.*.quota' => 'required|min:0',
             'categories.*.fee' => 'required|min:0',
             'categories.*.early_bird' => "required|min:0",
+            'categories.*.start_registration' => "required",
+            'categories.*.end_registration' => "required",
         ];
     }
 }
