@@ -232,6 +232,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/bulk-score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadScooresSheetElimination']);
             $router->get('/download-empty-score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEmptyScoreSheetElimination']);
             // ================================ End =========================================
+
+            $router->get('/download-qualification-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadQualificationSelectionScoresheet']);
+            $router->get('/download-elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationSelectionScoresheet']);
+
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -411,6 +415,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
+            $router->get('/download-selection-report', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventSelection']);
         });
 
         $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -448,6 +453,14 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
+        });
+
+        $router->group(['prefix' => 'scorer-elimination-selection', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelection']);
+        });
+
+        $router->group(['prefix' => 'all-result-selection-score', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelection']);
         });
 
         $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
