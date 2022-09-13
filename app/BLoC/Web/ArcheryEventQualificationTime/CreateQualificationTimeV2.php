@@ -90,7 +90,7 @@ class CreateQualificationTimeV2 extends Transactional
             if ($archery_event_qualification_time) {
                 if ($kaey_deleted && $kaey_deleted == 1) {
                     $archery_event_qualification_time->delete();
-                    return "success";
+                    continue;
                 }
             } else {
                 $archery_event_qualification_time = new ArcheryEventQualificationTime();
