@@ -8,7 +8,6 @@ use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Exceptions\BLoCException;
-use DateTime;
 
 class CreateQualificationTimeV2 extends Transactional
 {
@@ -92,19 +91,19 @@ class CreateQualificationTimeV2 extends Transactional
 
                 if ($kaey_deleted && $kaey_deleted == 1) {
                     $jadwal->delete();
-                }
-            } else {
-                $archery_event_qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_detail_id)
-                    ->first();
+                } else {
+                    $archery_event_qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_detail_id)
+                        ->first();
 
-                if (!$archery_event_qualification_time) {
-                    $archery_event_qualification_time = new ArcheryEventQualificationTime();
-                }
+                    if (!$archery_event_qualification_time) {
+                        $archery_event_qualification_time = new ArcheryEventQualificationTime();
+                    }
 
-                $archery_event_qualification_time->category_detail_id = $category_detail_id;
-                $archery_event_qualification_time->event_start_datetime =  $qt['event_start_datetime'];
-                $archery_event_qualification_time->event_end_datetime =  $qt['event_end_datetime'];
-                $archery_event_qualification_time->save();
+                    $archery_event_qualification_time->category_detail_id = $category_detail_id;
+                    $archery_event_qualification_time->event_start_datetime =  $qt['event_start_datetime'];
+                    $archery_event_qualification_time->event_end_datetime =  $qt['event_end_datetime'];
+                    $archery_event_qualification_time->save();
+                }
             }
         }
 
