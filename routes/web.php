@@ -225,6 +225,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
+        $router->group(['prefix' => 'management-user'], function () use ($router) {
+            $router->post('/create-new-user', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createNewUser']);
+        });
+
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
             $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
