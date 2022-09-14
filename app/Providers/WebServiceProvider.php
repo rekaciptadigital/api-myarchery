@@ -190,6 +190,7 @@ use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
 use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
 use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
 use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListRole;
 
@@ -239,6 +240,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("checkAdminExists", CheckAdminExists::class);
         $this->registerService("getListRole", GetListRole::class);
         $this->registerService("getListAdmin", GetListAdmin::class);
+        $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         
         // =========================== End ============================
 
