@@ -75,39 +75,43 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
-        $pages[] = view('report_result/club_rank_medals_standing', [
-            'logo_event' => $logo_event,
-            'logo_archery' => $logo_archery,
-            'event_name_report' => $event_name_report,
-            'event_date_report' => $event_date_report,
-            'event_location_report' => $event_location_report,
-            'headers' => $data_medal_standing['title_header']['category'],
-            'datatables' => $data_medal_standing['datatable'],
-            'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-            'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
-        ]);
-        // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
-
-        // =============================== data ======================================
-        foreach ($data_medal_standing['datatable'] as $key => $dms) {
-            $pages[] = view('report_medal_club/dataTable', [
+        if (count($data_medal_standing["datatable"]) > 0) {
+            $pages[] = view('report_result/club_rank_medals_standing', [
                 'logo_event' => $logo_event,
-                "dms" => $dms,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
                 'event_date_report' => $event_date_report,
                 'event_location_report' => $event_location_report,
                 'headers' => $data_medal_standing['title_header']['category'],
-                "rank" => $key + 1,
-                "category" => $data_medal_standing["title_header"]["category"],
-                "club_name" => $dms["club_name"],
-                "total_gold" => $dms["total_gold"],
-                "total_silver" => $dms["total_silver"],
-                "total_bronze" => $dms["total_bronze"],
+                'datatables' => $data_medal_standing['datatable'],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
                 'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
             ]);
+            // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
+
+
+
+            // =============================== data ======================================
+            foreach ($data_medal_standing['datatable'] as $key => $dms) {
+                $pages[] = view('report_medal_club/dataTable', [
+                    'logo_event' => $logo_event,
+                    "dms" => $dms,
+                    'logo_archery' => $logo_archery,
+                    'event_name_report' => $event_name_report,
+                    'event_date_report' => $event_date_report,
+                    'event_location_report' => $event_location_report,
+                    'headers' => $data_medal_standing['title_header']['category'],
+                    "rank" => $key + 1,
+                    "category" => $data_medal_standing["title_header"]["category"],
+                    "club_name" => $dms["club_name"],
+                    "total_gold" => $dms["total_gold"],
+                    "total_silver" => $dms["total_silver"],
+                    "total_bronze" => $dms["total_bronze"],
+                    'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
+                    'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                ]);
+            }
         }
         // =============================== enddata ===================================
 
@@ -156,8 +160,7 @@ class ReportMedalClub extends Retrieval
 
     protected function getMedalStanding($event_id)
     {
-        $data = ClubRanked::getEventRanked($event_id);
-
+        $data = ClubRanked::getEventRanked($event_id, 1, null);
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -187,83 +190,89 @@ class ReportMedalClub extends Retrieval
 
         $result = [];
         $detail_club_with_medal_response = [];
-        foreach ($data as $key => $d) {
-            $detail_club_with_medal_response["club_name"] = $d["club_name"];
-            $detail_club_with_medal_response["total_gold"] = $d["gold"];
-            $detail_club_with_medal_response["total_silver"] = $d["silver"];
-            $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+        if (count($data) > 0) {
+            foreach ($data as $key => $d) {
+                $detail_club_with_medal_response["club_name"] = $d["club_name"];
+                $detail_club_with_medal_response["total_gold"] = $d["gold"];
+                $detail_club_with_medal_response["total_silver"] = $d["silver"];
+                $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
 
-            foreach ($competition_category as $competition) {
-                $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
-                    ->where("competition_category_id", $competition->competition_category)
-                    ->orderBy('competition_category_id', 'DESC')->get();
+                foreach ($competition_category as $competition) {
+                    $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+                        ->where("competition_category_id", $competition->competition_category)
+                        ->orderBy('competition_category_id', 'DESC')->get();
 
-                foreach ($age_category as $age) {
-                    $gold = 0;
-                    $silver = 0;
-                    $bronze = 0;
+                    foreach ($age_category as $age) {
+                        $gold = 0;
+                        $silver = 0;
+                        $bronze = 0;
 
-                    if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
-                        $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
-                        $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
-                        $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
-                    };
+                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
+                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
+                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
+                        };
 
-                    $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
-                        "gold" => $gold,
-                        "silver" => $silver,
-                        "bronze" => $bronze
-                    ];
+                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                            "gold" => $gold,
+                            "silver" => $silver,
+                            "bronze" => $bronze
+                        ];
+                    }
                 }
-            }
-            $medal_array = [];
-            foreach ($detail_club_with_medal_response["category"] as $c) {
-                foreach ($c as $a) {
-                    foreach ($a as $s) {
-                        foreach ($s as $b) {
-                            array_push($medal_array, $b);
+                $medal_array = [];
+                foreach ($detail_club_with_medal_response["category"] as $c) {
+                    foreach ($c as $a) {
+                        foreach ($a as $s) {
+                            foreach ($s as $b) {
+                                array_push($medal_array, $b);
+                            }
                         }
                     }
                 }
+                $detail_club_with_medal_response["medal_array"] = $medal_array;
+                array_push($result, $detail_club_with_medal_response);
             }
-            $detail_club_with_medal_response["medal_array"] = $medal_array;
-            array_push($result, $detail_club_with_medal_response);
         }
 
         // start: total medal emas, perak, perunggu dari setiap kategori semua klub
         $array_of_total_medal_by_category = [];
-        $total_array_category = count($result[0]['medal_array']);
-        for ($i = 0; $i < $total_array_category; $i++) {
-            $total_medal_by_category = 0;
-            for ($j = 0; $j < count($result); $j++) {
-                $total_medal_by_category += $result[$j]['medal_array'][$i];
+        if (count($result) > 0) {
+            $total_array_category = count($result[0]['medal_array']);
+            for ($i = 0; $i < $total_array_category; $i++) {
+                $total_medal_by_category = 0;
+                for ($j = 0; $j < count($result); $j++) {
+                    $total_medal_by_category += $result[$j]['medal_array'][$i];
+                }
+                array_push($array_of_total_medal_by_category, $total_medal_by_category);
             }
-            array_push($array_of_total_medal_by_category, $total_medal_by_category);
+
+            // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
+            $array_of_total_medal_by_category_all_club = [];
+            $total_medal_by_category_gold = 0;
+            $total_medal_by_category_silver = 0;
+            $total_medal_by_category_bronze = 0;
+            for ($k = 0; $k < count($result); $k++) {
+                $total_medal_by_category_gold += $result[$k]['total_gold'];
+                $total_medal_by_category_silver += $result[$k]['total_silver'];
+                $total_medal_by_category_bronze += $result[$k]['total_bronze'];
+            }
+            $array_of_total_medal_by_category_all_club = [
+                'gold' => $total_medal_by_category_gold,
+                'silver' => $total_medal_by_category_silver,
+                'bronze' => $total_medal_by_category_bronze
+            ];
+            // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
         }
         // end: total medal emas, perak, perunggu dari setiap kategori semua klub
 
-        // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
-        $array_of_total_medal_by_category_all_club = [];
-        $total_medal_by_category_gold = 0;
-        $total_medal_by_category_silver = 0;
-        $total_medal_by_category_bronze = 0;
-        for ($k = 0; $k < count($result); $k++) {
-            $total_medal_by_category_gold += $result[$k]['total_gold'];
-            $total_medal_by_category_silver += $result[$k]['total_silver'];
-            $total_medal_by_category_bronze += $result[$k]['total_bronze'];
-        }
-        $array_of_total_medal_by_category_all_club = [
-            'gold' => $total_medal_by_category_gold,
-            'silver' => $total_medal_by_category_silver,
-            'bronze' => $total_medal_by_category_bronze
-        ];
-        // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
+
 
         $response = [
             'title_header' => $title_header,
             'datatable' => $result,
             'total_medal_by_category' => $array_of_total_medal_by_category,
-            'total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
+            'total_medal_by_category_all_club' => isset($array_of_total_medal_by_category_all_club) ? $array_of_total_medal_by_category_all_club : []
         ];
 
         return $response;

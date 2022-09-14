@@ -154,9 +154,18 @@ use App\BLoC\Web\Member\BulkInsertUserParticipant;
 use App\BLoC\Web\ArcheryScoring\ResetScoringEliminasi;
 use App\BLoC\Web\ClubRanked\GetConfigClubRanked;
 use App\BLoC\Web\ClubRanked\SetConfigClubRanked;
+use App\BLoC\Web\EliminationScoreSheet\BulkDownloadScooresSheetElimination;
+use App\BLoC\Web\EliminationScoreSheet\DownloadEmptyScoreSheetElimination;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
+use App\BLoC\Web\ArcheryScoreSheet\DownloadQualificationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
+use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
+use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -191,7 +200,6 @@ use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
-
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
@@ -228,7 +236,13 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
+
+        // ========================= Fast Open ========================
         $this->registerService("addLogoEvent", AddLogoEvent::class);
+        $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
+        $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
+        $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
+        // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
         $this->registerService("editArcheryEventParticipantScore", EditArcheryEventParticipantScore::class);
@@ -309,6 +323,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("upp", Upp::class);
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
+        $this->registerService("downloadQualificationSelectionScoresheet", DownloadQualificationSelectionScoresheet::class);
+        $this->registerService("downloadEliminationSelectionScoresheet", DownloadEliminationSelectionScoresheet::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
         $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);
@@ -327,6 +343,7 @@ class WebServiceProvider extends ServiceProvider
         // ========================== event =================================
         $this->registerService("createArcheryEventV2", CreateArcheryEventV2::class);
         $this->registerService("updateArcheryEventV2", updateArcheryEventV2::class);
+        $this->registerService("getArcheryReportEventSelection", GetArcheryReportEventSelection::class);
 
         // =========================== Category =============================
         $this->registerService("createOrUpdateArcheryCategoryDetailV2", CreateOrUpdateArcheryCategoryDetailV2::class);
@@ -390,11 +407,13 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setBudRestElimination", SetBudRestElimination::class);
         $this->registerService("cleanEliminationMatch", CleanEliminationMatch::class);
         $this->registerService("cleanScoringQualification", CleanScoringQualification::class);
+        $this->registerService("getParticipantScoreEliminationSelection", GetParticipantScoreEliminationSelection::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
         $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
+        $this->registerService("getParticipantScoreEventSelection", GetParticipantScoreEventSelection::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);
@@ -409,6 +428,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getConfigClubRanked", GetConfigClubRanked::class);
         $this->registerService("bulkInsertUserParticipant", BulkInsertUserParticipant::class);
         $this->registerService("importParticipantExcell", ImportParticipantExcell::class);
+        $this->registerService("bulkDownloadScooresSheetElimination", BulkDownloadScooresSheetElimination::class);
         // ================================================================================================
 
         // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //

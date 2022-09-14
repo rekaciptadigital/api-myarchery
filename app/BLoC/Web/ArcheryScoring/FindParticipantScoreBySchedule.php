@@ -52,6 +52,17 @@ class FindParticipantScoreBySchedule extends Retrieval
                 return $this->eliminationTeam($elimination_id, $match, $round);
             }
             return $this->elimination($elimination_id, $match, $round);
+        } elseif ($type_code == 3) {
+            if (isset($array_code[3])) {
+                return $this->qualificationFullDayByBudrest($parameters);
+            }
+            $session = $array_code[2];
+            if ($session == 11) {
+                return $this->shootOffQualification($parameters);
+            }
+            return $this->qualificationFullDay($parameters);
+        } elseif ($type_code == 4) {
+            return $this->eliminationSelection($parameters);
         }
         throw new BLoCException("gagal find score");
     }
@@ -386,5 +397,41 @@ class FindParticipantScoreBySchedule extends Retrieval
         }
 
         return $scores;
+    }
+
+    private function eliminationSelection($parameters)
+    {
+        $code = explode("-", $parameters->code);
+        $type = $code[0];
+        $participant_member_id = $code[1];
+        $session = $code[2];
+        $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id")
+            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->where("archery_event_participants.status", 1)
+            ->where("archery_event_participant_members.id", $participant_member_id)->first();
+        if (!$participant_member)
+            throw new BLoCException("member tidak ditemukan");
+
+        $score = ArcheryScoring::where("participant_member_id", $participant_member_id)
+            ->where("scoring_session", $session)
+            ->where("type", $type)
+            ->first();
+        $output = (object)array();
+        $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
+        $category_detail = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
+        if (!$category_detail) {
+            throw new BLoCException("kategori tidak ditemukan");
+        }
+        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, env('COUNT_STAGE_ELIMINATION_SELECTION'), env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION')) : ArcheryScoring::makeScoringFormat((object) array(), null, env('COUNT_STAGE_ELIMINATION_SELECTION'), env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION'));
+        $output->score = $s;
+        $output->category = $category_detail->getCategoryDetailById($category_detail->id);
+        $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
+        $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
+        $output->session = $session;
+        $output->schedule_id = $schedule->id;
+        $output->is_updated = 1;
+        if (isset($score->is_lock))
+            $output->is_updated = $score->is_lock == 1 ? 0 : 1;
+        return $output;
     }
 }

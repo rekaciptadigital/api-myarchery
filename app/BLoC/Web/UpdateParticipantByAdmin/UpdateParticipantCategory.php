@@ -132,10 +132,10 @@ class UpdateParticipantCategory extends Transactional
             $check_date = $this->getAge($user_participant->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
             if ($check_date["y"] > $new_category->max_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
             }
             if ($check_date["y"] == $new_category->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
             }
         }
 
@@ -146,7 +146,7 @@ class UpdateParticipantCategory extends Transactional
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user_participant->age < $new_category->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $new_category->min_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $new_category->min_age . " tahun");
             }
         }
 
