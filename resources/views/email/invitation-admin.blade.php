@@ -11,7 +11,6 @@
             width: 40%;
             border: none;
             background-color: #0D47A1;
-            color: white;
             padding: 14px 28px;
             font-size: 16px;
             cursor: pointer;
@@ -104,7 +103,7 @@
                                                     </p>
                                                     <br />
                                                     <a href="https://myarchery.id/home" target="_blank"
-                                                        rel="noopener noreferrer" class="block">
+                                                        rel="noopener noreferrer" class="block" style="color: white;">
                                                         Buka MyArchery
                                                     </a>
                                                     <div class="spacer" style="line-height: 55px;">&zwnj;</div>
