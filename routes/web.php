@@ -225,10 +225,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
-        $router->group(['prefix' => 'management-user'], function () use ($router) {
+        $router->group(['prefix' => 'management-user', "middleware" => "auth.admin"], function () use ($router) {
             $router->post('/create-new-user', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createNewUser']);
             $router->get('/check-is-exists-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminExists']);
             $router->get('/get-list-role', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListRole']);
+            $router->get('/get-list-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListAdmin']);
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
