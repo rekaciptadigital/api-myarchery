@@ -164,6 +164,12 @@ use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
+use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
+use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
+use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetListAdmin;
+use App\BLoC\Web\ManagementAdmin\GetListRole;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -186,13 +192,6 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
-use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
-use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
-use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
-use App\BLoC\Web\ManagementAdmin\CreateNewUser;
-use App\BLoC\Web\ManagementAdmin\GetListAdmin;
-use App\BLoC\Web\ManagementAdmin\GetListRole;
-
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
 use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\AddVenueSessionSetting;

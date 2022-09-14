@@ -29,14 +29,18 @@ class GetTransactionVenueUser extends Retrieval
                             "venue_place_product_orders.*", 
                             "venue_places.id as place_id", 
                             "venue_places.name as venue_name", 
+                            "venue_places.address as venue_address", 
                             "venue_place_products.product_name as product_name", 
                             "venue_place_products.total_each_rent_per_day as total_each_rent_per_day", 
                             "venue_place_products.base_product as base_product",
                             "transaction_logs.amount as amount",
                             "transaction_logs.status as status_transaction",
-                            "transaction_logs.transaction_log_activity as transaction_log_activity"
+                            "transaction_logs.transaction_log_activity as transaction_log_activity",
+                            "venue_place_schedule_operational_sessions.start_time as start_time_session",
+                            "venue_place_schedule_operational_sessions.end_time as end_time_session"
                             )
                             ->join("venue_place_products", "venue_place_products.id", "=", "venue_place_product_orders.product_id")
+                            ->join("venue_place_schedule_operational_sessions", "venue_place_schedule_operational_sessions.id", "=", "venue_place_product_orders.operational_session_id")
                             ->join("venue_places", "venue_places.id", "=", "venue_place_products.place_id")
                             ->join("transaction_logs", "transaction_logs.id", "=", "venue_place_product_orders.transaction_log_id")
                             ->where(function ($query) use ($status) {
