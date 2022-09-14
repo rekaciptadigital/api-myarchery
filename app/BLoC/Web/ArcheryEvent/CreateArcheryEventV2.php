@@ -68,7 +68,12 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->registration_end_datetime = $parameters->get("event_end_register");
             $archery_event->event_start_datetime = $parameters->get("event_start");
             $archery_event->event_end_datetime = $parameters->get("event_end");
-            $archery_event->event_slug = $time . '-' . Str::slug($parameters->get("event_name"));
+            
+            $check_slug = ArcheryEvent::where("event_slug",$slug)->first();
+            if($check_slug)
+                $slug = $time . '-' . $slug;
+
+            $archery_event->event_slug = $slug;
             $archery_event->admin_id = $admin->id;
             $archery_event->save();
 
