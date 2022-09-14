@@ -70,7 +70,6 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->event_end_datetime = $parameters->get("event_end");
             
             $slug = Str::slug($public_informations['event_name']);
-            $slug = $parameters->get("event_name");
             $check_slug = ArcheryEvent::where("event_slug", $slug)->first();
             if ($check_slug) {
                 $slug = $time . '-' . $slug;
