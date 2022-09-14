@@ -20,10 +20,10 @@
             text-decoration: none;
         }
 
-        .block:hover {
+        /* .block:hover {
             background-color: #ddd;
             color: black;
-        }
+        } */
     </style>
 
 </head>
