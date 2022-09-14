@@ -190,6 +190,7 @@ use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
 use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
 use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
 use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetListRole;
 
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
 use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
@@ -248,7 +249,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
         $this->registerService("createNewUser", CreateNewUser::class);
         $this->registerService("checkAdminExists", CheckAdminExists::class);
-        
+        $this->registerService("getListRole", GetListRole::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
