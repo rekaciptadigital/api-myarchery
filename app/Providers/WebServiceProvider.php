@@ -188,6 +188,8 @@ use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
 use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
 use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
+use App\BLoC\Web\ManagementAdmin\CreateNewUser;
 
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
 use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
@@ -244,6 +246,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
+        $this->registerService("createNewUser", CreateNewUser::class);
+        $this->registerService("checkAdminExists", CheckAdminExists::class);
+        
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
