@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Libraries\Logging;
 use App\Mail\AccountVerificationEmail;
-use App\Mail\CreateAccoutMail;
+use App\Mail\CreateAccountMail;
 use App\Mail\InvitationAdmin;
 
 class CreateAccountEmailJob extends Job
@@ -33,7 +33,7 @@ class CreateAccountEmailJob extends Job
      */
     public function handle()
     {
-        Mail::to($this->data['email'])->send(new CreateAccoutMail($this->data));
+        Mail::to($this->data['email'])->send(new CreateAccountMail ($this->data));
         $this->log("success", "Email sent to " . $this->data['email']);
     }
 
