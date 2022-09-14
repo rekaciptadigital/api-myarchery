@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\AdminRole;
 use App\Models\Role;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Exceptions\BLoCException;
 
 class CheckAdminExists extends Retrieval
 {
@@ -21,14 +22,9 @@ class CheckAdminExists extends Retrieval
 
         $admin = Admin::where("email", $email)->first();
         if ($admin) {
-            $role_detail = null;
             $admin_role = AdminRole::where("admin_id", $admin->id)->where("event_id", $event_id)->first();
             if ($admin_role) {
-                $role = Role::find($admin_role->role_id);
-                if ($role) {
-                    $role_detail = $role;
-                    $admin->role_detail = $role_detail;
-                }
+                throw new BLoCException("email ini sudah terdaftar");
             }
         }
         return $admin;

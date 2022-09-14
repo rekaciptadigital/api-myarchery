@@ -201,6 +201,7 @@ use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSett
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
 use App\BLoC\Web\Enterprise\Venue\Products\AddProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
+use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
@@ -251,6 +252,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("checkAdminExists", CheckAdminExists::class);
         $this->registerService("getListRole", GetListRole::class);
         $this->registerService("getListAdmin", GetListAdmin::class);
+        $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         
         // =========================== End ============================
 

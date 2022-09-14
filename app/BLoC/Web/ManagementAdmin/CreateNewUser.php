@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Queue;
@@ -51,10 +52,10 @@ class CreateNewUser extends Retrieval
         }
 
         $admin_role = AdminRole::where("admin_id", $admin->id)->where("event_id", $event_id)->first();
-        if (!$admin_role) {
-            $admin_role = new AdminRole;
+        if ($admin_role) {
+            throw new BLoCException("akun ini sudah didaftarkan sebagai pengelola di event ini");
         }
-
+        $admin_role = new AdminRole;
         $admin_role->admin_id = $admin->id;
         $admin_role->role_id = $role_id;
         $admin_role->event_id = $event_id;
