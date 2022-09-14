@@ -37,7 +37,7 @@ class AddLogoEvent extends Transactional
     protected function validation($parameters)
     {
         return [
-            'event_id' => 'exists:archery_events,id',
+            'event_id' => 'required|exists:archery_events,id',
             "logo" => "required|string"
         ];
     }
