@@ -32,9 +32,9 @@ class ParticipantImport implements WithValidation, ToCollection
                 $user = new User;
                 $user->name = $row[0];
                 $user->email = $row[1];
-                $password = str_random(6);
+                $password = "12345678";
                 $user->password = Hash::make($password);
-                $user->gender = $row[2];
+                // $user->gender = $row[2];
                 $user->save();
 
                 Queue::push(new SuccessImportExcellJob([
@@ -49,7 +49,7 @@ class ParticipantImport implements WithValidation, ToCollection
                 throw new BLoCException('event belum bisa di daftar');
             }
 
-            $category = ArcheryEventCategoryDetail::find($row[3]);
+            $category = ArcheryEventCategoryDetail::find($row[2]);
 
             $event = ArcheryEvent::find($category->event_id);
             if (!$event) {
@@ -123,8 +123,8 @@ class ParticipantImport implements WithValidation, ToCollection
         return [
             "0" => "required|string",
             '1' => "required|email:rfc,dns",
-            "2" => "required|in:male,female",
-            "3" => "exists:archery_event_category_details,id"
+            // "2" => "required|in:male,female",
+            "2" => "exists:archery_event_category_details,id"
         ];
     }
     public function customValidationAttributes()
@@ -132,8 +132,8 @@ class ParticipantImport implements WithValidation, ToCollection
         return [
             "0" => "name",
             '1' => 'email',
-            "2" => "gender",
-            "3" => "category_id"
+            // "2" => "gender",
+            "2" => "category_id"
         ];
     }
 }
