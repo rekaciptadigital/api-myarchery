@@ -44,7 +44,7 @@ class ParticipantImport implements WithValidation, ToCollection
                 ]));
             }
 
-            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $row[3])->first();
+            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $row[2])->first();
             if (!$qualification_time) {
                 throw new BLoCException('event belum bisa di daftar');
             }
