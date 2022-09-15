@@ -231,6 +231,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/get-list-role', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListRole']);
             $router->get('/get-list-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListAdmin']);
             $router->get('/get-detail-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailAdmin']);
+            $router->post("/remove-access-admin", ['uses' => "BLoCController@execute", "middleware" => "bloc:removeAccessAdmin"]);
         });
 
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -243,7 +244,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->get('/download-qualification-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadQualificationSelectionScoresheet']);
             $router->get('/download-elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationSelectionScoresheet']);
-
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -385,7 +385,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             // ===================================== Fast Open ======================================================================================
             $router->get('/get-member-can-join-elimination-group', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberCanJoinEliminationGroup']);
             $router->post('/change-member-join-elimination-group', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeMemberJoinEliminationGroup']);
-    
+
             // ====================================================== end =============================================================================
         });
 

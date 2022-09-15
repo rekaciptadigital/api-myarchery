@@ -205,6 +205,7 @@ use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
+use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 
 // End of Archery Enterprise Section //
 
@@ -253,7 +254,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getListRole", GetListRole::class);
         $this->registerService("getListAdmin", GetListAdmin::class);
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
-        
+        $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
