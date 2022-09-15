@@ -193,6 +193,7 @@ use App\BLoC\Web\ManagementAdmin\CreateNewUser;
 use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListRole;
+use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 
 // End of Archery Enterprise Section //
 
@@ -241,7 +242,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getListRole", GetListRole::class);
         $this->registerService("getListAdmin", GetListAdmin::class);
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
-        
+        $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
