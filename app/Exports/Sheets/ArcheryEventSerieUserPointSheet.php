@@ -51,6 +51,7 @@ class ArcheryEventSerieUserPointSheet implements FromView, WithColumnWidths, Wit
                 "name" => $value["user"]["name"],
                 "email" => $value["user"]["email"],
                 "city" => $value["user"]["city"],
+                "date_of_birth" => $value["user"]["date_of_birth"],
                 "point_qualification" => isset($value["point_details"]["qualification"]) ? $value["point_details"]["qualification"] : 0,
                 "point_elimination" => isset($value["point_details"]["elimination"]) ? $value["point_details"]["elimination"] : 0,
                 "total_point" => $value["total_point"],
