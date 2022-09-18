@@ -60,8 +60,8 @@
                 <tr>
                     <td style="text-align: center;">{{ $data['pos'] ? $data['pos'] : '-' }}</td>
                     <td style="text-align: left;">{{ $data['name'] ? $data['name'] : '-' }} </td>
-                    <td style="text-align: left;">{{ $data['email'] ? $data['email'] : '' }}</td>
                     <td style="text-align: left;">{{ $data['date_of_birth'] ? $data['date_of_birth'] : '' }}</td>
+                    <td style="text-align: left;">{{ $data['email'] ? $data['email'] : '' }}</td>
                     <td style="text-align: left;">{{ $data['city'] ? $data['city'] : '' }}</td>
                     <td style="text-align: center;">
                         {{ $data['point_qualification'] ? $data['point_qualification'] : '0' }}</td>
