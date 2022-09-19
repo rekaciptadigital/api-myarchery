@@ -110,14 +110,14 @@ class ArcheryScoring extends Model
                 }
                 return $scores;
             }
-            for ($i=0; $i < $count_stage ; $i++) { 
+            for ($i = 0; $i < $count_stage; $i++) {
                 $score_space = [];
-                for ($x=0; $x < $count_shot_in_stage; $x++) { 
+                for ($x = 0; $x < $count_shot_in_stage; $x++) {
                     $score_space[] = "";
                 }
-                $scores[$i+1] = $score_space;
+                $scores[$i + 1] = $score_space;
             }
-            
+
             return $scores;
         }
         // throw new BLoCException($session);
@@ -287,32 +287,32 @@ class ArcheryScoring extends Model
 
         foreach ($scores["shot"] as $k => $shot) {
             $scoring_1_total_score_per_rambahan = 0;
-            
+
             $point_1_per_rambahan = 0;
-            
+
             foreach ($shot["score"] as $i => $s) {
                 $s1 = $this->score_value[$scoring_1["scores"]["shot"][$k]["score"][$i]];
                 $scoring_1_total_score_per_rambahan = $scoring_1_total_score_per_rambahan + $s1;
             }
             $total_score_1 = $total_score_1 + $scoring_1_total_score_per_rambahan;
             $scoring_1["scores"]["shot"][$k]["total"] = $scoring_1_total_score_per_rambahan;
-   
-            $total_point_1 = $total_point_1 + $point_1_per_rambahan; 
+
+            $total_point_1 = $total_point_1 + $point_1_per_rambahan;
             $scoring_1["scores"]["shot"][$k]["point"] = $point_1_per_rambahan;
         }
 
         $scoring_1["scores"]["total"] = $total_score_1;
-        
+
 
         $scoring_1["scores"]["result"] = $total_point_1;
-        
+
 
         $scoring_1["scores"]["eliminationt_score_type"] = 1;
-        
+
 
         return [
             $scoring_1["member_id"] => $scoring_1,
-            
+
         ];
     }
 
@@ -431,9 +431,8 @@ class ArcheryScoring extends Model
             }
 
             $total_score_1 = $total_score_1 + $scoring_1_total_score_per_rambahan;
-            
+
             $scoring_1["scores"]["shot"][$k]["total"] = $scoring_1_total_score_per_rambahan;
-            
         }
 
         $scoring_1["scores"]["total"] = $total_score_1;
@@ -585,7 +584,7 @@ class ArcheryScoring extends Model
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
         $total_arrow = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
         $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
-        
+
         $output = [
             "sessions" => $sessions,
             "total_shot_off" => $participant->is_present == 1 ? $total_shot_off : 0,
@@ -761,7 +760,14 @@ class ArcheryScoring extends Model
             $archery_event_participant->where('archery_event_participants.distance_id', $distance_id);
         }
         if (!is_null($gender) && !empty($gender)) {
-            $archery_event_participant->where('archery_event_participant_members.gender', $gender);
+            if ($gender == "mix") {
+                $archery_event_participant->where(function ($q) {
+                    $q->where('archery_event_participant_members.gender', "male")
+                        ->orWhere("archery_event_participant_members.gender", "female");
+                });
+            } else {
+                $archery_event_participant->where("archery_event_participant_members.gender", $gender);
+            }
         }
         if (!is_null($competition_category_id)) {
             $archery_event_participant->where('archery_event_participants.competition_category_id', $competition_category_id);
@@ -1347,9 +1353,9 @@ class ArcheryScoring extends Model
         $total_fix = $total + $total_shot_off;
 
         $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
-        $total_arrow = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION')* env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
+        $total_arrow = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION') * env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
         $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
-        
+
         $output = [
             "sessions" => $sessions,
             "total_shot_off" => $participant->is_present == 1 ? $total_shot_off : 0,
