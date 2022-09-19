@@ -159,6 +159,11 @@ use App\BLoC\Web\EliminationScoreSheet\DownloadEmptyScoreSheetElimination;
 use App\BLoC\Web\EventOrder\BookingTemporary;
 use App\BLoC\Web\EventOrder\DeleteBookingTemporary;
 use App\BLoC\Web\UpdateParticipantByAdmin\ImportParticipantExcell;
+use App\BLoC\Web\ArcheryScoreSheet\DownloadQualificationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
+use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
+use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -307,6 +312,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("upp", Upp::class);
 
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
+        $this->registerService("downloadQualificationSelectionScoresheet", DownloadQualificationSelectionScoresheet::class);
+        $this->registerService("downloadEliminationSelectionScoresheet", DownloadEliminationSelectionScoresheet::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
         $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);
@@ -325,6 +332,7 @@ class WebServiceProvider extends ServiceProvider
         // ========================== event =================================
         $this->registerService("createArcheryEventV2", CreateArcheryEventV2::class);
         $this->registerService("updateArcheryEventV2", updateArcheryEventV2::class);
+        $this->registerService("getArcheryReportEventSelection", GetArcheryReportEventSelection::class);
 
         // =========================== Category =============================
         $this->registerService("createOrUpdateArcheryCategoryDetailV2", CreateOrUpdateArcheryCategoryDetailV2::class);
@@ -388,11 +396,13 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("setBudRestElimination", SetBudRestElimination::class);
         $this->registerService("cleanEliminationMatch", CleanEliminationMatch::class);
         $this->registerService("cleanScoringQualification", CleanScoringQualification::class);
+        $this->registerService("getParticipantScoreEliminationSelection", GetParticipantScoreEliminationSelection::class);
 
         // ================================ scorer-elimination v2 ==================================
         $this->registerService("setAdminTotal", SetAdminTotal::class);
         $this->registerService("setSavePermanentElimination", SetSavePermanentElimination::class);
         $this->registerService("resetScoringEliminasi", ResetScoringEliminasi::class);
+        $this->registerService("getParticipantScoreEventSelection", GetParticipantScoreEventSelection::class);
 
         // ================================ dashboard dos ==================================
         $this->registerService("getArcheryEventScheduleDashboardDos", GetArcheryEventScheduleDashboardDos::class);

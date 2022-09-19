@@ -36,7 +36,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     protected function process($parameters)
     {
-        $score_type = 1;
+        $score_type = $parameters->get('score_type') ?? 1;
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
@@ -89,6 +89,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
     public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
+        // if ($score_type == 3) $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);

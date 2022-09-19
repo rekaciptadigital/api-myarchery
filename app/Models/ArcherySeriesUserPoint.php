@@ -213,7 +213,7 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id","date_of_birth")->where("id", $u)->first();
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
@@ -235,6 +235,7 @@ class ArcherySeriesUserPoint extends Model
                 "name" => $user_detail->name,
                 "email" => $user_detail->email,
                 "avatar" => $user_detail->avatar,
+                "date_of_birth" => $user_detail->date_of_birth,
                 "city" => $city,
             ];
 
