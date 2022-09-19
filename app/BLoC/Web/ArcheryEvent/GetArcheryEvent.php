@@ -18,6 +18,9 @@ class GetArcheryEvent extends Retrieval
     {
         $admin = Auth::user();
         $archery_event = ArcheryEvent::where('admin_id', $admin['id'])->orderBy('created_at', 'DESC')->get();
+        return ArcheryEvent::select("archery_events.*")->leftJoin("admin_roles", "admin_roles.event_id", "=", "archery_events.id")->where("archery_events.admin_id", $admin->id)
+            ->orWhere("admin_roles.admin_id", $admin->id)
+            ->get();
 
         $output = [];
         foreach ($archery_event as $key => $value) {
