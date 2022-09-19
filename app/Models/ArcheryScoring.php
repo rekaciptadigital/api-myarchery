@@ -760,12 +760,7 @@ class ArcheryScoring extends Model
             $archery_event_participant->where('archery_event_participants.distance_id', $distance_id);
         }
         if (!is_null($gender) && !empty($gender)) {
-            if ($gender == "mix") {
-                $archery_event_participant->where(function ($q) {
-                    $q->where('archery_event_participant_members.gender', "male")
-                        ->orWhere("archery_event_participant_members.gender", "female");
-                });
-            } else {
+            if ($gender != "mix") {
                 $archery_event_participant->where("archery_event_participant_members.gender", $gender);
             }
         }
