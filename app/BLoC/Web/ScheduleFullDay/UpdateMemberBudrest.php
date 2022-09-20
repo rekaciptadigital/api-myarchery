@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ScheduleFullDay;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use DAI\Utils\Abstracts\Retrieval;
@@ -31,9 +32,12 @@ class UpdateMemberBudrest extends Retrieval
         }
 
         // cek pemilik event
-        // if ($event->admin_id != $admin->id) {
-        //     throw new BLoCException('you are not owner this event');
-        // }
+        if ($event->admin_id != $admin->id) {
+            $role = AdminRole::where("admin_id", $admin)->where("event_id", $event->id)->first();
+            if (!$role || $role->role_id != 6) {
+                throw new BLoCException("you are not owner this event");
+            }
+        }
 
         // dapatkan jadwal peserta
         $schedule_full_day1 = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")

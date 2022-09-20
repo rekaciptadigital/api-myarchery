@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ClubRanked;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryMasterAgeCategory;
@@ -28,7 +29,10 @@ class GetConfigClubRanked extends Transactional
         }
 
         if ($event->admin_id != $admin->id) {
-            throw new BLoCException('you are not owner this event');
+            $role = AdminRole::where("admin_id", $admin)->where("event_id", $event->id)->first();
+            if (!$role || $role->role_id != 6) {
+                throw new BLoCException("you are not owner this event");
+            }
         }
 
         $categoriy_detail = ArcheryEventCategoryDetail::where("event_id", $event->id)->get();
