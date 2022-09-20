@@ -103,8 +103,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             $archery_category_detail->fee = $category['fee'];
             $archery_category_detail->is_show = $category["is_show"];
             $archery_category_detail->early_bird = $category["early_bird"];
-            $archery_category_detail->start_registration = $category["start_registration"];
-            $archery_category_detail->end_registration = $category["end_registration"];
             $archery_category_detail->end_date_early_bird = $end_early_bird;
             $archery_category_detail->save();
         }
