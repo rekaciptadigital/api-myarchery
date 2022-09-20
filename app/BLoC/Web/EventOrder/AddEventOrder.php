@@ -72,7 +72,7 @@ class AddEventOrder extends Transactional
         if($event->is_private){
             $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
             if(!$check_email_whitelist)
-                throw new BLoCException("email tidak diizinkan untuk event ini");
+                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
 
         }
         if ($event->event_type == "Marathon") {
