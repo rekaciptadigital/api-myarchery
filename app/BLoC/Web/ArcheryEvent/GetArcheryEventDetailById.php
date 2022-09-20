@@ -25,7 +25,7 @@ class GetArcheryEventDetailById extends Retrieval
 
         if ($archery_event->admin_id != $admin->id) {
             $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $archery_event->id)->where(function ($q) {
-                $q->where("role_id", 5)->orWhere("role_id", 4);
+                $q->where("role_id", 5)->orWhere("role_id", 4)->orWhere("role_id", 6);
             })->first();
             if (!$roles) {
                 throw new BLoCException("forbiden");
