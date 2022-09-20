@@ -29,7 +29,7 @@ class GetConfigClubRanked extends Transactional
         }
 
         if ($event->admin_id != $admin->id) {
-            $role = AdminRole::where("admin_id", $admin)->where("event_id", $event->id)->first();
+            $role = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->first();
             if (!$role || $role->role_id != 6) {
                 throw new BLoCException("you are not owner this event");
             }
