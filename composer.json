@@ -11,6 +11,7 @@
         "doctrine/dbal": "^2.13",
         "dompdf/dompdf": "^1.2",
         "flipbox/lumen-generator": "^8.2",
+        "guzzlehttp/guzzle": "^7.4",
         "h4cc/wkhtmltoimage-amd64": "0.12.x",
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "illuminate/mail": "5.7.*",

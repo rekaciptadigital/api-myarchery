@@ -198,6 +198,8 @@ class ArcheryEvent extends Model
             "archery_master_team_categories.label as label_team_categories",
             "archery_master_team_categories.id as id_team_categories",
             "archery_master_team_categories.type as type",
+            "archery_event_category_details.start_registration",
+            "archery_event_category_details.end_registration",
             DB::raw("CONCAT(archery_master_team_categories.label,'-',
                                             archery_master_age_categories.label,'-',
                                             archery_master_competition_categories.label,'-',
@@ -335,7 +337,9 @@ class ArcheryEvent extends Model
                     "end_date_early_bird" => $value->end_date_early_bird,
                     "is_early_bird" => $value->is_early_bird,
                     "label" => $value->label_category,
-                    "is_show" => $value->is_show
+                    "is_show" => $value->is_show,
+                    "start_registration" => $value->start_registration,
+                    "end_registration" => $value->end_registration
                 ];
             }
         }
@@ -367,6 +371,7 @@ class ArcheryEvent extends Model
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
                     'handbook' => $data->handbook,
+                    'logo' => $data->logo,
                     'event_description' => $data->description,
                     'event_location' => $data->location,
                     'event_city' => [

@@ -164,6 +164,12 @@ use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
+use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
+use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
+use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetListAdmin;
+use App\BLoC\Web\ManagementAdmin\GetListRole;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -186,8 +192,20 @@ use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\UpdateVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\ScheduleHoliday\DeleteVenueScheduleHoliday;
 use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
-use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
-use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+use App\BLoC\Web\Enterprise\Venue\Products\UpdateVenuePlacePricelist;
+use App\BLoC\Web\Enterprise\Venue\Products\GetAllProductVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\AddVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetVenueSessionSettingDetailById;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\UpdateVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSetting;
+use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
+use App\BLoC\Web\Enterprise\Venue\Products\AddProductVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
+use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
+use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
+use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
+use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 
 // End of Archery Enterprise Section //
 
@@ -231,6 +249,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
+        $this->registerService("createNewUser", CreateNewUser::class);
+        $this->registerService("checkAdminExists", CheckAdminExists::class);
+        $this->registerService("getListRole", GetListRole::class);
+        $this->registerService("getListAdmin", GetListAdmin::class);
+        $this->registerService("getDetailAdmin", GetDetailAdmin::class);
+        $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
@@ -442,8 +466,20 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteVenueScheduleHoliday", DeleteVenueScheduleHoliday::class);
         $this->registerService("getVenueListCapacityArea", GetVenueMasterPlaceCapacityArea::class);
         $this->registerService("completeVenuePlace", CompleteVenuePlace::class);
+        $this->registerService("updateVenuePlacePricelist", UpdateVenuePlacePricelist::class);
+        $this->registerService("addVenueSessionSetting", AddVenueSessionSetting::class);
+        $this->registerService("getVenueSessionSettingDetailById", GetVenueSessionSettingDetailById::class);
+        $this->registerService("updateVenueSessionSetting", UpdateVenueSessionSetting::class);
+        $this->registerService("deleteVenueSessionSetting", DeleteVenueSessionSetting::class);
+        $this->registerService("getListSessionSettingByPlaceId", GetListSessionSettingByPlaceId::class);
+        $this->registerService("getAllProductVenuePlace", GetAllProductVenuePlace::class);
+        $this->registerService("addProductVenuePlace", AddProductVenuePlace::class);
+        $this->registerService("getVenueProductDetailById", GetVenueProductDetailById::class);
+        $this->registerService("updateProductVenuePlace", UpdateProductVenuePlace::class);
+        $this->registerService("deleteProductVenuePlace", DeleteProductVenuePlace::class);
+        $this->registerService("getListAllVenuePlace", GetListAllVenuePlace::class);
 
-
+        
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
 
 

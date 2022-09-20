@@ -225,6 +225,15 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/check-admin-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminRegister']);
         });
 
+        $router->group(['prefix' => 'management-user', "middleware" => "auth.admin"], function () use ($router) {
+            $router->post('/create-new-user', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createNewUser']);
+            $router->get('/check-is-exists-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkAdminExists']);
+            $router->get('/get-list-role', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListRole']);
+            $router->get('/get-list-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListAdmin']);
+            $router->get('/get-detail-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDetailAdmin']);
+            $router->post("/remove-access-admin", ['uses' => "BLoCController@execute", "middleware" => "bloc:removeAccessAdmin"]);
+        });
+
         $router->group(['prefix' => 'archery-score-sheet', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadPdf']);
             $router->get('/score-sheet-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationScoreSheet']);
@@ -235,7 +244,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->get('/download-qualification-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadQualificationSelectionScoresheet']);
             $router->get('/download-elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadEliminationSelectionScoresheet']);
-
         });
 
         $router->group(['prefix' => 'user', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -377,7 +385,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             // ===================================== Fast Open ======================================================================================
             $router->get('/get-member-can-join-elimination-group', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberCanJoinEliminationGroup']);
             $router->post('/change-member-join-elimination-group', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeMemberJoinEliminationGroup']);
-    
+
             // ====================================================== end =============================================================================
         });
 
@@ -538,6 +546,22 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                         $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
                     });
                 });
+
+                $router->group(['prefix' => 'product'], function () use ($router) {
+                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
+                    $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
+                    $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
+                    $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProductVenuePlace']);
+                    $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteProductVenuePlace']);
+
+                    $router->group(['prefix' => 'session-setting'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueSessionSetting']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
+                        $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
+                    });
+                });
             });
         });
     });
@@ -547,12 +571,12 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
-    $new_submission = VenuePlace::getAllListVenue(2);
-    $submission_approved = VenuePlace::getAllListVenue(4);
+    $new_submission = VenuePlace::getAllListVenue(2, null, null, 1000, 0);
+    $submission_approved = VenuePlace::getAllListVenue(4, null, null, 1000, 0);
 
     return view('enterprise/venue_submission_index', [
-        "datas" => $new_submission,
-        "data_approved" => $submission_approved
+        "datas" => $new_submission['data'],
+        "data_approved" => $submission_approved['data']
     ]);
 });
 
