@@ -14,7 +14,7 @@ class GetListRole extends Retrieval
 
     protected function process($parameters)
     {
-        $roles = Role::whereIn("id", [5, 6])->get();
+        $roles = Role::whereIn("id", [6])->get();
         return $roles;
     }
 
