@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
@@ -57,7 +58,10 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
 
         if ($event->admin_id !== $admin->id) {
-            throw new BLoCException("you are not owner this event");
+            $role = AdminRole::where("admin_id", $admin)->where("event_id", $event->id)->first();
+            if (!$role || $role->role_id != 6) {
+                throw new BLoCException("you are not owner this event");
+            }
         }
 
         $session_qualification = [];
@@ -94,7 +98,7 @@ class GetParticipantScoreEventSelection extends Retrieval
     {
         $data_scoring = ArcheryScoring::getScoringRankByCategoryIdForEventSelection($category_id, $session_qualification, $session_elimination, true, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
-        
+
         $data_collection = collect($data_scoring);
         $sorted_data = $data_collection->sortByDesc("all_total_irat")->toArray();
         $response = [];
@@ -103,5 +107,4 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
         return $response;
     }
-
 }

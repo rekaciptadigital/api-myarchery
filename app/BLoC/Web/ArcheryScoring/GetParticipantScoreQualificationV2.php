@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
@@ -56,7 +57,10 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         }
 
         if ($event->admin_id !== $admin->id) {
-            throw new BLoCException("you are not owner this event");
+            $role = AdminRole::where("admin_id", $admin)->where("event_id", $event->id)->first();
+            if (!$role || $role->role_id != 6) {
+                throw new BLoCException("you are not owner this event");
+            }
         }
 
         $session = [];
