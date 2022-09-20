@@ -99,7 +99,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$category_detail) {
                 throw new BLoCException("kategori tidak ditemukan");
             }
-            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail),null, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->count_stage, $category_detail->count_shot_in_stage);
+            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->count_stage, $category_detail->count_shot_in_stage);
             $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
             $output->score = $s;
             $output->category = $category_detail->getCategoryDetailById($category_detail->id);
@@ -260,7 +260,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->scores = $s;
             $output->round = $round;
             $output->is_updated = 1;
-            $output->budrest_number = $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . $value->target_fave : "";
+            $output->budrest_number = $value->bud_rest != 0 ? $value->bud_rest . $value->target_fave : "";
             $scores[] = $output;
         }
 
