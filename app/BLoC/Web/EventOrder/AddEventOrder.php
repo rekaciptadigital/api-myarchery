@@ -8,6 +8,7 @@ use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventEmailWhiteList;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -68,6 +69,12 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
+        if($event->is_private){
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
+            if(!$check_email_whitelist)
+                throw new BLoCException("email tidak diizinkan untuk event ini");
+
+        }
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
