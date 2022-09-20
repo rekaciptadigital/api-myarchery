@@ -8,6 +8,7 @@ use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventEmailWhiteList;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -74,6 +75,13 @@ class AddEventOrder extends Transactional
         }
 
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
+
+        if($event->is_private){
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
+            if(!$check_email_whitelist)
+                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
+
+        }
 
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
