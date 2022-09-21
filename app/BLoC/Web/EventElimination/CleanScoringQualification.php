@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\EventElimination;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
@@ -33,7 +34,12 @@ class CleanScoringQualification extends Retrieval
         }
 
         if ($event->admin_id != $admin->id) {
-            throw new BLoCException("forbiden");
+            $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->where(function ($q) {
+                $q->where("role_id", 5)->orWhere("role_id", 4);
+            })->first();
+            if (!$roles) {
+                throw new BLoCException("forbiden");
+            }
         }
 
         $members = ArcheryEventParticipant::select("archery_event_participant_members.*")->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")->where("archery_event_participants.event_category_id", $category_id)->where("archery_event_participants.status", 1)->get();

@@ -188,6 +188,12 @@ use App\BLoC\Web\Enterprise\Venue\GetVenueMasterPlaceCapacityArea;
 use App\BLoC\Web\Enterprise\Venue\CompleteVenuePlace;
 use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
 use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
+use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
+use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
+use App\BLoC\Web\ManagementAdmin\GetListAdmin;
+use App\BLoC\Web\ManagementAdmin\GetListRole;
+use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 
 // End of Archery Enterprise Section //
 
@@ -231,6 +237,12 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
+        $this->registerService("createNewUser", CreateNewUser::class);
+        $this->registerService("checkAdminExists", CheckAdminExists::class);
+        $this->registerService("getListRole", GetListRole::class);
+        $this->registerService("getListAdmin", GetListAdmin::class);
+        $this->registerService("getDetailAdmin", GetDetailAdmin::class);
+        $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);

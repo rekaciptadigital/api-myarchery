@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\EventElimination;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
@@ -40,7 +41,12 @@ class CleanEliminationMatch extends Retrieval
         }
 
         if ($event->admin_id != $admin->id) {
-            throw new BLoCException("forbiden");
+            $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->where(function ($q) {
+                $q->where("role_id", 5)->orWhere("role_id", 4);
+            })->first();
+            if (!$roles) {
+                throw new BLoCException("forbiden");
+            }
         }
 
         $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
@@ -99,7 +105,7 @@ class CleanEliminationMatch extends Retrieval
                 $group_team = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
                 if ($group_team) {
                     $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $group_team->participant_id)->get();
-                    
+
                     foreach ($member_team as $mt) {
                         $mt->delete();
                     }
