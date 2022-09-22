@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\Member;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
@@ -37,6 +38,10 @@ class ListMemberV2 extends Retrieval
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("Event tidak tersedia");
+        }
+
+        if ($admin->id != $event->admin_id) {
+            throw new BLoCException("access denied");
         }
 
         $participant_query = ArcheryEventParticipant::select(
