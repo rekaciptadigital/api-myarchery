@@ -52,6 +52,13 @@ use App\BLoC\App\Series\GetListSeries;
 use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
+use App\BLoC\App\UserAuth\ResendOtpAccountVerificationCode;
+use App\BLoC\App\UserAuth\ValidateAccoutVerification;
+use App\BLoC\App\Enterprise\GetDetailVenuePlace;
+use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
+use App\BLoC\App\Enterprise\GetInfoOrderProduct;
+use App\BLoC\App\Enterprise\AddOrderVenueProduct;
+use App\BLoC\App\Enterprise\GetTransactionVenueUser;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -69,6 +76,10 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("userValidateCodePassword", UserValidateCodePassword::class);
         $this->registerService("getUserProfile", GetUserProfile::class);
         $this->registerService("userLogout", UserLogout::class);
+        // fast open 3 
+        $this->registerService("resendOtpAccountVerificationCode", ResendOtpAccountVerificationCode::class);
+        $this->registerService("validateAccoutVerification", ValidateAccoutVerification::class);
+        // end fast open 3
         $this->registerService("findParticipantDetail", FindParticipantDetail::class);
         $this->registerService("addParticipantScore", AddParticipantScore::class);
         $this->registerService("editParticipantProfile", EditParticipantProfile::class);
@@ -115,6 +126,18 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getListParticipantByCategorySeriesId", GetListParticipantByCategorySeriesId::class);
         $this->registerService("getDetailSeriesById", GetDetailSeriesById::class);
         $this->registerService("getEventOrderV2", getEventOrderV2::class);
+
+
+        // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
+        $this->registerService("getDetailVenuePlace", GetDetailVenuePlace::class);
+        $this->registerService("getListProductByVenuePlace", GetListProductByVenuePlace::class);
+        $this->registerService("getInfoOrderProduct", GetInfoOrderProduct::class);
+        $this->registerService("addOrderVenueProduct", AddOrderVenueProduct::class);
+        $this->registerService("getTransactionVenueUser", GetTransactionVenueUser::class);
+
+        // -------------------------------------------- End of Archery Enterprise Service --------------------------------------------- //
+
+
     }
 
     private function registerService($serviceName, $className)

@@ -8,6 +8,7 @@ use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventEmailWhiteList;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -79,6 +80,11 @@ class AddEventOrder extends Transactional
         
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
+        if($event->is_private){
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
+            if(!$check_email_whitelist)
+                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
+        }
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
@@ -215,10 +221,13 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         if ($event->event_type == "Full_day") {
             if ($user->gender != $gender_category) {
-                if (empty($user->gender))
+                if (empty($user->gender)) {
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+                }
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                if ($gender_category != "mix") {
+                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                }
             }
         }
         // cek apakah user telah pernah mendaftar di categori tersebut
@@ -244,6 +253,7 @@ class AddEventOrder extends Transactional
 
         if ($participant) {
             $participant->status = 4;
+            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
             $participant->save();
         } else {
             // insert data participant
@@ -468,6 +478,12 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         $time_now = time();
 
+        $participant = ArcheryEventParticipant::where("user_id", $user->id)
+            ->where("status", 6)
+            ->where("expired_booking_time", ">", time())
+            ->where("event_category_id", $event_category_detail->id)
+            ->first();
+
         // cek total pendaftar yang masih pending dan sukses
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
             ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
@@ -506,7 +522,7 @@ class AddEventOrder extends Transactional
                 ->count();
 
             if ($check_success_category_mix > 3) {
-                throw new BLoCException("club anda sudah terdaftar 2 kali pada kategori ini");
+                throw new BLoCException("club anda sudah terdaftar 3 kali pada kategori ini");
             }
 
             $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $event_category_detail->id)
@@ -591,20 +607,29 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $participant_new = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0);
+        if ($participant) {
+            $participant->status = 4;
+            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
+            $participant->save();
+        } else {
+            // insert data participant
+            // $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0);
+            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0);
+        }
+
 
         if ($price < 1) {
-            $participant_new->status = 1;
-            $participant_new->save();
+            $participant->status = 1;
+            $participant->save();
 
             $res = [
-                "archery_event_participant_id" => $participant_new->id,
+                "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
             return $this->composeResponse($res);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
@@ -612,10 +637,10 @@ class AddEventOrder extends Transactional
             ->feePaymentsToUser($this->have_fee_payment_gateway)
             ->setMyarcheryFee($this->myarchery_fee)
             ->createSnap();
-        $participant_new->transaction_log_id = $payment->transaction_log_id;
-        $participant_new->save();
+        $participant->transaction_log_id = $payment->transaction_log_id;
+        $participant->save();
         $res = [
-            "archery_event_participant_id" => $participant_new->id,
+            "archery_event_participant_id" => $participant->id,
             "payment_info" => $payment
         ];
         return $this->composeResponse($res);

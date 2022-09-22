@@ -30,6 +30,7 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->event_type = $event_type;
             $archery_event->event_competition = $parameters->get('event_competition');
             $archery_event->status = 0;
+            $archery_event->is_private = $parameters->get('is_private') ?? false;
 
             // Upload Poster
             if ($parameters->get("event_banner")) {
@@ -67,7 +68,15 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->registration_end_datetime = $parameters->get("event_end_register");
             $archery_event->event_start_datetime = $parameters->get("event_start");
             $archery_event->event_end_datetime = $parameters->get("event_end");
-            $archery_event->event_slug = $time . '-' . Str::slug($parameters->get("event_name"));
+
+            $slug = Str::slug($parameters->get("event_name"));
+
+            $check_slug = ArcheryEvent::where("event_slug", $slug)->first();
+            if ($check_slug) {
+                $slug = $time . '-' . $slug;
+            }
+
+            $archery_event->event_slug = $slug;
             $archery_event->admin_id = $admin->id;
             $archery_event->save();
 
@@ -92,7 +101,7 @@ class CreateArcheryEventV2 extends Transactional
     {
         return [
             "event_type" => "required|in:Full_day,Marathon",
-            "event_competition" => "required|in:Tournament,Games",
+            "event_competition" => "required|in:Tournament,Games,Selection",
             // "status" => "required|integer|in:1,0",
             "event_banner" => "required",
             "event_name" => "required",

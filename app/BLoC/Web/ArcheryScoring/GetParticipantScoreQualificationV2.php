@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
+use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
@@ -36,7 +37,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     protected function process($parameters)
     {
-        $score_type = 1;
+        $score_type = $parameters->get('score_type') ?? 1;
         $admin = Auth::user();
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
@@ -56,7 +57,10 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         }
 
         if ($event->admin_id !== $admin->id) {
-            throw new BLoCException("you are not owner this event");
+            $role = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->first();
+            if (!$role || $role->role_id != 6) {
+                throw new BLoCException("you are not owner this event");
+            }
         }
 
         $session = [];
@@ -89,6 +93,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
     public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
+        // if ($score_type == 3) $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);
