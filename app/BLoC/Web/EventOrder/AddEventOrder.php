@@ -75,17 +75,17 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        if($event->is_private){
-            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
-            if(!$check_email_whitelist)
+        if ($event->is_private) {
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user->email)->where("event_id", $event->id)->first();
+            if (!$check_email_whitelist)
                 throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
-
         }
         if($event->my_archery_fee_percentage > 0)
             $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage/100));
         
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
+        
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
@@ -99,11 +99,26 @@ class AddEventOrder extends Transactional
         }
 
         $today = date('Y-m-d H:i:s');
+        if (!$event->registration_start_datetime || !$event->registration_end_datetime) {
+            throw new BLoCException("tanggal pendaftaran default belum di set");
+        }
+
         $registration_start_datetime = date("Y-m-d H:i:s", strtotime($event->registration_start_datetime));
         $registration_end_datetime = date("Y-m-d H:i:s", strtotime($event->registration_end_datetime));
-        if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
-            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
+
+        $registration_start_category = date("Y-m-d H:i:s", strtotime($event_category_detail->start_registration));
+        $registration_end_category = date("Y-m-d H:i:s", strtotime($event_category_detail->end_registration));
+
+        if (!$registration_start_category || !$registration_end_category) {
+            if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
+                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran event");
+            }
+        } else {
+            if (($today < $registration_start_category) || ($today > $registration_end_category)) {
+                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran untuk category ini");
+            }
         }
+
 
         if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
             throw new BLoCException("club harus diisi");
@@ -222,10 +237,13 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         if ($event->event_type == "Full_day") {
             if ($user->gender != $gender_category) {
-                if (empty($user->gender))
+                if (empty($user->gender)) {
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+                }
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                if ($gender_category != "mix") {
+                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                }
             }
         }
         // cek apakah user telah pernah mendaftar di categori tersebut
