@@ -37,7 +37,7 @@ class ListMemberTeamV2 extends Retrieval
         }
 
         if ($event->admin_id != $admin->id) {
-            throw new BLoCException("forbiden");
+            throw new BLoCException("access denied");
         }
 
         $participant_query = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.status as status_payment", "transaction_logs.expired_time")
