@@ -89,6 +89,7 @@ use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
+use App\BLoC\Web\ArcheryCategoryDetail\GetConfigCategoryRegistrationDate;
 use App\BLoC\Web\ArcheryCategoryDetail\SetConfigRegisterCategory;
 use App\BLoC\Web\ArcheryEvent\AddLogoEvent;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
@@ -232,6 +233,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
         $this->registerService("setConfigRegisterCategory", SetConfigRegisterCategory::class);
+        $this->registerService("getConfigCategoryRegistrationDate", GetConfigCategoryRegistrationDate::class);
+        
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);

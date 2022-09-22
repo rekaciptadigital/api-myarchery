@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateConfigCategoryMapingTable extends Migration
+class CreateConfigSpecialCategoryMapingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateConfigCategoryMapingTable extends Migration
      */
     public function up()
     {
-        Schema::create('config_special_maping', function (Blueprint $table) {
+        Schema::create('config_special_category_maping', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer("config_id");
-            $table->dateTime("datetime_start_register");
-            $table->dateTime("datetime_end_register");
+            $table->integer("special_config_id");
+            $table->integer("category_id");
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateConfigCategoryMapingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('config_special_maping');
+        Schema::dropIfExists('config_special_category_maping');
     }
 }

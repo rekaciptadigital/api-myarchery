@@ -268,6 +268,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
             $router->group(['prefix' => 'config-category-register'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigRegisterCategory']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigCategoryRegistrationDate']);
             });
 
             $router->group(['prefix' => 'category-details'], function () use ($router) {
