@@ -69,11 +69,10 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        if($event->is_private){
-            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email",$user->email)->where("event_id",$event->id)->first();
-            if(!$check_email_whitelist)
+        if ($event->is_private) {
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user->email)->where("event_id", $event->id)->first();
+            if (!$check_email_whitelist)
                 throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
-
         }
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
@@ -211,10 +210,13 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         if ($event->event_type == "Full_day") {
             if ($user->gender != $gender_category) {
-                if (empty($user->gender))
+                if (empty($user->gender)) {
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+                }
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                if ($gender_category != "mix") {
+                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                }
             }
         }
         // cek apakah user telah pernah mendaftar di categori tersebut
