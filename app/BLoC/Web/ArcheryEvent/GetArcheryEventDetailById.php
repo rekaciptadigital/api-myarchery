@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\ArcheryEvent;
 
-use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
@@ -24,12 +23,7 @@ class GetArcheryEventDetailById extends Retrieval
         }
 
         if ($archery_event->admin_id != $admin->id) {
-            $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $archery_event->id)->where(function ($q) {
-                $q->where("role_id", 5)->orWhere("role_id", 4)->orWhere("role_id", 6);
-            })->first();
-            if (!$roles) {
-                throw new BLoCException("forbiden");
-            }
+            throw new BLoCException("You're not the owner of this event");
         }
 
         $archery_event_detail = ArcheryEvent::detailEventById($parameters->get('id'));

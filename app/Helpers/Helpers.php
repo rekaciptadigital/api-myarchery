@@ -22,10 +22,3 @@
 
         return $date_ina;
     }
-
-    function dayTranslate($day)
-    {
-        $days   = ['Senin' => "Monday", 'Selasa' => "Tuesday", 'Rabu' => "Wednesday", 'Kamis' => "Thursday", 'Jumat' => "Friday", 'Sabtu' => "Saturday", 'Minggu' => "Sunday"];
-        $result = array_keys($days, $day);
-        return $result[0];
-    }

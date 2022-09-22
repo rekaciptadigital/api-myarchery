@@ -75,7 +75,7 @@ class UpdateArcheryEventV2 extends Transactional
         $event->registration_end_datetime = $parameters->get("event_end_register");
         $event->event_start_datetime = $parameters->get("event_start");
         $event->event_end_datetime = $parameters->get("event_end");
-        $event->is_private = $parameters->get('is_private') ?? false;
+        $event->event_slug = $time . '-' . Str::slug($parameters->get("event_name"));
         $event->admin_id = $admin->id;
         $event->save();
 
@@ -87,7 +87,7 @@ class UpdateArcheryEventV2 extends Transactional
         return [
             "event_id" => "required",
             "event_type" => "in:Full_day,Marathon",
-            "event_competition" => "in:Tournament,Games,Selection",
+            "event_competition" => "in:Tournament,Games",
             // "status" => "integer|in:1,0",
             "event_banner" => "string",
             "event_name" => "required|string",

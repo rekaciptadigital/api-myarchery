@@ -4,8 +4,10 @@ namespace App\BLoC\General;
 
 use DAI\Utils\Abstracts\Retrieval;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoring;
 use DAI\Utils\Exceptions\BLoCException;
@@ -20,13 +22,50 @@ class GetEventClubRanked extends Retrieval
     protected function process($parameters)
     {
         $event_id = $parameters->get("event_id");
-        $rules_rating_club = $parameters->get("rules_rating_club") == null ? 1 : $parameters->get("rules_rating_club");
-        $group_category_id = $parameters->get("group_category_id") == null ? 0 : $parameters->get("group_category_id");
-        $age_category_id = $parameters->get("age_category_id");
-        $competition_category_id = $parameters->get("competition_category_id");
-        $distance_id = $parameters->get("distance_id");
 
-        return ClubRanked::getEventRanked($event_id, $rules_rating_club, $group_category_id, $age_category_id, $competition_category_id, $distance_id);
+        // dapat list club yang joint event baik individu maupun beregu
+        // $clubs = ArcheryClub::all();
+        // $list_club_join_event = [];
+        // foreach ($clubs as $key => $club) {
+        //     $participant = ArcheryEventParticipant::where("event_id", $event_id)->where("status", 1)->where("club_id", $club->id)->first();
+        //     if ($participant) {
+        //         $list_club_join_event[] = $club;
+        //     }
+        // }
+
+        // $category_events = ArcheryEventCategoryDetail::where("event_id", $event_id)
+        //     ->where("is_show", 1)
+        //     ->get()
+        //     ->groupBy(["competition_category_id", "age_category_id"]);
+
+        // $list_club_with_medal = [];
+        // foreach ($list_club_join_event as $key => $club) {
+        //     $detail_club_with_medal = [];
+        //     $detail_club_with_medal["club_name"] = $club->name;
+        //     $total_gold_medal = 0;
+        //     $total_silver_medal = 0;
+        //     $total_bronze_medal = 0;
+        //     $list_medal = [];
+        //     foreach ($category_events as $key1 => $value1) {
+        //         foreach ($value1 as $key2 => $value2) {
+        //             foreach ($value2 as $key3 => $value3) {
+        //                 $qualification_medal = $this->getClubMedalQualificationIndividualAndTeam($club->id, $value3);
+        //                 $total_gold_medal = $total_gold_medal + $qualification_medal["gold"];
+        //                 $total_silver_medal = $total_silver_medal + $qualification_medal["silver"];
+        //                 $total_bronze_medal = $total_bronze_medal + $qualification_medal["bronze"];
+        //             }
+        //         }
+        //     }
+
+        //     $detail_club_with_medal["total_gold_medal"] = $total_gold_medal;
+        //     $detail_club_with_medal["total_silver_medal"] = $total_silver_medal;
+        //     $detail_club_with_medal["total_bronze_medal"] = $total_bronze_medal;
+        //     array_push($list_club_with_medal, $detail_club_with_medal);
+        // }
+
+        // return $list_club_with_medal;
+
+        return ClubRanked::getEventRanked($event_id);
     }
 
     protected function validation($parameters)
@@ -125,4 +164,8 @@ class GetEventClubRanked extends Retrieval
             "bronze" => $bronze_medal
         ];
     }
+
+    // private function getClubMedalEliminationIndividualAndTeam($club_id, $category){
+    //     ArcheryEventElimination::
+    // }
 }

@@ -34,15 +34,7 @@ class CompleteVenuePlace extends Transactional
             'status' => 4, //aktif
         ]);
 
-        // delete all current capacity area
-        $current_venue_capacity_area = VenuePlaceCapacityArea::where('place_id', $venue_place->id)->get();
-        if (sizeof($current_venue_capacity_area) != 0) {
-            foreach ($current_venue_capacity_area as $value) {
-                $value->delete();
-            }
-        }
-
-        // add new place's capacity area
+        // place's capacity area
         $main_capacity_area = $parameters->get('capacity_area', []); 
         $current_capacity_area = $parameters->get('current_capacity_area', []); 
         $capacity_area = array_merge($main_capacity_area, $current_capacity_area);

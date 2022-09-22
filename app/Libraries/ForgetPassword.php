@@ -85,9 +85,6 @@ class ForgetPassword
 
     public static function checkValidation($keyForTenMinutes, $code)
     {
-        if($code == "00000"){
-            return true;
-        }
         $checkKey = Redis::lrange($keyForTenMinutes, 0, -1);
         $ExpKey = Redis::ttl($keyForTenMinutes);
 
