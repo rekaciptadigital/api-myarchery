@@ -53,7 +53,9 @@
                 <th style="text-align: center; background: #FFFF00;"><strong>Total Score Kualifikasi</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Total x-y Kualifikasi</strong></th>
                 @foreach ($datas[0]['total_per_series'] as $item)
-                    <th style="text-align: center; background: #FFFF00;"><strong>{{ $item["event_name"] }}</strong></th>
+                    <th style="text-align: center; background: #FFFF00;"><strong>{{ $item['event_name'] }}</strong></th>
+                    <th style="text-align: center; background: #FFFF00;"><strong>Qualification</strong></th>
+                    <th style="text-align: center; background: #FFFF00;"><strong>Elimination</strong></th>
                 @endforeach
             </tr>
             @foreach ($datas as $data)
@@ -75,6 +77,16 @@
                     @foreach ($data['total_per_series'] as $item)
                         <td style="text-align: center;">
                             {{ $item['total'] != null ? $item['total'] : 'null' }}
+                        </td>
+                        @php
+                            $qualification = isset($item['point_details']['qualification']) ? $item['point_details']['qualification'] : null;
+                            $elimination = isset($item['point_details']['elimination']) ? $item['point_details']['elimination'] : null;
+                        @endphp
+                        <td style="text-align: center;">
+                            {{ $qualification != null ? $qualification : 'null' }}
+                        </td>
+                        <td style="text-align: center;">
+                            {{ $elimination != null ? $elimination : 'null' }}
                         </td>
                     @endforeach
                 </tr>
