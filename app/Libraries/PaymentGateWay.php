@@ -77,7 +77,7 @@ class PaymentGateWay
         return (new self);
     }
 
-    public static function setMyarcheryFee(Double $fee)
+    public static function setMyarcheryFee($fee)
     {
         if($fee > 0){
             self::$fee_myarchery = $fee;
@@ -342,12 +342,12 @@ class PaymentGateWay
             "step" => "select-payment-method",
             "include_admin_fee" => self::$fee_payment_gateway_to_user ? true : false,
             "expiration" => date('Y-m-d H:i:s', $expired_time),
-            "list_disabled_payment_methods" => ["CREDIT_CARD","DEBIT_CARD","OFFLINE_CASH_IN"]
+            "list_disabled_payment_methods" => implode(",",["CREDIT_CARD","DEBIT_CARD","OFFLINE_CASH_IN"])
         ];
         
-        // Session::forget('_old_order_id');
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('POST', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/create-v2', [
+        $url = env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/create-v2';
+        $response = $client->request('POST', $url, [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'x-oy-username' => env('OYID_USERNAME',"myarchery"),
@@ -426,6 +426,7 @@ class PaymentGateWay
         self::$expired_time = $expired_time;
         $snap_token = \Midtrans\Snap::getSnapToken($params);
         if ($snap_token) {
+            self::$token = $snap_token;
             return self::saveLog($params,$snap_token);
         }
         return (object)["status" => false, "message" => $result->message];
@@ -604,8 +605,8 @@ class PaymentGateWay
 
         // create cash flow
         if($status == 1){
-            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
             $event = ArcheryEvent::where('id',$participant->event_id)->first();
+            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
             $admin_have_event = Admin::where('id',$event->admin_id)->first();
             $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
             $note = $event->name." (".$category_label.")";
@@ -616,26 +617,26 @@ class PaymentGateWay
                     'transaction_log_id' => $transaction_log->id,
                     'amount' => $transaction_log->total_amount,
             ];
-            if($transaction_log->include_payment_gateway_fee > 0){
+            if(!$have_payment_fee && $transaction_log->gateway == "OY"){
+                $gateway_fee =self::getPaymentFee(self::$oy_callback->payment_method,self::$oy_callback->sender_bank,$transaction_log->amount,true);
+                if( $gateway_fee > 0){
                 $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
                     'note' => "[fee payment register event] ".$note,
                     'gateway' => $transaction_log->gateway,
                     'transaction_log_id' => $transaction_log->id,
-                    'amount' => -1 * $transaction_log->include_payment_gateway_fee,
+                    'amount' => -1 * $gateway_fee,
                 ];
-            }
-            if(!$have_payment_fee && $transaction_log->gateway == "OY"){
-                $gateway_fee =self::getPaymentFee(self::$oy_callback->payment_method,self::$oy_callback->sender_bank,$transaction_log->amount,true);
-                if( $gateway_fee > 0){
-                    $cash_flow[] = [
-                        'eo_id' => $admin_have_event->eo_id,
-                        'note' => "[fee MyArchery register event] ".$note,
-                        'gateway' => $transaction_log->gateway,
-                        'transaction_log_id' => $transaction_log->id,
-                        'amount' => -1 * $gateway_fee,
-                    ];
                 }
+            }
+            if($transaction_log->include_my_archery_fee > 0){
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[fee MyArchery register event] ".$note,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => -1 * $transaction_log->include_my_archery_fee,
+                ];
             }
             
             EoCashFlow::insert($cash_flow);
@@ -665,16 +666,7 @@ class PaymentGateWay
                     'transaction_log_id' => $transaction_log->id,
                     'amount' => $transaction_log->total_amount,
             ];
-            if($transaction_log->include_payment_gateway_fee > 0){
-                $cash_flow[] = [
-                    'eo_id' => $admin_have_event->eo_id,
-                    'note' => "[fee payment register official event] ".$event->name,
-                    'gateway' => $transaction_log->gateway,
-                    'transaction_log_id' => $transaction_log->id,
-                    'amount' => -1 * $transaction_log->include_payment_gateway_fee,
-                ];
-            }
-            if(!$have_payment_fee && $transaction_log->gateway == "OY"){
+             if(!$have_payment_fee && $transaction_log->gateway == "OY"){
                 $gateway_fee =self::getPaymentFee(self::$oy_callback->payment_method,self::$oy_callback->sender_bank,$transaction_log->amount,true);
                 if( $gateway_fee > 0){
                     $cash_flow[] = [

@@ -75,17 +75,16 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        if ($event->is_private) {
-            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user->email)->where("event_id", $event->id)->first();
-            if (!$check_email_whitelist)
-                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
-        }
         if($event->my_archery_fee_percentage > 0)
             $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage/100));
         
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
-        
+        if ($event->is_private) {
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user->email)->where("event_id", $event->id)->first();
+            if (!$check_email_whitelist)
+                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
+        }
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();

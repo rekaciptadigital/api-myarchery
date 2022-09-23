@@ -169,8 +169,10 @@ use App\BLoC\Web\EventElimination\ChangeMemberJoinEliminationGroup;
 use App\BLoC\Web\EventElimination\GetMemberCanJoinEliminationGroup;
 use App\BLoC\Web\ManagementAdmin\CheckAdminExists;
 use App\BLoC\Web\ManagementAdmin\CreateNewUser;
+use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListAdmin;
 use App\BLoC\Web\ManagementAdmin\GetListRole;
+use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -202,12 +204,9 @@ use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\DeleteVenueSessionSett
 use App\BLoC\Web\Enterprise\Venue\Products\SessionSetting\GetListSessionSettingByPlaceId;
 use App\BLoC\Web\Enterprise\Venue\Products\AddProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
-use App\BLoC\Web\ManagementAdmin\GetDetailAdmin;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
-use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
-
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
