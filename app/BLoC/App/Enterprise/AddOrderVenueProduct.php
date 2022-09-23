@@ -16,6 +16,7 @@ class AddOrderVenueProduct extends Retrieval
     var $gateway = "";
     var $have_fee_payment_gateway = false;
     var $payment_methode = "";
+    var $myarchery_fee = 0;
 
     public function getDescription()
     {
@@ -46,7 +47,9 @@ class AddOrderVenueProduct extends Retrieval
                         ->setGateway($this->gateway)
                         ->setCustomerDetails($user->name, $user->email, $user->phone_number)
                         ->addItemDetail($venue_place_product->id, (int)$price, $venue_place_product->product_name)
-                        ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+                        // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+                        ->feePaymentsToUser($this->have_fee_payment_gateway)
+                        ->setMyarcheryFee($this->myarchery_fee)
                         ->createSnap();
             if(!$payment->status)
                 throw new BLoCException($payment->message);
