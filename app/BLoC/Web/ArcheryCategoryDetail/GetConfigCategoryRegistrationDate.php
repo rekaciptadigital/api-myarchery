@@ -27,6 +27,12 @@ class GetConfigCategoryRegistrationDate extends Transactional
             "start" => $event->registration_start_datetime,
             "end" => $event->registration_end_datetime
         ];
+
+        $response["schedule_event"] = [
+            "start" => $event->event_start_datetime,
+            "end" => $event->event_end_datetime,
+        ];
+        
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {

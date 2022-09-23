@@ -23,6 +23,8 @@ class SetConfigRegisterCategory extends Transactional
         $event_id = $parameters->get("event_id");
         $default_datetime_start_register = $parameters->get("default_datetime_start_register");
         $default_datetime_end_register = $parameters->get("default_datetime_end_register");
+        $schedule_start_event = $parameters->get("schedule_start_event");
+        $schedule_end_event = $parameters->get("schedule_end_event");
         $is_active_config = $parameters->get("is_active_config");
         $list_config = $parameters->get("list_config");
 
@@ -53,17 +55,24 @@ class SetConfigRegisterCategory extends Transactional
 
         // set ulang tanggal pendaftaran event
         $event = ArcheryEvent::find($event_id);
-        if (isset($default_datetime_start_register) && strtotime($default_datetime_start_register) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-            throw new BLoCException("event start register harus h-1 sebelum mulai event");
+
+        if (strtotime($default_datetime_end_register) <= strtotime($default_datetime_start_register)) {
+            throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
         }
 
-        if (isset($default_datetime_end_register) && strtotime($default_datetime_end_register) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
+        if (strtotime($schedule_end_event) <= strtotime($schedule_start_event)) {
+            throw new BLoCException("tanggal mulai event harus sebelum tanggal akhir event");
+        }
+
+        if (strtotime($default_datetime_end_register) > strtotime("-1 day", strtotime($schedule_start_event))) {
             throw new BLoCException("event end register harus h-1 sebelum mulai event");
         }
 
 
         $event->registration_start_datetime = $default_datetime_start_register;
         $event->registration_end_datetime = $default_datetime_end_register;
+        $event->event_start_datetime = $schedule_start_event;
+        $event->event_end_datetime = $schedule_end_event;
         $event->save();
 
         // set ulang tanggal pendaftaran per kategori
@@ -79,23 +88,24 @@ class SetConfigRegisterCategory extends Transactional
         if ($is_active_config == 1) {
             foreach ($list_config as $lc) {
 
-                if (isset($lc["date_time_start_register_config"]) && strtotime($lc["date_time_start_register_config"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                    throw new BLoCException("event start register harus h-1 sebelum mulai event");
+                if (isset($lc["date_time_start_register_config"]) && isset($lc["date_time_end_register_config"])) {
+                    if (strtotime($lc["date_time_start_register_config"]) >= strtotime($lc["date_time_end_register_config"])) {
+                        throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
+                    }
+
+                    if (strtotime($lc["date_time_end_register_config"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
+                        throw new BLoCException("event end register harus h-1 sebelum mulai event");
+                    }
                 }
 
-
-
-                if (isset($lc["date_time_end_register_config"]) && strtotime($lc["date_time_end_register_config"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                    throw new BLoCException("event end register harus h-1 sebelum mulai event");
-                }
 
 
                 $config = new ConfigCategoryRegister();
                 $config->event_id = $event_id;
                 $config->config_type = $lc["config_type"];
                 $config->is_have_special = $lc["is_have_special_category"];
-                $config->datetime_start_register = isset($lc["date_time_start_register_config"]) ? $lc["date_time_start_register_config"] : $event->registration_start_datetime;
-                $config->datetime_end_register = isset($lc["date_time_end_register_config"]) ? $lc["date_time_end_register_config"] : $event->registration_end_datetime;
+                $config->datetime_start_register = isset($lc["date_time_start_register_config"]) ? $lc["date_time_start_register_config"] : $default_datetime_start_register;
+                $config->datetime_end_register = isset($lc["date_time_end_register_config"]) ? $lc["date_time_end_register_config"] : $default_datetime_end_register;
                 $config->save();
 
                 if ($config->is_have_special == 1) {
@@ -104,12 +114,16 @@ class SetConfigRegisterCategory extends Transactional
                             throw new BLoCException("category harus diisi");
                         }
 
-                        if (isset($sc["date_time_start_register_special_category"]) && strtotime($sc["date_time_start_register_special_category"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                            throw new BLoCException("event start register harus h-1 sebelum mulai event");
-                        }
+                        if (isset($sc["date_time_start_register_special_category"]) && isset($sc["date_time_end_register_special_category"])) {
+                            if (strtotime($sc["date_time_start_register_special_category"]) >= strtotime($sc["date_time_end_register_special_category"])) {
+                                throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
+                            }
 
-                        if (isset($sc["date_time_end_register_special_category"]) && strtotime($sc["date_time_end_register_special_category"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                            throw new BLoCException("event end register harus h-1 sebelum mulai event");
+                            if (strtotime($sc["date_time_end_register_special_category"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
+                                throw new BLoCException("event end register harus h-1 sebelum mulai event");
+                            }
+                        } else {
+                            throw new BLoCException("event start register dan event end register harus diiisi");
                         }
 
                         $config_special = new ConfigSpecialMaping();
@@ -173,6 +187,11 @@ class SetConfigRegisterCategory extends Transactional
             "start" => $event->registration_start_datetime,
             "end" => $event->registration_end_datetime
         ];
+
+        $response["schedule_event"] = [
+            "start" => $event->event_start_datetime,
+            "end" => $event->event_end_datetime,
+        ];
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {
@@ -211,6 +230,8 @@ class SetConfigRegisterCategory extends Transactional
             "default_datetime_start_register" => "required|string",
             "default_datetime_end_register" => "required|string",
             "is_active_config" => "required|integer|in:1,0",
+            "schedule_start_event" => "required|string",
+            "schedule_end_event" => "required|string"
         ];
 
         if ($parameters->get("is_active_config") == 1) {
