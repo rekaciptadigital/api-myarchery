@@ -81,7 +81,7 @@ class SetConfigRegisterCategory extends Transactional
             $cwe->start_registration = $default_datetime_start_register;
             $cwe->end_registration =  $default_datetime_end_register;
             $cwe->save();
-        }
+    }
 
         // akhir set ulang pendaftaran per kategori
 

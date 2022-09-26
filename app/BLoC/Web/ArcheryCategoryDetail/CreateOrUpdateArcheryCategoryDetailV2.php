@@ -124,8 +124,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             'categories.*.quota' => 'required|min:0',
             'categories.*.fee' => 'required|min:0',
             'categories.*.early_bird' => "required|min:0",
-            'categories.*.start_registration' => "required",
-            'categories.*.end_registration' => "required",
         ];
     }
 }
