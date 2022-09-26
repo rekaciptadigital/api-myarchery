@@ -46,18 +46,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             }
 
             $distance_category = ArcheryMasterDistanceCategory::find($category['distance_category_id']);
-            $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);
-
-            $date_time_event_start_datetime = strtotime($event->event_start_datetime);
-            $today = strtotime("now");
-
-            // validasi hanya bisa set category sebelum event mulai
-            if ($today > $date_time_event_start_datetime) {
-                throw new BLoCException("hanya dapat diatur sebelum event dimulai");
-            }
-
-            $date_time_event_start_register = strtotime($event->registration_start_datetime);
-            $date_time_event_end_register = strtotime($event->registration_end_datetime);
+            $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);           
 
             $end_early_bird = $category["end_date_early_bird"];
             $early_bird = $category["early_bird"];
@@ -66,9 +55,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             if ($end_early_bird != null) {
                 if ($early_bird == 0) {
                     throw new BLoCException("harga early bird harus lebih besar dari 0");
-                }
-                if (($end_early_bird < $date_time_event_start_register) && ($end_early_bird > $date_time_event_end_register)) {
-                    throw new BLoCException("tanggal early bird harus berada di rentang tanggal pendaftaran event");
                 }
             } elseif ($early_bird > 0) {
                 if ($end_early_bird == null) {
