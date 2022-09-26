@@ -76,6 +76,7 @@ use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategor
 use App\BLoC\Web\BudRest\SetBudRest;
 use App\BLoC\Web\BudRest\GetBudRest;
 use App\BLoC\Web\BudRest\GetIdCardByCategoryPerDay;
+use App\BLoC\Web\BudRest\GetIdCardByBudrestPerDay;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
@@ -378,6 +379,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
         $this->registerService("getListBudRestV2", GetListBudRestV2::class);
         $this->registerService("getIdCardByCategoryPerDay", GetIdCardByCategoryPerDay::class);
+        $this->registerService("getIdCardByBudrestPerDay", GetIdCardByBudrestPerDay::class);
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
