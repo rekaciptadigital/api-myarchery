@@ -64,10 +64,10 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->location = $parameters->get("event_location");
             $archery_event->city_id = $city->id;
             $archery_event->location_type = $parameters->get("event_location_type");
-            $archery_event->registration_start_datetime = $parameters->get("event_start_register");
-            $archery_event->registration_end_datetime = $parameters->get("event_end_register");
-            $archery_event->event_start_datetime = $parameters->get("event_start");
-            $archery_event->event_end_datetime = $parameters->get("event_end");
+            $archery_event->registration_start_datetime = "";
+            $archery_event->registration_end_datetime = "";
+            $archery_event->event_start_datetime = "";
+            $archery_event->event_end_datetime = "";
 
             $slug = Str::slug($parameters->get("event_name"));
 
