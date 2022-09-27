@@ -1,4 +1,6 @@
 # This file is a template, and might need editing before it works on your project.
+FROM composer:2 as composer_stage
+
 FROM php:7.3.33-fpm-alpine3.14
 
 # Customize any core extensions here
@@ -65,6 +67,7 @@ RUN docker-php-ext-install \
 
 CMD mkdir myarchery-api
 WORKDIR myarchery-api
+COPY --from=composer_stage /usr/bin/composer /usr/bin/composer
 COPY . /myarchery-api
 CMD mkdir log
 
