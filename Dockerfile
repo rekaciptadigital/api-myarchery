@@ -69,7 +69,8 @@ CMD mkdir myarchery-api
 WORKDIR myarchery-api
 COPY . /myarchery-api
 COPY --from=composer_stage /usr/bin/composer /usr/bin/composer
-COPY composer.json /myarchery-api #/var/www/html/
+COPY composer.json /myarchery-api 
+#/var/www/html/
 CMD mkdir log
 
 #RUN php artisan migrate
