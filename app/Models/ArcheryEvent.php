@@ -362,6 +362,7 @@ class ArcheryEvent extends Model
                 }
 
 
+                $event = ArcheryEvent::find($data->id_event);
 
                 $detail['id'] = $data->id_event;
                 $detail['event_type'] = $data->event_type;
@@ -395,6 +396,7 @@ class ArcheryEvent extends Model
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
                 $detail['admins'] = $admins_data;
+                $detail["can_register"] = $event->getCanRegister();
             }
         }
         $end = $detail['public_information']["event_end_register"];
@@ -417,11 +419,10 @@ class ArcheryEvent extends Model
         }
         $detail["official_status"] = $official_status;
         $detail["official_fee"] = $official_fee;
-        $detail["can_register"] = $this->getCanRegister();
         return $detail;
     }
 
-    public function getConfigResponse()
+    public function getCanRegister()
     {
         $response = [];
         $response["event_id"] = $this->id;
@@ -461,17 +462,12 @@ class ArcheryEvent extends Model
             }
             $response["list_config"][] = $c;
         }
-    }
-
-    public function getCanRegister()
-    {
-        $response = $this->getConfigResponse();
 
         $can_register = 0;
 
         if (
-            time() >= strtotime($response["defaultDatetimeRegister"]["start"])
-            && time() <= strtotime($response["defaultDatetimeRegister"]["end"])
+            time() >= strtotime($response["default_datetime_register"]["start"])
+            && time() <= strtotime($response["default_datetime_register"]["end"])
         ) {
             $can_register = 1;
         }
