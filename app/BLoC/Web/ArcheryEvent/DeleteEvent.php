@@ -6,6 +6,7 @@ use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,10 @@ class DeleteEvent extends Transactional
         $event_id = $parameters->get("event_id");
 
         $event = ArcheryEvent::find($event_id);
+
+        if ($event->admin_id != $admin->id) {
+            throw new BLoCException("forbiden");
+        }
 
         $count_user_join_or_order_event = ArcheryEventParticipant::select("archery_event_participants.*")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
@@ -48,15 +53,26 @@ class DeleteEvent extends Transactional
             $participants = ArcheryEventParticipant::where("event_category_id", $c->id)->get();
             foreach ($participants as $p) {
                 $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $p->id)->first();
-                
+                if ($member) {
+                    $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id")->first();
+                    if ($schedule) {
+                        $schedule->delete();
+                    }
+                    $member->delete();
+                }
+                $p->delete();
             }
+            $c->delete();
         }
+
+        $event->delete();
+        return "success";
     }
 
     protected function validation($parameters)
     {
         return [
-            "event_id" => "required|integer|existe:archery_events,id"
+            "event_id" => "required|integer|exists:archery_events,id"
         ];
     }
 }
