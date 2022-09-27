@@ -68,7 +68,7 @@ RUN docker-php-ext-install \
 CMD mkdir myarchery-api
 WORKDIR myarchery-api
 COPY --from=composer_stage /usr/bin/composer /usr/bin/composer
-COPY composer.json /var/www/html/
+COPY composer.json /myarchery-api #/var/www/html/
 COPY . /myarchery-api
 CMD mkdir log
 
