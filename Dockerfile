@@ -73,8 +73,8 @@ COPY . /myarchery-api
 CMD mkdir log
 
 #RUN php artisan migrate
-RUN composer install
-RUN rm -rf vendor
-RUN composer update -d .
+#RUN composer install
+#RUN rm -rf vendor
+#RUN composer update -d .
 
-CMD ["php-fpm", "./public/index.php"]
+#CMD ["php-fpm", "./public/index.php"]
