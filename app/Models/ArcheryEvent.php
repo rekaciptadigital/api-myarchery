@@ -417,8 +417,90 @@ class ArcheryEvent extends Model
         }
         $detail["official_status"] = $official_status;
         $detail["official_fee"] = $official_fee;
+        $detail["can_register"] = $this->getCanRegister();
         return $detail;
     }
+
+    public function getConfigResponse()
+    {
+        $response = [];
+        $response["event_id"] = $this->id;
+        $response["default_datetime_register"] = [
+            "start" => $this->registration_start_datetime,
+            "end" => $this->registration_end_datetime
+        ];
+
+        $response["schedule_event"] = [
+            "start" => $this->event_start_datetime,
+            "end" => $this->event_end_datetime,
+        ];
+        $config = ConfigCategoryRegister::where("event_id", $this->id)->get();
+        $enable_config = 0;
+        if ($config->count() > 0) {
+            $enable_config = 1;
+        }
+
+        $response["enable_config"] = $enable_config;
+
+        foreach ($config as $c) {
+            if ($c->is_have_special == 1) {
+                $list_special_config = [];
+                $config_special_mapping = ConfigSpecialMaping::where("config_id", $c->id)->get();
+                foreach ($config_special_mapping as $csm) {
+                    $categories = [];
+                    $config_special_category_mapping = ConfigSpecialCategoryMaping::where("special_config_id", $csm->id)->get();
+                    foreach ($config_special_category_mapping as $cscm) {
+                        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($cscm->category_id);
+                        $cscm->label = $label;
+                        $categories[] = $cscm;
+                    }
+                    $csm->categories = $categories;
+                    $list_special_config[] = $csm;
+                }
+                $c->list_special_config = $list_special_config;
+            }
+            $response["list_config"][] = $c;
+        }
+    }
+
+    public function getCanRegister()
+    {
+        $response = $this->getConfigResponse();
+
+        $can_register = 0;
+
+        if (
+            time() >= strtotime($response["defaultDatetimeRegister"]["start"])
+            && time() <= strtotime($response["defaultDatetimeRegister"]["end"])
+        ) {
+            $can_register = 1;
+        }
+
+        if ($response["enable_config"] == 1) {
+            foreach ($response["list_config"] as $c) {
+                if ($c["isHaveSpecial"] == 0) {
+                    if (
+                        time() >= strtotime($c["datetimeStartRegister"])
+                        && time() <= strtotime($c["datetimeEndRegister"])
+                    ) {
+                        $can_register = 1;
+                    }
+                } else {
+                    foreach ($c["listSpecialConfig"] as $lsc) {
+                        if (
+                            time() >= strtotime($lsc["datetimeStartRegister"])
+                            && time() <= strtotime($lsc["datetimeEndRegister"])
+                        ) {
+                            $can_register = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $can_register;
+    }
+
     protected function detailEventAll($limit, $offset, $event_name = "")
     {
 
