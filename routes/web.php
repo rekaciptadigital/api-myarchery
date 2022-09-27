@@ -435,6 +435,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);
             $router->get('/get-list-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListBudRestV2']);
+            $router->get('/download-idcard-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByCategoryPerDay']);
+            $router->get('/download-idcard-by-budrest-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByBudrestPerDay']);
+            $router->get('/download-idcard-by-club-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByClubPerDay']);
         });
 
         $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {

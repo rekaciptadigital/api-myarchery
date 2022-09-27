@@ -247,6 +247,7 @@ class ArcherySeriesUserPoint extends Model
                 $output2["event_name"] = $evennt->event_name;
                 $total_per_series = self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) != [] ? self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) : 0;
                 $output2["total"] = isset($total_per_series[$user_profile["id"]]["total_point"]) ? $total_per_series[$user_profile["id"]]["total_point"] : $total_per_series;
+                $output2["point_details"] = isset($total_per_series[$user_profile["id"]]["point_details"]) ? $total_per_series[$user_profile["id"]]["point_details"] : $total_per_series;
                 $data3[] = $output2;
             }
 
