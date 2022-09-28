@@ -58,7 +58,7 @@ class GetIdCardByBudrestPerDay extends Retrieval
             ->where("archery_event_participants.event_id", $event_id)
             ->whereDate("event_start_datetime", $date);
 
-        $schedule_member_collection = $schedule_member_query->orDerBy("archery_event_qualification_schedule_full_day.bud_rest_number")
+        $schedule_member_collection = $schedule_member_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face")
             ->get();
 
@@ -87,6 +87,9 @@ class GetIdCardByBudrestPerDay extends Retrieval
             }
         }
 
+        $data_collection = collect($output['category_budrest']);
+        $data_sorted = $data_collection->sortKeys();
+
         $final_doc = [];
 
         $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $event_id)->first();
@@ -101,7 +104,7 @@ class GetIdCardByBudrestPerDay extends Retrieval
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($output, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
+            $final_doc = $this->generateArrayParticipant($data_sorted, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         }
 
         $editor_data = json_decode($idcard_event->editor_data);
@@ -129,9 +132,9 @@ class GetIdCardByBudrestPerDay extends Retrieval
     {
         $final_doc = [];
 
-        foreach($datas['category_budrest'] as $data) {
+        foreach($datas as $details) {
 
-            foreach($data as $detail) {
+            foreach($details as $detail) {
 
                 $user = User::find($detail['user_id']);
                 if (!$user) {
