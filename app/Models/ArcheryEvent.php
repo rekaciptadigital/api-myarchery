@@ -474,18 +474,18 @@ class ArcheryEvent extends Model
 
         if ($response["enable_config"] == 1) {
             foreach ($response["list_config"] as $c) {
-                if ($c["isHaveSpecial"] == 0) {
+                if ($c["is_have_special"] == 0) {
                     if (
-                        time() >= strtotime($c["datetimeStartRegister"])
-                        && time() <= strtotime($c["datetimeEndRegister"])
+                        time() >= strtotime($c["datetime_start_register"])
+                        && time() <= strtotime($c["datetime_end_register"])
                     ) {
                         $can_register = 1;
                     }
                 } else {
-                    foreach ($c["listSpecialConfig"] as $lsc) {
+                    foreach ($c["list_special_config"] as $lsc) {
                         if (
-                            time() >= strtotime($lsc["datetimeStartRegister"])
-                            && time() <= strtotime($lsc["datetimeEndRegister"])
+                            time() >= strtotime($lsc["datetime_start_register"])
+                            && time() <= strtotime($lsc["datetime_end_register"])
                         ) {
                             $can_register = 1;
                         }
