@@ -78,6 +78,6 @@ RUN composer install
 RUN rm -rf vendor
 RUN composer update -d .
 
-#CMD ["php-fpm"]
+#CMD ["php artisan serve --port=3000"]
 
 EXPOSE 3000
