@@ -112,6 +112,8 @@ class ArcheryMemberCertificate extends Model
                             }
 
                             $type_certificate_label = "Eliminasi Beregu";
+                            $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_team->id);
+                            $item["{%category_name%}"] = $label;
                             $rank = $elimination_group_team->elimination_ranked;
                         } else {
                             $team_participant = ArcheryEventParticipant::select("archery_event_participants.event_category_id")
