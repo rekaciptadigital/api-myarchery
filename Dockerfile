@@ -78,6 +78,6 @@ RUN composer install
 RUN rm -rf vendor
 RUN composer update -d .
 
-CMD ["php-fpm"]
+CMD ["nohup php-fpm"]
 
 EXPOSE 9000
