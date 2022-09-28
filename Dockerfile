@@ -78,6 +78,6 @@ RUN composer install
 RUN rm -rf vendor
 RUN composer update -d .
 
-CMD ["php-fpm", "./public/index.php"]
+CMD ["php-fpm"]
 
 EXPOSE 9000
