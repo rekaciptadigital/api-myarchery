@@ -29,6 +29,9 @@ class DeleteEvent extends Transactional
             throw new BLoCException("forbiden");
         }
 
+
+        
+
         $count_user_join_or_order_event = ArcheryEventParticipant::select("archery_event_participants.*")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->where("archery_event_participants.event_id", $event_id)
