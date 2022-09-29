@@ -11,7 +11,7 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class DeleteEvent extends Transactional
+class DeleteEventNew extends Transactional
 {
     public function getDescription()
     {

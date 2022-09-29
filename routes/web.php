@@ -320,7 +320,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->group(['prefix' => 'events'], function () use ($router) {
                 // ================================== Fast Open 3 =========================================================
                 $router->post('/add-logo-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addLogoEvent']);
-                $router->delete('/delete-event-new', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteEvent']);
+                $router->delete('/delete-event-new', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteEventNew']);
                 // ================================== End Fast Open ===================================================
                 $router->put('/delete-handbook', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteHandBook']);
                 $router->put('/category-fee', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editArcheryEventCategoryDetailFee']);
