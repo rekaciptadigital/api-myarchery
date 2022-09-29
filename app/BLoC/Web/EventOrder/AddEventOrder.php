@@ -74,7 +74,6 @@ class AddEventOrder extends Transactional
             if (!$check_email_whitelist)
                 throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
         }
-        
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
@@ -88,26 +87,11 @@ class AddEventOrder extends Transactional
         }
 
         $today = date('Y-m-d H:i:s');
-        if (!$event->registration_start_datetime || !$event->registration_end_datetime) {
-            throw new BLoCException("tanggal pendaftaran default belum di set");
-        }
-
         $registration_start_datetime = date("Y-m-d H:i:s", strtotime($event->registration_start_datetime));
         $registration_end_datetime = date("Y-m-d H:i:s", strtotime($event->registration_end_datetime));
-
-        $registration_start_category = date("Y-m-d H:i:s", strtotime($event_category_detail->start_registration));
-        $registration_end_category = date("Y-m-d H:i:s", strtotime($event_category_detail->end_registration));
-
-        if (!$registration_start_category || !$registration_end_category) {
-            if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
-                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran event");
-            }
-        } else {
-            if (($today < $registration_start_category) || ($today > $registration_end_category)) {
-                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran untuk category ini");
-            }
+        if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
+            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
         }
-
 
         if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
             throw new BLoCException("club harus diisi");
