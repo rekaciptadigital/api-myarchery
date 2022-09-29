@@ -46,7 +46,7 @@ class GetArcheryClubs extends Retrieval
         });
 
         $archery_clubs->limit($limit)->offset($offset);
-
+        
         foreach ($archery_clubs->get() as $key) {
             $club['detail'] = $key;
             $club['total_member'] = ClubMember::where('club_id', $key->id)->count();
