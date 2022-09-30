@@ -30,7 +30,7 @@ class DeleteEvent extends Transactional
         }
 
 
-        
+
 
         $count_user_join_or_order_event = ArcheryEventParticipant::select("archery_event_participants.*")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
