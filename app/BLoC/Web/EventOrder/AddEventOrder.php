@@ -85,6 +85,7 @@ class AddEventOrder extends Transactional
             if (!$check_email_whitelist)
                 throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
         }
+        
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
