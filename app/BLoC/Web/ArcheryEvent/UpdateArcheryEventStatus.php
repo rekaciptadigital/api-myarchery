@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,16 @@ class UpdateArcheryEventStatus extends Retrieval
 
             if ($count_user_join_or_order_event > 0) {
                 throw new BLoCException("tidak dapat ubah status karena telah ada peserta yang mendaftar");
+            }
+        } else {
+            $qualification_time = ArcheryEventQualificationTime::select("archery_event_qualification_time.*")
+                ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_qualification_time.category_detail_id")
+                ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+                ->where("event_id", $event_id)
+                ->first();
+
+            if (!$qualification_time) {
+                throw new BLoCException("harap lengkapi data event sebelum publish");
             }
         }
 
