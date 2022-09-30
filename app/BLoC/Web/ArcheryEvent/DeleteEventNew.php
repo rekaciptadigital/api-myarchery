@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BloC\Web\ArcheryEvent;
+namespace App\BLoC\Web\ArcheryEvent;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
@@ -11,7 +11,7 @@ use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 
-class DeleteEventNew extends Transactional
+class DeleteEvent extends Transactional
 {
     public function getDescription()
     {
