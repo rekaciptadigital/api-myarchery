@@ -56,6 +56,10 @@ class SetConfigRegisterCategory extends Transactional
         // set ulang tanggal pendaftaran event
         $event = ArcheryEvent::find($event_id);
 
+        if (strtotime($default_datetime_start_register) < time()) {
+            throw new BLoCException("event start register invalid");
+        }
+
         if (strtotime($default_datetime_end_register) <= strtotime($default_datetime_start_register)) {
             throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
         }
@@ -81,7 +85,7 @@ class SetConfigRegisterCategory extends Transactional
             $cwe->start_registration = $default_datetime_start_register;
             $cwe->end_registration =  $default_datetime_end_register;
             $cwe->save();
-    }
+        }
 
         // akhir set ulang pendaftaran per kategori
 
@@ -181,6 +185,7 @@ class SetConfigRegisterCategory extends Transactional
             }
         }
 
+        // susun response
         $response = [];
         $response["event_id"] = $event->id;
         $response["default_datetime_register"] = [
