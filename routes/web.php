@@ -274,6 +274,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategory']);
             });
 
+            $router->group(['prefix' => 'config-category-register'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigRegisterCategory']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigCategoryRegistrationDate']);
+            });
+
             $router->group(['prefix' => 'category-details'], function () use ($router) {
                 $router->get('/qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetailQualification']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetail']);
@@ -431,6 +436,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);
             $router->get('/get-list-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListBudRestV2']);
+            $router->get('/download-idcard-by-category-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByCategoryPerDay']);
+            $router->get('/download-idcard-by-budrest-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByBudrestPerDay']);
+            $router->get('/download-idcard-by-club-per-day', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByClubPerDay']);
         });
 
         $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
