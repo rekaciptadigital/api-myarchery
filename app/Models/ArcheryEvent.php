@@ -198,6 +198,8 @@ class ArcheryEvent extends Model
             "archery_master_team_categories.label as label_team_categories",
             "archery_master_team_categories.id as id_team_categories",
             "archery_master_team_categories.type as type",
+            "archery_event_category_details.start_registration",
+            "archery_event_category_details.end_registration",
             DB::raw("CONCAT(archery_master_team_categories.label,'-',
                                             archery_master_age_categories.label,'-',
                                             archery_master_competition_categories.label,'-',
@@ -335,7 +337,9 @@ class ArcheryEvent extends Model
                     "end_date_early_bird" => $value->end_date_early_bird,
                     "is_early_bird" => $value->is_early_bird,
                     "label" => $value->label_category,
-                    "is_show" => $value->is_show
+                    "is_show" => $value->is_show,
+                    "start_registration" => $value->start_registration,
+                    "end_registration" => $value->end_registration
                 ];
             }
         }
@@ -358,6 +362,7 @@ class ArcheryEvent extends Model
                 }
 
 
+                $event = ArcheryEvent::find($data->id_event);
 
                 $detail['id'] = $data->id_event;
                 $detail['event_type'] = $data->event_type;
@@ -367,6 +372,7 @@ class ArcheryEvent extends Model
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
                     'handbook' => $data->handbook,
+                    'logo' => $data->logo,
                     'event_description' => $data->description,
                     'event_location' => $data->location,
                     'event_city' => [
@@ -390,6 +396,7 @@ class ArcheryEvent extends Model
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
                 $detail['admins'] = $admins_data;
+                $detail["can_register"] = $event->getCanRegister();
             }
         }
         $end = $detail['public_information']["event_end_register"];
@@ -414,6 +421,82 @@ class ArcheryEvent extends Model
         $detail["official_fee"] = $official_fee;
         return $detail;
     }
+
+    public function getCanRegister()
+    {
+        $response = [];
+        $response["event_id"] = $this->id;
+        $response["default_datetime_register"] = [
+            "start" => $this->registration_start_datetime,
+            "end" => $this->registration_end_datetime
+        ];
+
+        $response["schedule_event"] = [
+            "start" => $this->event_start_datetime,
+            "end" => $this->event_end_datetime,
+        ];
+        $config = ConfigCategoryRegister::where("event_id", $this->id)->get();
+        $enable_config = 0;
+        if ($config->count() > 0) {
+            $enable_config = 1;
+        }
+
+        $response["enable_config"] = $enable_config;
+
+        foreach ($config as $c) {
+            if ($c->is_have_special == 1) {
+                $list_special_config = [];
+                $config_special_mapping = ConfigSpecialMaping::where("config_id", $c->id)->get();
+                foreach ($config_special_mapping as $csm) {
+                    $categories = [];
+                    $config_special_category_mapping = ConfigSpecialCategoryMaping::where("special_config_id", $csm->id)->get();
+                    foreach ($config_special_category_mapping as $cscm) {
+                        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($cscm->category_id);
+                        $cscm->label = $label;
+                        $categories[] = $cscm;
+                    }
+                    $csm->categories = $categories;
+                    $list_special_config[] = $csm;
+                }
+                $c->list_special_config = $list_special_config;
+            }
+            $response["list_config"][] = $c;
+        }
+
+        $can_register = 0;
+
+        if (
+            time() >= strtotime($response["default_datetime_register"]["start"])
+            && time() <= strtotime($response["default_datetime_register"]["end"])
+        ) {
+            $can_register = 1;
+        }
+
+        if ($response["enable_config"] == 1) {
+            foreach ($response["list_config"] as $c) {
+                if ($c["is_have_special"] == 0) {
+                    if (
+                        time() >= strtotime($c["datetime_start_register"])
+                        && time() <= strtotime($c["datetime_end_register"])
+                    ) {
+                        $can_register = 1;
+                    }
+                } else {
+                    foreach ($c["list_special_config"] as $lsc) {
+                        if (
+                            time() >= strtotime($lsc["datetime_start_register"])
+                            && time() <= strtotime($lsc["datetime_end_register"])
+                        ) {
+                            $can_register = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $can_register;
+    }
+
     protected function detailEventAll($limit, $offset, $event_name = "")
     {
 

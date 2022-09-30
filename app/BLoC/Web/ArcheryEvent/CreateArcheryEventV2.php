@@ -64,10 +64,6 @@ class CreateArcheryEventV2 extends Transactional
             $archery_event->location = $parameters->get("event_location");
             $archery_event->city_id = $city->id;
             $archery_event->location_type = $parameters->get("event_location_type");
-            $archery_event->registration_start_datetime = $parameters->get("event_start_register");
-            $archery_event->registration_end_datetime = $parameters->get("event_end_register");
-            $archery_event->event_start_datetime = $parameters->get("event_start");
-            $archery_event->event_end_datetime = $parameters->get("event_end");
 
             $slug = Str::slug($parameters->get("event_name"));
 
@@ -108,10 +104,6 @@ class CreateArcheryEventV2 extends Transactional
             "event_location" => "required",
             "event_city" => "required",
             "event_location_type" => "required|in:Indoor,Outdoor,Both",
-            "event_start_register" => "required|after_or_equal:today",
-            "event_end_register" => "required",
-            "event_start" => "required",
-            "event_end" => "required|after:event_start",
             "more_information" => "array"
         ];
     }
