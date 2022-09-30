@@ -274,6 +274,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategory']);
             });
 
+            $router->group(['prefix' => 'config-category-register'], function () use ($router) {
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigRegisterCategory']);
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigCategoryRegistrationDate']);
+            });
+
             $router->group(['prefix' => 'category-details'], function () use ($router) {
                 $router->get('/qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetailQualification']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryCategoryDetail']);
