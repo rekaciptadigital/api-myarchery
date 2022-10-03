@@ -74,6 +74,7 @@ class AddEventOrder extends Transactional
             if (!$check_email_whitelist)
                 throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
         }
+
         if ($event->event_type == "Marathon") {
             $is_marathon = 1;
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
@@ -86,12 +87,29 @@ class AddEventOrder extends Transactional
             }
         }
 
-        $today = date('Y-m-d H:i:s');
-        $registration_start_datetime = date("Y-m-d H:i:s", strtotime($event->registration_start_datetime));
-        $registration_end_datetime = date("Y-m-d H:i:s", strtotime($event->registration_end_datetime));
-        if (($today < $registration_start_datetime) || ($today > $registration_end_datetime)) {
-            throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran");
+        $now = time();
+        if (!$event->registration_start_datetime || !$event->registration_end_datetime) {
+            throw new BLoCException("tanggal pendaftaran default belum di set");
         }
+
+        $time_register_event_start = strtotime($event->registration_start_datetime);
+        $time_register_event_end = strtotime($event->registration_end_datetime);
+
+        if ($event_category_detail->start_registration && $event_category_detail->end_registration) {
+            $time_registration_start_category = strtotime($event_category_detail->start_registration);
+            $time_registration_end_category = strtotime($event_category_detail->end_registration);
+        }
+
+        if (!isset($time_registration_start_category) || !isset($time_registration_end_category)) {
+            if (($now < $time_register_event_start) || ($now > $time_register_event_end)) {
+                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran event");
+            }
+        } else {
+            if (($now < $time_registration_start_category) || ($now > $time_registration_end_category)) {
+                throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran untuk category ini");
+            }
+        }
+
 
         if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
             throw new BLoCException("club harus diisi");
