@@ -96,6 +96,7 @@ use App\BLoC\Web\ArcheryCategoryDetail\GetConfigCategoryRegistrationDate;
 use App\BLoC\Web\ArcheryCategoryDetail\SetConfigRegisterCategory;
 use App\BLoC\Web\ArcheryEvent\AddLogoEvent;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
+use App\BLoC\Web\ArcheryEvent\DeleteEvent;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
 use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
@@ -250,6 +251,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getListAdmin", GetListAdmin::class);
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
+        $this->registerService("deleteEvent", DeleteEvent::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
