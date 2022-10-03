@@ -315,7 +315,7 @@ class ArcheryEventCategoryDetail extends Model
                 } else {
                     if (
                         time() >= strtotime($event->registration_start_datetime)
-                        && time() <= strtotime($event->registration_start_datetime)
+                        && time() <= strtotime($event->registration_end_datetime)
                     ) {
                         $can_register = 1;
                     }

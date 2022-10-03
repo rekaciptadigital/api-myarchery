@@ -56,9 +56,9 @@ class SetConfigRegisterCategory extends Transactional
         // set ulang tanggal pendaftaran event
         $event = ArcheryEvent::find($event_id);
 
-        if (strtotime($default_datetime_start_register) < time()) {
-            throw new BLoCException("event start register invalid");
-        }
+        // if (strtotime($default_datetime_start_register) < time()) {
+        //     throw new BLoCException("event start register invalid");
+        // }
 
         if (strtotime($default_datetime_end_register) <= strtotime($default_datetime_start_register)) {
             throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");

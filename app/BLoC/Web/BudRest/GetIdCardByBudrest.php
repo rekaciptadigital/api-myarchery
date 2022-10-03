@@ -108,6 +108,7 @@ class GetIdCardByBudrest extends Retrieval
             $final_doc = $this->generateArrayParticipant($data_sorted, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         }
 
+        if ($idcard_event->editor_data == " " || $idcard_event->editor_data == null) throw new BLoCException("ID Card bantalan belom diset, silahkan konfigurasi di menu ID Card");
         $editor_data = json_decode($idcard_event->editor_data);
         $paper_size = $editor_data->paperSize;
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
