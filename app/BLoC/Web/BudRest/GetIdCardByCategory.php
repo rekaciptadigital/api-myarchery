@@ -1,6 +1,7 @@
 <?php
 
 namespace App\BLoC\Web\BudRest;
+ini_set('max_execution_time', 180);
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventIdcardTemplate;
@@ -17,7 +18,7 @@ use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use Illuminate\Support\Facades\Auth;
 
-class GetIdCardByCategoryPerDay extends Retrieval
+class GetIdCardByCategory extends Retrieval
 {
     public function getDescription()
     {
@@ -46,7 +47,9 @@ class GetIdCardByCategoryPerDay extends Retrieval
                     ->where('event_id', $event_id)
                     ->join('archery_event_qualification_time', 'archery_event_qualification_time.category_detail_id', '=', 'archery_event_category_details.id')
                     ->where(function ($query) use ($date){
-                            $query->whereDate('archery_event_qualification_time.event_start_datetime', $date);  
+                        if(!empty($date)){
+                            $query->whereDate('archery_event_qualification_time.event_start_datetime', $date);
+                        } 
                     })->get();
 
         $final_doc = [];
@@ -69,10 +72,17 @@ class GetIdCardByCategoryPerDay extends Retrieval
             $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
         }
 
+        if ($idcard_event->editor_data == " " || $idcard_event->editor_data == null) throw new BLoCException("ID Card bantalan belom diset, silahkan konfigurasi di menu ID Card");
         $editor_data = json_decode($idcard_event->editor_data);
         $paper_size = $editor_data->paperSize;
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
-        $file_name = $type == 1 ? "asset/idcard/idcard_" . $archery_event->event_name . "_category_" . $date . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        
+        if(!empty($date)){
+            $file_name = $type == 1 ? "asset/idcard/idcard_" . $archery_event->event_name . "_category_" . $date . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        } else {
+            $file_name = $type == 1 ? "asset/idcard/idcard_" . $archery_event->event_name . "_category_allday" . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        }
+        
         PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
@@ -84,7 +94,7 @@ class GetIdCardByCategoryPerDay extends Retrieval
     {
         $validator = [
             'event_id' => 'required',
-            'date' => 'required'
+            // 'date' => 'required'
         ];
 
         return $validator;
@@ -109,7 +119,8 @@ class GetIdCardByCategoryPerDay extends Retrieval
 
             $participants = ArcheryEventParticipant::where("event_category_id", $data->archery_event_category_details_id)->where("status", 1)->orderBy('club_id')->get();
             if ($participants->isEmpty()) {
-                throw new BLoCException("tidak ada partisipan");
+                continue;
+                // throw new BLoCException("tidak ada partisipan");
             }
 
             foreach ($participants as $participant) {

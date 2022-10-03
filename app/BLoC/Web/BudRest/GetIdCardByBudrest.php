@@ -1,6 +1,7 @@
 <?php
 
 namespace App\BLoC\Web\BudRest;
+ini_set('max_execution_time', 180);
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventIdcardTemplate;
@@ -17,7 +18,7 @@ use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use Illuminate\Support\Facades\Auth;
 
-class GetIdCardByBudrestPerDay extends Retrieval
+class GetIdCardByBudrest extends Retrieval
 {
     public function getDescription()
     {
@@ -55,15 +56,15 @@ class GetIdCardByBudrestPerDay extends Retrieval
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-            ->where("archery_event_participants.event_id", $event_id)
-            ->whereDate("event_start_datetime", $date);
+            ->where("archery_event_participants.event_id", $event_id);
+
+        if(!empty($date)) $schedule_member_query->whereDate("event_start_datetime", $date);       ;
 
         $schedule_member_collection = $schedule_member_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face")
             ->get();
 
         $output = [];
-        $output["date"] = $date;
         $output["category_budrest"] = null;
 
         if ($schedule_member_collection->count() > 0) {
@@ -107,10 +108,17 @@ class GetIdCardByBudrestPerDay extends Retrieval
             $final_doc = $this->generateArrayParticipant($data_sorted, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
         }
 
+        if ($idcard_event->editor_data == " " || $idcard_event->editor_data == null) throw new BLoCException("ID Card bantalan belom diset, silahkan konfigurasi di menu ID Card");
         $editor_data = json_decode($idcard_event->editor_data);
         $paper_size = $editor_data->paperSize;
         $orientation = array_key_exists("orientation", $editor_data) ? $editor_data->orientation : "P";
-        $file_name = $type == 1 ? "asset/idcard/idcard_" . $event->event_name . "_budrest_" . $date . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+
+        if(!empty($date)){
+            $file_name = $type == 1 ? "asset/idcard/idcard_" . $event->event_name . "_budrest_" . $date . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        } else {
+            $file_name = $type == 1 ? "asset/idcard/idcard_" . $event->event_name . "_budrest_allday" . ".pdf" : "asset/idcard/idcard_" . $category_file  . ".pdf";
+        }
+
         PdfLibrary::setArrayDoc($final_doc['doc'])->setFileName($file_name)->savePdf(null, $paper_size, $orientation);
         return [
             "file_name" => env('APP_HOSTNAME') . $file_name,
@@ -122,7 +130,7 @@ class GetIdCardByBudrestPerDay extends Retrieval
     {
         $validator = [
             'event_id' => 'required',
-            'date' => 'required'
+            // 'date' => 'required'
         ];
 
         return $validator;

@@ -75,9 +75,9 @@ use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
 use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
 use App\BLoC\Web\BudRest\SetBudRest;
 use App\BLoC\Web\BudRest\GetBudRest;
-use App\BLoC\Web\BudRest\GetIdCardByCategoryPerDay;
-use App\BLoC\Web\BudRest\GetIdCardByBudrestPerDay;
-use App\BLoC\Web\BudRest\GetIdCardByClubPerDay;
+use App\BLoC\Web\BudRest\GetIdCardByCategory;
+use App\BLoC\Web\BudRest\GetIdCardByBudrest;
+use App\BLoC\Web\BudRest\GetIdCardByClub;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
@@ -385,9 +385,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRestV2", GetBudRestV2::class);
         $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
         $this->registerService("getListBudRestV2", GetListBudRestV2::class);
-        $this->registerService("getIdCardByCategoryPerDay", GetIdCardByCategoryPerDay::class);
-        $this->registerService("getIdCardByBudrestPerDay", GetIdCardByBudrestPerDay::class);
-        $this->registerService("getIdCardByClubPerDay", GetIdCardByClubPerDay::class);
+        $this->registerService("getIdCardByCategory", GetIdCardByCategory::class);
+        $this->registerService("getIdCardByBudrest", GetIdCardByBudrest::class);
+        $this->registerService("getIdCardByClub", GetIdCardByClub::class);
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);
