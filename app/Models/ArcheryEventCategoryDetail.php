@@ -248,7 +248,9 @@ class ArcheryEventCategoryDetail extends Model
             'fee',
             'early_bird',
             "end_date_early_bird",
-            "archery_master_team_categories.type"
+            "archery_master_team_categories.type",
+            "archery_event_category_details.start_registration",
+            "archery_event_category_details.end_registration"
         )
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
@@ -301,6 +303,25 @@ class ArcheryEventCategoryDetail extends Model
                     $age_config["min_date_of_birth"] = $category_detail->min_date_of_birth;
                     $age_config["max_date_of_birth"] = $category_detail->max_date_of_birth;
                 }
+
+                $can_register = 0;
+                if ($category_detail->start_registration && $category_detail->end_registration) {
+                    if (
+                        time() >= strtotime($category_detail->start_registration)
+                        && time() <= strtotime($category_detail->end_registration)
+                    ) {
+                        $can_register = 1;
+                    }
+                } else {
+                    if (
+                        time() >= strtotime($event->registration_start_datetime)
+                        && time() <= strtotime($event->registration_end_datetime)
+                    ) {
+                        $can_register = 1;
+                    }
+                }
+
+                $category->can_register = $can_register;
 
                 $category->age_config = $age_config;
 

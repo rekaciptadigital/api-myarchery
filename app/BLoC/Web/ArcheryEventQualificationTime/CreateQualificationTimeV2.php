@@ -57,6 +57,9 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("category tidak valid");
             }
 
+
+            
+
             // ubah string datetime yang diinputkan users menjadi format datetime
             $qualification_time_event_start_datetime = date('Y-m-d', strtotime($qt['event_start_datetime']));
             $qualification_time_event_end_datetime = date('Y-m-d', strtotime($qt['event_end_datetime']));
