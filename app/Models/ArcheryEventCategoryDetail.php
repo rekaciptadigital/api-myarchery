@@ -17,7 +17,7 @@ class ArcheryEventCategoryDetail extends Model
     protected $guarded = ['id'];
     protected $appends = [
         'category_team', 'event_name', 'gender_category', 'start_event',
-        'is_early_bird', 'label_category', 'class_category', 'end_event'
+        'is_early_bird', 'label_category', 'class_category', 'end_event',
     ];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
@@ -178,7 +178,7 @@ class ArcheryEventCategoryDetail extends Model
     public function getIsEarlyBirdAttribute()
     {
         $is_early_bird = 0;
-        if (($this->early_bird > 0) && ($this->end_date_early_bird != null)) {
+        if (((int)$this->early_bird > 0) && ($this->end_date_early_bird != null)) {
             $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
             $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
 
@@ -187,6 +187,20 @@ class ArcheryEventCategoryDetail extends Model
             }
         }
         return $this->attributes['is_early_bird'] = $is_early_bird;
+    }
+
+    public function getIsEarlyBirdWna()
+    {
+        $is_early_bird_wna = 0;
+        if (((int)$this->early_price_wna > 0) && ($this->end_date_early_bird != null)) {
+            $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
+            $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
+
+            if (Carbon::today() <= $new_format_early_bird_end_datetime) {
+                $is_early_bird_wna = 1;
+            }
+        }
+        return $is_early_bird_wna;
     }
 
     public function getGenderCategoryAttribute()

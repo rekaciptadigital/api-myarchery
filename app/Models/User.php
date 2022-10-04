@@ -132,6 +132,34 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         ];
     }
 
+    public function checkIsCompleteUserData()
+    {
+        $is_complete = 0;
+        if ($this->gender && $this->address && $this->date_of_birth) {
+            if ($this->is_wna == 1) {
+                if (
+                    $this->passport_number
+                    && $this->country_id
+                    && $this->city_of_country_id
+                    && $this->passport_img
+                ) {
+                    $is_complete = 1;
+                }
+            } else {
+                if (
+                    $this->nik
+                    && $this->address_province_id
+                    && $this->address_city_id
+                    && $this->ktp_kk
+                ) {
+                    $is_complete = 1;
+                }
+            }
+        }
+
+        return $is_complete;
+    }
+
     public static function sendOtpAccountVerification($user_id)
     {
         $user = User::find($user_id);

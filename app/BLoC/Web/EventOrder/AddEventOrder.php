@@ -52,6 +52,10 @@ class AddEventOrder extends Transactional
         $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
         
         $user = Auth::guard('app-api')->user();
+        if ($user->checkIsCompleteUserData() != 1) {
+            throw new BLoCException("data user belum lengkap, harap lengkapi data");
+        }
+
         $event_category_id = $parameters->get('event_category_id');
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
@@ -64,9 +68,16 @@ class AddEventOrder extends Transactional
         }
 
         // cek harga apakah normal atau early bird
-        $price = $event_category_detail->fee;
-        if ($event_category_detail->is_early_bird == 1) {
-            $price = $event_category_detail->early_bird;
+        if ($user->is_wna == 0) {
+            $price = $event_category_detail->fee == null ? 0 : $event_category_detail->fee;
+            if ($event_category_detail->is_early_bird == 1) {
+                $price = $event_category_detail->early_bird;
+            }
+        } else {
+            $price = $event_category_detail->normal_price_wna;
+            if ($event_category_detail->getIsEarlyBirdWna() == 1) {
+                $price = $event_category_detail->early_price_wna;
+            }
         }
 
         $is_marathon = 0;
