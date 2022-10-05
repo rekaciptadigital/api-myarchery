@@ -141,7 +141,7 @@
             <tr>
                 <th style="text-align: center; background: #a1a11a;"><strong>No</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>NAMA REGU</strong></th>
-                <th style="text-align: center; background: #a1a11a;"><strong>HARGA DAFTAR</strong></th>
+                {{-- <th style="text-align: center; background: #a1a11a;"><strong>HARGA DAFTAR</strong></th> --}}
                 <th style="text-align: center; background: #FFFF00;"><strong>TOTAL KUOTA</strong></th>
                 <th style="text-align: center; background: #a1a11a;"><strong>TOTAL PENDAFTAR</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>SISA KUOTA</strong></th>
@@ -159,7 +159,7 @@
                 <tr>
                     <td style="text-align: center;">{{ $no = $no + 1 }}</td>
                     <td style="text-align: left;">{{ $key }}</td>
-                    <td style="text-align: right;">Rp{{ $data['amount'] ? number_format($data['amount']) : '0' }}</td>
+                    {{-- <td style="text-align: right;">Rp{{ $data['amount'] ? number_format($data['amount']) : '0' }}</td> --}}
                     <td style="text-align: center;">{{ $data['quota'] ? $data['quota'] : '0' }}</td>
                     <td style="text-align: center;">{{ $data['quota_sell'] ? $data['quota_sell'] : '0' }}</td>
                     <td style="text-align: center;">{{ $data['left_quota'] ? $data['left_quota'] : '0' }}</td>
@@ -174,7 +174,7 @@
                 ?>
             @endforeach
             <tr>
-                <td colspan="3" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
+                <td colspan="2" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
                 <td style="text-align: center;background: #ccccad;">{{ $quota }}</td>
                 <td style="text-align: center;background: #ccccad;">{{ $quota_sell }}</td>
                 <td style="text-align: center;background: #ccccad;">{{ $left_quota }}</td>
@@ -219,7 +219,7 @@
             <tr>
                 <th rowspan="2" style="text-align: center; background: #a1a11a;"><strong>No</strong></th>
                 <th rowspan="2" style="text-align: center; background: #FFFF00;"><strong>Kategori</strong></th>
-                <th colspan="3" style="text-align: center; background: #a1a11a;"><strong>Biaya</strong></th>
+                {{-- <th colspan="3" style="text-align: center; background: #a1a11a;"><strong>Biaya</strong></th> --}}
                 <th colspan="3" style="text-align: center; background: #FFFF00;"><strong>Kuota</strong></th>
                 <th colspan="3" style="text-align: center; background: #a1a11a;"><strong>Terjual</strong></th>
                 <th colspan="3" style="text-align: center; background: #FFFF00;"><strong>Sisa kuota</strong></th>
@@ -228,9 +228,9 @@
             </tr>
 
             <tr>
-                <th style="text-align: center; background: #a1a11a;"><strong>Individu Putra/Putri</strong></th>
+                {{-- <th style="text-align: center; background: #a1a11a;"><strong>Individu Putra/Putri</strong></th>
                 <th style="text-align: center; background: #a1a11a;"><strong>Beregu Putra/Putri</strong></th>
-                <th style="text-align: center; background: #a1a11a;"><strong>Beregu Campuran</strong></th>
+                <th style="text-align: center; background: #a1a11a;"><strong>Beregu Campuran</strong></th> --}}
                 <th style="text-align: center; background: #FFFF00;"><strong>Individu Putra/Putri</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Beregu Putra/Putri</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Beregu Campuran</strong></th>
@@ -246,13 +246,18 @@
                 <tr>
                     <td style="text-align: center;">{{ $no = $no + 1 }}</td>
                     <td style="text-align: left;">{{ $data['label'] }}</td>
-                    <td style="text-align: right;">
-                        Rp{{ $data['fee'] ? number_format($data['fee']['individu']) : '0' }}</td>
-                    <td style="text-align: right;">Rp{{ $data['fee'] ? number_format($data['fee']['team']) : '0' }}
+                    {{-- <td style="text-align: right;">
+                        Rp{{ $data['fee'] ? number_format($data['fee']['individu']) : '0' }}
                     </td>
                     <td style="text-align: right;">
-                        Rp{{ $data['fee'] ? number_format($data['fee']['mix_team']) : '0' }}</td>
-                    <td style="text-align: center;">{{ $data['quota'] ? $data['quota']['individu'] : '0' }}</td>
+                        Rp{{ $data['fee'] ? number_format($data['fee']['team']) : '0' }}
+                    </td>
+                    <td style="text-align: right;">
+                        Rp{{ $data['fee'] ? number_format($data['fee']['mix_team']) : '0' }}
+                    </td> --}}
+                    <td style="text-align: center;">
+                        {{ $data['quota'] ? $data['quota']['individu'] : '0' }}
+                    </td>
                     <td style="text-align: center;">{{ $data['quota'] ? $data['quota']['team'] : '0' }}</td>
                     <td style="text-align: center;">{{ $data['quota'] ? $data['quota']['mix_team'] : '0' }}</td>
                     <td style="text-align: center;">{{ $data['total_sell'] ? $data['total_sell']['individu'] : '0' }}
@@ -283,7 +288,7 @@
                 ?>
             @endforeach
             <tr>
-                <td colspan="5" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
+                <td colspan="2" style="text-align: center;background: #ccccad;"><strong>Total</strong></td>
                 <td style="text-align: center;background: #ccccad;">{{ $q_i }}</td>
                 <td style="text-align: center;background: #ccccad;">{{ $q_t }}</td>
                 <td style="text-align: center;background: #ccccad;">{{ $q_m }}</td>
