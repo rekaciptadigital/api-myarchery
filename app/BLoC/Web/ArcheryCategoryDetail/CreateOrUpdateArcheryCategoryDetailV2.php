@@ -5,6 +5,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMasterCompetitionCategory;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcheryMasterDistanceCategory;
 use App\Models\ArcheryMasterTeamCategory;
@@ -46,7 +47,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             }
 
             $distance_category = ArcheryMasterDistanceCategory::find($category['distance_category_id']);
-            $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);           
+            $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);
 
             $end_early_bird = $category["end_date_early_bird"];
             $early_bird = $category["early_bird"];
@@ -71,6 +72,30 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
             if (!$archery_category_detail) {
                 $archery_category_detail = new ArcheryEventCategoryDetail();
+            } else {
+                $count_user_join_or_order_category = ArcheryEventParticipant::select("archery_event_participants.*")
+                    ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                    ->where("archery_event_participants.event_category_id ", $archery_category_detail->id)
+                    ->where(function ($query) {
+                        $query->where("archery_event_participants.status", 1)
+                            ->orWhere(function ($q) {
+                                $q->where("archery_event_participants.status", 4)
+                                    ->where("transaction_logs.status", 4)
+                                    ->where("transaction_logs.expired_time", ">", time());
+                            });
+                    })->get()
+                    ->count();
+
+                if ($count_user_join_or_order_category > 0) { // cek apakah telah ada user yang daftar di category tsb
+                    // cek apakah terjadi perubahan harga
+                    if (
+                        $archery_category_detail->fee != $category['fee']
+                        || $archery_category_detail->early_bird != $category['early_bird']
+                        || $archery_category_detail->end_date_early_bird != $category['end_date_early_bird']
+                    ) {
+                        throw new BLoCException("tidak dapat ubah harga karena telah ada peserta yang mendaftar");
+                    }
+                }
             }
 
             $archery_category_detail->event_id = $event->id;

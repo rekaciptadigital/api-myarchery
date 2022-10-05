@@ -36,11 +36,11 @@ class GetUserProfile extends Retrieval
             "age" => $user->age,
             "can_update_name" => $user->can_update_name,
             "can_update_date_of_birth" => $user->can_update_date_of_birth,
-            "can_update_gender" => $user->can_update_gender
+            "can_update_gender" => $user->can_update_gender,
+            "is_wna" => $user->is_wna
         ];
 
         return $output;
-        
     }
 
     protected function validation($parameters)
