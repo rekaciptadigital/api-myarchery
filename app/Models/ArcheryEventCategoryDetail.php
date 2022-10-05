@@ -238,7 +238,6 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-
         $is_marathon = 0;
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -264,7 +263,9 @@ class ArcheryEventCategoryDetail extends Model
             "end_date_early_bird",
             "archery_master_team_categories.type",
             "archery_event_category_details.start_registration",
-            "archery_event_category_details.end_registration"
+            "archery_event_category_details.end_registration",
+            "archery_event_category_details.normal_price_wna",
+            "archery_event_category_details.early_price_wna"
         )
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
@@ -336,6 +337,8 @@ class ArcheryEventCategoryDetail extends Model
                 }
 
                 $category->can_register = $can_register;
+
+                $category->is_early_bird_wna = $category_detail->getIsEarlyBirdWna();
 
                 $category->age_config = $age_config;
 
