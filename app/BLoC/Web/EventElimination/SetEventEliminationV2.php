@@ -132,6 +132,8 @@ class SetEventEliminationV2 extends Transactional
             ->distinct()
             ->get();
 
+        return $participant_collection_score_elimination;
+
 
         if ($participant_collection_score_elimination->count() > 0) {
             throw new BLoCException("sudah ada yang melakukan eliminasi");
