@@ -75,6 +75,9 @@ use App\BLoC\Web\ArcheryEvent\GetArcheryEventGlobal;
 use App\BLoC\Web\ArcheryEventMasterTeamCategory\GetArcheryEventMasterTeamCategory;
 use App\BLoC\Web\BudRest\SetBudRest;
 use App\BLoC\Web\BudRest\GetBudRest;
+use App\BLoC\Web\BudRest\GetIdCardByCategory;
+use App\BLoC\Web\BudRest\GetIdCardByBudrest;
+use App\BLoC\Web\BudRest\GetIdCardByClub;
 use App\BLoC\Web\ArcheryEventMasterDistanceCategory\GetArcheryEventMasterDistanceCategory;
 use App\BLoC\Web\ArcheryEventMasterCompetitionCategory\GetArcheryEventMasterCompetitionCategory;
 use App\BLoC\Web\ArcheryEventMasterAgeCategory\GetArcheryEventMasterAgeCategory;
@@ -89,8 +92,11 @@ use App\BLoC\Web\ArcheryEvent\GetListArcheryEventDetail;
 use App\BLoC\Web\AdminAuth\ValidateCodePassword;
 use App\BLoC\Web\ArcheryCategoryDetail\CreateOrUpdateArcheryCategoryDetailV2;
 use App\BLoC\Web\ArcheryCategoryDetail\DeleteCategoryDetailV2;
+use App\BLoC\Web\ArcheryCategoryDetail\GetConfigCategoryRegistrationDate;
+use App\BLoC\Web\ArcheryCategoryDetail\SetConfigRegisterCategory;
 use App\BLoC\Web\ArcheryEvent\AddLogoEvent;
 use App\BLoC\Web\ArcheryEvent\CreateArcheryEventV2;
+use App\BLoC\Web\ArcheryEvent\DeleteEvent;
 use App\BLoC\Web\ArcheryEvent\DeleteHandBook;
 use App\BLoC\Web\ArcheryEvent\UpdateArcheryEventV2;
 use App\BLoC\Web\ArcheryEventIdcard\BulkDownloadCard;
@@ -98,7 +104,6 @@ use App\BLoC\Web\ArcheryEventParticipant\GetDownloadArcheryEventParticipant;
 use App\BLoC\Web\ArcheryEventOfficial\GetDownloadArcheryEventOfficial;
 use App\BLoC\Web\ArcheryScoreSheet\DownloadPdf;
 use App\BLoC\Web\EliminationScoreSheet\DownloadEliminationScoreSheet;
-
 use App\BLoC\Web\ArcheryUser\AcceptVerifyUser;
 use App\BLoC\Web\UpdateParticipantByAdmin\UpdateParticipantCategory;
 use App\BLoC\Web\Series\GetDownloadUserSeriePoint;
@@ -237,12 +242,16 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
         $this->registerService("changeMemberJoinEliminationGroup", ChangeMemberJoinEliminationGroup::class);
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
+        $this->registerService("setConfigRegisterCategory", SetConfigRegisterCategory::class);
+        $this->registerService("getConfigCategoryRegistrationDate", GetConfigCategoryRegistrationDate::class);
+        
         $this->registerService("createNewUser", CreateNewUser::class);
         $this->registerService("checkAdminExists", CheckAdminExists::class);
         $this->registerService("getListRole", GetListRole::class);
         $this->registerService("getListAdmin", GetListAdmin::class);
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
+        $this->registerService("deleteEvent", DeleteEvent::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
@@ -376,6 +385,9 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRestV2", GetBudRestV2::class);
         $this->registerService("createOrUpdateBudRestV2", CreateOrUpdateBudRestV2::class);
         $this->registerService("getListBudRestV2", GetListBudRestV2::class);
+        $this->registerService("getIdCardByCategory", GetIdCardByCategory::class);
+        $this->registerService("getIdCardByBudrest", GetIdCardByBudrest::class);
+        $this->registerService("getIdCardByClub", GetIdCardByClub::class);
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);

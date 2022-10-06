@@ -17,7 +17,7 @@ class ArcheryEventCategoryDetail extends Model
     protected $guarded = ['id'];
     protected $appends = [
         'category_team', 'event_name', 'gender_category', 'start_event',
-        'is_early_bird', 'label_category', 'class_category', 'end_event'
+        'is_early_bird', 'label_category', 'class_category', 'end_event',
     ];
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
@@ -178,7 +178,7 @@ class ArcheryEventCategoryDetail extends Model
     public function getIsEarlyBirdAttribute()
     {
         $is_early_bird = 0;
-        if (($this->early_bird > 0) && ($this->end_date_early_bird != null)) {
+        if (((int)$this->early_bird > 0) && ($this->end_date_early_bird != null)) {
             $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
             $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
 
@@ -187,6 +187,20 @@ class ArcheryEventCategoryDetail extends Model
             }
         }
         return $this->attributes['is_early_bird'] = $is_early_bird;
+    }
+
+    public function getIsEarlyBirdWna()
+    {
+        $is_early_bird_wna = 0;
+        if (((int)$this->early_price_wna > 0) && ($this->end_date_early_bird != null)) {
+            $carbon_early_bird_end_datetime = Carbon::parse($this->end_date_early_bird);
+            $new_format_early_bird_end_datetime = Carbon::create($carbon_early_bird_end_datetime->year, $carbon_early_bird_end_datetime->month, $carbon_early_bird_end_datetime->day, 0, 0, 0);
+
+            if (Carbon::today() <= $new_format_early_bird_end_datetime) {
+                $is_early_bird_wna = 1;
+            }
+        }
+        return $is_early_bird_wna;
     }
 
     public function getGenderCategoryAttribute()
@@ -224,7 +238,6 @@ class ArcheryEventCategoryDetail extends Model
 
     public static function getCategoriesRegisterEvent($event_id)
     {
-
         $is_marathon = 0;
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
@@ -248,7 +261,11 @@ class ArcheryEventCategoryDetail extends Model
             'fee',
             'early_bird',
             "end_date_early_bird",
-            "archery_master_team_categories.type"
+            "archery_master_team_categories.type",
+            "archery_event_category_details.start_registration",
+            "archery_event_category_details.end_registration",
+            "archery_event_category_details.normal_price_wna",
+            "archery_event_category_details.early_price_wna"
         )
             ->leftJoin('archery_master_team_categories', 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
             ->where('archery_event_category_details.event_id', $event_id)
@@ -301,6 +318,27 @@ class ArcheryEventCategoryDetail extends Model
                     $age_config["min_date_of_birth"] = $category_detail->min_date_of_birth;
                     $age_config["max_date_of_birth"] = $category_detail->max_date_of_birth;
                 }
+
+                $can_register = 0;
+                if ($category_detail->start_registration && $category_detail->end_registration) {
+                    if (
+                        time() >= strtotime($category_detail->start_registration)
+                        && time() <= strtotime($category_detail->end_registration)
+                    ) {
+                        $can_register = 1;
+                    }
+                } else {
+                    if (
+                        time() >= strtotime($event->registration_start_datetime)
+                        && time() <= strtotime($event->registration_end_datetime)
+                    ) {
+                        $can_register = 1;
+                    }
+                }
+
+                $category->can_register = $can_register;
+
+                $category->is_early_bird_wna = $category_detail->getIsEarlyBirdWna();
 
                 $category->age_config = $age_config;
 
