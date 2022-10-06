@@ -75,8 +75,18 @@ class CleanEliminationMatch extends Retrieval
         $list_match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination->id)->get();
         foreach ($list_match as $value) {
             if ($value->elimination_member_id != 0) {
+                // return $value;
                 $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
                 if ($member) {
+                    $scoring = ArcheryScoring::where("type", 2)->where("item_id", $value->id)
+                        ->where("participant_member_id", $member->member_id)
+                        ->where("item_value", "archery_event_elimination_matches")
+                        ->first();
+
+                    if ($scoring) {
+                        $scoring->delete();
+                    }
+                    
                     $member->delete();
                 }
             }
