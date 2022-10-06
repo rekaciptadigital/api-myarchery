@@ -22,6 +22,8 @@ use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryUserAthleteCode;
+use App\Models\CityCountry;
+use App\Models\Country;
 use Maatwebsite\Excel\Events\AfterSheet;
 use DateTime;
 
@@ -62,6 +64,9 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             ->where("archery_event_participants.status", 1)
             ->get();
 
+        $event =  ArcheryEvent::find($event_id);
+        $time_stamp_event_start = strtotime($event->event_start_datetime);
+
         if ($data->isEmpty()) {
             throw new BLoCException("data tidak ditemukan");
         }
@@ -77,10 +82,12 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 ->where("competition_category_id", $category->competition_category_id)
                 ->where("team_category_id", $category->team_category_id)
                 ->first();
-            $user = User::select('name', 'address_province_id', 'verify_status', 'address_city_id', 'address', 'date_of_birth', 'ktp_kk', 'selfie_ktp_kk', 'place_of_birth', 'nik', DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, '2022-03-03') AS age"))->where('id', $value->user_id)->first();
+            $user = User::select('name', 'address_province_id', 'verify_status', 'address_city_id', 'address', 'date_of_birth', 'ktp_kk', 'selfie_ktp_kk', 'place_of_birth', "is_wna", "passport_number", "country_id", "city_of_country_id", 'nik', DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, $time_stamp_event_start) AS age"))->where('id', $value->user_id)->first();
             $athlete_code = ArcheryUserAthleteCode::getAthleteCode($value->user_id, "perpani");
             $city = City::find($user["address_city_id"]);
             $province = Provinces::find($user["address_province_id"]);
+            $country = Country::find($user->country_id);
+            $city_country = CityCountry::find($user->city_of_country_id);
             if (!empty($user['date_of_birth']))
                 $age = $this->getAge($user['date_of_birth'], $value->event_start_datetime);
             $export_data[] = [
@@ -95,15 +102,16 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 'address' => $user["address"],
                 'date_of_birth' => $user['date_of_birth'] . ', ' . $user["place_of_birth"],
                 'age' => !empty($user['date_of_birth']) ? $age["y"] . " tahun " . $age["m"] . " bulan " . $age["d"] . " hari"  : '-',
-                'phone_number' => $value->phone_number,
-                'gender' => $value->gender,
+                'phone_number' => $user->phone_number,
+                'gender' => $user->gender,
                 'province' => $province ? $province->name : "",
                 'city' => $city ? $city->name : "",
                 'category' => $category_label,
                 'nik' => $user['nik'] ? $user['nik'] : '-',
-                'foto_peserta' => '-',
-                'foto_ktp' => $user['ktp_kk'] ? $user['ktp_kk'] : '-',
-                'foto_bukti' => '-',
+                'nationality' => $user->is_wna == 1 ? "Asing" : "Indonesia",
+                "country" => $country ? $country->name : "-",
+                "city_of_country" => $city_country ? $city_country->name : "-",
+                "passport_number" => $user->passport_number,
                 'club' => $value->club ? $value->club : '-',
             ];
         }
