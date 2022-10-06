@@ -22,6 +22,9 @@ class UrlReport extends Model
             $upp->delete();
         }
 
-        
+        $medal_recapitulation = UrlReport::where("event_id", $event_id)->where("type", "medal_recapitulation")->first();
+        if ($medal_recapitulation) {
+            $medal_recapitulation->delete();
+        }
     }
 }
