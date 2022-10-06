@@ -5,21 +5,14 @@ namespace App\Exports\Sheets;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventIdcardTemplate;
-use App\Models\User;
 use App\Models\ArcheryMasterTeamCategory;
-
-use Maatwebsite\Excel\Concerns\FromCollection;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithDrawings;
 use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryUserAthleteCode;
 use App\Models\TransactionLog;
 
 class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeadings
@@ -235,10 +228,10 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
 
         $gender_obj = [
             "Putra" => [
-                "total_participant" => $team_category_obj["individu male"]["total_sell"],
+                "total_participant" => $team_category_obj["individu male"]["total_sell"]+$team_category_obj["individu male"]["total_sell_early_bird"],
             ],
             "Putri" => [
-                "total_participant" => $team_category_obj["individu female"]["total_sell"],
+                "total_participant" => $team_category_obj["individu female"]["total_sell"]+$team_category_obj["individu female"]["total_sell_early_bird"],
             ]
         ];
 
