@@ -23,6 +23,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use App\Models\UrlReport;
 use Illuminate\Support\Carbon;
 
 class GetArcheryReportResultV2 extends Retrieval
@@ -39,6 +40,13 @@ class GetArcheryReportResultV2 extends Retrieval
         $event_id = $parameters->get('event_id');
         $date_filter = $parameters->get('date');
         // $id = array();
+
+        $check_is_exist_report = UrlReport::where("event_id", $event_id)->where("type", "report_event")->first();
+        if ($check_is_exist_report) {
+            return [
+                "file_path"=>$check_is_exist_report->url
+            ];
+        }
 
         $pages = array();
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
@@ -252,11 +260,11 @@ class GetArcheryReportResultV2 extends Retrieval
                                 $type = '';
                                 $report = 'Result';
                                 $data_report = $this->getData($category_detail->id, $type, $event_id);
-                                
+
 
                                 if (strtolower($category_of_team->type) == "individual") {
                                     if (!empty($data_report[0])) {
-                                        
+
                                         $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_detail->id)->first();
                                         $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
 
@@ -366,10 +374,10 @@ class GetArcheryReportResultV2 extends Retrieval
             'images' => true,
             'cover' => $cover_page,
             // 'header-html' => $header_html,
-            'footer-html' => $footer_html,
-            'toc' => true,
-            'toc-level-indentation' => '2rem',
-            'enable-toc-back-links' => true,
+            // 'footer-html' => $footer_html,
+            // 'toc' => true,
+            // 'toc-level-indentation' => '2rem',
+            // 'enable-toc-back-links' => true,
         ]);
 
         $digits = 3;
@@ -380,6 +388,12 @@ class GetArcheryReportResultV2 extends Retrieval
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
+
+        $url_report = new UrlReport();
+        $url_report->url = $response["file_path"];
+        $url_report->type = "report_event";
+        $url_report->event_id = $event_id;
+        $url_report->save();
 
 
         // set generate date of report

@@ -10,16 +10,14 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryQualificationSchedules;
-use App\Models\ArcherySeriesUserPoint;
-use App\Models\ArcheryEventEliminationMember;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
-use App\Libraries\EliminationFormat;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryScoringEliminationGroup;
+use App\Models\UrlReport;
 
 class AddParticipantMemberScore extends Transactional
 {
@@ -59,9 +57,9 @@ class AddParticipantMemberScore extends Transactional
             return $this->addScoringQualificationSelection($parameters);
         }
 
-        if ($type == 4) 
+        if ($type == 4)
             return $this->addScoringEliminationSelection($parameters);
-        
+
 
         throw new BLoCException("gagal input skoring");
     }
@@ -93,6 +91,7 @@ class AddParticipantMemberScore extends Transactional
         }
 
 
+        UrlReport::removeAllUrlReport($event->id);
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
@@ -177,6 +176,8 @@ class AddParticipantMemberScore extends Transactional
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
         }
+
+        UrlReport::removeAllUrlReport($event->id);
 
         $get_member_match = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.member_id",
@@ -304,6 +305,8 @@ class AddParticipantMemberScore extends Transactional
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
         }
+
+        UrlReport::removeAllUrlReport($event->id);
 
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
@@ -461,6 +464,8 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
+        UrlReport::removeAllUrlReport($event->id);
+
         $get_participant_match = ArcheryEventEliminationGroupMatch::select(
             "archery_event_elimination_group_teams.participant_id",
             "archery_event_elimination_group_match.*"
@@ -581,6 +586,8 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
+        UrlReport::removeAllUrlReport($event->id);
+
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
@@ -658,6 +665,8 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
+        UrlReport::removeAllUrlReport($event->id);
+
 
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
@@ -667,15 +676,15 @@ class AddParticipantMemberScore extends Transactional
         // $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         // if ($event_elimination) 
         //     throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
-    
+
 
         if (env('COUNT_STAGE_ELIMINATION_SELECTION') < $session)
             throw new BLoCException("sesi tidak tersedia");
 
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
-        if (!$schedule) 
+        if (!$schedule)
             throw new BLoCException("jadwal belum di set");
-        
+
         $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 4)->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
             throw new BLoCException("scoring sudah dikunci");
