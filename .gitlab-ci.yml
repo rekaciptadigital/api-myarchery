@@ -26,7 +26,7 @@ stages:
   - switch
 
 stage_build:
-  image: docker:latest
+  image: node:14
   stage: build
   script:
     #- rm -rf yarn.lock
@@ -87,7 +87,7 @@ stage_deploy_docker:
     - ssh -p22 root@103.31.38.37 "/root/deployment/$CI_COMMIT_BRANCH-docker-api-deploy.sh"
 
 update:
-  image: docker:latest
+  image: node:14
   stage: update-bf
   before_script:
   - apt-get update -qq
@@ -102,7 +102,7 @@ update:
     - ssh -p22 root@$HOST_IP "/root/deployment_bf_docker/$CI_COMMIT_BRANCH-api-update.sh"
 
 deploy:
-  image: docker:latest
+  image: node:14
   stage: deploy-bf
   before_script:
   - apt-get update -qq
@@ -117,7 +117,7 @@ deploy:
     - ssh -p22 root@$HOST_IP "/root/deployment_bf_docker/$CI_COMMIT_BRANCH-api-deploy.sh"
 
 revert:
-  image: docker:latest
+  image: node:14
   stage: revert
   before_script:
   - apt-get update -qq
@@ -132,7 +132,7 @@ revert:
     - ssh -p22 root@103.31.38.37 "/root/deployment/$CI_COMMIT_BRANCH-api-revert.sh"
 
 switch:
-  image: docker:latest
+  image: node:14
   stage: switch
   before_script:
   - apt-get update -qq
