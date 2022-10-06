@@ -80,7 +80,7 @@ class CleanEliminationMatch extends Retrieval
                     $member->delete();
                 }
             }
-            $scoring = ArcheryScoring::where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
+            $scoring = ArcheryScoring::where("type", 2)->where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
             if ($scoring) {
                 $scoring->delete();
             }
