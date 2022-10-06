@@ -123,6 +123,7 @@ class SetEventEliminationV2 extends Transactional
 
         $participant_collection_score_elimination = ArcheryScoring::select(
             "archery_event_participant_members.*",
+            "archery_scorings.id as scoring_id",
         )
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
