@@ -16,8 +16,10 @@ use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryScoringEliminationGroup;
+use App\Models\UrlReport;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class CleanEliminationMatch extends Retrieval
 {
@@ -35,10 +37,17 @@ class CleanEliminationMatch extends Retrieval
             throw new BLoCException("category not found");
         }
 
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event = ArcheryEvent::find($category->event_id);
         if (!$event) {
             throw new BLoCException("event not found");
         }
+
+        UrlReport::removeAllUrlReport($event->id);
 
         if ($event->admin_id != $admin->id) {
             $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->where(function ($q) {
@@ -86,7 +95,7 @@ class CleanEliminationMatch extends Retrieval
                     if ($scoring) {
                         $scoring->delete();
                     }
-                    
+
                     $member->delete();
                 }
             }

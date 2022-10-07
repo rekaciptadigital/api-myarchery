@@ -18,6 +18,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryScoringEliminationGroup;
 use App\Models\UrlReport;
+use Illuminate\Support\Facades\Redis;
 
 class AddParticipantMemberScore extends Transactional
 {
@@ -98,6 +99,11 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("kategori tidak tersedia");
         }
 
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         if ($event_elimination) {
             throw new BLoCException("tidak bisa input skor karena eliminasi telah ditentukan");
@@ -170,6 +176,11 @@ class AddParticipantMemberScore extends Transactional
         $category = ArcheryEventCategoryDetail::find($get_elimination->event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
+        }
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
         }
 
         $event = ArcheryEvent::find($category->event_id);
@@ -313,6 +324,12 @@ class AddParticipantMemberScore extends Transactional
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
         }
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         if ($event_elimination) {
             throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
@@ -459,6 +476,11 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("kategori tidak tersedia");
         }
 
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event = ArcheryEvent::find($category->event_id);
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
@@ -593,6 +615,12 @@ class AddParticipantMemberScore extends Transactional
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
         }
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         if ($event_elimination) {
             throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
@@ -671,6 +699,11 @@ class AddParticipantMemberScore extends Transactional
         $category = ArcheryEventCategoryDetail::find($participant_member->event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak tersedia");
+        }
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
         }
 
         // $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
