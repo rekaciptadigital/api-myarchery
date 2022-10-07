@@ -22,13 +22,15 @@
         <div class="mb-3 row">
             <label for="name" class="col-sm-1 col-form-label">Name</label>
             <div class="col-sm-10">
-                <input type="text" readonly class="form-control-plaintext" id="name" value=": {{ $user->name }}">
+                <input type="text" readonly class="form-control-plaintext" id="name"
+                    value=": {{ $user->name }}">
             </div>
         </div>
         <div class="mb-3 row">
             <label for="email" class="col-sm-1 col-form-label">Email</label>
             <div class="col-sm-10">
-                <input type="email" readonly class="form-control-plaintext" id="email" value=": {{ $user->email }}">
+                <input type="email" readonly class="form-control-plaintext" id="email"
+                    value=": {{ $user->email }}">
             </div>
         </div>
         <div class="mb-3 row">
@@ -43,6 +45,13 @@
             <div class="col-sm-10">
                 <input type="city_user" readonly class="form-control-plaintext" id="city_user"
                     value=": {{ $city_user->name }}">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="address" class="col-sm-1 col-form-label">Address</label>
+            <div class="col-sm-10">
+                <input type="address" readonly class="form-control-plaintext" id="address"
+                    value=": {{ $user->address }}">
             </div>
         </div>
         <br>
@@ -66,6 +75,10 @@
                 <label for="city" class="form-label">New City</label>
                 <select class="form-control js-example-basic-single" name="city" id="city">
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" id="address" cols="30" rows="2"></textarea>
             </div>
             <div class="mb-3">
                 <input type="submit" value="Simpan" class="btn btn-success">
