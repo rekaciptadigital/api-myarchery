@@ -143,7 +143,7 @@
                         <td scope="col">{{ $d2->prefix }}</td>
                         <td scope="col">{{ $d2->date_verified }}</td>
                         <td scope="col">{{ $d2->email }}</td>
-                        <td scope="col">{{ $d2->email }}</td>
+                        <td scope="col">{{ $d2->name }}</td>
                         <td scope="col">{{ $d2->gender }}</td>
                         <td scope="col">{{ $d2->address }}</td>
                         <td scope="col">{{ $d2->place_of_birth . ', ' . $d2->date_of_birth }}</td>

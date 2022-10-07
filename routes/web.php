@@ -136,7 +136,7 @@ $router->put("kioheswbgcgoiwagfp/{id}", function (Request $request, $id) {
 
             $user->address_province_id = $province->id;
             $user->address_city_id = $city->id;
-            $user->save();
+
 
             $athlete_code = ArcheryUserAthleteCode::where("user_id", $user->id)
                 ->where("status", 1)
@@ -174,6 +174,12 @@ $router->put("kioheswbgcgoiwagfp/{id}", function (Request $request, $id) {
                 }
             }
         }
+
+        if ($request->address) {
+            $user->address = $request->address;
+        }
+
+        $user->save();
         DB::commit();
         return redirect("kioheswbgcgoiwagfp/" . $user->id);
     } catch (\Throwable $th) {
