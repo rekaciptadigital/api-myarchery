@@ -169,6 +169,8 @@ use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
+use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
+use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -236,6 +238,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryEvent", AddArcheryEvent::class);
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
+
+        // =========================== queen archery ============================
+        $this->registerService("setConfig", SetConfig::class);
+        $this->registerService("getConfig", GetConfig::class);
 
         // ========================= Fast Open ========================
         $this->registerService("addLogoEvent", AddLogoEvent::class);
