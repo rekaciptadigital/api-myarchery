@@ -61,9 +61,7 @@
                         <p>{{ $location }}</p>
                     </td>
                     <td>
-                        @if ($qr != '')
-                            <img style="height: 150px" src="{{ $qr }}" alt="" srcset="">
-                        @endif
+                        <img style="height: 150px" src="{{ $qr }}" alt="" srcset="">
                     </td>
                 </tr>
             </tbody>

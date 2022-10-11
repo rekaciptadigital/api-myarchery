@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\UpdateParticipantByAdmin;
 
-use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventParticipant;
@@ -29,12 +28,7 @@ class ChangeIsPresent extends Transactional
         }
 
         if ($event->admin_id != $admin->id) {
-            $roles = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->where(function ($q) {
-                $q->where("role_id", 5)->orWhere("role_id", 4);
-            })->first();
-            if (!$roles) {
-                throw new BLoCException("forbiden");
-            }
+            throw new BLoCException("forbiden");
         }
 
         $participant = ArcheryEventParticipant::where("id", $participant_id)->where("event_id", $event_id)->first();

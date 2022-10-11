@@ -107,12 +107,15 @@ class SetEventEliminationV2 extends Transactional
                 // }
 
                 foreach ($session as $key => $s) {
+                    // if ($value["sessions"][$s]["total"] == 0) {
+                    //     throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
+                    // }
                     $scoring_per_session =  ArcheryScoring::where("participant_member_id", $value["member"]->id)
                         ->where("type", 1)
                         ->where("scoring_session", $s)
                         ->first();
                     if (!$scoring_per_session) {
-                        // throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
+                        throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
                     }
                 }
             }

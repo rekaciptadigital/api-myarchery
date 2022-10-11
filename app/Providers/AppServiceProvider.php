@@ -52,8 +52,6 @@ use App\BLoC\App\Series\GetListSeries;
 use App\BLoC\App\Series\SetMemberSeries;
 use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
-use App\BLoC\App\UserAuth\ResendOtpAccountVerificationCode;
-use App\BLoC\App\UserAuth\ValidateAccoutVerification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,10 +69,6 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("userValidateCodePassword", UserValidateCodePassword::class);
         $this->registerService("getUserProfile", GetUserProfile::class);
         $this->registerService("userLogout", UserLogout::class);
-        // fast open 3 
-        $this->registerService("resendOtpAccountVerificationCode", ResendOtpAccountVerificationCode::class);
-        $this->registerService("validateAccoutVerification", ValidateAccoutVerification::class);
-        // end fast open 3
         $this->registerService("findParticipantDetail", FindParticipantDetail::class);
         $this->registerService("addParticipantScore", AddParticipantScore::class);
         $this->registerService("editParticipantProfile", EditParticipantProfile::class);

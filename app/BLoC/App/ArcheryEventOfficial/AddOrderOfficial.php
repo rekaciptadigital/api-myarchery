@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Auth;
 
 class AddOrderOfficial extends Retrieval
 {
+    var $payment_methode = "";
+    var $have_fee_payment_gateway = "";
+    var $gateway = "";
     public function getDescription()
     {
         return "";
@@ -29,7 +32,8 @@ class AddOrderOfficial extends Retrieval
 
         $club_id = $parameters->get('club_id');
         $event_id = $parameters->get('event_id');
-
+        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
+        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY","midtrans");
         $time_now = time();
 
 
@@ -47,7 +51,7 @@ class AddOrderOfficial extends Retrieval
         if (!$event) {
             throw new BLoCException("event tidak ditemukan");
         }
-
+        $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user == 1 ? true : false;
         // cek apakah event telah berlangsung atau belum
         $now = Carbon::now();
         $new_format_registration_start = Carbon::parse($event->registration_start_datetime, new DateTimeZone('Asia/jakarta'));
@@ -67,8 +71,7 @@ class AddOrderOfficial extends Retrieval
         if (!$archery_event_official_detail) {
             throw new BLoCException("kategori official pada event ini belum di atur");
         }
-
-
+    
 
         if ($club_id != 0) {
             $club_member = ClubMember::where('club_id', $club_id)->where('user_id', $user_login->id)->first();
@@ -139,12 +142,14 @@ class AddOrderOfficial extends Retrieval
         $order_official_id = env("ORDER_OFFICIAL_ID_PREFIX", "OO-S") . $archery_event_official->id;
         // return $order_official_id;
 
+        if($event->my_archery_fee_percentage > 0)
+            $myarchery_fee = round($archery_event_official_detail->fee * ($event->my_archery_fee_percentage/100));
 
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
-            ->enabledPayments(["bca_va", "bni_va", "bri_va", "other_va", "gopay"])
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
-           // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
+            ->feePaymentsToUser($this->have_fee_payment_gateway)
+            ->setMyarcheryFee($myarchery_fee)
             ->createSnap();
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;

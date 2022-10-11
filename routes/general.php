@@ -41,24 +41,14 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     $router->group(['prefix' => 'v1'], function () use ($router) {
         $router->get('/archery/scorer/participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScore']);
         $router->get('/archery/scorer/qualificaiton', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualification']);
-        $router->get('/archery/scorer/elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelectionLiveScore']);
-        $router->get('/archery/scorer/all-result-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelectionLiveScore']);
-
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {
-        // =============================== Fast Open 3 ============================================
-        $router->group(["prefix" => "series"], function () use ($router) {
-            $router->get("download-excell-member-series-rank", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberSeriesRank']);
-        });
-        // ================================= End ====================================================
         $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
         $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
         $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);
         $router->get('/get-city-country', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCityCountry']);
         $router->get('/get-country', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCountry']);
-        $router->get('/get-winer-participant-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMedalParticipantByEventId']);
-        $router->get('/get-list-tab-category-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListTabCategoryByEventId']);
     });
 });
 

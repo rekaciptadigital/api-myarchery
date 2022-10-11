@@ -367,7 +367,6 @@ class ArcheryEvent extends Model
                 $detail['id'] = $data->id_event;
                 $detail['event_type'] = $data->event_type;
                 $detail['event_competition'] = $data->event_competition;
-                $detail['is_private'] = $data->is_private;
                 $detail['public_information'] = [
                     'event_name' => $data->event_name,
                     'event_banner' => $data->poster,
@@ -391,7 +390,6 @@ class ArcheryEvent extends Model
                     'event_url' => $event_url,
                     'need_verify' => $data->need_verify,
                     'event_tracking' => $data->event_status,
-                    "logo" => $data->logo,
                 ];
                 $detail['more_information'] = $moreinformations_data;
                 $detail['event_categories'] = $eventcategories_data;
@@ -661,7 +659,6 @@ class ArcheryEvent extends Model
             "id" => $data->id,
             "event_type" => $data->event_type,
             "event_competition" => $data->event_competition,
-            "is_private" => $data->is_private,
             "public_information" => [
                 'event_name' => $data->event_name,
                 'event_banner' => $data->poster,

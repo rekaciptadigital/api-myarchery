@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\Member;
 
-use App\Models\AdminRole;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
@@ -40,10 +39,6 @@ class ListMemberV2 extends Retrieval
             throw new BLoCException("Event tidak tersedia");
         }
 
-        if ($admin->id != $event->admin_id) {
-            throw new BLoCException("access denied");
-        }
-
         $participant_query = ArcheryEventParticipant::select(
             'archery_event_participant_members.id as member_id',
             'archery_event_participants.id as participant_id',
@@ -55,16 +50,14 @@ class ListMemberV2 extends Retrieval
             'archery_clubs.name as club_name',
             'archery_event_participants.phone_number',
             'archery_event_participants.competition_category_id',
-            'archery_event_participants.status as status_participant',
-            'transaction_logs.status as status_transaction_log',
-            'transaction_logs.expired_time as expired_time'
+            DB::RAW('case when archery_event_participants.status=1 then "Lunas" when transaction_logs.status=4 and transaction_logs.expired_time>= now() then "Belum Lunas" when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then "Expired" when archery_event_participants.status=5 then "Refund" else "Gratis" END AS status_payment'),
+            'archery_event_participants.age_category_id',
+            DB::RAW('case when transaction_logs.status=1 then 1 when transaction_logs.status=4 and transaction_logs.expired_time>= now() then 2 when (transaction_logs.status=4 or transaction_logs.status=2) and transaction_logs.expired_time<= now() then 3 when archery_event_participants.status=5 then 5 else 4 END AS order_payment')
         )->leftJoin('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
             ->leftJoin('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
             ->join("users", "users.id", "=", "archery_event_participants.user_id")
-            ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.event_id", $event_id)
-            ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.type", "individual");
 
 
@@ -88,42 +81,7 @@ class ListMemberV2 extends Retrieval
         });
 
         if ($is_pagination == 1) { //get all data without pagination
-            $participant_collection = $participant_query->orderBy('archery_event_participants.id', 'DESC')->get();
-            $data = [];
-            foreach ($participant_collection as $pc) {
-                $response = [];
-                $status_payment = "";
-                if (
-                    $pc->status_participant == 2 ||
-                    $pc->status_transaction_log == 2 ||
-                    ($pc->status_participant == 4 && $pc->status_transaction_log == 4 && $pc->expired_time >= time())
-                ) {
-                    $status_payment = "Expired";
-                } elseif ($pc->status_participant == 4 && $pc->status_transaction_log == 4 && $pc->expired_time <= time()) {
-                    $status_payment = "Belum Lunas";
-                } elseif ($pc->status_participant == 3 || $pc->status_transaction_log == 3) {
-                    $status_payment = "Failed";
-                } elseif ($pc->status_participant == 5) {
-                    $status_payment = "Refund";
-                } elseif ($pc->status_participant == 1) {
-                    $status_payment = "Lunas";
-                }
-                $response["age_category_id"] = $pc->age_category_id;
-                $response["member_id"] = $pc->member_id;
-                $response["participant_id"] = $pc->participant_id;
-                $response["user_id"] = $pc->user_id;
-                $response["event_id"] = $pc->event_id;
-                $response["event_category_id"] = $pc->event_category_id;
-                $response["name"] = $pc->name;
-                $response["email"] = $pc->email;
-                $response["club_name"] = $pc->club_name;
-                $response["phone_number"] = $pc->phone_number;
-                $response["competition_category_id"] = $pc->competition_category_id;
-                $response["status_payment"] = $status_payment;
-                $data[] = $response;
-            }
-
-            return $data;
+            return $participant_query->orderBy('archery_event_participants.id', 'DESC')->get();
         }
 
         $data = $this->paginate($participant_query->orderBy('archery_event_participants.id', 'DESC')->paginate($perPage));

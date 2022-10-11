@@ -60,9 +60,7 @@
                         <p>{{ $location }}</p>
                     </td>
                     <td>
-                        @if ($qr != '')
-                            <img style="height: 150px" src="{{ $qr }}" alt="" srcset="">
-                        @endif
+                        <img style="height: 150px" src="{{ $qr }}" alt="" srcset="">
                     </td>
                 </tr>
             </tbody>
@@ -91,11 +89,9 @@
                     <td style="">Athlete</td>
                     <td>:</td>
                     <td>
-                        @if ($athlete_1 != '')
-                            @foreach ($athlete_1 as $item)
-                                {{ $item }},
-                            @endforeach
-                        @endif
+                        @foreach ($athlete_1 as $item)
+                            {{ $item }},
+                        @endforeach
                     </td>
                     <td style="width:200px;"></td>
                 </tr>
@@ -129,11 +125,9 @@
                     <td style="">Athlete</td>
                     <td>:</td>
                     <td>
-                        @if ($athlete_2 != '')
-                            @foreach ($athlete_2 as $item)
-                                {{ $item }},
-                            @endforeach
-                        @endif
+                        @foreach ($athlete_2 as $item)
+                            {{ $item }},
+                        @endforeach
                     </td>
                     <td style="width:200px;"></td>
                 </tr>
