@@ -5,21 +5,15 @@ namespace App\Exports\Sheets;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventIdcardTemplate;
-use App\Models\User;
 use App\Models\ArcheryMasterTeamCategory;
-
-use Maatwebsite\Excel\Concerns\FromCollection;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\WithHeadings; 
-use Maatwebsite\Excel\Concerns\WithDrawings;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryUserAthleteCode;
+use App\Models\TransactionLog;
 
 class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeadings
 {
@@ -47,51 +41,42 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
         if(empty($team_category)){
             throw new BLoCException("data tidak ditemukan");
         }
-        // dd($team_category);
+
         $team_category_obj = [];
         foreach ($team_category as $key => $value) {
             $team_category_id = $value->team_category_id;
-            // $team_category_id = 'individu female';
-            $team_category_detail = ArcheryMasterTeamCategory::where("id",$team_category_id)->first();
-            $category = ArcheryEventCategoryDetail::where("archery_event_category_details.event_id",$event_id)->where("archery_event_category_details.team_category_id",$team_category_id)->first();
+            $team_category_detail = ArcheryMasterTeamCategory::where("id", $team_category_id)->first();
+            $category = ArcheryEventCategoryDetail::where("archery_event_category_details.event_id", $event_id)->where("archery_event_category_details.team_category_id", $team_category_id)->first();
 
-            $end_date_early_bird = $category ? $category->end_date_early_bird : null;
-            $check_participant_early_bird = null;
+            $total_sell_regular = ArcheryEventParticipant::where("team_category_id", $team_category_id)
+                ->where("event_id", $event_id)
+                ->where("status", 1)
+                ->where("is_early_bird_payment", 0)
+                ->get()
+                ->count();
 
-            if ($end_date_early_bird) {
-                $check_participant = DB::select('SELECT count(archery_event_participants.id) as total_register
-                FROM archery_event_participants
-                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
-                WHERE archery_event_category_details.event_id = ? 
-                AND archery_event_category_details.team_category_id = ? 
-                AND archery_event_participants.status = 1 
-                AND archery_event_participants.created_at > end_date_early_bird
-                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id],
-                ["end_date_early_bird" => $end_date_early_bird]);
+            $total_sell_early_bird = ArcheryEventParticipant::where("team_category_id", $team_category_id)
+                ->where("event_id", $event_id)
+                ->where("status", 1)
+                ->where("is_early_bird_payment", 1)
+                ->get()
+                ->count();
 
-                $check_participant_early_bird = DB::select('SELECT count(archery_event_participants.id) as total_register
-                FROM archery_event_participants
-                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
-                WHERE archery_event_category_details.event_id = ? 
-                AND archery_event_category_details.team_category_id = ? 
-                AND archery_event_participants.status = 1 
-                AND archery_event_participants.created_at <= end_date_early_bird
-                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id],
-                ["end_date_early_bird" => $end_date_early_bird]);
-            } else {
-                $check_participant = DB::select('SELECT count(archery_event_participants.id) as total_register
-                FROM archery_event_participants
-                JOIN archery_event_category_details ON archery_event_participants.event_category_id = archery_event_category_details.id
-                WHERE archery_event_category_details.event_id = ? 
-                AND archery_event_category_details.team_category_id = ? 
-                AND archery_event_participants.status = 1 
-                GROUP BY(archery_event_category_details.team_category_id)',[$event_id,$team_category_id]);
-            }
-            // dd($check_participant);
-            $total_sell_regular = $check_participant ? $check_participant[0]->total_register : 0;
-            $total_sell_early_bird = $check_participant_early_bird ? $check_participant_early_bird[0]->total_register : 0;
             $fee_regular = $category ? $category->fee : 0;
             $fee_early_bird = $category ? $category->early_bird : 0;
+            $check_paymet_is_early_bird = ArcheryEventParticipant::where("event_category_id", $category->id)
+                ->where("status", 1)
+                ->where("is_early_bird_payment", 1)
+                ->first();
+
+            if ($check_paymet_is_early_bird) {
+                $transaction_log = TransactionLog::find($check_paymet_is_early_bird->transaction_log_id);
+                if ($transaction_log) {
+                    $fee_early_bird = $transaction_log->amount;
+                }
+            }
+
+
             $team_category_obj[$team_category_id] = [
                 "quota" => $value->total_quota,
                 "fee" => $fee_regular,
@@ -142,9 +127,52 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                                      ->whereIn("archery_event_category_details.team_category_id", ["male_team","female_team"])
                                      ->groupBy("archery_event_category_details.competition_category_id")->count();
             $fee_individu = $team_category_obj["individu male"]["fee"];
-            $fee_team = $team_category_obj["male_team"]["fee"];
-            $fee_mix_team = $team_category_obj["mix_team"]["fee"];
-            $competition_category_obj[$competition_category_id]=[
+            $fee_team = isset($team_category_obj["male_team"]["fee"]) ? $team_category_obj["male_team"]["fee"] : null;
+            $fee_mix_team = isset($team_category_obj["mix_team"]["fee"]) ? $team_category_obj["mix_team"]["fee"] : null;
+
+            $list_individu = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.amount")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                ->where("event_id", $event_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("competition_category_id", $competition_category_id)
+                ->whereIn("archery_event_participants.team_category_id", ["individu male", "individu female"])
+                ->where(function ($query) {
+                    $query->where("is_early_bird_payment", 0)->orWhere("is_early_bird_payment", 1);
+                })->get();
+
+            $total_individu = 0;
+            foreach ($list_individu as $key => $li) {
+                $total_individu = $total_individu + $li->amount;
+            }
+
+            $list_team = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.amount")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                ->where("event_id", $event_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("competition_category_id", $competition_category_id)
+                ->whereIn("archery_event_participants.team_category_id", ["male_team", "female_team"])
+                ->where(function ($query) {
+                    $query->where("is_early_bird_payment", 0)->orWhere("is_early_bird_payment", 1);
+                })->get();
+
+            $total_team = 0;
+            foreach ($list_team as $key => $lt) {
+                $total_team = $total_team + $lt->amount;
+            }
+
+            $list_mix = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.amount")->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                ->where("event_id", $event_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("competition_category_id", $competition_category_id)
+                ->whereIn("archery_event_participants.team_category_id", ["mix_team"])
+                ->where(function ($query) {
+                    $query->where("is_early_bird_payment", 0)->orWhere("is_early_bird_payment", 1);
+                })->get();
+
+            $total_mix = 0;
+            foreach ($list_mix as $key => $lm) {
+                $total_mix = $total_mix + $lm->amount;
+            }
+
+            $competition_category_obj[$competition_category_id] = [
                 'label' => $value->competition_category_id,
                 'fee' => [
                     "individu" => $fee_individu,
@@ -166,41 +194,43 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                     "team" => $team[0]->total_quota - $check_participant_team,
                     "mix_team" => $mix_team[0]->total_quota - $check_participant_mix
                 ],
-                'total_amount' => ($check_participant_individu * $fee_individu) + ($check_participant_team * $fee_team) + ($check_participant_mix * $fee_mix_team),
+                'total_amount' => $total_individu + $total_team + $total_mix,
             ];
         }
 
 
         $team_obj =  [
-                "Individual Putra & putri" =>[
-                    "amount" => $team_category_obj["individu male"]["fee"],
-                    "quota" => $team_category_obj["individu male"]["quota"] + $team_category_obj["individu female"]["quota"],
-                    "quota_sell" => $team_category_obj["individu male"]["total_sell"] + $team_category_obj["individu female"]["total_sell"],
-                    "left_quota" => $team_category_obj["individu male"]["left_quota"] + $team_category_obj["individu female"]["left_quota"],
-                    "total_amount" => $team_category_obj["individu male"]["total_amount"] + $team_category_obj["individu female"]["total_amount"],
-                ],
-                "Beregu Putra & putri" =>[
-                    "amount" => $team_category_obj["male_team"]["fee"],
-                    "quota" => $team_category_obj["male_team"]["quota"] + $team_category_obj["female_team"]["quota"],
-                    "quota_sell" => $team_category_obj["male_team"]["total_sell"] + $team_category_obj["female_team"]["total_sell"],
-                    "left_quota" => $team_category_obj["male_team"]["left_quota"] + $team_category_obj["female_team"]["left_quota"],
-                    "total_amount" => $team_category_obj["male_team"]["total_amount"] + $team_category_obj["female_team"]["total_amount"],
-                ],
-                "Beregu Campuran" =>[
-                    "amount" => $team_category_obj["mix_team"]["fee"],
-                    "quota" => $team_category_obj["mix_team"]["quota"],
-                    "quota_sell" => $team_category_obj["mix_team"]["total_sell"],
-                    "left_quota" => $team_category_obj["mix_team"]["left_quota"],
-                    "total_amount" => $team_category_obj["mix_team"]["total_amount"],
-                ]
+            "Individual Putra & putri" => [
+                "amount" => $team_category_obj["individu male"]["fee"],
+                "quota" => $team_category_obj["individu male"]["quota"] + $team_category_obj["individu female"]["quota"],
+                "quota_sell" => $team_category_obj["individu male"]["total_sell"] + $team_category_obj["individu male"]["total_sell_early_bird"] + $team_category_obj["individu female"]["total_sell"] + $team_category_obj["individu female"]["total_sell_early_bird"],
+                "left_quota" => $team_category_obj["individu male"]["left_quota"] + $team_category_obj["individu female"]["left_quota"],
+                "total_amount" => $team_category_obj["individu male"]["total_amount"] + $team_category_obj["individu female"]["total_amount"],
+            ],
+
+            "Beregu Putra & putri" => [
+                "amount" => isset($team_category_obj["male_team"]["fee"]) ? $team_category_obj["male_team"]["fee"] : null,
+                "quota" => isset($team_category_obj["male_team"]["quota"]) && isset($team_category_obj["female_team"]["quota"]) ? $team_category_obj["male_team"]["quota"] + $team_category_obj["female_team"]["quota"] : null,
+                "quota_sell" => isset($team_category_obj["male_team"]["total_sell"]) && isset($team_category_obj["female_team"]["total_sell"]) ? $team_category_obj["male_team"]["total_sell"] + $team_category_obj["female_team"]["total_sell"] : null,
+                "left_quota" => isset($team_category_obj["male_team"]["left_quota"]) && isset($team_category_obj["female_team"]["left_quota"]) ? $team_category_obj["male_team"]["left_quota"] + $team_category_obj["female_team"]["left_quota"] : null,
+                "total_amount" => isset($team_category_obj["male_team"]["total_amount"]) && isset($team_category_obj["female_team"]["total_amount"]) ? $team_category_obj["male_team"]["total_amount"] + $team_category_obj["female_team"]["total_amount"] : null,
+            ],
+
+            "Beregu Campuran" => [
+                "amount" => isset($team_category_obj["mix_team"]["fee"]) ? $team_category_obj["mix_team"]["fee"] : null,
+                "quota" => isset($team_category_obj["mix_team"]["quota"]) ? $team_category_obj["mix_team"]["quota"] : null,
+                "quota_sell" => isset($team_category_obj["mix_team"]["total_sell"]) ? $team_category_obj["mix_team"]["total_sell"] : null,
+                "left_quota" => isset($team_category_obj["mix_team"]["left_quota"]) ? $team_category_obj["mix_team"]["left_quota"] : null,
+                "total_amount" => isset($team_category_obj["mix_team"]["total_amount"]) ? $team_category_obj["mix_team"]["total_amount"] : null,
+            ]
         ];
 
         $gender_obj = [
-            "Putra" =>[
-                "total_participant" => $team_category_obj["individu male"]["total_sell"],
+            "Putra" => [
+                "total_participant" => $team_category_obj["individu male"]["total_sell"]+$team_category_obj["individu male"]["total_sell_early_bird"],
             ],
             "Putri" => [
-                "total_participant" => $team_category_obj["individu female"]["total_sell"],
+                "total_participant" => $team_category_obj["individu female"]["total_sell"]+$team_category_obj["individu female"]["total_sell_early_bird"],
             ]
         ];
         

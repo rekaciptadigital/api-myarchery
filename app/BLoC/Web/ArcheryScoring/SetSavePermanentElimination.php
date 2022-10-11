@@ -12,8 +12,10 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesUserPoint;
+use App\Models\UrlReport;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Abstracts\Retrieval;
+use Illuminate\Support\Facades\Redis;
 
 class SetSavePermanentElimination extends Retrieval
 {
@@ -37,6 +39,13 @@ class SetSavePermanentElimination extends Retrieval
 
         if (!$category) {
             throw new BLoCException("category not found");
+        }
+
+        UrlReport::removeAllUrlReport($category->event_id);
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
         }
 
         if (strtolower($category->type) == "team") {
@@ -282,7 +291,7 @@ class SetSavePermanentElimination extends Retrieval
                 if ($value->score == "" || $value->score == 0 || $value->score == "m") {
                     continue;
                 }
-              
+
                 $result_shot_of_2 = $result_shot_of_2 + $value->score;
             }
 

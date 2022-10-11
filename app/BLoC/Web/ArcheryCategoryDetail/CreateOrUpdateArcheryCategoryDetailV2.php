@@ -5,6 +5,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMasterCompetitionCategory;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcheryMasterDistanceCategory;
 use App\Models\ArcheryMasterTeamCategory;
@@ -23,9 +24,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
     {
         $admin = Auth::user();
         $event = ArcheryEvent::find($parameters->get("event_id"));
-        if (!$event) {
-            throw new BLoCException("Event tidak ditemukan");
-        }
 
         if ($event->admin_id != $admin->id) {
             throw new BLoCException("Forbiden");
@@ -42,39 +40,14 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
         foreach ($list_category as $key => $category) {
             $competitio_category = ArcheryEventMasterCompetitionCategory::find($category['competition_category_id']);
-            if (!$competitio_category) {
-                throw new BLoCException("Competition category tidak tersedia");
-            }
-
             $age_category = ArcheryMasterAgeCategory::find($category['age_category_id']);
-            if (!$age_category) {
-                throw new BLoCException("Age category tidak tersedia");
-            }
 
             if ($age_category->is_hide == 1) {
                 throw new BLoCException("kategori umur ini tidak dapat digunakan");
             }
 
             $distance_category = ArcheryMasterDistanceCategory::find($category['distance_category_id']);
-            if (!$distance_category) {
-                throw new BLoCException("Distance category tidak ditemukan");
-            }
-
             $team_category = ArcheryMasterTeamCategory::find($category['team_category_id']);
-            if (!$team_category) {
-                throw new BLoCException("Team category tidak ditemukan");
-            }
-
-            $date_time_event_start_datetime = strtotime($event->event_start_datetime);
-            $today = strtotime("now");
-
-            // validasi hanya bisa set category sebelum event mulai
-            if ($today > $date_time_event_start_datetime) {
-                throw new BLoCException("hanya dapat diatur sebelum event dimulai");
-            }
-
-            $date_time_event_start_register = strtotime($event->registration_start_datetime);
-            $date_time_event_end_register = strtotime($event->registration_end_datetime);
 
             $end_early_bird = $category["end_date_early_bird"];
             $early_bird = $category["early_bird"];
@@ -83,9 +56,6 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             if ($end_early_bird != null) {
                 if ($early_bird == 0) {
                     throw new BLoCException("harga early bird harus lebih besar dari 0");
-                }
-                if (($end_early_bird < $date_time_event_start_register) && ($end_early_bird > $date_time_event_end_register)) {
-                    throw new BLoCException("tanggal early bird harus berada di rentang tanggal pendaftaran event");
                 }
             } elseif ($early_bird > 0) {
                 if ($end_early_bird == null) {
@@ -102,6 +72,30 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
 
             if (!$archery_category_detail) {
                 $archery_category_detail = new ArcheryEventCategoryDetail();
+            } else {
+                $count_user_join_or_order_category = ArcheryEventParticipant::select("archery_event_participants.*")
+                    ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                    ->where("archery_event_participants.event_category_id ", $archery_category_detail->id)
+                    ->where(function ($query) {
+                        $query->where("archery_event_participants.status", 1)
+                            ->orWhere(function ($q) {
+                                $q->where("archery_event_participants.status", 4)
+                                    ->where("transaction_logs.status", 4)
+                                    ->where("transaction_logs.expired_time", ">", time());
+                            });
+                    })->get()
+                    ->count();
+
+                if ($count_user_join_or_order_category > 0) { // cek apakah telah ada user yang daftar di category tsb
+                    // cek apakah terjadi perubahan harga
+                    if (
+                        $archery_category_detail->fee != $category['fee']
+                        || $archery_category_detail->early_bird != $category['early_bird']
+                        || $archery_category_detail->end_date_early_bird != $category['end_date_early_bird']
+                    ) {
+                        throw new BLoCException("tidak dapat ubah harga karena telah ada peserta yang mendaftar");
+                    }
+                }
             }
 
             $archery_category_detail->event_id = $event->id;
@@ -132,12 +126,12 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
     protected function validation($parameters)
     {
         return [
-            'event_id' => 'required',
+            'event_id' => 'required|integer|exists:archery_events,id',
             "categories" => "required|array|min:1",
-            'categories.*.age_category_id' => 'required',
-            'categories.*.competition_category_id' => 'required',
-            'categories.*.distance_category_id' => 'required',
-            'categories.*.team_category_id' => 'required',
+            'categories.*.age_category_id' => 'required|exists:archery_master_age_categories,id',
+            'categories.*.competition_category_id' => 'required|exists:archery_master_competition_categories,id',
+            'categories.*.distance_category_id' => 'required|exists:archery_master_distances,id',
+            'categories.*.team_category_id' => 'required|exists:archery_master_team_categories,id',
             'categories.*.quota' => 'required|min:0',
             'categories.*.fee' => 'required|min:0',
             'categories.*.early_bird' => "required|min:0",

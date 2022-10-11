@@ -238,6 +238,18 @@ class ArcherySeriesUserPoint extends Model
                 "city" => $city,
             ];
 
+            $event_series = ArcheryEventSerie::where("serie_id", $category_series->serie_id)->get();
+            $data3 = [];
+            foreach ($event_series as $series_event) {
+                $output2 = [];
+                $evennt = ArcheryEvent::find($series_event->event_id);
+                $output2["event_name"] = $evennt->event_name;
+                $total_per_series = self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) != [] ? self::getTotalPointUserPerSeries($user_profile["id"], $category_serie_id, $series_event->id) : 0;
+                $output2["total"] = isset($total_per_series[$user_profile["id"]]["total_point"]) ? $total_per_series[$user_profile["id"]]["total_point"] : $total_per_series;
+                $output2["point_details"] = isset($total_per_series[$user_profile["id"]]["point_details"]) ? $total_per_series[$user_profile["id"]]["point_details"] : $total_per_series;
+                $data3[] = $output2;
+            }
+
             $output[] = [
                 "tmp_score" => ArcheryScoring::getTotalTmp($user["score_detail_qualification"], $total_score, 0.001),
                 "total_point" => $user["total_point"],

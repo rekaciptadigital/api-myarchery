@@ -141,7 +141,8 @@ class ArcheryEventParticipant extends Model
     $status,
     $club_id,
     $day_choice,
-    $expired_booking_time = 0
+    $expired_booking_time = 0,
+    $is_early_bird_payment = 0
   ) {
     return self::create([
       'club_id' => $club_id,
@@ -162,7 +163,8 @@ class ArcheryEventParticipant extends Model
       'unique_id' => $unique_id,
       'event_category_id' => $event_category_detail->id,
       'day_choice' => $day_choice,
-      "expired_booking_time" => $expired_booking_time
+      "expired_booking_time" => $expired_booking_time,
+      "is_early_bird_payment" => $is_early_bird_payment
     ]);
   }
 }

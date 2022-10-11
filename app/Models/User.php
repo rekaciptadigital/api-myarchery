@@ -123,4 +123,57 @@ class User extends Model implements JWTSubject, AuthenticatableContract
             "detail_city_country" => CityCountry::getDetailCityCountry($this->city_of_country_id)
         ];
     }
+
+    public function checkIsCompleteUserData()
+    {
+        $is_complete = 0;
+        if ($this->gender && $this->address && $this->date_of_birth) {
+            if ($this->is_wna == 1) {
+                if (
+                    $this->passport_number
+                    && $this->country_id
+                    && $this->city_of_country_id
+                    && $this->passport_img
+                ) {
+                    $is_complete = 1;
+                }
+            } else {
+                if (
+                    $this->nik
+                    && $this->address_province_id
+                    && $this->address_city_id
+                    && $this->ktp_kk
+                ) {
+                    $is_complete = 1;
+                }
+            }
+        }
+
+        return $is_complete;
+    }
+
+    public static function sendOtpAccountVerification($user_id)
+    {
+        $user = User::find($user_id);
+        $code = substr(str_shuffle('1234567890'), 0, 5);
+
+        $otp_code = OtpVerificationCode::where("email", $user->email)->where("expired_time", ">", time())->get();
+        if ($otp_code->count() >= 3) {
+            throw new BLoCException("anda sudah melewati batas maksimal pengiriman otp, periksa kembali email anda");
+        }
+        $otp_code = new OtpVerificationCode();
+        $otp_code->user_id = $user->id;
+        $otp_code->email = $user->email;
+        $otp_code->otp_code = $code;
+        $otp_code->expired_time = strtotime("+1 day", time());
+        $otp_code->save();
+
+        Queue::push(new AccountVerificationJob([
+            "code" => $code,
+            "email" => $user->email,
+            "name" => $user->name,
+        ]));
+
+        return $otp_code;
+    }
 }

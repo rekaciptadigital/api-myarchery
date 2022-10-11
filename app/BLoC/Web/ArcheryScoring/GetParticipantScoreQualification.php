@@ -4,14 +4,11 @@ namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryQualificationSchedules;
 use App\Models\ArcheryMasterTeamCategory;
-use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipant;
-use DAI\Utils\Abstracts\Transactional;
-use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\DB;
 use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Facades\Redis;
 
 class GetParticipantScoreQualification extends Retrieval
 {
@@ -38,16 +35,22 @@ class GetParticipantScoreQualification extends Retrieval
 
     protected function process($parameters)
     {
-        $team_category_id = $parameters->get('team_category_id');
-        $competition_category_id = $parameters->get('competition_category_id');
-        $age_category_id = $parameters->get('age_category_id');
-        $gender = $parameters->get('gender');
-        $score_type = 1;
-        $event_id = $parameters->get('event_id');
-        $distance_id = $parameters->get('distance_id');
+        $score_type = $parameters->get('score_type') ?? 1;
         $event_category_id = $parameters->get('event_category_id');
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
+        if (!$category_detail) {
+            throw new BLoCException("category not found");
+        }
+
+        // $data = Redis::get($category_detail->id . "_LIVE_SCORE");
+        // if ($data) {
+        //     return json_decode($data);
+        // }
+
         $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
+        if (!$category_detail) {
+            throw new BLoCException("team category not found");
+        }
 
         $session = [];
         for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
@@ -56,16 +59,22 @@ class GetParticipantScoreQualification extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                return $this->mixTeamBestOfThree($category_detail, $team_category, $session);
+                $data = $this->mixTeamBestOfThree($category_detail, $team_category, $session);
             } else {
-                return $this->teamBestOfThree($category_detail, $team_category, $session);
+                $data = $this->teamBestOfThree($category_detail, $team_category, $session);
             }
         }
+
         if (strtolower($team_category->type) == "individual") {
-            $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session);
-            return $qualification_rank;
+            $data = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session);
         }
-        return [];
+
+        $redis = Redis::connection();
+        $redis->set($event_category_id . "_LIVE_SCORE", json_encode($data), "EX", 60 * 60 * 24 * 7);
+
+        return $data;
+
+        throw new BLoCException("gagal get live score");
     }
 
     private function teamBestOfThree($category_detail, $team_category, $session)

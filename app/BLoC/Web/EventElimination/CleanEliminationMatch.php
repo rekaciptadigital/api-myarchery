@@ -15,8 +15,10 @@ use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryScoringEliminationGroup;
+use App\Models\UrlReport;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class CleanEliminationMatch extends Retrieval
 {
@@ -34,10 +36,17 @@ class CleanEliminationMatch extends Retrieval
             throw new BLoCException("category not found");
         }
 
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
+        }
+
         $event = ArcheryEvent::find($category->event_id);
         if (!$event) {
             throw new BLoCException("event not found");
         }
+
+        UrlReport::removeAllUrlReport($event->id);
 
         if ($event->admin_id != $admin->id) {
             throw new BLoCException("forbiden");
@@ -69,12 +78,22 @@ class CleanEliminationMatch extends Retrieval
         $list_match = ArcheryEventEliminationMatch::where("event_elimination_id", $elimination->id)->get();
         foreach ($list_match as $value) {
             if ($value->elimination_member_id != 0) {
+                // return $value;
                 $member = ArcheryEventEliminationMember::find($value->elimination_member_id);
                 if ($member) {
+                    $scoring = ArcheryScoring::where("type", 2)->where("item_id", $value->id)
+                        ->where("participant_member_id", $member->member_id)
+                        ->where("item_value", "archery_event_elimination_matches")
+                        ->first();
+
+                    if ($scoring) {
+                        $scoring->delete();
+                    }
+
                     $member->delete();
                 }
             }
-            $scoring = ArcheryScoring::where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
+            $scoring = ArcheryScoring::where("type", 2)->where("item_id", $value->id)->where("item_value", "archery_event_elimination_matches")->first();
             if ($scoring) {
                 $scoring->delete();
             }
