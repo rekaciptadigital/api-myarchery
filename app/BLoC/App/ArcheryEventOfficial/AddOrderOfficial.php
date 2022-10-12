@@ -146,6 +146,7 @@ class AddOrderOfficial extends Retrieval
             $myarchery_fee = round($archery_event_official_detail->fee * ($event->my_archery_fee_percentage/100));
 
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
+            ->setGateway("midtrans")
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
             ->feePaymentsToUser($this->have_fee_payment_gateway)
