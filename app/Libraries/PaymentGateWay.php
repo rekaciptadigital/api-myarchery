@@ -40,6 +40,7 @@ class PaymentGateWay
     static $oy_callback = array();
     static $payment_methode = "";
     static $bank_sender = "";
+    static $sender_bank = "";
     static $expired_time = "";
     static $payment_methode_detail = [];
     static $enabled_payments = [
@@ -237,8 +238,8 @@ class PaymentGateWay
             return 0;
         }
         $type = $list[self::$gateway][self::$payment_methode]["type"];
-        $bank_sender = self::$payment_methode == "QRIS" ? "all" : self::$bank_sender;
-        $n = $list[self::$gateway][self::$payment_methode][$bank_sender];
+        $sender_bank = self::$payment_methode == "QRIS" ? "all" : self::$sender_bank;
+        $n = $list[self::$gateway][self::$payment_methode][$sender_bank];
         if($type == "percentage"){
             $fee = round($amount * ($n/100));
         }
