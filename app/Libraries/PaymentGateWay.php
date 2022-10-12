@@ -440,7 +440,7 @@ class PaymentGateWay
         return (object)[
             "order_date" =>$transaction_log->created_at,
             "order_id" => $transaction_log->order_id,
-            "total" => $transaction_log->total_amount == 0 ? $transaction_log->total : $transaction_log->total_amount,
+            "total" => $transaction_log->total_amount,
             "gateway" => $transaction_log->gateway,
             "opt" => json_decode($transaction_log->opt),
             "status_id" => $status,
