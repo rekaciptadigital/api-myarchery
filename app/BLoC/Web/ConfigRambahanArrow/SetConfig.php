@@ -239,5 +239,7 @@ class SetConfig extends Transactional
             $rules["shoot_rule.*.category.*.age_category_id"] = "required|exists:archery_master_age_categories,id";
             $rules["shoot_rule.*.category.*.distance_id"] = "required|exists:archery_master_distances,id";
         }
+
+        return $rules;
     }
 }
