@@ -42,10 +42,10 @@ class GetParticipantScoreQualification extends Retrieval
             throw new BLoCException("category not found");
         }
 
-        $data = Redis::get($category_detail->id . "_LIVE_SCORE");
-        if ($data) {
-            return json_decode($data);
-        }
+        // $data = Redis::get($category_detail->id . "_LIVE_SCORE");
+        // if ($data) {
+        //     return json_decode($data);
+        // }
 
         $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
         if (!$category_detail) {

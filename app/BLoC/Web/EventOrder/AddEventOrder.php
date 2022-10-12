@@ -61,6 +61,11 @@ class AddEventOrder extends Transactional
             throw new BLoCException("category event not found");
         }
 
+        $data = Redis::get($event_category_detail->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($event_category_detail->id . "_LIVE_SCORE");
+        }
+
         $with_early_bird = 0;
         // cek harga apakah normal atau early bird
         if ($user->is_wna == 0) {
