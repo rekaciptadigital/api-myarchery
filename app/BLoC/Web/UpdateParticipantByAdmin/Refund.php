@@ -47,9 +47,9 @@ class Refund extends Transactional
             throw new BLoCException("event tidak ditemukan");
         }
 
-        if ($event->admin_id != $admin->id) {
-            throw new BLoCException("forbiden");
-        }
+        // if ($event->admin_id != $admin->id) {
+        //     throw new BLoCException("forbiden");
+        // }
 
         if ($participant->status != 1) {
             throw new BLoCException("tidak bisa melakukan refund");
