@@ -19,26 +19,27 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
 {
     protected $event_id;
 
-    function __construct($event_id) {
-            $this->event_id = $event_id;
+    function __construct($event_id)
+    {
+        $this->event_id = $event_id;
     }
 
     public function view(): View
     {
-        $event_id=$this->event_id ;
+        $event_id = $this->event_id;
         $admin = Auth::user();
         $event_detail = ArcheryEvent::find($event_id);
         $team_category = DB::select('SELECT archery_event_category_details.team_category_id, sum(archery_event_category_details.quota) as total_quota 
                                 FROM archery_event_category_details 
                                 WHERE archery_event_category_details.event_id = ? 
-                                GROUP BY(archery_event_category_details.team_category_id)',[$event_id]);
-        
+                                GROUP BY(archery_event_category_details.team_category_id)', [$event_id]);
+
         $competition_category = DB::select('SELECT archery_event_category_details.competition_category_id, sum(archery_event_category_details.quota) as total_quota 
                                 FROM archery_event_category_details 
                                 WHERE archery_event_category_details.event_id = ? 
-                                GROUP BY(archery_event_category_details.competition_category_id)',[$event_id]);
-        
-        if(empty($team_category)){
+                                GROUP BY(archery_event_category_details.competition_category_id)', [$event_id]);
+
+        if (empty($team_category)) {
             throw new BLoCException("data tidak ditemukan");
         }
 
@@ -89,43 +90,43 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                 "left_quota" => $value->total_quota - ($total_sell_regular + $total_sell_early_bird),
             ];
         }
-        
+
         $competition_category_obj = [];
-        foreach($competition_category as $key => $value){
+        foreach ($competition_category as $key => $value) {
             $competition_category_id = $value->competition_category_id;
             $individual = DB::select('SELECT sum(archery_event_category_details.quota) as total_quota 
                                 FROM archery_event_category_details 
                                 WHERE archery_event_category_details.event_id = ? 
                                 AND archery_event_category_details.team_category_id IN (?,?) 
-                                GROUP BY(archery_event_category_details.competition_category_id)',[$event_id,"individu male","individu female"]);
+                                GROUP BY(archery_event_category_details.competition_category_id)', [$event_id, "individu male", "individu female"]);
             $team = DB::select('SELECT sum(archery_event_category_details.quota) as total_quota 
                                 FROM archery_event_category_details 
                                 WHERE archery_event_category_details.event_id = ? 
                                 AND archery_event_category_details.team_category_id IN (?,?) 
-                                GROUP BY(archery_event_category_details.competition_category_id)',[$event_id,"male_team","female_team"]);
+                                GROUP BY(archery_event_category_details.competition_category_id)', [$event_id, "male_team", "female_team"]);
             $mix_team = DB::select('SELECT sum(archery_event_category_details.quota) as total_quota 
                                 FROM archery_event_category_details 
                                 WHERE archery_event_category_details.event_id = ? 
                                 AND archery_event_category_details.team_category_id IN (?) 
-                                GROUP BY(archery_event_category_details.competition_category_id)',[$event_id,"mix_team"]);
-            $check_participant_mix = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-                                     ->where("archery_event_category_details.event_id", $event_id)
-                                     ->where("archery_event_category_details.competition_category_id", $competition_category_id)
-                                     ->where("archery_event_participants.status", 1)
-                                     ->whereIn("archery_event_category_details.team_category_id", ["mix_team"])
-                                     ->groupBy("archery_event_category_details.competition_category_id")->count();
-            $check_participant_individu = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-                                     ->where("archery_event_category_details.event_id", $event_id)
-                                     ->where("archery_event_category_details.competition_category_id", $competition_category_id)
-                                     ->where("archery_event_participants.status", 1)
-                                     ->whereIn("archery_event_category_details.team_category_id", ["individu male","individu female"])
-                                     ->groupBy("archery_event_category_details.competition_category_id")->count();
-            $check_participant_team = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-                                     ->where("archery_event_category_details.event_id", $event_id)
-                                     ->where("archery_event_category_details.competition_category_id", $competition_category_id)
-                                     ->where("archery_event_participants.status", 1)
-                                     ->whereIn("archery_event_category_details.team_category_id", ["male_team","female_team"])
-                                     ->groupBy("archery_event_category_details.competition_category_id")->count();
+                                GROUP BY(archery_event_category_details.competition_category_id)', [$event_id, "mix_team"]);
+            $check_participant_mix = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.competition_category_id", $competition_category_id)
+                ->where("archery_event_participants.status", 1)
+                ->whereIn("archery_event_category_details.team_category_id", ["mix_team"])
+                ->groupBy("archery_event_category_details.competition_category_id")->count();
+            $check_participant_individu = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.competition_category_id", $competition_category_id)
+                ->where("archery_event_participants.status", 1)
+                ->whereIn("archery_event_category_details.team_category_id", ["individu male", "individu female"])
+                ->groupBy("archery_event_category_details.competition_category_id")->count();
+            $check_participant_team = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.competition_category_id", $competition_category_id)
+                ->where("archery_event_participants.status", 1)
+                ->whereIn("archery_event_category_details.team_category_id", ["male_team", "female_team"])
+                ->groupBy("archery_event_category_details.competition_category_id")->count();
             $fee_individu = $team_category_obj["individu male"]["fee"];
             $fee_team = isset($team_category_obj["male_team"]["fee"]) ? $team_category_obj["male_team"]["fee"] : null;
             $fee_mix_team = isset($team_category_obj["mix_team"]["fee"]) ? $team_category_obj["mix_team"]["fee"] : null;
@@ -181,8 +182,8 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                 ],
                 'quota' => [
                     "individu" => $individual[0]->total_quota,
-                    "team" => $team[0]->total_quota,
-                    "mix_team" => $mix_team[0]->total_quota
+                    "team" => isset($team[0]->total_quota) ? $team[0]->total_quota : null,
+                    "mix_team" => isset($mix_team[0]->total_quota) ? $mix_team[0]->total_quota : null
                 ],
                 'total_sell' => [
                     "individu" => $check_participant_individu,
@@ -191,8 +192,8 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                 ],
                 'remaining_quota' => [
                     "individu" => $individual[0]->total_quota - $check_participant_individu,
-                    "team" => $team[0]->total_quota - $check_participant_team,
-                    "mix_team" => $mix_team[0]->total_quota - $check_participant_mix
+                    "team" => isset($team[0]->total_quota) ? $team[0]->total_quota - $check_participant_team : null,
+                    "mix_team" => isset($mix_team[0]->total_quota) ? $mix_team[0]->total_quota - $check_participant_mix : null
                 ],
                 'total_amount' => $total_individu + $total_team + $total_mix,
             ];
@@ -233,7 +234,7 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                 "total_participant" => $team_category_obj["individu female"]["total_sell"]+$team_category_obj["individu female"]["total_sell_early_bird"],
             ]
         ];
-        
+
         $public_summary = DB::select('SELECT archery_master_age_categories.label as age_category_label, archery_master_age_categories.id as age_category_id
                                             ,archery_master_competition_categories.label as competition_category_label, archery_master_competition_categories.id as competition_category_id
                                             ,archery_master_distances.label as distance_label, archery_master_distances.id as distance_id
@@ -243,85 +244,85 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                                 JOIN archery_master_competition_categories ON archery_event_category_details.competition_category_id = archery_master_competition_categories.id  
                                 JOIN archery_master_distances ON archery_event_category_details.distance_id = archery_master_distances.id  
                                 WHERE event_id = ? 
-                                GROUP BY age_category_id,competition_category_id,distance_id',[$event_id]);
+                                GROUP BY age_category_id,competition_category_id,distance_id', [$event_id]);
 
         $public_summary_obj = [];
         foreach ($public_summary as $key => $value) {
-            $individu_male_quota = ArcheryEventCategoryDetail::where("event_id",$event_id)
-            ->where("age_category_id",$value->age_category_id)
-            ->where("competition_category_id",$value->competition_category_id)
-            ->where("distance_id",$value->distance_id)
-            ->where("team_category_id","individu male")
-            ->groupBy(["age_category_id","competition_category_id","distance_id"])->sum("archery_event_category_details.quota");
-            $individu_female_quota = ArcheryEventCategoryDetail::where("event_id",$event_id)
-            ->where("age_category_id",$value->age_category_id)
-            ->where("competition_category_id",$value->competition_category_id)
-            ->where("distance_id",$value->distance_id)
-            ->where("team_category_id","individu female")
-            ->groupBy(["age_category_id","competition_category_id","distance_id"])->sum("archery_event_category_details.quota");
-            $team_male_quota = ArcheryEventCategoryDetail::where("event_id",$event_id)
-            ->where("age_category_id",$value->age_category_id)
-            ->where("competition_category_id",$value->competition_category_id)
-            ->where("distance_id",$value->distance_id)
-            ->where("team_category_id","male_team")
-            ->groupBy(["age_category_id","competition_category_id","distance_id"])->sum("archery_event_category_details.quota");
-            $team_female_quota = ArcheryEventCategoryDetail::where("event_id",$event_id)
-            ->where("age_category_id",$value->age_category_id)
-            ->where("competition_category_id",$value->competition_category_id)
-            ->where("distance_id",$value->distance_id)
-            ->where("team_category_id","female_team")
-            ->groupBy(["age_category_id","competition_category_id","distance_id"])->sum("archery_event_category_details.quota");
-            $team_mix_quota = ArcheryEventCategoryDetail::where("event_id",$event_id)
-            ->where("age_category_id",$value->age_category_id)
-            ->where("competition_category_id",$value->competition_category_id)
-            ->where("distance_id",$value->distance_id)
-            ->where("team_category_id","mix_team")
-            ->groupBy(["age_category_id","competition_category_id","distance_id"])->sum("archery_event_category_details.quota");
-            
-            $check_participant_male = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->where("archery_event_category_details.age_category_id",$value->age_category_id)
-            ->where("archery_event_category_details.competition_category_id",$value->competition_category_id)
-            ->where("archery_event_category_details.distance_id",$value->distance_id)
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_category_details.team_category_id","individu male")
-            ->groupBy(["archery_event_category_details.age_category_id","archery_event_category_details.competition_category_id","archery_event_category_details.distance_id"])->count();
-            $check_participant_female = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->where("archery_event_category_details.age_category_id",$value->age_category_id)
-            ->where("archery_event_category_details.competition_category_id",$value->competition_category_id)
-            ->where("archery_event_category_details.distance_id",$value->distance_id)
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_category_details.team_category_id","individu female")
-            ->groupBy(["archery_event_category_details.age_category_id","archery_event_category_details.competition_category_id","archery_event_category_details.distance_id"])->count();
-            $check_participant_male_team = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->where("archery_event_category_details.age_category_id",$value->age_category_id)
-            ->where("archery_event_category_details.competition_category_id",$value->competition_category_id)
-            ->where("archery_event_category_details.distance_id",$value->distance_id)
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_category_details.team_category_id","male_team")
-            ->groupBy(["archery_event_category_details.age_category_id","archery_event_category_details.competition_category_id","archery_event_category_details.distance_id"])->count();
-            $check_participant_female_team = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->where("archery_event_category_details.age_category_id",$value->age_category_id)
-            ->where("archery_event_category_details.competition_category_id",$value->competition_category_id)
-            ->where("archery_event_category_details.distance_id",$value->distance_id)
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_category_details.team_category_id","female_team")
-            ->groupBy(["archery_event_category_details.age_category_id","archery_event_category_details.competition_category_id","archery_event_category_details.distance_id"])->count();
-            $check_participant_mix = ArcheryEventParticipant::join("archery_event_category_details","archery_event_participants.event_category_id","archery_event_category_details.id")
-            ->where("archery_event_category_details.event_id", $event_id)
-            ->where("archery_event_category_details.age_category_id",$value->age_category_id)
-            ->where("archery_event_category_details.competition_category_id",$value->competition_category_id)
-            ->where("archery_event_category_details.distance_id",$value->distance_id)
-            ->where("archery_event_participants.status", 1)
-            ->where("archery_event_category_details.team_category_id","mix_team")
-            ->groupBy(["archery_event_category_details.age_category_id","archery_event_category_details.competition_category_id","archery_event_category_details.distance_id"])->count();
-            
-            
+            $individu_male_quota = ArcheryEventCategoryDetail::where("event_id", $event_id)
+                ->where("age_category_id", $value->age_category_id)
+                ->where("competition_category_id", $value->competition_category_id)
+                ->where("distance_id", $value->distance_id)
+                ->where("team_category_id", "individu male")
+                ->groupBy(["age_category_id", "competition_category_id", "distance_id"])->sum("archery_event_category_details.quota");
+            $individu_female_quota = ArcheryEventCategoryDetail::where("event_id", $event_id)
+                ->where("age_category_id", $value->age_category_id)
+                ->where("competition_category_id", $value->competition_category_id)
+                ->where("distance_id", $value->distance_id)
+                ->where("team_category_id", "individu female")
+                ->groupBy(["age_category_id", "competition_category_id", "distance_id"])->sum("archery_event_category_details.quota");
+            $team_male_quota = ArcheryEventCategoryDetail::where("event_id", $event_id)
+                ->where("age_category_id", $value->age_category_id)
+                ->where("competition_category_id", $value->competition_category_id)
+                ->where("distance_id", $value->distance_id)
+                ->where("team_category_id", "male_team")
+                ->groupBy(["age_category_id", "competition_category_id", "distance_id"])->sum("archery_event_category_details.quota");
+            $team_female_quota = ArcheryEventCategoryDetail::where("event_id", $event_id)
+                ->where("age_category_id", $value->age_category_id)
+                ->where("competition_category_id", $value->competition_category_id)
+                ->where("distance_id", $value->distance_id)
+                ->where("team_category_id", "female_team")
+                ->groupBy(["age_category_id", "competition_category_id", "distance_id"])->sum("archery_event_category_details.quota");
+            $team_mix_quota = ArcheryEventCategoryDetail::where("event_id", $event_id)
+                ->where("age_category_id", $value->age_category_id)
+                ->where("competition_category_id", $value->competition_category_id)
+                ->where("distance_id", $value->distance_id)
+                ->where("team_category_id", "mix_team")
+                ->groupBy(["age_category_id", "competition_category_id", "distance_id"])->sum("archery_event_category_details.quota");
+
+            $check_participant_male = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.age_category_id", $value->age_category_id)
+                ->where("archery_event_category_details.competition_category_id", $value->competition_category_id)
+                ->where("archery_event_category_details.distance_id", $value->distance_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_category_details.team_category_id", "individu male")
+                ->groupBy(["archery_event_category_details.age_category_id", "archery_event_category_details.competition_category_id", "archery_event_category_details.distance_id"])->count();
+            $check_participant_female = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.age_category_id", $value->age_category_id)
+                ->where("archery_event_category_details.competition_category_id", $value->competition_category_id)
+                ->where("archery_event_category_details.distance_id", $value->distance_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_category_details.team_category_id", "individu female")
+                ->groupBy(["archery_event_category_details.age_category_id", "archery_event_category_details.competition_category_id", "archery_event_category_details.distance_id"])->count();
+            $check_participant_male_team = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.age_category_id", $value->age_category_id)
+                ->where("archery_event_category_details.competition_category_id", $value->competition_category_id)
+                ->where("archery_event_category_details.distance_id", $value->distance_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_category_details.team_category_id", "male_team")
+                ->groupBy(["archery_event_category_details.age_category_id", "archery_event_category_details.competition_category_id", "archery_event_category_details.distance_id"])->count();
+            $check_participant_female_team = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.age_category_id", $value->age_category_id)
+                ->where("archery_event_category_details.competition_category_id", $value->competition_category_id)
+                ->where("archery_event_category_details.distance_id", $value->distance_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_category_details.team_category_id", "female_team")
+                ->groupBy(["archery_event_category_details.age_category_id", "archery_event_category_details.competition_category_id", "archery_event_category_details.distance_id"])->count();
+            $check_participant_mix = ArcheryEventParticipant::join("archery_event_category_details", "archery_event_participants.event_category_id", "archery_event_category_details.id")
+                ->where("archery_event_category_details.event_id", $event_id)
+                ->where("archery_event_category_details.age_category_id", $value->age_category_id)
+                ->where("archery_event_category_details.competition_category_id", $value->competition_category_id)
+                ->where("archery_event_category_details.distance_id", $value->distance_id)
+                ->where("archery_event_participants.status", 1)
+                ->where("archery_event_category_details.team_category_id", "mix_team")
+                ->groupBy(["archery_event_category_details.age_category_id", "archery_event_category_details.competition_category_id", "archery_event_category_details.distance_id"])->count();
+
+
             $public_summary_obj[] = [
-                "label" => $value->age_category_label." - ".$value->competition_category_label." - ".$value->distance_label,
+                "label" => $value->age_category_label . " - " . $value->competition_category_label . " - " . $value->distance_label,
                 "individu_male" => [
                     "quota" => $individu_male_quota,
                     "sell" => $check_participant_male,
@@ -349,7 +350,7 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
                 ]
             ];
         }
-     
+
         return view('reports.summary_participant', [
             'team_category' => $team_category_obj,
             'team' => $team_obj,
@@ -363,9 +364,9 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
     public function headings(): array
     {
         return [
-            'A' =>200,
-            'B' => 200, 
-            'C' => 200          
+            'A' => 200,
+            'B' => 200,
+            'C' => 200
         ];
     }
 
@@ -373,8 +374,8 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
     {
         return [
             'A' => 30,
-            'B' => 30,            
-            'C' => 20,   
+            'B' => 30,
+            'C' => 20,
             'D' => 30,
             'E' => 30,
             'F' => 20,
@@ -391,7 +392,4 @@ class SummaryParticipantSheet implements FromView, WithColumnWidths, WithHeading
             'Q' => 30,
         ];
     }
-    
 }
-
-

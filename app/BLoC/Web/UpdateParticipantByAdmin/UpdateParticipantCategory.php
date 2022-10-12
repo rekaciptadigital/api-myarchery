@@ -75,14 +75,14 @@ class UpdateParticipantCategory extends Transactional
         if ($isExist->count() > 0) {
             foreach ($isExist as $ie) {
                 if ($ie->status == 1) {
-                    throw new BLoCException("event dengan kategori ini sudah di ikuti");
+                    // throw new BLoCException("event dengan kategori ini sudah di ikuti");
                 }
 
                 if ($ie->status == 4) {
                     $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
                     if ($ie_transaction_log) {
                         if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
-                            throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran atau batalkan pesanan");
+                            // throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran atau batalkan pesanan");
                         }
                     }
                 }
@@ -132,10 +132,10 @@ class UpdateParticipantCategory extends Transactional
             $check_date = $this->getAge($user_participant->date_of_birth, $event->event_start_datetime);
             // cek apakah usia user memenuhi syarat categori event
             if ($check_date["y"] > $new_category->max_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
             }
             if ($check_date["y"] == $new_category->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
-                throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
             }
         }
 
@@ -146,7 +146,7 @@ class UpdateParticipantCategory extends Transactional
             }
             // cek apakah usia user memenuhi syarat categori event
             if ($user_participant->age < $new_category->min_age) {
-                throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $new_category->min_age . " tahun");
+                // throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $new_category->min_age . " tahun");
             }
         }
 
@@ -244,7 +244,7 @@ class UpdateParticipantCategory extends Transactional
             ->count();
 
         if ($gender_category == 'mix') {
-            if ($check_register_same_category >= 2) {
+            if ($check_register_same_category >= 3) {
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $new_category->id)
                     ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                     ->where('archery_event_participants.club_id', $partticipant->club_id)
@@ -257,7 +257,7 @@ class UpdateParticipantCategory extends Transactional
                     throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
             }
         } else {
-            if ($check_register_same_category >= 2) {
+            if ($check_register_same_category >= 3) {
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $new_category->id)
                     ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                     ->where('archery_event_participants.club_id', $partticipant->club_id)

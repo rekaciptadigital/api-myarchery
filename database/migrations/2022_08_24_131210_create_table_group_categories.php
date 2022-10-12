@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterTransactionLogUpdateGateway extends Migration
+class CreateTableGroupCategories extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AlterTransactionLogUpdateGateway extends Migration
      */
     public function up()
     {
-        Schema::table('transaction_logs', function (Blueprint $table) {
-            $table->string("gateway",255);
-            $table->text("opt");
+        Schema::create('group_categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string("group_category_name")->nullable();
+            $table->integer("event_id");
+            $table->timestamps();
         });
     }
 
@@ -26,6 +28,6 @@ class AlterTransactionLogUpdateGateway extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('group_categories');
     }
 }
