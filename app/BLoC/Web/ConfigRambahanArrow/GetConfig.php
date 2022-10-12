@@ -106,7 +106,6 @@ class GetConfig extends Transactional
             $response["shoot_rule"] = $shoot_rule_1;
         }
 
-        return "ok";
         return $response;
     }
 
