@@ -37,7 +37,7 @@ class InsertParticipantByAdmin extends Transactional
         $object = $parameters->get("object");
 
         foreach ($object as $key => $o) {
-            $user_new = User::find($o["email"]);
+            $user_new = User::where("email", $o["email"])->first();
             if (!$user_new) {
                 $user_new = new User;
                 $user_new->gender = "male";
@@ -75,26 +75,26 @@ class InsertParticipantByAdmin extends Transactional
             }
 
             // insert data participant
-            $participant = ArcheryEventParticipant::create([
-                'club_id' => 0,
-                'user_id' => $user_new->id,
-                'status' => 1,
-                'event_id' => $event->id,
-                'name' => $user_new->name,
-                'type' => $category->category_team,
-                'email' => $user_new->email,
-                'phone_number' => $user_new->phone_number,
-                'age' => $user_new->age,
-                'gender' => $user_new->gender,
-                'team_category_id' => $category->team_category_id,
-                'age_category_id' => $category->age_category_id,
-                'competition_category_id' => $category->competition_category_id,
-                'distance_id' => $category->distance_id,
-                'transaction_log_id' => 0,
-                'unique_id' => Str::uuid(),
-                'event_category_id' => $category->id,
-                "register_by" => 2
-            ]);
+            $participant = new ArcheryEventParticipant();
+            $participant->club_id = 0;
+            $participant->user_id = $user_new->id;
+            $participant->status = 1;
+            $participant->event_id = $event->id;
+            $participant->name = $user_new->name;
+            $participant->type = $category->category_team;
+            $participant->email = $user_new->email;
+            $participant->phone_number = $user_new->phone_number;
+            $participant->age = $user_new->age;
+            $participant->gender = $user_new->gender;
+            $participant->team_category_id = $category->team_category_id;
+            $participant->age_category_id = $category->age_category_id;
+            $participant->competition_category_id = $category->competition_category_id;
+            $participant->distance_id = $category->distance_id;
+            $participant->transaction_log_id = 0;
+            $participant->unique_id = Str::uuid();
+            $participant->event_category_id = $category->id;
+            $participant->register_by = 2;
+            $participant->save();
 
             // insert ke archery_event_participant_member
             $member = ArcheryEventParticipantMember::create([
