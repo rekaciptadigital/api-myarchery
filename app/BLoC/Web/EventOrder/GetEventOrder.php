@@ -24,7 +24,7 @@ class GetEventOrder extends Retrieval
         $user = Auth::guard('app-api')->user();
         $output = array();
 
-        $participants = ArcheryEventParticipant::where("user_id", $user["id"])->where("status", "!=", 6);
+        $participants = ArcheryEventParticipant::where("user_id", $user["id"]);
         $participants->when($status, function ($query) use ($status) {
             if ($status == 'pending') {
                 return $query->select('archery_event_participants.*')->join('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')

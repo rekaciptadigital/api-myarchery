@@ -32,7 +32,6 @@ class AddArcheryEvent extends Transactional
             $archery_event->event_type = $event_type;
             $archery_event->event_competition = $parameters->get('event_competition');
             $archery_event->status = $parameters->get('status');
-            $archery_event->is_private = $parameters->get('is_private') ?? false;
 
             $public_informations = $parameters->get('public_information');
 
@@ -61,14 +60,7 @@ class AddArcheryEvent extends Transactional
             $archery_event->registration_end_datetime = $public_informations['event_end_register'];
             $archery_event->event_start_datetime = $public_informations['event_start'];
             $archery_event->event_end_datetime = $public_informations['event_end'];
-
-            $slug = Str::slug($public_informations['event_name']);
-            $check_slug = ArcheryEvent::where("event_slug",$slug)->first();
-            
-            if($check_slug)
-                $slug = $time . '-' . $slug;
-
-            $archery_event->event_slug = $slug;
+            $archery_event->event_slug = $time . '-' . Str::slug($public_informations['event_name']);
             $archery_event->admin_id = $admin['id'];
             $archery_event->save();
 

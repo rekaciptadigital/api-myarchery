@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Jobs\AccountVerificationJob;
-use Queue;
-use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -22,9 +19,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'date_of_birth', 'phone_number',
-        'gender', 'verify_status', 'address', 'place_of_birth',
-        'address_province_id', 'address_city_id', "email_verified"
+        'name', 'email', 'password', 'date_of_birth', 'phone_number', 'gender', 'verify_status', 'address', 'place_of_birth', 'address_province_id', 'address_city_id'
     ];
 
     /**
@@ -101,9 +96,6 @@ class User extends Model implements JWTSubject, AuthenticatableContract
                 'age' => $user->age,
                 'gender' => $user->gender,
                 'address' => $user->address,
-                "can_update_name" => $user->can_update_name,
-                "can_update_date_of_birth" => $user->can_update_date_of_birth,
-                "can_update_gender" => $user->can_update_gender
             ];
         }
         return $data;

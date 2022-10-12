@@ -29,7 +29,7 @@
             </hr>
     </div>
     <div>
-        <img src="{{ $cover_event }}" alt="" srcset="" width="25%">
+        {!! $cover_event !!}
     </div>
     <div style="margin-bottom: 300px;"></div>
     <div class="box-bottom">
