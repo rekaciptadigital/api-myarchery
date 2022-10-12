@@ -101,11 +101,12 @@ class GetConfig extends Transactional
                 "category" => []
             ];
         }
-        
+
         if ($implement_all_1 != 1) {
             $response["shoot_rule"] = $shoot_rule_1;
         }
 
+        return "ok";
         return $response;
     }
 
