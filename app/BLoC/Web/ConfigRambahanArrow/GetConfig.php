@@ -94,8 +94,16 @@ class GetConfig extends Transactional
             $response["session"] = $session_1;
             $response["child_bow"] = $arrow_1;
             $response["rambahan"] = $rambahan_1;
+            $response["shoot_rule"] = [
+                "session" => 0,
+                "rambahan" => 0,
+                "child_bow" => 0,
+                "category" => []
+            ];
         }
-        $response["shoot_rule"] = $shoot_rule_1;
+        if ($implement_all_1 != 1) {
+            $response["shoot_rule"] = $shoot_rule_1;
+        }
 
         return $response;
     }
