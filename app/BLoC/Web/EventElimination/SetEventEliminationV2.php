@@ -18,6 +18,8 @@ use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventMasterCompetitionCategory;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
+use App\Models\UrlReport;
+use Illuminate\Support\Facades\Redis;
 
 class SetEventEliminationV2 extends Transactional
 {
@@ -33,6 +35,13 @@ class SetEventEliminationV2 extends Transactional
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category) {
             throw new BLoCException("kategori tidak ada");
+        }
+
+        UrlReport::removeAllUrlReport($category->event_id);
+
+        $data = Redis::get($category->id . "_LIVE_SCORE");
+        if ($data) {
+            Redis::del($category->id . "_LIVE_SCORE");
         }
 
 
@@ -126,6 +135,7 @@ class SetEventEliminationV2 extends Transactional
 
         $participant_collection_score_elimination = ArcheryScoring::select(
             "archery_event_participant_members.*",
+            "archery_scorings.id as scoring_id",
         )
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
