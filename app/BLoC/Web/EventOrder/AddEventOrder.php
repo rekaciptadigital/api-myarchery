@@ -8,6 +8,7 @@ use App\Models\ArcheryEventParticipantMember;
 use DAI\Utils\Abstracts\Transactional;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryEventEmailWhiteList;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -27,10 +28,6 @@ use Illuminate\Support\Facades\Redis;
 
 class AddEventOrder extends Transactional
 {
-    var $gateway = "";
-    var $have_fee_payment_gateway = false;
-    var $payment_methode = "";
-    var $myarchery_fee = 0;
     public function getDescription()
     {
         return "";
@@ -48,8 +45,6 @@ class AddEventOrder extends Transactional
 
     protected function process($parameters)
     {
-        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
-        
         $user = Auth::guard('app-api')->user();
         if ($user->checkIsCompleteUserData() != 1) {
             throw new BLoCException("data user belum lengkap, harap lengkapi data");
@@ -58,7 +53,7 @@ class AddEventOrder extends Transactional
         $event_category_id = $parameters->get('event_category_id');
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
-        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY","midtrans");
+
 
         // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
@@ -252,10 +247,13 @@ class AddEventOrder extends Transactional
         $gender_category = $event_category_detail->gender_category;
         if ($event->event_type == "Full_day") {
             if ($user->gender != $gender_category) {
-                if (empty($user->gender))
+                if (empty($user->gender)) {
                     throw new BLoCException('silahkan set gender terlebih dahulu, kamu bisa update gender di halaman update profile :) ');
+                }
 
-                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                if ($gender_category != "mix") {
+                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                }
             }
         }
         // cek apakah user telah pernah mendaftar di categori tersebut
@@ -324,15 +322,12 @@ class AddEventOrder extends Transactional
         }
 
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->feePaymentsToUser($this->have_fee_payment_gateway)
-            ->setMyarcheryFee($this->myarchery_fee)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
-        if(!$payment->status)
-            throw new BLoCException($payment->message);
-            
+
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
 
@@ -476,11 +471,10 @@ class AddEventOrder extends Transactional
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->feePaymentsToUser($this->have_fee_payment_gateway)
-            ->setMyarcheryFee($this->myarchery_fee)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
 
         foreach ($participant_member_id as $pm) {
@@ -506,6 +500,12 @@ class AddEventOrder extends Transactional
 
         $gender_category = $event_category_detail->gender_category;
         $time_now = time();
+
+        $participant = ArcheryEventParticipant::where("user_id", $user->id)
+            ->where("status", 6)
+            ->where("expired_booking_time", ">", time())
+            ->where("event_category_id", $event_category_detail->id)
+            ->first();
 
         // cek total pendaftar yang masih pending dan sukses
         $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
@@ -545,7 +545,7 @@ class AddEventOrder extends Transactional
                 ->count();
 
             if ($check_success_category_mix > 3) {
-                throw new BLoCException("club anda sudah terdaftar 2 kali pada kategori ini");
+                throw new BLoCException("club anda sudah terdaftar 3 kali pada kategori ini");
             }
 
             $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $event_category_detail->id)
@@ -643,28 +643,27 @@ class AddEventOrder extends Transactional
 
 
         if ($price < 1) {
-            $participant_new->status = 1;
-            $participant_new->save();
+            $participant->status = 1;
+            $participant->save();
 
             $res = [
-                "archery_event_participant_id" => $participant_new->id,
+                "archery_event_participant_id" => $participant->id,
                 "payment_info" => null
             ];
             return $this->composeResponse($res);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
-            ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)
             ->addItemDetail($event_category_detail->id, (int)$price, $event_category_detail->event_name)
-            ->feePaymentsToUser($this->have_fee_payment_gateway)
-            ->setMyarcheryFee($this->myarchery_fee)
+            ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
+            // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
-        $participant_new->transaction_log_id = $payment->transaction_log_id;
-        $participant_new->save();
+        $participant->transaction_log_id = $payment->transaction_log_id;
+        $participant->save();
         $res = [
-            "archery_event_participant_id" => $participant_new->id,
+            "archery_event_participant_id" => $participant->id,
             "payment_info" => $payment
         ];
         return $this->composeResponse($res);
