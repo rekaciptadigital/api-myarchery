@@ -2,7 +2,6 @@
 
 namespace App\BLoC\Web\ConfigRambahanArrow;
 
-use App\Models\AdminRole;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryMasterAgeCategory;
@@ -149,6 +148,7 @@ class SetConfig extends Transactional
             }
         }
 
+        // susun response
         $response = [];
         $active_setting_1 = 0;
         $implement_all_1 = 1;
@@ -215,8 +215,29 @@ class SetConfig extends Transactional
 
     protected function validation($parameters)
     {
-        return [
+        $rules = [
             "event_id" => "required|integer|exists:archery_events,id",
+            "active_setting" => "required|in:0,1",
+            "implement_all" => "required|in:0,1",
         ];
+
+
+        $implement_all  = $parameters->get("implement_all");
+
+        if ($implement_all == 1) {
+            $rules["session"] = "required|numeric|min:1";
+            $rules["rambahan"] = "required|numeric|min:3|max:15";
+            $rules["child_bow"] = "required|numeric|min:3|max:15";
+        } else {
+            $rules["shoot_rule"] = "required|array:min:1";
+            $rules["shoot_rule.*.session"] = "required|numeric|min:1";
+            $rules["shoot_rule.*.rambahan"] = "required|numeric|min:3|max:15";
+            $rules["shoot_rule.*.child_bow"] = "required|numeric|min:3|max:15";
+            $rules["shoot_rule.*.category"] = "required|array|min:1";
+            $rules["shoot_rule.*.category"] = "required|array|min:1";
+            $rules["shoot_rule.*.category.*.competition_category_id"] = "required|exists:archery_master_competition_categories,id";
+            $rules["shoot_rule.*.category.*.age_category_id"] = "required|exists:archery_master_age_categories,id";
+            $rules["shoot_rule.*.category.*.distance_id"] = "required|exists:archery_master_distances,id";
+        }
     }
 }
