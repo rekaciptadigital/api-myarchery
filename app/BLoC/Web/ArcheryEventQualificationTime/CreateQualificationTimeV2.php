@@ -31,10 +31,10 @@ class CreateQualificationTimeV2 extends Transactional
             throw new BLoCException("forbiden");
         }
 
-        $today = date('Y-m-d', strtotime("now"));
-        // ubah string mulai dan string selesai event menjadi objek tanggal
-        $date_time_event_start_datetime = date('Y-m-d', strtotime($event->event_start_datetime));
-        $date_time_event_end_datetime = date('Y-m-d', strtotime($event->event_end_datetime));
+        $today = time();
+        // ubah string mulai dan string selesai event menjadi objek timestamp
+        $date_time_event_start_datetime = strtotime($event->event_start_datetime);
+        $date_time_event_end_datetime = strtotime($event->event_end_datetime);
 
         // validasi hanya bisa set jadwal sebelum event mulai
         if ($today > $date_time_event_start_datetime) {
@@ -57,33 +57,6 @@ class CreateQualificationTimeV2 extends Transactional
                 throw new BLoCException("category tidak valid");
             }
 
-
-            
-
-            // ubah string datetime yang diinputkan users menjadi format datetime
-            $qualification_time_event_start_datetime = date('Y-m-d', strtotime($qt['event_start_datetime']));
-            $qualification_time_event_end_datetime = date('Y-m-d', strtotime($qt['event_end_datetime']));
-
-            if (
-                // cek apakah tanggal mulai dan tanggal selesai berada di dalam rentang tanggal pertandingan event
-                (
-                    ($qualification_time_event_start_datetime >= $date_time_event_start_datetime)
-                    &&
-                    ($qualification_time_event_start_datetime <= $date_time_event_end_datetime))
-                &&
-                (
-                    ($qualification_time_event_end_datetime >= $date_time_event_start_datetime)
-                    && ($qualification_time_event_end_datetime <= $date_time_event_end_datetime)
-                )
-
-            ) {
-                if ($qualification_time_event_end_datetime < $qualification_time_event_start_datetime) {
-                    throw new BLoCException("waktu mulai harus lebih kecil dari waktu selesai");
-                }
-            } else {
-                throw new BLoCException("harus di set pada rentang tanggal event");
-            }
-
             $key_qualification_id = array_key_exists("qualification_time_id", $qt);
             $kaey_deleted = array_key_exists("deleted", $qt);
 
@@ -96,6 +69,29 @@ class CreateQualificationTimeV2 extends Transactional
                     continue;
                 }
             } else {
+                // ubah string datetime yang diinputkan users menjadi format datetime
+                $qualification_time_event_start_datetime = strtotime($qt['event_start_datetime']);
+                $qualification_time_event_end_datetime = strtotime($qt['event_end_datetime']);
+                if (
+                    // cek apakah tanggal mulai dan tanggal selesai berada di dalam rentang tanggal pertandingan event
+                    (
+                        ($qualification_time_event_start_datetime >= $date_time_event_start_datetime)
+                        &&
+                        ($qualification_time_event_start_datetime <= $date_time_event_end_datetime))
+                    &&
+                    (
+                        ($qualification_time_event_end_datetime >= $date_time_event_start_datetime)
+                        && ($qualification_time_event_end_datetime <= $date_time_event_end_datetime)
+                    )
+
+                ) {
+                    if ($qualification_time_event_end_datetime < $qualification_time_event_start_datetime) {
+                        throw new BLoCException("waktu mulai harus lebih kecil dari waktu selesai");
+                    }
+                } else {
+                    throw new BLoCException("harus di set pada rentang tanggal event");
+                }
+                
                 $archery_event_qualification_time = new ArcheryEventQualificationTime();
             }
 

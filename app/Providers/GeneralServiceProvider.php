@@ -28,10 +28,9 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getParticipantScoreEliminationSelectionLiveScore", GetParticipantScoreEliminationSelectionLiveScore::class);
         $this->registerService("getParticipantScoreEventSelectionLiveScore", GetParticipantScoreEventSelectionLiveScore::class);
 
-          // ==================================== Fast Open 3 ========================================
-          $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
-          // ==================================== End ================================================
-
+        // ==================================== Fast Open 3 ========================================
+        $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
+        // ==================================== End ================================================
     }
 
     private function registerService($serviceName, $className)
