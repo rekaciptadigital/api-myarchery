@@ -213,6 +213,7 @@ use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
+
 // End of Archery Enterprise Section //
 
 class WebServiceProvider extends ServiceProvider
@@ -496,7 +497,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("deleteProductVenuePlace", DeleteProductVenuePlace::class);
         $this->registerService("getListAllVenuePlace", GetListAllVenuePlace::class);
 
-        
+
         // ------------------------------------------------ End of Archery Enterprise Service ------------------------------------------------ //
 
 
