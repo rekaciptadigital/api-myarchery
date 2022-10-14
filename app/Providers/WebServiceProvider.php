@@ -179,6 +179,7 @@ use App\BLoC\Web\ManagementAdmin\GetListRole;
 use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
+use App\BLoC\Web\ArcheryReport\ReportRankQualification;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -242,6 +243,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryCategory", AddArcheryCategory::class);
         $this->registerService("editArcheryCategory", EditArcheryCategory::class);
         $this->registerService("getArcheryCategory", GetArcheryCategory::class);
+        $this->registerService("reportRankQualification", ReportRankQualification::class);
 
         // ============================= Event ==============================
         $this->registerService("editArcheryEvent", EditArcheryEvent::class);
