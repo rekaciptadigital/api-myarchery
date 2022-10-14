@@ -7,15 +7,18 @@ use App\Libraries\EliminationFormatPDFV2;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
+use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterCompetitionCategory;
 use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use Illuminate\Support\Carbon;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Storage;
 
-class ReportRankQualification extends Retrieval
+class GetDownloadBaganElimination extends Retrieval
 {
     public function getDescription()
     {
@@ -26,6 +29,14 @@ class ReportRankQualification extends Retrieval
     {
         $event_id = $parameters->get("event_id");
         $event = ArcheryEvent::find($event_id);
+
+        $event_name_report = $event->event_name;
+        $start_date_event = dateFormatTranslate(Carbon::parse($event->event_start_datetime)->format('d-F-Y'), false);
+        $end_date_event = dateFormatTranslate(Carbon::parse($event->event_end_datetime)->format('d-F-Y'), false);
+        $event_date_report = $start_date_event . ' - ' . $end_date_event;
+        $event_location_report = $event->location;
+        $logo_event = $event->logo;
+        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
 
         $category_id = $parameters->get("category_id");
         $category = ArcheryEventCategoryDetail::find($category_id);
@@ -54,7 +65,7 @@ class ReportRankQualification extends Retrieval
         if (strtolower($team_category->type) == "individual") {
             if (!empty($data_report[0])) {
 
-                $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_detail->id)->first();
+                $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_id)->first();
                 $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
 
                 if ($data_elimination['updated'] == false) {
@@ -62,44 +73,25 @@ class ReportRankQualification extends Retrieval
                         $data_graph_individu = EliminationFormatPDFV2::getViewDataGraphIndividuOfBigTwentyTwo($data_elimination);
                         $view_path = 'report_result/elimination_graph/individu/graph_thirtytwo';
                         $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
-                        $pages[] = EliminationFormatPDFV2::renderPageGraphIndividuOfBigTwentyTwo($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                        $view = EliminationFormatPDFV2::renderPageGraphIndividuOfBigTwentyTwo($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                     } else if ($elimination_individu->count_participant == 16) {
                         $data_graph_individu = EliminationFormatPDFV2::getViewDataGraphIndividuOfBigSixteen($data_elimination);
                         $view_path = 'report_result/elimination_graph/individu/graph_sixteen';
-                        $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
-                        $pages[] = EliminationFormatPDFV2::renderPageGraphIndividuOfBigSixteen($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                        $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
+                        $view = EliminationFormatPDFV2::renderPageGraphIndividuOfBigSixteen($view_path, $data_graph_individu, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                     } else if ($elimination_individu->count_participant == 8) {
                         if ($data_graph) {
                             $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
                             $view_path = 'report_result/graph_eight';
-                            $pages[] = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
+                            $view = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
                         }
-                    } else {
-                        continue;
                     }
                 }
-
-                $pages[] = view('report_result/all_results_individu', [
-                    'data_report' => $data_qualification,
-                    'competition' => $competition->competition_category,
-                    'report' => $report,
-                    'category' => $data_report[0][0]['category'],
-                    'logo_event' => $logo_event,
-                    'logo_archery' => $logo_archery,
-                    'type' => ucfirst($type),
-                    'event_name_report' => $event_name_report,
-                    'event_date_report' => $event_date_report,
-                    'event_location_report' => $event_location_report
-                ]);
-
-                $data_report = array();
-                $data_graph = null;
-                $data = null;
             }
         }
 
-        if (strtolower($category_of_team->type) == "team") {
-            $elimination_team = ArcheryEventEliminationGroup::where("category_id", $category_detail->id)->first();
+        if (strtolower($team_category->type) == "team") {
+            $elimination_team = ArcheryEventEliminationGroup::where("category_id", $category->id)->first();
 
             //print bagan eliminasi
             if ($data_elimination['updated'] == false) {
@@ -107,46 +99,19 @@ class ReportRankQualification extends Retrieval
                     // return ($data_elimination); die;
                     $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
                     $view_path = 'report_result/elimination_graph/team/graph_four';
-                    $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
-                    $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                    $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
+                    $view = EliminationFormatPDFV2::renderPageGraphTeamOfBigFour($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                 } else if ($elimination_team->count_participant == 8) {
                     $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigEight($data_elimination);
                     $view_path = 'report_result/elimination_graph/team/graph_eight';
-                    $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
-                    $pages[] = EliminationFormatPDFV2::renderPageGraphTeamOfBigEight($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
+                    $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
+                    $view = EliminationFormatPDFV2::renderPageGraphTeamOfBigEight($view_path, $data_graph_team, $competition->competition_category, $title_category, $logo_event, $logo_archery, $event_name_report, $event_location_report, $event_date_report);
                 }
-            } else {
-                continue;
             }
             //end print bagan eliminasi
-
-            //print all result qualification
-            $pages[] = view('report_result/all_results_team', [
-                'data_report' => $data_qualification,
-                'competition' => $competition->competition_category,
-                'report' => $report,
-                'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
-                'logo_event' => $logo_event,
-                'logo_archery' => $logo_archery,
-                'type' => ucfirst($type),
-                'event_name_report' => $event_name_report,
-                'event_date_report' => $event_date_report,
-                'event_location_report' => $event_location_report
-            ]);
-            $data_report = array();
-            //end print all result qualification
         }
 
-        $pdf = PDFv2::loadView('qualification-rank', [
-            'data' => $list_scoring_qualification,
-            "logo_event" => $logo_event,
-            "event_location_report" => $event_location_report,
-            "logo_archery" => $logo_archery,
-            "event_name_report" => $event_name_report,
-            "event_date_report" => $event_date_report,
-            "competition" => $competition->label,
-            "category" => $category->label_category
-        ]);
+        $pdf = PDFv2::loadHtml($view);
         $pdf->setOptions([
             'margin-top'    => 8,
             'margin-bottom' => 12,
@@ -164,7 +129,7 @@ class ReportRankQualification extends Retrieval
             // 'enable-toc-back-links' => true,
         ]);
 
-        $fileName   = 'qualification_rank_' . $category_id . "_" . time() . '.pdf';
+        $fileName   = 'elimination_graph' . $category_id . "_" . time() . '.pdf';
 
         $path = 'asset/qualification_rank';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');

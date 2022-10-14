@@ -357,6 +357,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                 $router->get('/report-medal-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportMedalClub']);
                 $router->get('/upp', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:upp']);
                 $router->get("/report-list-qualification-rank-by-category-id", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:reportRankQualification']);
+                $router->get("/GetDownloadBaganElimination", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadBaganElimination']);
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
