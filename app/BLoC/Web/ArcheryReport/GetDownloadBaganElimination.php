@@ -111,6 +111,10 @@ class GetDownloadBaganElimination extends Retrieval
             //end print bagan eliminasi
         }
 
+        if (!isset($view)) {
+            throw new BLoCException("data eliminasi tidak ada");
+        }
+
         $pdf = PDFv2::loadHtml($view);
         $pdf->setOptions([
             'margin-top'    => 8,
