@@ -663,7 +663,7 @@ class AddEventOrder extends Transactional
             return $this->composeResponse($res);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant_new->id;
         $payment = PaymentGateWay::setTransactionDetail((int)$price, $order_id)
             ->setGateway($this->gateway)
             ->setCustomerDetails($user->name, $user->email, $user->phone_number)

@@ -10,6 +10,7 @@ use App\Models\Provinces;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
+use DAI\Utils\Helpers\BLoC;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -49,11 +50,16 @@ class UpdateVerifikasiUser extends Retrieval
         }
 
         if ($is_wna == 0) {
-            Validator::make($parameters->all(), [
+            $Validator = Validator::make($parameters->all(), [
                 'nik' => [
                     Rule::unique('users')->ignore($user->id),
                 ],
-            ])->validate();
+            ]);
+
+            if ($Validator->fails()) {
+                throw new BLoCException($Validator->errors());
+            }
+            
             $user->nik = $nik;
 
             $province = Provinces::find($province_id);

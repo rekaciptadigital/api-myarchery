@@ -179,6 +179,7 @@ use App\BLoC\Web\ManagementAdmin\GetListRole;
 use App\BLoC\Web\ManagementAdmin\RemoveAccessAdmin;
 use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
+use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
 
 // Archery Enterprise Section //
@@ -243,7 +244,11 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryCategory", AddArcheryCategory::class);
         $this->registerService("editArcheryCategory", EditArcheryCategory::class);
         $this->registerService("getArcheryCategory", GetArcheryCategory::class);
+
+        // ================================ queen series 4 =========================================
         $this->registerService("reportRankQualification", ReportRankQualification::class);
+        $this->registerService("getDownloadBaganElimination", GetDownloadBaganElimination::class);
+        // =================================== end series 4==========================================
 
         // ============================= Event ==============================
         $this->registerService("editArcheryEvent", EditArcheryEvent::class);
@@ -264,7 +269,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
         $this->registerService("setConfigRegisterCategory", SetConfigRegisterCategory::class);
         $this->registerService("getConfigCategoryRegistrationDate", GetConfigCategoryRegistrationDate::class);
-        
+
         $this->registerService("createNewUser", CreateNewUser::class);
         $this->registerService("checkAdminExists", CheckAdminExists::class);
         $this->registerService("getListRole", GetListRole::class);

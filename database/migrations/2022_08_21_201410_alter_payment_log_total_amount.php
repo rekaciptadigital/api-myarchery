@@ -22,9 +22,10 @@ class AlterPaymentLogTotalAmount extends Migration
             $table->double('amount');
             $table->timestamps();
         });
-
         Schema::table('transaction_logs', function (Blueprint $table) {
             $table->double("total_amount");
+            $table->string("gateway",255);
+            $table->text("opt");
         });
     }
 
