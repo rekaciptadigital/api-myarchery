@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryMasterCompetitionCategory;
 use Illuminate\Support\Carbon;
 
 class ReportRankQualification extends Retrieval
@@ -39,7 +40,11 @@ class ReportRankQualification extends Retrieval
 
         $archery_event = ArcheryEvent::find($event_id);
 
+        $logo_event = $archery_event->logo;
+
         $category = ArcheryEventCategoryDetail::find($category_id);
+
+        $competition = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
 
         $sessions = [];
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
@@ -53,10 +58,17 @@ class ReportRankQualification extends Retrieval
         $event_location_report = $archery_event->location;
 
         $list_scoring_qualification = ArcheryScoring::getScoringRankByCategoryId($category_id, 1,  $sessions, false, null, false);
-        return $list_scoring_qualification;
+        // return $list_scoring_qualification;
 
-        $pdf = PDFv2::loadView('qualification-rank.blade', [
-            'data' => $list_scoring_qualification
+        $pdf = PDFv2::loadView('qualification-rank', [
+            'data' => $list_scoring_qualification,
+            "logo_event" => $logo_event,
+            "event_location_report" => $event_location_report,
+            "logo_archery" => $logo_archery,
+            "event_name_report" => $event_name_report,
+            "event_date_report" => $event_date_report,
+            "competition" => $competition->label,
+            "category" => $category->label_category
         ]);
         $pdf->setOptions([
             'margin-top'    => 8,
@@ -75,9 +87,9 @@ class ReportRankQualification extends Retrieval
             // 'enable-toc-back-links' => true,
         ]);
 
-        $fileName   = 'qualification_rank_' . $event_id . "_" . time() . '.pdf';
+        $fileName   = 'qualification_rank_' . $category_id . "_" . time() . '.pdf';
 
-        $path = 'asset/report_result_medal_club';
+        $path = 'asset/qualification_rank';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
