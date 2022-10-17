@@ -83,10 +83,10 @@
                         <strong>Total</strong>
                     </th>
                     <th style="text-align: center; border: 1px solid black;">
-                        <strong>X</strong>
+                        <strong>X+10</strong>
                     </th>
                     <th style="text-align: center; border: 1px solid black;">
-                        <strong>X+10</strong>
+                        <strong>X</strong>
                     </th>
                 </tr>
                 @foreach ($data as $key => $d)
@@ -106,11 +106,14 @@
                             </td>
                         @endforeach
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $d['total'] }}</td>
+                            {{ $d['total'] }}
+                        </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $d['total_x'] }}</td>
+                            {{ $d['total_x_plus_ten'] }}
+                        </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $d['total_x_plus_ten'] }}</td>
+                            {{ $d['total_x'] }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
