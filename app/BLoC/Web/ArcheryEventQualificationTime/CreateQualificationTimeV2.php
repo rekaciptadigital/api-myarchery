@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryEventQualificationTime;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
@@ -58,13 +59,18 @@ class CreateQualificationTimeV2 extends Transactional
             }
 
             $key_qualification_id = array_key_exists("qualification_time_id", $qt);
-            $kaey_deleted = array_key_exists("deleted", $qt);
+            $key_deleted = array_key_exists("deleted", $qt);
 
             $archery_event_qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_detail_id)
                 ->first();
 
             if ($archery_event_qualification_time) {
-                if ($kaey_deleted && $kaey_deleted == 1) {
+                if ($key_deleted && $key_deleted == 1) {
+                    $jadwal_member = ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $archery_event_qualification_time->id)->get();
+                    foreach ($jadwal_member as $jadwal) {
+                        $jadwal->delete();
+                    }
+                    
                     $archery_event_qualification_time->delete();
                     continue;
                 }
@@ -91,7 +97,7 @@ class CreateQualificationTimeV2 extends Transactional
                 } else {
                     throw new BLoCException("harus di set pada rentang tanggal event");
                 }
-                
+
                 $archery_event_qualification_time = new ArcheryEventQualificationTime();
             }
 
