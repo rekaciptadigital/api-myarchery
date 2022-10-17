@@ -30,7 +30,9 @@
             <tbody>
                 <tr style="height: 40px;">
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
+                    <td style="width: 10%; height: 50px;" rowspan="2">
+                        <img src="{{ $logo_event }}" alt="" width="80%">
+                    </td>
                     <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
@@ -55,55 +57,65 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
-
-        <h1 style="text-align: center">{{ $report }}</h1>
-        <h1 style="text-align: center">{{ $category }}</h1>
-        <table style="width:100%;border: 1px solid black;">
+        <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
+        <h2 style="text-align: center">Qualification</h2>
+        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
             <thead>
-                <!-- <tr>
-                <th>Table Heading</th>
-            </tr> -->
+                <!-- <tr><th>Table Heading</th></tr> -->
             </thead>
             <tbody style="font-size: 24px;">
-
                 <tr style="border: 1px solid black;">
-
-
-                    <th style="text-align: center; border: 1px solid black;"><strong>NAME</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>CLUB</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>SESI 1</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>SESI 2</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>TOTAL</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>X</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>X+10</strong></th>
-
+                    <th style="text-align: center;border: 1px solid black; ">
+                        <strong>Athlete</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; ">
+                        <strong>Rank</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; ">
+                        <strong>Club</strong>
+                    </th>
+                    @foreach ($data[0]['sessions'] as $key => $item)
+                        <th style="text-align: center;border: 1px solid black;">
+                            <strong>Sesi {{ $key }}</strong>
+                        </th>
+                    @endforeach
+                    <th style="text-align: center; border: 1px solid black;">
+                        <strong>Total</strong>
+                    </th>
+                    <th style="text-align: center; border: 1px solid black;">
+                        <strong>X+10</strong>
+                    </th>
+                    <th style="text-align: center; border: 1px solid black;">
+                        <strong>X</strong>
+                    </th>
                 </tr>
-                @foreach ($data_report as $data)
+                @foreach ($data as $key => $d)
                     <tr style="border: 1px solid black;">
-
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['club'] ? $data['club'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
+                            {{ $d['member']['name'] ? $d['member']['name'] : '-' }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['scoring']['sessions']['2'] ? $data['scoring']['sessions']['2']['total'] : '-' }}
+                            {{ $key + 1 }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['scoring'] ? $data['scoring']['total'] : '-' }}</td>
+                            {{ $d['club_name'] }}
+                        </td>
+                        @foreach ($d['sessions'] as $key2 => $item)
+                            <td style="text-align: center;border: 1px solid black;">
+                                {{ $item['total'] }}
+                            </td>
+                        @endforeach
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['scoring'] ? $data['scoring']['total_x'] : '-' }}</td>
+                            {{ $d['total'] }}
+                        </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['scoring'] ? $data['scoring']['total_x_plus_ten'] : '-' }}</td>
-
-
+                            {{ $d['total_x_plus_ten'] }}
+                        </td>
+                        <td style="text-align: center;border: 1px solid black;">
+                            {{ $d['total_x'] }}
+                        </td>
                     </tr>
                 @endforeach
-                <!-- <tr>
-            <td colspan="3"></td>
-        </tr> -->
             </tbody>
         </table>
     </div>
