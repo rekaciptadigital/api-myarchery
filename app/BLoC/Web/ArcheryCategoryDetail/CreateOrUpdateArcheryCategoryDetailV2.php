@@ -75,7 +75,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
             } else {
                 $count_user_join_or_order_category = ArcheryEventParticipant::select("archery_event_participants.*")
                     ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                    ->where("archery_event_participants.event_category_id ", $archery_category_detail->id)
+                    ->where("archery_event_participants.event_category_id", $archery_category_detail->id)
                     ->where(function ($query) {
                         $query->where("archery_event_participants.status", 1)
                             ->orWhere(function ($q) {
