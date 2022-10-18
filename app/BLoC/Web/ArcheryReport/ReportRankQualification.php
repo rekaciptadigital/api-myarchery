@@ -49,7 +49,7 @@ class ReportRankQualification extends Retrieval
         $event_location_report = $archery_event->location;
 
         $list_scoring_qualification = ArcheryScoring::getScoringRankByCategoryId($category_id, 1,  $sessions, false, null, false);
-        // return $list_scoring_qualification;
+        return $list_scoring_qualification;
 
         $pdf = PDFv2::loadView('qualification-rank', [
             'data' => $list_scoring_qualification,
