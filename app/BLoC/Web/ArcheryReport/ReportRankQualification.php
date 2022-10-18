@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryMasterCompetitionCategory;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 
 class ReportRankQualification extends Retrieval
@@ -49,7 +50,9 @@ class ReportRankQualification extends Retrieval
         $event_location_report = $archery_event->location;
 
         $list_scoring_qualification = ArcheryScoring::getScoringRankByCategoryId($category_id, 1,  $sessions, false, null, false);
-        return $list_scoring_qualification;
+        if (count($list_scoring_qualification) == 0) {
+            throw new BLoCException("data skoring kosong");
+        }
 
         $pdf = PDFv2::loadView('qualification-rank', [
             'data' => $list_scoring_qualification,
