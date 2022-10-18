@@ -93,7 +93,7 @@ class CreateOrUpdateArcheryCategoryDetailV2 extends Transactional
                         || $archery_category_detail->early_bird != $category['early_bird']
                         || strtotime($archery_category_detail->end_date_early_bird) != strtotime($category['end_date_early_bird'])
                     ) {
-                        throw new BLoCException("tidak dapat ubah harga karena telah ada peserta yang mendaftar");
+                        // throw new BLoCException("tidak dapat ubah harga karena telah ada peserta yang mendaftar");
                     }
                 }
             }
