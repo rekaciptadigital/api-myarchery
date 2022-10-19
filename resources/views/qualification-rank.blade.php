@@ -57,61 +57,61 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
-        <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
-        <h2 style="text-align: center">Qualification</h2>
+        <p style="text-align: center; font-size: 14pt;"><strong>{{ $category }}</strong></p>
+        <h2 style="text-align: center; font-size:14pt">Qualification</h2>
         <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
             <thead>
                 <!-- <tr><th>Table Heading</th></tr> -->
             </thead>
             <tbody style="font-size: 24px;">
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; font-size: 14pt">
                         <strong>Athlete</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black;font-size: 14pt ">
                         <strong>Rank</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black;font-size: 14pt ">
                         <strong>Club</strong>
                     </th>
                     @foreach ($data[0]['sessions'] as $key => $item)
-                        <th style="text-align: center;border: 1px solid black;">
+                        <th style="text-align: center;border: 1px solid black;font-size: 14pt">
                             <strong>Sesi {{ $key }}</strong>
                         </th>
                     @endforeach
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                         <strong>Total</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                         <strong>X+10</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                         <strong>X</strong>
                     </th>
                 </tr>
                 @foreach ($data as $key => $d)
                     <tr style="border: 1px solid black;">
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $d['member']['name'] ? $d['member']['name'] : '-' }}
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
+                            {{ $d['member']['name'] ? ucwords($d['member']['name']) : '-' }}
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                             {{ $key + 1 }}
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $d['club_name'] }}
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
+                            {{ ucwords($d['club_name']) }}
                         </td>
                         @foreach ($d['sessions'] as $key2 => $item)
-                            <td style="text-align: center;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                 {{ $item['total'] }}
                             </td>
                         @endforeach
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                             {{ $d['total'] }}
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                             {{ $d['total_x_plus_ten'] }}
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                             {{ $d['total_x'] }}
                         </td>
                     </tr>
