@@ -33,7 +33,7 @@ class AddOrderOfficial extends Retrieval
         $club_id = $parameters->get('club_id');
         $event_id = $parameters->get('event_id');
         $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
-        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY","midtrans");
+        $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY", "midtrans");
         $time_now = time();
 
 
@@ -142,8 +142,10 @@ class AddOrderOfficial extends Retrieval
         $order_official_id = env("ORDER_OFFICIAL_ID_PREFIX", "OO-S") . $archery_event_official->id;
         // return $order_official_id;
 
-        if($event->my_archery_fee_percentage > 0)
-            $myarchery_fee = round($archery_event_official_detail->fee * ($event->my_archery_fee_percentage/100));
+        $myarchery_fee = 0;
+        if ($event->my_archery_fee_percentage > 0) {
+            $myarchery_fee = round($archery_event_official_detail->fee * ($event->my_archery_fee_percentage / 100));
+        }
 
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
             ->setGateway("midtrans")
