@@ -230,9 +230,9 @@ class PaymentGateWay
                     "EWALLET" => [
                         "dana" => 1.5,
                         "linkaja_ewallet" => 1.5,
-                        "shopeepay" => 2,
+                        "shopeepay_ewallet" => 2,
                         "default" => 1.5,
-                        "ovo" => 1.5,
+                        "ovo_ewallet" => 1.5,
                         "type" => "percentage"
                     ]
                 ]
