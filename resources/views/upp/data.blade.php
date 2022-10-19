@@ -26,7 +26,7 @@
 <body>
     <div class="page" style="break-after:page">
         <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
-        <table style="width: 100%; height: 40px;" border="0">
+        <table style="width: 100%; height: 40px; font-size: 14pt" border="0">
             <tbody>
                 <tr style="height: 40px;">
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
@@ -58,90 +58,94 @@
         <h1 style="text-align: center">Day {{ $day }}</h1>
         @foreach ($data_report as $item)
             @if ($item['team'] == 'individual' && $item['type'] == 'qualification')
-                <p style="text-align: center; font-size: 30px;"><strong>{{ $item['data'][0][0]['category'] }}</strong>
+                <p style="text-align: center; font-size: 14pt;"><strong>{{ $item['data'][0][0]['category'] }}</strong>
                 </p>
-                <h2 style="text-align: center">Qualification</h2>
-                <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                <h2 style="text-align: center; font-size: 14pt">Qualification</h2>
+                <table class="table"
+                    style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt">
                     <thead>
                         <!-- <tr><th>Table Heading</th></tr> -->
                     </thead>
 
-                    <tbody style="font-size: 24px;">
+                    <tbody style="font-size: 14pt;">
                         <tr style="border: 1px solid black;">
-                            <th style="text-align: center;border: 1px solid black; ">
+                            <th style="text-align: center;border: 1px solid black; font-size: 14pt">
                                 <strong>Medal</strong>
                             </th>
-                            <th style="text-align: center;border: 1px solid black; ">
+                            <th style="text-align: center;border: 1px solid black; font-size: 14pt">
                                 <strong>Athlete</strong>
                             </th>
-                            <th style="text-align: center;border: 1px solid black; ">
+                            <th style="text-align: center;border: 1px solid black; font-size: 14pt">
                                 <strong>Club</strong>
                             </th>
-                            <th style="text-align: center;border: 1px solid black;">
+                            <th style="text-align: center;border: 1px solid black;font-size: 14pt">
                                 <strong>Sesi 1</strong>
                             </th>
-                            <th style="text-align: center; border: 1px solid black;">
+                            <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                                 <strong>Sesi 2</strong>
                             </th>
-                            <th style="text-align: center; border: 1px solid black;">
+                            <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                                 <strong>Total</strong>
                             </th>
-                            <th style="text-align: center; border: 1px solid black;">
+                            <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                                 <strong>X</strong>
                             </th>
-                            <th style="text-align: center; border: 1px solid black;">
+                            <th style="text-align: center; border: 1px solid black;font-size: 14pt">
                                 <strong>X+10</strong>
                             </th>
                         </tr>
                         @foreach ($item['data'][0] as $key2 => $data)
-                            <tr style="border: 1px solid black;">
+                            <tr style="border: 1px solid black;font-size: 14pt">
                                 <!-- start initiate medals -->
                                 @if ($key2 == 0)
                                     @if ($data['medal'] == 'Gold')
-                                        <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">
+                                            {{ $data['medal'] }}
                                         </td>
                                     @else
-                                        <td style="text-align: left;border: 1px solid black;">Gold</td>
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">Gold</td>
                                     @endif
                                 @endif
 
                                 @if ($key2 == 1)
                                     @if ($data['medal'] == 'Silver')
-                                        <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">
+                                            {{ $data['medal'] }}
                                         </td>
                                     @else
-                                        <td style="text-align: left;border: 1px solid black;">Silver</td>
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">Silver</td>
                                     @endif
                                 @endif
 
                                 @if ($key2 == 2)
                                     @if ($data['medal'] == 'Bronze')
-                                        <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">
+                                            {{ $data['medal'] }}
                                         </td>
                                     @else
-                                        <td style="text-align: left;border: 1px solid black;">-</td>
+                                        <td style="text-align: left;border: 1px solid black;font-size: 14pt">-</td>
                                     @endif
                                 @endif
                                 <!-- end medals -->
-                                <td style="text-align: center;border: 1px solid black;">
-                                    {{ $data['athlete'] ? $data['athlete'] : '-' }}
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
+                                    {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
-                                    {{ $data['club'] ? $data['club'] : '-' }}
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
+                                    {{ $data['club'] ? ucwords(strtolower($data['club'])) : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ isset($data['scoring']['sessions']['2']) ? $data['scoring']['sessions']['2']['total'] : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring'] ? $data['scoring']['total'] : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring'] ? $data['scoring']['total_x'] : '-' }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;">
+                                <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring'] ? $data['scoring']['total_x_plus_ten'] : '-' }}
                                 </td>
                             </tr>
@@ -152,12 +156,13 @@
 
             @if ($item['team'] == 'team' && $item['type'] == 'qualification')
                 @if ($item['data'] != [])
-                    <p style="text-align: center; font-size: 30px;">
+                    <p style="text-align: center;font-size: 14pt">
                         <strong>{{ $item['category_label'] }}</strong>
                     </p>
-                    <h2 style="text-align: center">Qualification</h2>
-                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
-                        <tbody style="font-size: 24px;">
+                    <h2 style="text-align: center; font-size: 14pt">Qualification</h2>
+                    <table class="table"
+                        style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt">
+                        <tbody style="font-size: 14pt;">
                             <tr style="border: 1px solid black;">
                                 <th style="text-align: center;border: 1px solid black; ">
                                     <strong>Medal</strong>
@@ -193,7 +198,7 @@
                                     <td style="text-align: center;border: 1px solid black;">
                                         @if (sizeof($data['teams']) > 0)
                                             @foreach ($data['teams'] as $key => $team)
-                                                {{ $team['name'] }} <br>
+                                                {{ ucwords(strtolower($team['name'])) }} <br>
                                             @endforeach
                                         @else
                                             Belum ada anggota
@@ -216,15 +221,16 @@
 
             @if ($item['type'] == 'elimination' && $item['team'] == 'individual')
                 @if ($item['data'][0] != [])
-                    <p style="text-align: center; font-size: 30px;">
+                    <p style="text-align: center; font-size: 14pt;">
                         <strong>{{ $item['category_label'] }}</strong>
                     </p>
-                    <h2 style="text-align: center">Elimination</h2>
-                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                    <h2 style="text-align: center;font-size: 14pt">Elimination</h2>
+                    <table class="table"
+                        style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt">
                         <thead>
                             <!-- <tr><th>Table Heading</th></tr> -->
                         </thead>
-                        <tbody style="font-size: 24px;">
+                        <tbody style="font-size: 14pt;">
                             <tr style="border: 1px solid black;">
                                 <th style="text-align: center;border: 1px solid black; " colspan="5">
                                     <strong>Medalist by Event</strong>
@@ -273,9 +279,9 @@
 
                                     <!-- end medals -->
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
+                                        {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}</td>
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['club'] ? $data['club'] : '-' }}</td>
+                                        {{ $data['club'] ? ucwords(strtolower($data['club'])) : '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -285,15 +291,16 @@
 
             @if ($item['type'] == 'elimination' && $item['team'] == 'team')
                 @if ($item['data'] != [])
-                    <p style="text-align: center; font-size: 30px;">
+                    <p style="text-align: center; font-size: 14pt;">
                         <strong>{{ $item['category_label'] }}</strong>
                     </p>
-                    <h2 style="text-align: center">Elimination</h2>
-                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                    <h2 style="text-align: center; font-size: 14pt">Elimination</h2>
+                    <table class="table"
+                        style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt">
                         <thead>
                             <!-- <tr><th>Table Heading</th></tr> -->
                         </thead>
-                        <tbody style="font-size: 24px;">
+                        <tbody style="font-size: 14pt;">
                             <tr style="border: 1px solid black;">
                                 <th style="text-align: center;border: 1px solid black; " colspan="5">
                                     <strong>Medalist by Event</strong>
