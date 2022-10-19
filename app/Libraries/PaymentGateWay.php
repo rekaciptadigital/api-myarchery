@@ -219,17 +219,20 @@ class PaymentGateWay
                         "022" => 3500,
                         "009" => 3500,
                         "014" => 4500,
+                        "default" => 3500,
                         "type" => "nominal"
                     ],
                     "QRIS" => [
                         "all" => 0.7,
+                        "default" => 0.7,
                         "type" => "percentage"
                     ],
                     "EWALLET" => [
                         "dana" => 1.5,
                         "linkaja_ewallet" => 1.5,
-                        "shopeepay" => 2,
-                        "ovo" => 1.5,
+                        "shopeepay_ewallet" => 2,
+                        "default" => 1.5,
+                        "ovo_ewallet" => 1.5,
                         "type" => "percentage"
                     ]
                 ]
@@ -239,7 +242,7 @@ class PaymentGateWay
         }
         $type = $list[self::$gateway][self::$payment_methode]["type"];
         $sender_bank = self::$payment_methode == "QRIS" ? "all" : self::$sender_bank;
-        $n = $list[self::$gateway][self::$payment_methode][$sender_bank];
+        $n = isset($list[self::$gateway][self::$payment_methode][$sender_bank]) ? $list[self::$gateway][self::$payment_methode][$sender_bank] : $list[self::$gateway][self::$payment_methode]["default"];
         if($type == "percentage"){
             $fee = round($amount * ($n/100));
         }
