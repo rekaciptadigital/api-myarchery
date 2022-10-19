@@ -42,5 +42,6 @@ class CreateConfigTargetFaceTable extends Migration
     public function down()
     {
         Schema::dropIfExists('config_target_face');
+        Schema::dropIfExists('config_target_face_per_category');
     }
 }
