@@ -20,7 +20,6 @@ class GetConfigTargetFace extends Retrieval
         $response = [];
 
         $response["event_id"] = $event_id;
-        $total_ring = 6;
         $highest_score = 10;
         $score_x = 1;
         $implement_all = 1;
@@ -28,7 +27,6 @@ class GetConfigTargetFace extends Retrieval
 
         $config_target_face = ConfigTargetFace::where("event_id", $event_id)->first();
         if ($config_target_face) {
-            $total_ring = $config_target_face->total_ring;
             $highest_score = $config_target_face->highest_score;
             $score_x = $config_target_face->score_x;
             $implement_all = $config_target_face->implement_all;
@@ -38,7 +36,6 @@ class GetConfigTargetFace extends Retrieval
             }
         }
 
-        $response["total_ring"] = $total_ring;
         $response["highest_score"] = $highest_score;
         $response["score_x"] = $score_x;
         $response["implement_all"] = $implement_all;
