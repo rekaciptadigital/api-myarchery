@@ -1,4 +1,81 @@
-before_script: 
+image: docker:latest
+services:
+  - docker:dind
+
+#before_script: 
+  #- apt-get update -qq
+  #- apt-get install -qq git
+  ## Setup SSH deploy keys
+  #- 'which ssh-agent || ( apt-get install -qq openssh-client )'
+  #- eval $(ssh-agent -s)
+  #- ssh-add <(echo "$PRIVATEKEY_ARCHERY")
+  #- mkdir -p ~/.ssh
+  #- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+ 
+#stages:
+  #- update
+  #- deploy
+
+stages:
+  - update-bf
+  - deploy-bf
+  - revert
+  - build
+  - push
+  - deploy
+  - switch
+
+stage_build:
+  image: docker:latest
+  stage: build
+  script:
+    #- rm -rf yarn.lock
+    #- rm -rf package-lock.json 
+    #- mv .env.example .env
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    #- docker pull $CI_REGISTRY_IMAGE:latest || true
+    - >
+      docker build
+      --pull
+      --build-arg http_proxy=$http_proxy
+      --build-arg https_proxy=$https_proxy
+      --build-arg no_proxy=$no_proxy
+      --cache-from $CI_REGISTRY_IMAGE:latest
+      --label "org.opencontainers.image.title=$CI_PROJECT_TITLE"
+      --label "org.opencontainers.image.url=$CI_PROJECT_URL"
+      --label "org.opencontainers.image.created=$CI_JOB_STARTED_AT"
+      --label "org.opencontainers.image.revision=$CI_COMMIT_SHA"
+      --label "org.opencontainers.image.version=$CI_COMMIT_REF_NAME"
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  
+Push latest:
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+Push tag:
+  variables:
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    - tags
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+stage_deploy_docker:
+  image: ubuntu:latest
+  stage: deploy
+  before_script:
   - apt-get update -qq
   - apt-get install -qq git
   # Setup SSH deploy keys
@@ -7,13 +84,12 @@ before_script:
   - ssh-add <(echo "$PRIVATEKEY_ARCHERY")
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
- 
-stages:
-  - update
-  - deploy
-  
+  script:
+    - ssh -p22 root@103.31.38.37 "/root/deployment/$CI_COMMIT_BRANCH-docker-api-deploy.sh"
+
 update:
-  stage: update
+  image: ubuntu:latest
+  stage: update-bf
   before_script:
   - apt-get update -qq
   - apt-get install -qq git
@@ -27,7 +103,8 @@ update:
     - ssh -p22 root@$HOST_IP "/root/deployment_bf_docker/$CI_COMMIT_BRANCH-api-update.sh"
 
 deploy:
-  stage: deploy
+  image: ubuntu:latest
+  stage: deploy-bf
   before_script:
   - apt-get update -qq
   - apt-get install -qq git
@@ -39,3 +116,33 @@ deploy:
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
     - ssh -p22 root@$HOST_IP "/root/deployment_bf_docker/$CI_COMMIT_BRANCH-api-deploy.sh"
+
+revert:
+  image: ubuntu:latest
+  stage: revert
+  before_script:
+  - apt-get update -qq
+  - apt-get install -qq git
+  # Setup SSH deploy keys
+  - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$PRIVATEKEY_ARCHERY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh -p22 root@103.31.38.37 "/root/deployment/$CI_COMMIT_BRANCH-api-revert.sh"
+
+switch:
+  image: ubuntu:latest
+  stage: switch
+  before_script:
+  - apt-get update -qq
+  - apt-get install -qq git
+  # Setup SSH deploy keys
+  - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$PRIVATEKEY_ARCHERY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh -p22 root@103.31.38.37 "/root/deployment/$CI_COMMIT_BRANCH-api-switch.sh"
