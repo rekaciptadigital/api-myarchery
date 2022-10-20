@@ -61,8 +61,24 @@ class SetConfigTargetFace extends Retrieval
 
     protected function validation($parameters)
     {
-        return [
+        $rules = [
             'event_id' => 'required|exists:archery_events,id',
+            'highest_score' => "required|integer|max:20",
+            "score_x" => "required|in:1,2",
+            "implement_all" => "required|in:1,0",
+
         ];
+
+        if ($parameters->get("implement_all") == 0) {
+            $rules["categories_config"] = "required|array|min:1";
+            $rules["categories_config.*.highest_score"] = "required|integer|max:20";
+            $rules["categories_config.*.score_x"] = "required|in:1,2";
+            $rules["categories_config.*.categories"] = "required|array|min:1";
+            $rules["categories_config.*.categories.*.competition_category_id"] = "required|exists:archery_master_competition_categories,id";
+            $rules["categories_config.*.categories.*.distance_id"] = "required|exists:archery_master_distances,id";
+            $rules["categories_config.*.categories.*.age_category_id"] = "required|exists:archery_master_age_categories,id";
+        }
+
+        return $rules;
     }
 }
