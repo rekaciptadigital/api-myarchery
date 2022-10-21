@@ -71,7 +71,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             mkdir(public_path() . "/" . $path, 0777);
         }
 
-        $file_name = $path . "scoore_sheet_elimination_" . $elimination_id . "_" . $round;
+        $file_name = $path . "scoore_sheet_elimination_" . $elimination_id . "_" . $round . ".pdf";
 
         if (strtolower($category->type) == "team") {
             return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name);

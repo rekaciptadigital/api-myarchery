@@ -92,13 +92,13 @@
                 @foreach ($data as $key => $d)
                     <tr style="border: 1px solid black;">
                         <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                            {{ $d['member']['name'] ? ucwords($d['member']['name']) : '-' }}
+                            {{ $d['member']['name'] ? ucwords(strtolower($d['member']['name'])) : '-' }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                             {{ $key + 1 }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                            {{ ucwords($d['club_name']) }}
+                            {{ $d['club_name'] }}
                         </td>
                         @foreach ($d['sessions'] as $key2 => $item)
                             <td style="text-align: center;border: 1px solid black;font-size: 14pt">
