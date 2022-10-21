@@ -466,6 +466,16 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
+            "13" => 0,
+            "14" => 0,
+            "15" => 0,
+            "16" => 0,
+            "17" => 0,
+            "18" => 0,
+            "19" => 0,
+            "20" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -473,12 +483,14 @@ class ArcheryScoring extends Model
         $scors = []; // data rambahan / keseluruhan arrow
         $total = 0;
         foreach ($scoring as $key => $value) {
+            // dd($value);
             $arrows = [];
             if (!empty($value)) {
                 foreach ($value as $k => $arrow) {
                     $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0;
                     $total = $total + $a;
                     $total_per_points[$arrow] = $total_per_points[$arrow] + 1;
+                    // dd($a);
                     $arrows[] = ["id" => $arrow, "value" => $a];
                 }
                 $scors[$key] = $arrows;
@@ -625,32 +637,47 @@ class ArcheryScoring extends Model
         $eight = $total_per_point[8];
         $nine = $total_per_point[9];
         $ten = $total_per_point[10];
+        $eleven = $total_per_point[11];
+        $twelve = $total_per_point[12];
+        $thirteen = $total_per_point[13];
+        $fourteen = $total_per_point[14];
+        $fifteen = $total_per_point[15];
+        $sixteen = $total_per_point[16];
+        $seventeen = $total_per_point[17];
+        $eighteen = $total_per_point[18];
+        $nineteen = $total_per_point[19];
+        $twenty = $total_per_point[20];
         $x = $total_per_point["x"];
         $x_plus_y = $x + $ten;
-        $output = $total + (
-            ($x_plus_y + (
-                ($x + (
-                    ($ten + (
-                        ($nine + (
-                            ($eight + (
-                                ($seven + (
-                                    ($six + (
-                                        ($five + (
-                                            ($four + (
-                                                ($three + (
-                                                    ($two +
-                                                        ($one * $key)
-                                                    ) * $key)
-                                                ) * $key)
-                                            ) * $key)
-                                        ) * $key)
-                                    ) * $key)
-                                ) * $key)
-                            ) * $key)
-                        ) * $key)
-                    ) * $key)
-                ) * $key)
-            ) * $key);
+        $output = $total + (($x_plus_y + (($nineteen + (($twenty + (($eighteen + (($seventeen + (($sixteen + (($fifteen + (($fourteen + (($thirteen + (($twelve + (($x + (($eleven + (($ten + (($nine + (($eight + (($seven + (($six + (($five + (($four + (($three + (($two + ($one * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key);
+        return $output;
+    }
+
+    protected function getTotalTmpXLowest(array $total_per_point, $total, $key = 0.01)
+    {
+        $one = $total_per_point[1];
+        $two = $total_per_point[2];
+        $three = $total_per_point[3];
+        $four = $total_per_point[4];
+        $five = $total_per_point[5];
+        $six = $total_per_point[6];
+        $seven = $total_per_point[7];
+        $eight = $total_per_point[8];
+        $nine = $total_per_point[9];
+        $ten = $total_per_point[10];
+        $eleven = $total_per_point[11];
+        $twelve = $total_per_point[12];
+        $thirteen = $total_per_point[13];
+        $fourteen = $total_per_point[14];
+        $fifteen = $total_per_point[15];
+        $sixteen = $total_per_point[16];
+        $seventeen = $total_per_point[17];
+        $eighteen = $total_per_point[18];
+        $nineteen = $total_per_point[19];
+        $twenty = $total_per_point[20];
+        $x = $total_per_point["x"];
+        $x_plus_y = $x + $ten;
+        $output = $total + (($x_plus_y + (($nineteen + (($twenty + (($eighteen + (($seventeen + (($sixteen + (($fifteen + (($fourteen + (($thirteen + (($twelve + (($x + (($eleven + (($ten + (($nine + (($eight + (($seven + (($six + (($five + (($four + (($three + (($two + ($one * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key);
         return $output;
     }
 
