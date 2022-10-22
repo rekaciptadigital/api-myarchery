@@ -655,6 +655,7 @@ class PaymentGateWay
         if($status == 1){
             $event_official_detail = ArcheryEventOfficialDetail::where('id',$archery_event_official->event_official_detail_id)->first();
             $event = ArcheryEvent::where('id',$event_official_detail->event_id)->first();
+            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
             $admin_have_event = Admin::where('id',$event->admin_id)->first();
             $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
