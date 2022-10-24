@@ -22,6 +22,7 @@ class SetConfigTargetFace extends Retrieval
         $score_x = $parameters->get("score_x");
         $implement_all = $parameters->get("implement_all");
         $categories_config = $parameters->get("categories_config");
+        $active_setting = $parameters->get("active_setting");
 
         // reset config
         $config_target_face = ConfigTargetFace::where("event_id", $event->id)->first();
@@ -35,20 +36,22 @@ class SetConfigTargetFace extends Retrieval
 
         // set ulang config
         // total_ring highest_score score_x implement_all
-        $new_config_target_face = new ConfigTargetFace();
-        $new_config_target_face->event_id = $event->id;
-        $new_config_target_face->highest_score = $highest_score;
-        $new_config_target_face->score_x = $score_x;
-        $new_config_target_face->implement_all = $implement_all;
-        $new_config_target_face->save();
+        if ($active_setting == 1) {
+            $new_config_target_face = new ConfigTargetFace();
+            $new_config_target_face->event_id = $event->id;
+            $new_config_target_face->highest_score = $highest_score;
+            $new_config_target_face->score_x = $score_x;
+            $new_config_target_face->implement_all = $implement_all;
+            $new_config_target_face->save();
 
-        if ($implement_all == 0) {
-            foreach ($categories_config as $value) {
-                $new_config_target_face_per_category = new ConfigTargetFacePerCategory();
-                $new_config_target_face->highest_score = $value["highest_score"];
-                $new_config_target_face->score_x = $value["score_x"];
-                $new_config_target_face->categories = json_encode($value["categories"]);
-                $new_config_target_face_per_category->save();
+            if ($implement_all == 0) {
+                foreach ($categories_config as $value) {
+                    $new_config_target_face_per_category = new ConfigTargetFacePerCategory();
+                    $new_config_target_face->highest_score = $value["highest_score"];
+                    $new_config_target_face->score_x = $value["score_x"];
+                    $new_config_target_face->categories = json_encode($value["categories"]);
+                    $new_config_target_face_per_category->save();
+                }
             }
         }
 
@@ -63,10 +66,10 @@ class SetConfigTargetFace extends Retrieval
     {
         $rules = [
             'event_id' => 'required|exists:archery_events,id',
-            'highest_score' => "required|integer|max:20",
-            "score_x" => "required|in:1,2",
+            'highest_score' => "required|numeric|max:12",
+            "score_x" => "required|numeric|in:0,1,2,3,4,5,6,7,8,9,10,11,12",
             "implement_all" => "required|in:1,0",
-
+            "active_setting" => "required|in:1,0"
         ];
 
         if ($parameters->get("implement_all") == 0) {
