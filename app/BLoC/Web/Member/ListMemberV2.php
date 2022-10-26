@@ -99,7 +99,7 @@ class ListMemberV2 extends Retrieval
                     ($pc->status_participant == 4 && $pc->status_transaction_log == 4 && $pc->expired_time >= time())
                 ) {
                     $status_payment = "Expired";
-                } elseif ($pc->status_participant == 4 && $pc->status_transaction_log == 4 && $pc->expired_time <= time()) {
+                } elseif ($pc->status_participant == 4 && $pc->status_transaction_log == 4 && $pc->expired_time > time()) {
                     $status_payment = "Belum Lunas";
                 } elseif ($pc->status_participant == 3 || $pc->status_transaction_log == 3) {
                     $status_payment = "Failed";
