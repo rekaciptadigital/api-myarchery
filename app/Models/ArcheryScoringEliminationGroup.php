@@ -21,6 +21,8 @@ class ArcheryScoringEliminationGroup extends Model
         "8" => 8,
         "9" => 9,
         "10" => 10,
+        "11" => 11,
+        "12" => 12,
         "x" => 10,
         "m" => 0,
     ];
@@ -80,8 +82,9 @@ class ArcheryScoringEliminationGroup extends Model
         return $scores;
     }
 
-    public static function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    public static function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        self::$score_value["x"] = $score_x_value;
         $scores = self::$elimination_scores_format_by_type[2];
         $total_score_1 = 0;
         $total_score_2 = 0;
@@ -182,8 +185,9 @@ class ArcheryScoringEliminationGroup extends Model
         ];
     }
 
-    public static function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1)
+    public static function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1, $score_x_value = 10)
     {
+        self::$score_value["x"] = $score_x_value;
         $scores = self::$elimination_scores_format_by_type[2];
         $total_score_1 = 0;
 
@@ -212,8 +216,9 @@ class ArcheryScoringEliminationGroup extends Model
         ];
     }
 
-    public static function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    public static function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        self::$score_value["x"] = $score_x_value;
         $scores = self::$elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_point_2 = 0;
@@ -346,8 +351,9 @@ class ArcheryScoringEliminationGroup extends Model
         ];
     }
 
-    public static function calculateEliminationScoringTypePointFormatbye(array $scoring_1)
+    public static function calculateEliminationScoringTypePointFormatbye(array $scoring_1, $score_x_value = 10)
     {
+        self::$score_value["x"] = $score_x_value;
         $scores = self::$elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_score_1 = 0;
@@ -360,7 +366,7 @@ class ArcheryScoringEliminationGroup extends Model
                 $scoring_1_total_score_per_rambahan = $scoring_1_total_score_per_rambahan + $s1;
             }
 
-            
+
 
             $total_score_1 = $total_score_1 + $scoring_1_total_score_per_rambahan;
             $scoring_1["scores"]["shot"][$k]["total"] = $scoring_1_total_score_per_rambahan;
