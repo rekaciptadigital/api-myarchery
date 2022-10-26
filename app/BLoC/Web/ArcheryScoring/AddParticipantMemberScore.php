@@ -372,7 +372,7 @@ class AddParticipantMemberScore extends Transactional
 
         $event_elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         if ($event_elimination) {
-            // throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
+            throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
         }
 
         if ($category->session_in_qualification < $session)
