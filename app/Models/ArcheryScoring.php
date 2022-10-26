@@ -23,6 +23,8 @@ class ArcheryScoring extends Model
         "8" => 8,
         "9" => 9,
         "10" => 10,
+        "11" => 11,
+        "12" => 12,
         "x" => 10,
         "m" => 0,
     ];
@@ -90,6 +92,8 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -145,8 +149,9 @@ class ArcheryScoring extends Model
         return $scores;
     }
 
-    protected function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    protected function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_point_2 = 0;
@@ -279,8 +284,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypePointFormatBye(array $scoring_1)
+    protected function calculateEliminationScoringTypePointFormatBye(array $scoring_1, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_score_1 = 0;
@@ -316,8 +322,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    protected function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[2];
         $total_score_1 = 0;
         $total_score_2 = 0;
@@ -418,8 +425,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1)
+    protected function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[2];
         $total_score_1 = 0;
 
@@ -452,8 +460,9 @@ class ArcheryScoring extends Model
         return $scores;
     }
 
-    protected function makeScoring(array $scoring)
+    protected function makeScoring(array $scoring, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $total_per_points = [
             "" => 0,
             "1" => 0,
@@ -468,14 +477,6 @@ class ArcheryScoring extends Model
             "10" => 0,
             "11" => 0,
             "12" => 0,
-            "13" => 0,
-            "14" => 0,
-            "15" => 0,
-            "16" => 0,
-            "17" => 0,
-            "18" => 0,
-            "19" => 0,
-            "20" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -515,6 +516,8 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -612,8 +615,9 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function makeScoringShotOffQualification($score)
+    protected function makeScoringShotOffQualification($score, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $total = 0;
         $arrows = [];
         foreach ($score as $key => $value) {
@@ -639,45 +643,37 @@ class ArcheryScoring extends Model
         $ten = $total_per_point[10];
         $eleven = $total_per_point[11];
         $twelve = $total_per_point[12];
-        $thirteen = $total_per_point[13];
-        $fourteen = $total_per_point[14];
-        $fifteen = $total_per_point[15];
-        $sixteen = $total_per_point[16];
-        $seventeen = $total_per_point[17];
-        $eighteen = $total_per_point[18];
-        $nineteen = $total_per_point[19];
-        $twenty = $total_per_point[20];
         $x = $total_per_point["x"];
         $x_plus_y = $x + $ten;
-        $output = $total + (($x_plus_y + (($nineteen + (($twenty + (($eighteen + (($seventeen + (($sixteen + (($fifteen + (($fourteen + (($thirteen + (($twelve + (($x + (($eleven + (($ten + (($nine + (($eight + (($seven + (($six + (($five + (($four + (($three + (($two + ($one * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key);
-        return $output;
-    }
+        $output = $total + (
+            ($x_plus_y + (
+                ($x + (
+                    ($twelve + (
+                        ($eleven + (
+                            ($ten + (
+                                ($nine + (
+                                    ($eight + (
+                                        ($seven + (
+                                            ($six + (
+                                                ($five + (
+                                                    ($four + (
+                                                        ($three + (
+                                                            ($two +
+                                                                ($one * $key)
+                                                            ) * $key)
+                                                        ) * $key)
+                                                    ) * $key)
+                                                ) * $key)
+                                            ) * $key)
+                                        ) * $key)
+                                    ) * $key)
+                                ) * $key)
+                            ) * $key)
+                        ) * $key)
+                    ) * $key)
+                ) * $key)
+            ) * $key);
 
-    protected function getTotalTmpXLowest(array $total_per_point, $total, $key = 0.01)
-    {
-        $one = $total_per_point[1];
-        $two = $total_per_point[2];
-        $three = $total_per_point[3];
-        $four = $total_per_point[4];
-        $five = $total_per_point[5];
-        $six = $total_per_point[6];
-        $seven = $total_per_point[7];
-        $eight = $total_per_point[8];
-        $nine = $total_per_point[9];
-        $ten = $total_per_point[10];
-        $eleven = $total_per_point[11];
-        $twelve = $total_per_point[12];
-        $thirteen = $total_per_point[13];
-        $fourteen = $total_per_point[14];
-        $fifteen = $total_per_point[15];
-        $sixteen = $total_per_point[16];
-        $seventeen = $total_per_point[17];
-        $eighteen = $total_per_point[18];
-        $nineteen = $total_per_point[19];
-        $twenty = $total_per_point[20];
-        $x = $total_per_point["x"];
-        $x_plus_y = $x + $ten;
-        $output = $total + (($x_plus_y + (($nineteen + (($twenty + (($eighteen + (($seventeen + (($sixteen + (($fifteen + (($fourteen + (($thirteen + (($twelve + (($x + (($eleven + (($ten + (($nine + (($eight + (($seven + (($six + (($five + (($four + (($three + (($two + ($one * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key)) * $key);
         return $output;
     }
 
