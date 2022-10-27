@@ -18,7 +18,7 @@ class BudRest extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['archery_event_category_id', 'bud_rest_start', 'bud_rest_end', 'target_face', 'type'];
 
-    protected function downloadQualificationScoreSheet($category_id, $update_file = false, $session = 1)
+    protected function downloadQualificationScoreSheet($category_id, $update_file = true, $session = 1)
     {
 
         $category = ArcheryEventCategoryDetail::find($category_id);

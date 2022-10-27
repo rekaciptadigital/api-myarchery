@@ -115,14 +115,15 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring) {
                         $admin_total = $archery_scooring->admin_total;
                         $scoring_detail = json_decode($archery_scooring->scoring_detail);
+                        $total_scoring_detail = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
 
                         if ($admin_total != 0) {
                             $total_scoring = $admin_total;
                         } else {
-                            $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+                            $total_scoring = $total_scoring_detail;
                         }
 
-                        if ($total_scoring != $admin_total) {
+                        if ($total_scoring_detail != $admin_total) {
                             $is_different = 1;
                         }
                     }
@@ -221,14 +222,14 @@ class GetEventEliminationTemplate extends Retrieval
                     if ($archery_scooring_team) {
                         $admin_total = $archery_scooring_team->admin_total;
                         $scoring_detail = json_decode($archery_scooring_team->scoring_detail);
-
+                        $total_scoring_detail = $scoring_detail->result;
                         if ($admin_total != 0) {
                             $total_scoring = $admin_total;
                         } else {
-                            $total_scoring = $scoring_detail->result;
+                            $total_scoring = $total_scoring_detail;
                         }
 
-                        if ($total_scoring != $admin_total) {
+                        if ($total_scoring_detail != $admin_total) {
                             $is_different = 1;
                         }
                     }
