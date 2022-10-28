@@ -47,9 +47,9 @@ class SetConfigTargetFace extends Retrieval
             if ($implement_all == 0) {
                 foreach ($categories_config as $value) {
                     $new_config_target_face_per_category = new ConfigTargetFacePerCategory();
-                    $new_config_target_face->highest_score = $value["highest_score"];
-                    $new_config_target_face->score_x = $value["score_x"];
-                    $new_config_target_face->categories = json_encode($value["categories"]);
+                    $new_config_target_face_per_category->highest_score = $value["highest_score"];
+                    $new_config_target_face_per_category->score_x = $value["score_x"];
+                    $new_config_target_face_per_category->categories = json_encode($value["categories"]);
                     $new_config_target_face_per_category->save();
                 }
             }
@@ -74,8 +74,8 @@ class SetConfigTargetFace extends Retrieval
 
         if ($parameters->get("implement_all") == 0) {
             $rules["categories_config"] = "required|array|min:1";
-            $rules["categories_config.*.highest_score"] = "required|integer|max:20";
-            $rules["categories_config.*.score_x"] = "required|in:1,2";
+            $rules["categories_config.*.highest_score"] = "required|integer|max:12";
+            $rules["categories_config.*.score_x"] = "required|in:0,1,2,3,4,5,6,7,8,,9,10,11,12";
             $rules["categories_config.*.categories"] = "required|array|min:1";
             $rules["categories_config.*.categories.*.competition_category_id"] = "required|exists:archery_master_competition_categories,id";
             $rules["categories_config.*.categories.*.distance_id"] = "required|exists:archery_master_distances,id";
