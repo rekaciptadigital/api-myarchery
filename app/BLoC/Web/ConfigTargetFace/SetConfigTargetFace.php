@@ -47,6 +47,7 @@ class SetConfigTargetFace extends Retrieval
             if ($implement_all == 0) {
                 foreach ($categories_config as $value) {
                     $new_config_target_face_per_category = new ConfigTargetFacePerCategory();
+                    $new_config_target_face_per_category->config_id = $new_config_target_face->id;
                     $new_config_target_face_per_category->highest_score = $value["highest_score"];
                     $new_config_target_face_per_category->score_x = $value["score_x"];
                     $new_config_target_face_per_category->categories = json_encode($value["categories"]);
