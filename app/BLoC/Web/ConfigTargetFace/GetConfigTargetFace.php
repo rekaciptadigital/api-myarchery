@@ -33,7 +33,7 @@ class GetConfigTargetFace extends Retrieval
             $score_x = $config_target_face->score_x;
             $implement_all = $config_target_face->implement_all;
             if ($config_target_face->implement_all == 0) {
-                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face->id)->get();
                 foreach ($config_target_face_per_category as $key => $value) {
                     $value->categories = json_decode($value->categories);
                 }
