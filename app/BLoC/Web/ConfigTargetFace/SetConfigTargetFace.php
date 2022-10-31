@@ -54,13 +54,13 @@ class SetConfigTargetFace extends Retrieval
                     $new_config_target_face_per_category->save();
                 }
             }
+
+            if ($new_config_target_face->implement_all == 0) {
+                $new_config_target_face->categories_config = ConfigTargetFacePerCategory::where("config_id", $new_config_target_face->id)->get();
+            }
         }
 
-        if ($new_config_target_face->implement_all == 0) {
-            $new_config_target_face->categories_config = ConfigTargetFacePerCategory::where("config_id", $new_config_target_face->id)->get();
-        }
-
-        return $new_config_target_face;
+        return "success";
     }
 
     protected function validation($parameters)
