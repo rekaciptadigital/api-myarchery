@@ -82,7 +82,24 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 ->where("competition_category_id", $category->competition_category_id)
                 ->where("team_category_id", $category->team_category_id)
                 ->first();
-            $user = User::select('name', 'address_province_id', 'verify_status', 'address_city_id', 'address', 'date_of_birth', 'ktp_kk', 'selfie_ktp_kk', 'place_of_birth', "is_wna", "passport_number", "country_id", "city_of_country_id", 'nik', DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, $time_stamp_event_start) AS age"))->where('id', $value->user_id)->first();
+            $user = User::select(
+                'name',
+                "phone_number",
+                'address_province_id',
+                'verify_status',
+                'address_city_id',
+                'address',
+                'date_of_birth',
+                'ktp_kk',
+                'selfie_ktp_kk',
+                'place_of_birth',
+                "is_wna",
+                "passport_number",
+                "country_id",
+                "city_of_country_id",
+                'nik',
+                DB::RAW("TIMESTAMPDIFF(YEAR, date_of_birth, $time_stamp_event_start) AS age")
+            )->where('id', $value->user_id)->first();
             $athlete_code = ArcheryUserAthleteCode::getAthleteCode($value->user_id, "perpani");
             $city = City::find($user["address_city_id"]);
             $province = Provinces::find($user["address_province_id"]);
