@@ -60,7 +60,7 @@ class SetConfigTargetFace extends Retrieval
             }
         }
 
-        return $new_config_target_face;
+        return "success";
     }
 
     protected function validation($parameters)
