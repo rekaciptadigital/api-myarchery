@@ -56,7 +56,7 @@ class GetIdCardByCategory extends Retrieval
 
         $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $event_id)->first();
         if (!$idcard_event) {
-            throw new BLoCException("Template event id card tidak ditemukan");
+            throw new BLoCException("ID card bantalan belum di set, silahkan konfigurasi di menu ID card");
         }
 
         $html_template = base64_decode($idcard_event->html_template);
