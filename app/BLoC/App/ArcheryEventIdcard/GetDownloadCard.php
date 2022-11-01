@@ -38,7 +38,7 @@ class GetDownloadCard extends Retrieval
 
         $idcard_event = ArcheryEventIdcardTemplate::where('event_id', $find_participant_member_team->event_id)->first();
         if (!$idcard_event) {
-            throw new BLoCException("Template event id card tidak ditemukan");
+            throw new BLoCException("ID card bantalan belum di set, silahkan konfigurasi di menu ID card");
         }
 
         $category = ArcheryEventIdcardTemplate::getCategoryLabel($find_participant_member_team->participant_id, $find_participant_member_team->user_id);
