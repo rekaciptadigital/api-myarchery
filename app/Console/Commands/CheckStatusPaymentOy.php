@@ -43,7 +43,7 @@ class CheckStatusPaymentOy extends Command
         $trans_log = TransactionLog::where("gateway","OY")->where("status", 4)->get();
         foreach ($trans_log as $key => $value) {
             echo "order id : ".$value."\n";
-            $checkout = PaymentGateWay::notificationCallbackPaymnetOy($order_id);
+            $checkout = PaymentGateWay::notificationCallbackPaymnetOy($value);
             print_r($checkout);
             echo "\n\n";
         }
