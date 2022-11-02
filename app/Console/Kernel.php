@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\SetBudRest::class,
-        Commands\GenerateTask::class
+        Commands\GenerateTask::class,
+        Commands\CheckStatusPaymentOy::class
     ];
 
     /**
@@ -27,5 +28,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('set:BudRest');
         $schedule->command('generate:task');
+        $schedule->command('check:StatusOy');
     }
 }

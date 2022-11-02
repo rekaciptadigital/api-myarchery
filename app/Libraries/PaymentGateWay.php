@@ -455,9 +455,7 @@ class PaymentGateWay
         ];
     }
 
-    public static function notificationCallbackPaymnetOy($parameters){
-        $order_id = $parameters->get('partner_tx_id');
-
+    public static function notificationCallbackPaymnetOy($order_id){
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=false&partner_tx_id=' . $order_id, [
             'headers' => [
@@ -686,6 +684,14 @@ class PaymentGateWay
                 ];
             }
             EoCashFlow::insert($cash_flow);
+        }
+    }
+
+    public static function CheckStatusOY()
+    {
+        $trans_log = TransactionLog::where("gateway","OY")->where("status", 4)->get();
+        foreach ($trans_log as $key => $value) {
+            self::notificationCallbackPaymnetOy($order_id);
         }
     }
 }
