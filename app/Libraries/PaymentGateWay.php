@@ -219,17 +219,20 @@ class PaymentGateWay
                         "022" => 3500,
                         "009" => 3500,
                         "014" => 4500,
+                        "default" => 3500,
                         "type" => "nominal"
                     ],
                     "QRIS" => [
                         "all" => 0.7,
+                        "default" => 0.7,
                         "type" => "percentage"
                     ],
                     "EWALLET" => [
                         "dana" => 1.5,
                         "linkaja_ewallet" => 1.5,
-                        "shopeepay" => 2,
-                        "ovo" => 1.5,
+                        "shopeepay_ewallet" => 2,
+                        "default" => 1.5,
+                        "ovo_ewallet" => 1.5,
                         "type" => "percentage"
                     ]
                 ]
@@ -239,7 +242,7 @@ class PaymentGateWay
         }
         $type = $list[self::$gateway][self::$payment_methode]["type"];
         $sender_bank = self::$payment_methode == "QRIS" ? "all" : self::$sender_bank;
-        $n = $list[self::$gateway][self::$payment_methode][$sender_bank];
+        $n = isset($list[self::$gateway][self::$payment_methode][$sender_bank]) ? $list[self::$gateway][self::$payment_methode][$sender_bank] : $list[self::$gateway][self::$payment_methode]["default"];
         if($type == "percentage"){
             $fee = round($amount * ($n/100));
         }
@@ -452,9 +455,7 @@ class PaymentGateWay
         ];
     }
 
-    public static function notificationCallbackPaymnetOy($parameters){
-        $order_id = $parameters->get('partner_tx_id');
-
+    public static function notificationCallbackPaymnetOy($order_id){
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', env('OY_BASEURL',"https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=false&partner_tx_id=' . $order_id, [
             'headers' => [
@@ -652,6 +653,7 @@ class PaymentGateWay
         if($status == 1){
             $event_official_detail = ArcheryEventOfficialDetail::where('id',$archery_event_official->event_official_detail_id)->first();
             $event = ArcheryEvent::where('id',$event_official_detail->event_id)->first();
+            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
             $admin_have_event = Admin::where('id',$event->admin_id)->first();
             $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
@@ -682,6 +684,14 @@ class PaymentGateWay
                 ];
             }
             EoCashFlow::insert($cash_flow);
+        }
+    }
+
+    public static function CheckStatusOY()
+    {
+        $trans_log = TransactionLog::where("gateway","OY")->where("status", 4)->get();
+        foreach ($trans_log as $key => $value) {
+            self::notificationCallbackPaymnetOy($order_id);
         }
     }
 }

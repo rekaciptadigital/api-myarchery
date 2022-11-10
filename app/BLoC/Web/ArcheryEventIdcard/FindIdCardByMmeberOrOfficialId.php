@@ -51,7 +51,7 @@ class FindIdCardByMmeberOrOfficialId extends Transactional
 
         $id_card_template = ArcheryEventIdcardTemplate::where("event_id", $event_id)->first();
         if (!$id_card_template) {
-            throw new BLoCException("template tidak tersedia");
+            throw new BLoCException("ID card bantalan belum di set, silahkan konfigurasi di menu ID card");
         }
 
         $background = $id_card_template->background;
