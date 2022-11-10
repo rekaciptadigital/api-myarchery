@@ -31,8 +31,6 @@ class InsertParticipantByAdmin extends Transactional
     protected function process($parameters)
     {
         $admin = Auth::user();
-        // $category_id = $parameters->get("category_id");
-        $emails = $parameters->get("emails");
 
         $object = $parameters->get("object");
 
@@ -40,7 +38,7 @@ class InsertParticipantByAdmin extends Transactional
             $user_new = User::where("email", $o["email"])->first();
             if (!$user_new) {
                 $user_new = new User;
-                $user_new->gender = "male";
+                $user_new->gender = $o["gender"];
                 $user_new->name = $o["name"];
                 $user_new->password = Hash::make("12345678");
                 $user_new->email = $o["email"];
@@ -135,10 +133,12 @@ class InsertParticipantByAdmin extends Transactional
     protected function validation($parameters)
     {
         return [
-            // "category_id" => "required|integer",
-            // "emails"    => "required|array|min:1|max:20",
-            // "emails.*"  => "required|email|distinct",
-            "object" => "required"
+            "object" => "required",
+            "object.*.email" => "required",
+            "object.*.name" => "required",
+            "object.*.phone_number" => "required",
+            "object.*.category_id" => "required|numeric|exists:archery_event_category_details,id",
+            "object.*.gender" => "required|in:male,female",
         ];
     }
 }

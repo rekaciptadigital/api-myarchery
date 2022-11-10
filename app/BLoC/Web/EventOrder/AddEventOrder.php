@@ -88,6 +88,11 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
+        if ($event->my_archery_fee_percentage > 0)
+            $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage / 100));
+
+        $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
+
         if ($event->is_private) {
             $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user->email)->where("event_id", $event->id)->first();
             if (!$check_email_whitelist)
@@ -327,6 +332,8 @@ class AddEventOrder extends Transactional
             ->enabledPayments(["bca_va", "bni_va", "bri_va", "gopay", "other_va"])
             // ->enabledPaymentWithFee($this->payment_methode, $this->have_fee_payment_gateway)
             ->createSnap();
+        if (!$payment->status)
+            throw new BLoCException($payment->message);
 
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();

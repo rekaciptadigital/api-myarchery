@@ -171,6 +171,8 @@ use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
 use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
+use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
+use App\BLoC\Web\ArcheryReport\ReportRankQualification;
 
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -231,6 +233,11 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("editArcheryCategory", EditArcheryCategory::class);
         $this->registerService("getArcheryCategory", GetArcheryCategory::class);
 
+        // ================================ queen series 4 =========================================
+        $this->registerService("reportRankQualification", ReportRankQualification::class);
+        $this->registerService("getDownloadBaganElimination", GetDownloadBaganElimination::class);
+        // =================================== end series 4==========================================
+
         // ============================= Event ==============================
         $this->registerService("editArcheryEvent", EditArcheryEvent::class);
         $this->registerService("deleteArcheryEvent", DeleteArcheryEvent::class);
@@ -250,7 +257,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadEmptyScoreSheetElimination", DownloadEmptyScoreSheetElimination::class);
         $this->registerService("setConfigRegisterCategory", SetConfigRegisterCategory::class);
         $this->registerService("getConfigCategoryRegistrationDate", GetConfigCategoryRegistrationDate::class);
-        
+
         $this->registerService("createNewUser", CreateNewUser::class);
         $this->registerService("checkAdminExists", CheckAdminExists::class);
         $this->registerService("getListRole", GetListRole::class);

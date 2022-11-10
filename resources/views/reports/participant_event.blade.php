@@ -88,8 +88,10 @@
                     <td style="text-align: left;">{{ $data['phone_number'] ? $data['phone_number'] : '-' }}</td>
                     <td style="text-align: center;">{{ $data['nik'] ? $data['nik'] : '-' }} </td>
                     <td style="text-align: center;">{{ $data['country'] ? $data['country'] : '-' }} </td>
-                    <td style="text-align: center;">{{ $data['city_of_country'] ? $data['city_of_country'] : '-' }} </td>
-                    <td style="text-align: center;">{{ $data['passport_number'] ? $data['passport_number'] : '-' }} </td>
+                    <td style="text-align: center;">{{ $data['city_of_country'] ? $data['city_of_country'] : '-' }}
+                    </td>
+                    <td style="text-align: center;">{{ $data['passport_number'] ? $data['passport_number'] : '-' }}
+                    </td>
                     {{-- <td style="text-align: center;">{{ $data['foto_ktp'] ? $data['foto_ktp'] : '-' }} </td> --}}
                     {{-- <td style="text-align: center;">{{ $data['foto_peserta'] ? $data['foto_peserta'] : '-' }} </td> --}}
                     {{-- <td style="text-align: center;">{{ $data['foto_bukti'] ? $data['foto_bukti'] : '-' }} </td> --}}

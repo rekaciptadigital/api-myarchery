@@ -38,8 +38,8 @@
         <tbody>
             <tr style="height: 30px;">
                 <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
-                    <img style="display: block;" src="https://myarchery.id/static/media/myachery.9ed0d268.png" alt=""
-                        height="90" />
+                    <img style="display: block;" src="https://myarchery.id/static/media/myachery.9ed0d268.png"
+                        alt="" height="90" />
                 </td>
                 <td
                     style="width: 349px; height: 86px; border-style: none; font-size: 12px;text-align: left;float: left;">
@@ -49,7 +49,7 @@
                     <p style="text-align: left;float: left;">{{ $category_label }}</p>
                 </td>
                 <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
-                    <!-- <img style="display: block;" src="" alt="" height="90" /> -->
+                    <img style="display: block;" src="{{ $event['logo'] }}" alt="" height="90" />
                 </td>
             </tr>
         </tbody>
@@ -88,9 +88,9 @@
                 <th class="border" style="height: 42px; width: 20px;">2</th>
                 <th class="border" style="height: 42px; width: 20px;">3</th>
                 <?php if($total_shot_per_stage > 6){ ?>
-                    <th class="border" style="height: 42px; width: 20px;">4</th>
+                <th class="border" style="height: 42px; width: 20px;">4</th>
                 <?php }if($total_shot_per_stage > 8){ ?>
-                    <th class="border" style="height: 42px; width: 20px;">5</th>
+                <th class="border" style="height: 42px; width: 20px;">5</th>
                 <?php } ?>
                 <th class="border" style="height: 42px; width: 50.2;">Jumlah</th>
                 <th class="border" style="width: 50.3px; height: 42px;">Total</th>
@@ -99,19 +99,19 @@
             </tr>
         </thead>
         <tbody>
-        <?php for ($i=0; $i < $total_stage; $i++) { ?>
+            <?php for ($i=0; $i < $total_stage; $i++) { ?>
             <tr style="background-color: #e3e2de;">
-                <td class="border" style="height: 36px; width: 17px;" rowspan="2">{{$i+1}}</td>
+                <td class="border" style="height: 36px; width: 17px;" rowspan="2">{{ $i + 1 }}</td>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php if($total_shot_per_stage > 2){ ?>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php }if($total_shot_per_stage > 4){ ?>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php }if($total_shot_per_stage > 6){ ?>
-                    <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
+                <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php } ?>
                 <?php if($total_shot_per_stage > 8){ ?>
-                    <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
+                <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php } ?>
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.3px;" rowspan="2">&nbsp;</td>
@@ -123,12 +123,12 @@
                 <?php if($total_shot_per_stage > 2){ ?>
                 <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php }if($total_shot_per_stage > 4){ ?>
-                    <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
+                <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php }if($total_shot_per_stage > 6){ ?>
-                    <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
+                <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php } ?>
                 <?php if($total_shot_per_stage > 8){ ?>
-                    <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
+                <td class="border" style="height: 30px; width: 20px;">&nbsp;</td>
                 <?php } ?>
                 <td class="border" style="height: 30px; width: 50.2;">&nbsp;</td>
                 <td class="border" style="height: 30px; width: 50.01px;">&nbsp;</td>
@@ -149,7 +149,8 @@
         <tbody>
             <tr>
                 <td rowspan="2" style="width: 280px; height: 200px;">
-                    <img style="display: block;" src="{{ $qr }}" alt="" width="150" height="150" />
+                    <img style="display: block;" src="{{ $qr }}" alt="" width="150"
+                        height="150" />
                 </td>
                 <td style="border-bottom: 1pt solid black;width: 39.1621%; height: 100px;margin :10px">&nbsp;</td>
                 <td style="width: 10%; height: 100px;margin :10px">&nbsp;</td>

@@ -102,7 +102,7 @@ class GetDownloadArcheryEventOfficial extends Retrieval
 
         $template = ArcheryEventOfficialTemplate::where('event_id', $event_id)->first();
         if (!$template) {
-            throw new BLoCException("template official was not found");
+            throw new BLoCException("ID card official belum di set, silahkan konfigurasi di menu ID card");
         }
 
         if (!$template->background) {

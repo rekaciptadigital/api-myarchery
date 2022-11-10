@@ -21,8 +21,11 @@ class CallbackMidtrans extends Transactional
 
     protected function process($parameters)
     {
-        $payment = PaymentGateWay::notificationCallbackPaymnet();
-        return $payment;
+        $gateway = $parameters->get("gateway");
+        if($gateway == "OY"){
+            return PaymentGateWay::notificationCallbackPaymnetOy($parameters->get('partner_tx_id'));
+        }
+        return PaymentGateWay::notificationCallbackPaymnet();
     }
 
     protected function validation($parameters)
