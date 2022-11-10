@@ -343,7 +343,7 @@ class PaymentGateWay
             "step" => "select-payment-method",
             "include_admin_fee" => self::$fee_payment_gateway_to_user ? true : false,
             "expiration" => date('Y-m-d H:i:s', $expired_time),
-            "list_disabled_payment_methods" => implode(",",["CREDIT_CARD","DEBIT_CARD","OFFLINE_CASH_IN"])
+            "list_disabled_payment_methods" => implode(",",["DEBIT_CARD","OFFLINE_CASH_IN"])
         ];
         
         $client = new \GuzzleHttp\Client();
@@ -413,11 +413,11 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
-        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
+        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 60) . " minutes", time());
         $params = array(
             "expiry" => array(
                 "unit" => "minutes",
-                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30)
+                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 60)
             ),
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
