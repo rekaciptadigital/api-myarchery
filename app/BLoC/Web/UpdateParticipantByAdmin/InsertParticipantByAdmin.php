@@ -48,7 +48,7 @@ class InsertParticipantByAdmin extends Transactional
 
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type as type_team")
                 ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
-                ->where("id", $o["category_id"])
+                ->where("archery_event_category_details.id", $o["category_id"])
                 ->first();
 
             if (!$category) {
