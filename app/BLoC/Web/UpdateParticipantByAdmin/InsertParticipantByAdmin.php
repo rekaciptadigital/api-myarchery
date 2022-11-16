@@ -46,14 +46,20 @@ class InsertParticipantByAdmin extends Transactional
                 $user_new->save();
             }
 
-            $category = ArcheryEventCategoryDetail::find($o["category_id"]);
+            $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type as type_team")
+                ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+                ->where("id", $o["category_id"])
+                ->first();
+
             if (!$category) {
                 throw new BLoCException("category not found");
             }
 
-            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category->id)->first();
-            if (!$qualification_time) {
-                throw new BLoCException('event belum bisa di daftar');
+            if (strtolower($category->type_team) == "individual") {
+                $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category->id)->first();
+                if (!$qualification_time) {
+                    throw new BLoCException('event belum bisa di daftar');
+                }
             }
 
             $event = ArcheryEvent::find($category->event_id);
