@@ -11,7 +11,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -26,10 +26,11 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 
 class ArcheryEventParticipantExport implements WithMultipleSheets
 {
-    protected $event_id,$status_id;
+    protected $event_id, $status_id;
 
-    function __construct($event_id) {
-            $this->event_id = $event_id;
+    function __construct($event_id)
+    {
+        $this->event_id = $event_id;
     }
 
     public function sheets(): array
@@ -41,5 +42,3 @@ class ArcheryEventParticipantExport implements WithMultipleSheets
         return $sheets;
     }
 }
-
-

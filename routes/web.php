@@ -430,6 +430,10 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/set-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigClubRanked']);
             $router->get('/get-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigClubRanked']);
         });
+
+        $router->group(["prefix" => "support", "middleware" => 'auth.admin'], function () use ($router) {
+            $router->post("insert-budrest-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertMemberBudrestByCsv']);
+        });
     });
 
     // ============================================ v2 =======================================================
