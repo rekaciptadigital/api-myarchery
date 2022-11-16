@@ -100,26 +100,28 @@ class InsertParticipantByAdmin extends Transactional
             $participant->register_by = 2;
             $participant->save();
 
-            // insert ke archery_event_participant_member
-            $member = ArcheryEventParticipantMember::create([
-                "archery_event_participant_id" => $participant->id,
-                "name" => $user_new->name,
-                "gender" => $user_new->gender,
-                "birthdate" => $user_new->date_of_birth,
-                "age" => $user_new->age,
-                "team_category_id" => $category->team_category_id,
-                "user_id" => $user_new->id
-            ]);
+            if (strtolower($category->type_team) == "individual") {
+                // insert ke archery_event_participant_member
+                $member = ArcheryEventParticipantMember::create([
+                    "archery_event_participant_id" => $participant->id,
+                    "name" => $user_new->name,
+                    "gender" => $user_new->gender,
+                    "birthdate" => $user_new->date_of_birth,
+                    "age" => $user_new->age,
+                    "team_category_id" => $category->team_category_id,
+                    "user_id" => $user_new->id
+                ]);
 
-            ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($category->id, $user_new->gender), $participant->id);
-            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event->id, $user_new->gender), $user_new->id, $event->id);
-            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
-            Redis::hset($key, $category->id, $category->id);
-            ArcheryEventQualificationScheduleFullDay::create([
-                'qalification_time_id' => $qualification_time->id,
-                'participant_member_id' => $member->id,
-            ]);
-            ParticipantMemberTeam::saveParticipantMemberTeam($category->id, $participant->id, $member->id, $category->category_team);
+                ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($category->id, $user_new->gender), $participant->id);
+                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event->id, $user_new->gender), $user_new->id, $event->id);
+                $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
+                Redis::hset($key, $category->id, $category->id);
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $qualification_time->id,
+                    'participant_member_id' => $member->id,
+                ]);
+                ParticipantMemberTeam::saveParticipantMemberTeam($category->id, $participant->id, $member->id, $category->category_team);
+            }
         }
 
         return "success";
