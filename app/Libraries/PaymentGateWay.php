@@ -234,6 +234,11 @@ class PaymentGateWay
                         "default" => 1.5,
                         "ovo_ewallet" => 1.5,
                         "type" => "percentage"
+                    ],
+                    "CC" => [
+                        "all" => 2.9,
+                        "default" => 2.9,
+                        "type" => "percentage"
                     ]
                 ]
             ];
@@ -241,7 +246,7 @@ class PaymentGateWay
             return 0;
         }
         $type = $list[self::$gateway][self::$payment_methode]["type"];
-        $sender_bank = self::$payment_methode == "QRIS" ? "all" : self::$sender_bank;
+        $sender_bank = self::$payment_methode == "QRIS" || self::$payment_methode == "CC" ? "all" : self::$sender_bank;
         $n = isset($list[self::$gateway][self::$payment_methode][$sender_bank]) ? $list[self::$gateway][self::$payment_methode][$sender_bank] : $list[self::$gateway][self::$payment_methode]["default"];
         if($type == "percentage"){
             $fee = round($amount * ($n/100));
@@ -249,6 +254,8 @@ class PaymentGateWay
         if($type == "nominal"){
             $fee = $n;
         }
+        if(self::$payment_methode == "CC")
+            $fee = $fee + 2000;
 
         return $fee;
     }
