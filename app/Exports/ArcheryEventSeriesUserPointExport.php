@@ -11,7 +11,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -30,13 +30,14 @@ class ArcheryEventSeriesUserPointExport implements WithMultipleSheets
 {
     protected $serie_id;
 
-    function __construct($serie_id) {
-            $this->serie_id = $serie_id;
+    function __construct($serie_id)
+    {
+        $this->serie_id = $serie_id;
     }
 
     public function sheets(): array
     {
-        $categories = ArcherySeriesCategory::where("serie_id",$this->serie_id)->get();
+        $categories = ArcherySeriesCategory::where("serie_id", $this->serie_id)->get();
 
         $sheets = [];
         foreach ($categories as $key => $value) {
@@ -45,5 +46,3 @@ class ArcheryEventSeriesUserPointExport implements WithMultipleSheets
         return $sheets;
     }
 }
-
-
