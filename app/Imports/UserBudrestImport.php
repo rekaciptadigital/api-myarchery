@@ -19,7 +19,7 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-        foreach ($rows as $row) {
+        foreach ($rows as $key => $row) {
             $name = $row["name"];
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_event_qualification_time.id as qualification_time_id")
                 ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
@@ -47,7 +47,7 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if (!$member) {
-                throw new BLoCException("member not found");
+                throw new BLoCException("member not found for name " . $name . " on index " . $key);
             }
 
 
