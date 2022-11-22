@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class UserBudrestImport implements ToCollection, WithHeadingRow
 {
+    private $fail_import = [];
     public function __construct(int $event_id)
     {
         $this->event_id = $event_id;
@@ -48,7 +49,10 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if (!$member) {
-                throw new BLoCException("member not found for name " . $name . " on index " . $key);
+                $this->fail_import[]["name"] = $name;
+                $this->fail_import[]["index"] = $key;
+                continue;
+                // throw new BLoCException("member not found for name " . $name . " on index " . $key);
             }
 
 
@@ -83,6 +87,11 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
             $schedule_full_day->target_face = $target_face;
             $schedule_full_day->save();
         }
+    }
+
+    public function getFailImport()
+    {
+        return $this->fail_import;
     }
 
     public function batchSize(): int
