@@ -49,8 +49,8 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if (!$member) {
-                $this->fail_import[]["name"] = $name;
-                $this->fail_import[]["index"] = $key;
+                $this->fail_import[$key]["name"] = $name;
+                $this->fail_import[$key]["index"] = $key;
                 continue;
                 // throw new BLoCException("member not found for name " . $name . " on index " . $key);
             }
