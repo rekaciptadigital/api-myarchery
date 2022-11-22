@@ -33,8 +33,9 @@ class InsertMemberBudrestByCsv extends Retrieval
 
         $file_name = "import_user_budrest/" . time() . ".csv";
         Excel::store(new UserBudrestExport($data), $file_name);
-        Excel::import(new UserBudrestImport($event_id), $file_name);
-        return "success";
+        $import = new UserBudrestImport($event_id);
+        Excel::import($import, $file_name);
+        return $import->getFailImport();
     }
 
     protected function validation($parameters)
