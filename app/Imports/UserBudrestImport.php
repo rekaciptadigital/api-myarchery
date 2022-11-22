@@ -44,6 +44,7 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
                 ->join("users", "users.id", "=", "archery_event_participants.user_id")
                 ->whereRaw("users.name like ?", ["%" . $name . "%"])
                 ->where("archery_event_participants.event_category_id", $category->id)
+                ->where("archery_event_participants.status", 1)
                 ->first();
 
             if (!$member) {
