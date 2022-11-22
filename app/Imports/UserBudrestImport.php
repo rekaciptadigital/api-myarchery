@@ -36,7 +36,7 @@ class UserBudrestImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if (!$category) {
-                throw new BLoCException("category not found");
+                throw new BLoCException("category not found " . $key);
             }
 
 
