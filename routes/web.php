@@ -436,6 +436,9 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/get-config', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigClubRanked']);
         });
 
+        $router->group(['prefix' => 'config-target-face', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigTargetFace']);
+            $router->get('/get-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigTargetFace']);
         $router->group(["prefix" => "support", "middleware" => 'auth.admin'], function () use ($router) {
             $router->post("insert-budrest-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertMemberBudrestByCsv']);
         });

@@ -173,6 +173,9 @@ use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
 use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
+use App\BLoC\Web\ConfigTargetFace\GetConfigTargetFace;
+use App\BLoC\Web\ConfigTargetFace\SetConfigTargetFace;
+
 use App\BLoC\Web\EndpointSupport\InsertMemberBudrestByCsv;
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
@@ -236,6 +239,8 @@ class WebServiceProvider extends ServiceProvider
         // ================================ queen series 4 =========================================
         $this->registerService("reportRankQualification", ReportRankQualification::class);
         $this->registerService("getDownloadBaganElimination", GetDownloadBaganElimination::class);
+        $this->registerService("setConfigTargetFace", SetConfigTargetFace::class);
+        $this->registerService("getConfigTargetFace", GetConfigTargetFace::class);
         // =================================== end series 4==========================================
 
         // ============================= Event ==============================

@@ -17,6 +17,8 @@ use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryScoringEliminationGroup;
+use App\Models\ConfigTargetFace;
+use App\Models\ConfigTargetFacePerCategory;
 use App\Models\UrlReport;
 use Illuminate\Support\Facades\Redis;
 
@@ -29,6 +31,7 @@ class AddParticipantMemberScore extends Transactional
 
     protected function process($parameters)
     {
+        return 36.010102 > 36.000003;
         $code = \explode("-", $parameters->code);
         if (count($code) < 3) {
             throw new BLoCException("kode bermasalah");
@@ -118,10 +121,29 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("jadwal belum di set");
         }
         $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 1)->first();
-        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
+        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
+        }
 
-        $score = ArcheryScoring::makeScoringShotOffQualification($parameters->shoot_scores);
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
+        $score = ArcheryScoring::makeScoringShotOffQualification($parameters->shoot_scores, $score_x_value);
 
         if ($get_score) {
             $scoring = ArcheryScoring::find($get_score->id);
@@ -220,23 +242,41 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("member tidak valid");
         }
 
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
         if ($get_elimination->elimination_scoring_type == 1) {
             if ($members[0] != [] && $members[1] == []) {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[0]);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[0], $score_x_value);
             } elseif ($members[1] != [] && $members[0] == []) {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[1]);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormatBye($members[1], $score_x_value);
             } else {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0], $members[1], $save_permanent);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypePointFormat($members[0], $members[1], $save_permanent, $score_x_value);
             }
         }
 
         if ($get_elimination->elimination_scoring_type == 2) {
             if ($members[0] != [] && $members[1] == []) {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[0]);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[0], $score_x_value);
             } elseif ($members[1] != [] && $members[0] == []) {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[1]);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormatBye($members[1], $score_x_value);
             } else {
-                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent);
+                $calculate = ArcheryScoring::calculateEliminationScoringTypeTotalFormat($members[0], $members[1], $save_permanent, $score_x_value);
             }
         }
 
@@ -343,10 +383,29 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("jadwal belum di set");
         }
         $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 1)->first();
-        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
+        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
+        }
 
-        $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
+        $score = ArcheryScoring::makeScoring($parameters->shoot_scores, $score_x_value);
         $event_score_id = $get_score ? $get_score->id : 0;
 
         if ($event_score_id) {
@@ -519,23 +578,41 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("tim tidak valid");
         }
 
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
         if ($get_elimination_group->elimination_scoring_type == 1) {
             if ($participants[0] != [] && $participants[1] == []) {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[0]);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[0], $score_x_value);
             } elseif ($participants[1] != [] && $participants[0] == []) {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[1]);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormatbye($participants[1], $score_x_value);
             } else {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormat($participants[0], $participants[1], $save_permanent);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypePointFormat($participants[0], $participants[1], $save_permanent, $score_x_value);
             }
         }
 
         if ($get_elimination_group->elimination_scoring_type == 2) {
             if ($participants[0] != [] && $participants[1] == []) {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[0]);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[0], $score_x_value);
             } elseif ($participants[1] != [] && $participants[0] == []) {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[1]);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormatBye($participants[1], $score_x_value);
             } else {
-                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormat($participants[0], $participants[1], $save_permanent);
+                $calculate = ArcheryScoringEliminationGroup::calculateEliminationScoringTypeTotalFormat($participants[0], $participants[1], $save_permanent, $score_x_value);
             }
         }
 
@@ -634,10 +711,29 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("jadwal belum di set");
         }
         $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 3)->first();
-        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
+        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
+        }
 
-        $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
+        $score = ArcheryScoring::makeScoring($parameters->shoot_scores, $score_x_value);
         $event_score_id = $get_score ? $get_score->id : 0;
 
         if ($event_score_id) {
@@ -719,10 +815,29 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("jadwal belum di set");
 
         $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 4)->first();
-        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4)
+        if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
+        }
 
-        $score = ArcheryScoring::makeScoring($parameters->shoot_scores);
+        $score_x_value = 10;
+        $config_target_face = ConfigTargetFace::where("event_id", $category->event_id)->first();
+        if ($config_target_face) {
+            $score_x_value = $config_target_face->score_x;
+            if ($config_target_face->implement_all == 0) {
+                $config_target_face_per_category = ConfigTargetFacePerCategory::where("config_id", $config_target_face)->get();
+                foreach ($config_target_face_per_category as $ctfpc) {
+                    if (
+                        $category->distance_id == $ctfpc->distance_id
+                        && $category->competition_category_id == $ctfpc->competition_category_id
+                        && $category->age_category_id == $ctfpc->age_category_id
+                    ) {
+                        $score_x_value = $ctfpc->score_x;
+                    }
+                }
+            }
+        }
+
+        $score = ArcheryScoring::makeScoring($parameters->shoot_scores, $score_x_value);
         $event_score_id = $get_score ? $get_score->id : 0;
 
         if ($event_score_id) {

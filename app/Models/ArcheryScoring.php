@@ -23,6 +23,8 @@ class ArcheryScoring extends Model
         "8" => 8,
         "9" => 9,
         "10" => 10,
+        "11" => 11,
+        "12" => 12,
         "x" => 10,
         "m" => 0,
     ];
@@ -90,6 +92,8 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -145,8 +149,9 @@ class ArcheryScoring extends Model
         return $scores;
     }
 
-    protected function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    protected function calculateEliminationScoringTypePointFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_point_2 = 0;
@@ -279,8 +284,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypePointFormatBye(array $scoring_1)
+    protected function calculateEliminationScoringTypePointFormatBye(array $scoring_1, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[1];
         $total_point_1 = 0;
         $total_score_1 = 0;
@@ -316,8 +322,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent)
+    protected function calculateEliminationScoringTypeTotalFormat(array $scoring_1, array $scoring_2, $save_permanent, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[2];
         $total_score_1 = 0;
         $total_score_2 = 0;
@@ -418,8 +425,9 @@ class ArcheryScoring extends Model
         ];
     }
 
-    protected function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1)
+    protected function calculateEliminationScoringTypeTotalFormatBye(array $scoring_1, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $scores = $this->elimination_scores_format_by_type[2];
         $total_score_1 = 0;
 
@@ -452,8 +460,9 @@ class ArcheryScoring extends Model
         return $scores;
     }
 
-    protected function makeScoring(array $scoring)
+    protected function makeScoring(array $scoring, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $total_per_points = [
             "" => 0,
             "1" => 0,
@@ -466,6 +475,8 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -473,12 +484,14 @@ class ArcheryScoring extends Model
         $scors = []; // data rambahan / keseluruhan arrow
         $total = 0;
         foreach ($scoring as $key => $value) {
+            // dd($value);
             $arrows = [];
             if (!empty($value)) {
                 foreach ($value as $k => $arrow) {
                     $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0;
                     $total = $total + $a;
                     $total_per_points[$arrow] = $total_per_points[$arrow] + 1;
+                    // dd($a);
                     $arrows[] = ["id" => $arrow, "value" => $a];
                 }
                 $scors[$key] = $arrows;
@@ -503,6 +516,8 @@ class ArcheryScoring extends Model
             "8" => 0,
             "9" => 0,
             "10" => 0,
+            "11" => 0,
+            "12" => 0,
             "x" => 0,
             "m" => 0,
         ];
@@ -600,8 +615,9 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function makeScoringShotOffQualification($score)
+    protected function makeScoringShotOffQualification($score, $score_x_value = 10)
     {
+        $this->score_value["x"] = $score_x_value;
         $total = 0;
         $arrows = [];
         foreach ($score as $key => $value) {
@@ -625,21 +641,27 @@ class ArcheryScoring extends Model
         $eight = $total_per_point[8];
         $nine = $total_per_point[9];
         $ten = $total_per_point[10];
+        $eleven = $total_per_point[11];
+        $twelve = $total_per_point[12];
         $x = $total_per_point["x"];
         $x_plus_y = $x + $ten;
         $output = $total + (
             ($x_plus_y + (
                 ($x + (
-                    ($ten + (
-                        ($nine + (
-                            ($eight + (
-                                ($seven + (
-                                    ($six + (
-                                        ($five + (
-                                            ($four + (
-                                                ($three + (
-                                                    ($two +
-                                                        ($one * $key)
+                    ($twelve + (
+                        ($eleven + (
+                            ($ten + (
+                                ($nine + (
+                                    ($eight + (
+                                        ($seven + (
+                                            ($six + (
+                                                ($five + (
+                                                    ($four + (
+                                                        ($three + (
+                                                            ($two +
+                                                                ($one * $key)
+                                                            ) * $key)
+                                                        ) * $key)
                                                     ) * $key)
                                                 ) * $key)
                                             ) * $key)
@@ -651,6 +673,7 @@ class ArcheryScoring extends Model
                     ) * $key)
                 ) * $key)
             ) * $key);
+
         return $output;
     }
 
