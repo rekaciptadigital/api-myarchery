@@ -6,18 +6,14 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventOfficial;
 use App\Models\TransactionLog;
 use App\Models\EoCashFlow;
-
-use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
-use App\Models\ClubMember;
 use App\Models\ArcherySeriesUserPoint;
 use App\Models\ParticipantMemberTeam;
-use App\Models\TemporaryParticipantMember;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\ArcheryEventOfficialDetail;
@@ -213,35 +209,35 @@ class PaymentGateWay
             return 0;
         }
         $fee = 0;
-        $list = ["OY" => [
-                    "VA" => [
-                        "002" => 3500,
-                        "013" => 3500,
-                        "008" => 3500,
-                        "022" => 3500,
-                        "009" => 3500,
-                        "014" => 4500,
-                        "default" => 3500,
-                        "type" => "nominal"
-                    ],
-                    "QRIS" => [
-                        "all" => 0.7,
-                        "default" => 0.7,
-                        "type" => "percentage"
-                    ],
-                    "EWALLET" => [
-                        "dana" => 1.5,
-                        "linkaja_ewallet" => 1.5,
-                        "shopeepay_ewallet" => 2,
-                        "default" => 1.5,
-                        "ovo_ewallet" => 1.5,
-                        "type" => "percentage"
-                    ],
-                    "CC" => [
-                        "all" => 2.9,
-                        "default" => 2.9,
-                        "type" => "percentage"
-                    ]
+        $list = [
+            "OY" => [
+                "VA" => [
+                    "002" => 3500,
+                    "013" => 3500,
+                    "008" => 3500,
+                    "022" => 3500,
+                    "009" => 3500,
+                    "014" => 4500,
+                    "default" => 3500,
+                    "type" => "nominal"
+                ],
+                "QRIS" => [
+                    "all" => 0.7,
+                    "default" => 0.7,
+                    "type" => "percentage"
+                ],
+                "EWALLET" => [
+                    "dana" => 1.5,
+                    "linkaja_ewallet" => 1.5,
+                    "shopeepay_ewallet" => 2,
+                    "default" => 1.5,
+                    "ovo_ewallet" => 1.5,
+                    "type" => "percentage"
+                ],
+                "CC" => [
+                    "all" => 2.9,
+                    "default" => 2.9,
+                    "type" => "percentage"
                 ]
             ]
         ];
@@ -257,7 +253,7 @@ class PaymentGateWay
         if ($type == "nominal") {
             $fee = $n;
         }
-        if(self::$payment_methode == "CC")
+        if (self::$payment_methode == "CC")
             $fee = $fee + 2000;
 
         return $fee;
@@ -625,7 +621,7 @@ class PaymentGateWay
                 'amount' => $transaction_log->total_amount,
             ];
             if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
+                $gateway_fee = self::getPaymentFee(self::$oy_callback["payment_method"], self::$oy_callback["sender_bank"], $transaction_log->amount, true);
                 if ($gateway_fee > 0) {
                     $cash_flow[] = [
                         'eo_id' => $admin_have_event->eo_id,
@@ -675,7 +671,7 @@ class PaymentGateWay
                 'amount' => $transaction_log->total_amount,
             ];
             if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
+                $gateway_fee = self::getPaymentFee(self::$oy_callback["payment_method"], self::$oy_callback["sender_bank"], $transaction_log->amount, true);
                 if ($gateway_fee > 0) {
                     $cash_flow[] = [
                         'eo_id' => $admin_have_event->eo_id,
@@ -703,7 +699,7 @@ class PaymentGateWay
     {
         $trans_log = TransactionLog::where("gateway", "OY")->where("status", 4)->get();
         foreach ($trans_log as $key => $value) {
-            self::notificationCallbackPaymnetOy($order_id);
+            self::notificationCallbackPaymnetOy($value->order_id);
         }
     }
 }
