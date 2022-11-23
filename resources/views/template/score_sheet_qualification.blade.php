@@ -49,7 +49,7 @@
                     <p style="text-align: left;float: left;">{{ $category_label }}</p>
                 </td>
                 <td style="width: 150px; height: 86px; border-style: none; text-align: center;">
-                    <img style="display: block;" src="{{$event["logo"]}}" alt="" height="90" />
+                    <img style="display: block;" src="{{ $event['logo'] }}" alt="" height="90" />
                 </td>
             </tr>
         </tbody>

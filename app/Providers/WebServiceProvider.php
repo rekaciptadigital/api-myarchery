@@ -169,11 +169,14 @@ use App\BLoC\Web\ArcheryScoreSheet\DownloadEliminationSelectionScoresheet;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelection;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection;
 use App\BLoC\Web\ArcheryReport\GetArcheryReportEventSelection;
+use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
+use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
 use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
 use App\BLoC\Web\ConfigTargetFace\GetConfigTargetFace;
 use App\BLoC\Web\ConfigTargetFace\SetConfigTargetFace;
 
+use App\BLoC\Web\EndpointSupport\InsertMemberBudrestByCsv;
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
@@ -248,6 +251,10 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("findArcheryEvent", FindArcheryEvent::class);
         $this->registerService("findArcheryEventBySlug", FindArcheryEventBySlug::class);
 
+        // =========================== queen archery ============================
+        $this->registerService("setConfig", SetConfig::class);
+        $this->registerService("getConfig", GetConfig::class);
+
         // ========================= Fast Open ========================
         $this->registerService("addLogoEvent", AddLogoEvent::class);
         $this->registerService("getMemberCanJoinEliminationGroup", GetMemberCanJoinEliminationGroup::class);
@@ -263,6 +270,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         $this->registerService("deleteEvent", DeleteEvent::class);
+        $this->registerService("insertMemberBudrestByCsv", InsertMemberBudrestByCsv::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);

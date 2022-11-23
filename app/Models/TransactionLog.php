@@ -12,7 +12,7 @@ class TransactionLog extends Model
     protected $status = [
         4 => "Menunggu Pembayaran",
         1 => "Di Ikuti",
-        2 => "Kadarluarsa",
+        2 => "Kedaluwarsa",
         3 => "Gagal",
         5 => "Refund"
     ];

@@ -262,6 +262,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->put('/avatar', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateAdminAvatar']);
         });
 
+        $router->group(['prefix' => 'aturan-pertandingan', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set-config-aturan-pertandingan', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfig']);
+            $router->get('/get-config-aturan-pertandingan', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfig']);
+        });
+
         $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->group(['prefix' => 'age-categories'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryEventMasterAgeCategory']);
@@ -434,6 +439,8 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(['prefix' => 'config-target-face', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/set-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigTargetFace']);
             $router->get('/get-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigTargetFace']);
+        $router->group(["prefix" => "support", "middleware" => 'auth.admin'], function () use ($router) {
+            $router->post("insert-budrest-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertMemberBudrestByCsv']);
         });
     });
 
