@@ -7,11 +7,11 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithHeadings; 
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -25,7 +25,8 @@ class ArcheryEventBudrestExport implements WithMultipleSheets
 
     protected $data;
 
-    function __construct($data) {
+    function __construct($data)
+    {
         $this->datas = $data;
     }
 
@@ -40,5 +41,3 @@ class ArcheryEventBudrestExport implements WithMultipleSheets
         return $sheets;
     }
 }
-
-

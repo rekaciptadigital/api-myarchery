@@ -1,22 +1,23 @@
 <?php
+
 namespace App\Exports;
 
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\WithHeadings; 
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\Storage;
 
 class ParticipantScoreQualification implements FromView, WithColumnWidths, WithHeadings
 {
     use Exportable;
-    
+
     private $data;
 
     public function __construct($data)
     {
-         $this->data = $data;
+        $this->data = $data;
     }
 
     public function view(): View
@@ -36,15 +37,14 @@ class ParticipantScoreQualification implements FromView, WithColumnWidths, WithH
                 'session_in_qualification' => $this->data['session_in_qualification']
             ]);
         }
-        
     }
 
     public function headings(): array
     {
         return [
             'A' => 10,
-            'B' => 10, 
-            'C' => 85          
+            'B' => 10,
+            'C' => 85
         ];
     }
 
@@ -52,8 +52,8 @@ class ParticipantScoreQualification implements FromView, WithColumnWidths, WithH
     {
         return [
             'A' => 10,
-            'B' => 30,            
-            'C' => 20,   
+            'B' => 30,
+            'C' => 20,
             'D' => 15,
             'E' => 25,
             'F' => 15,

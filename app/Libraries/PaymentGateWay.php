@@ -213,30 +213,35 @@ class PaymentGateWay
             return 0;
         }
         $fee = 0;
-        $list = [
-            "OY" => [
-                "VA" => [
-                    "002" => 3500,
-                    "013" => 3500,
-                    "008" => 3500,
-                    "022" => 3500,
-                    "009" => 3500,
-                    "014" => 4500,
-                    "default" => 3500,
-                    "type" => "nominal"
-                ],
-                "QRIS" => [
-                    "all" => 0.7,
-                    "default" => 0.7,
-                    "type" => "percentage"
-                ],
-                "EWALLET" => [
-                    "dana" => 1.5,
-                    "linkaja_ewallet" => 1.5,
-                    "shopeepay_ewallet" => 2,
-                    "default" => 1.5,
-                    "ovo_ewallet" => 1.5,
-                    "type" => "percentage"
+        $list = ["OY" => [
+                    "VA" => [
+                        "002" => 3500,
+                        "013" => 3500,
+                        "008" => 3500,
+                        "022" => 3500,
+                        "009" => 3500,
+                        "014" => 4500,
+                        "default" => 3500,
+                        "type" => "nominal"
+                    ],
+                    "QRIS" => [
+                        "all" => 0.7,
+                        "default" => 0.7,
+                        "type" => "percentage"
+                    ],
+                    "EWALLET" => [
+                        "dana" => 1.5,
+                        "linkaja_ewallet" => 1.5,
+                        "shopeepay_ewallet" => 2,
+                        "default" => 1.5,
+                        "ovo_ewallet" => 1.5,
+                        "type" => "percentage"
+                    ],
+                    "CC" => [
+                        "all" => 2.9,
+                        "default" => 2.9,
+                        "type" => "percentage"
+                    ]
                 ]
             ]
         ];
@@ -244,7 +249,7 @@ class PaymentGateWay
             return 0;
         }
         $type = $list[self::$gateway][self::$payment_methode]["type"];
-        $sender_bank = self::$payment_methode == "QRIS" ? "all" : self::$sender_bank;
+        $sender_bank = self::$payment_methode == "QRIS" || self::$payment_methode == "CC" ? "all" : self::$sender_bank;
         $n = isset($list[self::$gateway][self::$payment_methode][$sender_bank]) ? $list[self::$gateway][self::$payment_methode][$sender_bank] : $list[self::$gateway][self::$payment_methode]["default"];
         if ($type == "percentage") {
             $fee = round($amount * ($n / 100));
@@ -252,6 +257,8 @@ class PaymentGateWay
         if ($type == "nominal") {
             $fee = $n;
         }
+        if(self::$payment_methode == "CC")
+            $fee = $fee + 2000;
 
         return $fee;
     }
@@ -346,7 +353,6 @@ class PaymentGateWay
             "step" => "select-payment-method",
             "include_admin_fee" => self::$fee_payment_gateway_to_user ? true : false,
             "expiration" => date('Y-m-d H:i:s', $expired_time),
-            "list_disabled_payment_methods" => implode(",", ["CREDIT_CARD", "DEBIT_CARD", "OFFLINE_CASH_IN"])
         ];
 
         $client = new \GuzzleHttp\Client();
@@ -418,11 +424,11 @@ class PaymentGateWay
     {
         $transaction_details = self::$transaction_details;
         $customer_details = self::$customer_details;
-        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
+        $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 60) . " minutes", time());
         $params = array(
             "expiry" => array(
                 "unit" => "minutes",
-                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30)
+                "duration" => env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 60)
             ),
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,

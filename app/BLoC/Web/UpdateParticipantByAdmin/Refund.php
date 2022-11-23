@@ -17,7 +17,6 @@ use Illuminate\Support\Carbon;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
-use Mockery\Generator\Parameter;
 
 class Refund extends Transactional
 {
@@ -89,14 +88,16 @@ class Refund extends Transactional
             "reason_refund" => $parameters->get("reason_refund")
         ]);
 
-        $transaction_log = TransactionLog::find($participant->transaction_log_id);
-        if (!$transaction_log) {
-            throw new BLoCException("data transaksi tidak ditemukan");
-        }
+        if ($participant->register_by == 1) {
+            $transaction_log = TransactionLog::find($participant->transaction_log_id);
+            if (!$transaction_log) {
+                throw new BLoCException("data transaksi tidak ditemukan");
+            }
 
-        $transaction_log->update([
-            "status" => 5
-        ]);
+            $transaction_log->update([
+                "status" => 5
+            ]);
+        }
 
         if ($category_participant->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->refundIndividu($participant_id, $category_participant->id, $user->id);

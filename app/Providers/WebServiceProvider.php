@@ -173,7 +173,7 @@ use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
 use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
-
+use App\BLoC\Web\EndpointSupport\InsertMemberBudrestByCsv;
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
@@ -265,6 +265,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         $this->registerService("deleteEvent", DeleteEvent::class);
+        $this->registerService("insertMemberBudrestByCsv", InsertMemberBudrestByCsv::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);
