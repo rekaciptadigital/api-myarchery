@@ -444,92 +444,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
 
-        // ============================================ v2 =======================================================
-        $router->group(['prefix' => 'v2'], function () use ($router) {
-            $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
-                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
-                $router->get('/download-selection-report', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventSelection']);
-            });
-
-            $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);
-                $router->get('/get-list-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListBudRestV2']);
-                $router->get('/download-idcard-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByCategory']);
-                $router->get('/download-idcard-by-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByBudrest']);
-                $router->get('/download-idcard-by-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByClub']);
-            });
-
-            $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateArcheryCategoryDetailV2']);
-                $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteCategoryDetailV2']);
-            });
-            $router->group(['prefix' => 'members', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberV2']);
-                $router->get('/team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberTeamV2']);
-                $router->get('/access-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberAccessCategories']);
-            });
-
-            $router->group(['prefix' => 'qualification-time', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQualificationTimeV2']);
-            });
-
-            $router->group(['prefix' => 'q-and-a', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQandA']);
-                $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteQandA']);
-                $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandADetail']);
-                $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editQandA']);
-            });
-
-            $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScheduleFullDay']);
-                $router->put('/change_bud_rest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMemberBudrest']);
-                $router->get('/download-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadMemberBudrest']);
-            });
-
-            $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
-            });
-
-            $router->group(['prefix' => 'scorer-elimination-selection', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelection']);
-            });
-
-            $router->group(['prefix' => 'all-result-selection-score', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelection']);
-            });
-
-            $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
-                $router->get('/template-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTemplateIdCardByEventIdV2']);
-                $router->get('/download-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadIdCardByCategoryIdV2']);
-                $router->get('/find-id-card-by-code', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findIdCardByMmeberOrOfficialId']);
-            });
-
-            $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
-                $router->post('/insert-by-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertParticipantByAdmin']);
-
-                // ====================================== Fast Open 3 ======================================
-                $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
-                $router->post('/import-participant-excell', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importParticipantExcell']);
-            });
-
-            $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
-                $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
-                $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
-                $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
-                $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
-            });
-
-            $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
-                $router->post('/set-admin-total', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setAdminTotal']);
-                $router->post('/set-save-permanent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setSavePermanentElimination']);
-            });
-        });
-
         $router->group(['prefix' => 'eo'], function () use ($router) {
             $router->group(['prefix' => 'v1'], function () use ($router) {
                 $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
@@ -579,6 +493,92 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
         // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
+    });
+
+     // ============================================ v2 =======================================================
+     $router->group(['prefix' => 'v2'], function () use ($router) {
+        $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
+            $router->get('/download-selection-report', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventSelection']);
+        });
+
+        $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);
+            $router->get('/get-list-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListBudRestV2']);
+            $router->get('/download-idcard-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByCategory']);
+            $router->get('/download-idcard-by-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByBudrest']);
+            $router->get('/download-idcard-by-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getIdCardByClub']);
+        });
+
+        $router->group(['prefix' => 'category', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateArcheryCategoryDetailV2']);
+            $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteCategoryDetailV2']);
+        });
+        $router->group(['prefix' => 'members', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberV2']);
+            $router->get('/team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberTeamV2']);
+            $router->get('/access-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberAccessCategories']);
+        });
+
+        $router->group(['prefix' => 'qualification-time', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQualificationTimeV2']);
+        });
+
+        $router->group(['prefix' => 'q-and-a', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createQandA']);
+            $router->delete('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteQandA']);
+            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getQandADetail']);
+            $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:editQandA']);
+        });
+
+        $router->group(['prefix' => 'schedule-full-day', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getScheduleFullDay']);
+            $router->put('/change_bud_rest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateMemberBudrest']);
+            $router->get('/download-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadMemberBudrest']);
+        });
+
+        $router->group(['prefix' => 'scorer-qualification', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualificationV2']);
+        });
+
+        $router->group(['prefix' => 'scorer-elimination-selection', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelection']);
+        });
+
+        $router->group(['prefix' => 'all-result-selection-score', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelection']);
+        });
+
+        $router->group(['prefix' => 'id-card', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateIdCardTemplateV2']);
+            $router->get('/template-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTemplateIdCardByEventIdV2']);
+            $router->get('/download-by-category', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadIdCardByCategoryIdV2']);
+            $router->get('/find-id-card-by-code', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findIdCardByMmeberOrOfficialId']);
+        });
+
+        $router->group(['prefix' => 'participant', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->put('/change-is-present', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeIsPresent']);
+            $router->post('/insert-by-admin', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertParticipantByAdmin']);
+
+            // ====================================== Fast Open 3 ======================================
+            $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
+            $router->post('/import-participant-excell', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importParticipantExcell']);
+        });
+
+        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
+            $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
+            $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
+            $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
+        });
+
+        $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->post('/set-admin-total', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setAdminTotal']);
+            $router->post('/set-save-permanent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setSavePermanentElimination']);
+        });
     });
 
 
