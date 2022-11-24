@@ -31,7 +31,6 @@ class AddParticipantMemberScore extends Transactional
 
     protected function process($parameters)
     {
-        return 36.010102 > 36.000003;
         $code = \explode("-", $parameters->code);
         if (count($code) < 3) {
             throw new BLoCException("kode bermasalah");
