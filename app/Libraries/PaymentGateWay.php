@@ -621,7 +621,7 @@ class PaymentGateWay
                 'amount' => $transaction_log->total_amount,
             ];
             if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback["payment_method"], self::$oy_callback["sender_bank"], $transaction_log->amount, true);
+                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
                 if ($gateway_fee > 0) {
                     $cash_flow[] = [
                         'eo_id' => $admin_have_event->eo_id,
@@ -671,7 +671,7 @@ class PaymentGateWay
                 'amount' => $transaction_log->total_amount,
             ];
             if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback["payment_method"], self::$oy_callback["sender_bank"], $transaction_log->amount, true);
+                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
                 if ($gateway_fee > 0) {
                     $cash_flow[] = [
                         'eo_id' => $admin_have_event->eo_id,
