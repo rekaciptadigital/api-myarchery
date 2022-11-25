@@ -491,7 +491,6 @@ class ArcheryScoring extends Model
                     $a = isset($this->score_value[$arrow]) ? $this->score_value[$arrow] : 0;
                     $total = $total + $a;
                     $total_per_points[$arrow] = $total_per_points[$arrow] + 1;
-                    // dd($a);
                     $arrows[] = ["id" => $arrow, "value" => $a];
                 }
                 $scors[$key] = $arrows;
