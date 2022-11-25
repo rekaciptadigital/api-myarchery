@@ -247,9 +247,6 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
                     "6" => $rambahan_6_session_3,
                 ];
 
-                dd($shot_scores_session_3);
-
-
                 $get_score_session_3 = ArcheryScoring::where("scoring_session", 3)->where("participant_member_id", $member->id)->where('type', 1)->first();
 
                 $score_session_3 = ArcheryScoring::makeScoring($shot_scores_session_3, $score_x_value);
