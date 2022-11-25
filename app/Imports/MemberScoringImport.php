@@ -90,7 +90,7 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
             $rambahan_4_session_3 = [];
             $rambahan_5_session_3 = [];
             $rambahan_6_session_3 = [];
-            for ($s = 1; $s <= 72; $s++) {
+            for ($s = 1; $s <= 108; $s++) {
                 if ($row[$s] == 0) {
                     $row[$s] = "";
                 }
@@ -246,6 +246,8 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
                     "5" => $rambahan_5_session_3,
                     "6" => $rambahan_6_session_3,
                 ];
+
+                dd($shot_scores_session_3);
 
 
                 $get_score_session_3 = ArcheryScoring::where("scoring_session", 3)->where("participant_member_id", $member->id)->where('type', 1)->first();
