@@ -85,6 +85,9 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
             $rambahan_5_session_2 = [];
             $rambahan_6_session_2 = [];
             for ($s = 1; $s <= 72; $s++) {
+                if ($row[$s] == 0) {
+                    $row[$s] = "";
+                }
                 if ($s >= 1 && $s <= 6) {
                     $rambahan_1_session_1[] = $row[$s];
                 }
@@ -133,7 +136,6 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
                     $rambahan_6_session_2[] = $row[$s];
                 }
             }
-            
             // ====================================================================
 
             // insert session 1 =========================================================================
@@ -151,7 +153,6 @@ class MemberScoringImport implements ToCollection, WithHeadingRow
                 ->where('type', 1)
                 ->first();
 
-                
             $score_session_1 = ArcheryScoring::makeScoring($shot_scores_session_1, $score_x_value);
             if ($get_score_session_1) {
                 $scoring_session_1 = ArcheryScoring::find($get_score_session_1->id);
