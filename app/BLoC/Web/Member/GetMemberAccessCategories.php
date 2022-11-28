@@ -53,7 +53,11 @@ class GetMemberAccessCategories extends Retrieval
         $list_category = null;
 
         foreach ($categories as $category) {
-            if ($category->max_age == 0 && $category->min_age == 0)
+            $countUserBooking = ArcheryEventParticipant::countEventUserBooking($category->id);
+            $category->countUserBooking = $countUserBooking;
+            if ($age == 52) {
+                $list_category[] = $category;
+            } else if ($category->max_age == 0 && $category->min_age == 0)
                 $list_category[] = $category;
             else if ($category->max_age == 0) {
                 if ($category->min_age <= $age) {
