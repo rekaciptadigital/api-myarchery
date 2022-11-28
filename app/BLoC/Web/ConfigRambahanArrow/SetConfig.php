@@ -13,6 +13,7 @@ use App\Models\ConfigArrowRambahan;
 use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ArcheryScoring;
 
 class SetConfig extends Transactional
 {
@@ -42,9 +43,14 @@ class SetConfig extends Transactional
             throw new BLoCException("you are not owner this event");
         }
 
+        $check = ArcheryScoring::join('archery_event_participant_members', 'archery_scorings.participant_member_id', '=', 'archery_event_participant_members.id')
+        ->join('archery_event_participants', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')->where("archery_event_participants.event_id",$event_id)->count();
+        if($check > 0){
+            throw new BLoCException("gagal update aturan menembak karna sudah tahap skoring");
+        }
+
         // reset config
         $list_category = ArcheryEventCategoryDetail::where("event_id", $event_id)->get(); // tangkap semua kategori
-
         // ubah jumlah arrow dan rambahan di semua kategori menjadi nilai default
         foreach ($list_category as $category) {
             $category->count_stage = 6;
@@ -53,6 +59,7 @@ class SetConfig extends Transactional
             $category->save();
         }
 
+        
         // hapus semua kategori config
         $config = ConfigArrowRambahan::where("event_id", $event_id)->first();
 

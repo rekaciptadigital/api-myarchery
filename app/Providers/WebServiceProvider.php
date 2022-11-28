@@ -281,6 +281,8 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDetailAdmin", GetDetailAdmin::class);
         $this->registerService("removeAccessAdmin", RemoveAccessAdmin::class);
         $this->registerService("deleteEvent", DeleteEvent::class);
+        $this->registerService("insertMemberBudrestByCsv", InsertMemberBudrestByCsv::class);
+        $this->registerService("inserSkoringByExcell", InserSkoringByExcell::class);
         // =========================== End ============================
 
         $this->registerService("getArcheryEventCategory", GetArcheryEventCategory::class);

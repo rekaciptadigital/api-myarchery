@@ -89,9 +89,9 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        if($event->my_archery_fee_percentage > 0)
-            $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage/100));
-        
+        if ($event->my_archery_fee_percentage > 0)
+            $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage / 100));
+
         $this->have_fee_payment_gateway = $event->include_payment_gateway_fee_to_user > 0 ? true : false;
 
         if ($event->is_private) {
@@ -334,9 +334,9 @@ class AddEventOrder extends Transactional
             ->feePaymentsToUser($this->have_fee_payment_gateway)
             ->setMyarcheryFee($this->myarchery_fee)
             ->createSnap();
-        if(!$payment->status)
+        if (!$payment->status)
             throw new BLoCException($payment->message);
-            
+
         $participant->transaction_log_id = $payment->transaction_log_id;
         $participant->save();
 

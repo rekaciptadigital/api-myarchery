@@ -439,10 +439,65 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/set-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setConfigTargetFace']);
             $router->get('/get-config-target-face', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getConfigTargetFace']);
         });
+
+        $router->group(["prefix" => "support", "middleware" => 'auth.admin'], function () use ($router) {
+            $router->post("insert-budrest-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertMemberBudrestByCsv']);
+            $router->post("insert-skoring-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:inserSkoringByExcell']);
+        });
+
+        $router->group(['prefix' => 'eo'], function () use ($router) {
+            $router->group(['prefix' => 'v1'], function () use ($router) {
+                $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
+
+                    $router->group(['prefix' => 'scoring'], function () use ($router) {
+                        $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
+                    });
+                });
+            });
+        });
+
+
+        // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
+        $router->group(['prefix' => 'enterprise'], function () use ($router) {
+            $router->group(['prefix' => 'v1'], function () use ($router) {
+
+                $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
+                    $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
+                    $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlace']);
+                    $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
+                    $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
+                    $router->get('/list-facilities-by-eo-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlaceOtherFacilitiesByEoId']);
+                    $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
+                    $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
+                    $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
+                    $router->get('/list-capacity-area', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListCapacityArea']);
+                    $router->post('/complete-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:completeVenuePlace']);
+
+                    $router->group(['prefix' => 'schedule'], function () use ($router) {
+                        $router->group(['prefix' => 'operational'], function () use ($router) {
+                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleOperational']);
+                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleOperational']);
+                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleOperationalDetailById']);
+                            $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleOperationalByPlaceId']);
+                        });
+
+                        $router->group(['prefix' => 'holiday'], function () use ($router) {
+                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleHoliday']);
+                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleHoliday']);
+                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleHolidayDetailById']);
+                            $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleHolidayByPlaceId']);
+                            $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
+                        });
+                    });
+                });
+            });
+        });
+        // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
     });
 
-    // ============================================ v2 =======================================================
-    $router->group(['prefix' => 'v2'], function () use ($router) {
+     // ============================================ v2 =======================================================
+     $router->group(['prefix' => 'v2'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
@@ -527,17 +582,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         });
     });
 
-    $router->group(['prefix' => 'eo'], function () use ($router) {
-        $router->group(['prefix' => 'v1'], function () use ($router) {
-            $router->group(['prefix' => 'archery', 'middleware' => 'auth.admin'], function () use ($router) {
 
-                $router->group(['prefix' => 'scoring'], function () use ($router) {
-                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryScoring']);
-                });
-            });
-        });
-    });
-
+    // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
+    $router->get('enterprise/fldryepswqpxrat', function () {
+        $new_submission = VenuePlace::getAllListVenue(2);
+        $submission_approved = VenuePlace::getAllListVenue(4);
 
     // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
     $router->group(['prefix' => 'enterprise'], function () use ($router) {
@@ -591,9 +640,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
         });
     });
-    // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
-});
-
 
 // ------------------------------------------------------------- Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
 $router->get('enterprise/fldryepswqpxrat', function () {
@@ -612,16 +658,6 @@ $router->post('enterprise/fldryepswqpxrat/{id}', function (Request $request, $id
         if (!$data) {
             throw new Exception("data venue not found", 404);
         }
-        $data->update([
-            "status" => $request->status
-        ]);
-
-        return redirect('enterprise/fldryepswqpxrat');
-    } catch (\Throwable $th) {
-        return response()->json([
-            "status" => "error",
-            "message" => $th->getMessage()
-        ], $th->getCode());
-    }
+    });
 });
 // ------------------------------------------------------------- End Archery Enterprise Temporary Dashboard ------------------------------------------------------------- //
