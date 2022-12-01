@@ -122,6 +122,10 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             ->where("competition_category_id", $category_detail->competition_category_id)
             ->where("distance_id", $category_detail->distance_id)
             ->where("team_category_id", $team_cat)->first();
+        $session = [];
+        for ($i = 0; $i < $category_detail_team->session_in_qualification; $i++) {
+            $session[] = $i + 1;
+        }
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_team->id, 1, $session);
 
         $participant_club = [];
@@ -143,12 +147,14 @@ class GetParticipantScoreQualificationV2 extends Retrieval
                     foreach ($member_rank["total_per_points"] as $p => $t) {
                         $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
                     }
+                    $member_rank["member"]["total"] = $member_rank["total"];
                     $total = $total + $member_rank["total"];
                     $club_members[] = $member_rank["member"];
                     unset($qualification_rank[$k]);
                 }
-                if (count($club_members) == 3)
+                if (count($club_members) == 3) {
                     break;
+                }
             }
             $participant_club[] = [
                 "participant_id" => $value->id,
