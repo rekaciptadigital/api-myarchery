@@ -61,6 +61,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/get-order-v2', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrderV2']);
                 $router->get('/check-email', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberParticipantIndividual']);
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
+                $router->post('/cancel-buy-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cancelBuyEvent']);
             });
 
             $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.user'], function () use ($router) {
