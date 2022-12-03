@@ -55,13 +55,13 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->group(['prefix' => 'event-order', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);
+                $router->post('/cancel-buy-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cancelBuyEvent']);
                 $router->post('/booking-temporary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bookingTemporary']);
                 $router->post('/delete-booking-temporary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteBookingTemporary']);
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrder']);
                 $router->get('/get-order-v2', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventOrderV2']);
                 $router->get('/check-email', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberParticipantIndividual']);
                 $router->get('/{id}', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:detailEventOrder']);
-                $router->post('/cancel-buy-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cancelBuyEvent']);
             });
 
             $router->group(['prefix' => 'event-qualification-schedule', 'middleware' => 'auth.user'], function () use ($router) {
