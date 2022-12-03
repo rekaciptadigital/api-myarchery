@@ -2,25 +2,10 @@
 
 namespace App\BLoC\Web\Series;
 
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEvent;
-use App\Models\ArcheryQualificationSchedules;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventS;
-use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventSerie;
-use App\Models\ArcherySeriesUserPoint;
-use App\Models\ArcheryEventElimination;
-use App\Models\ArcherySeriesCategory;
-use App\Models\ArcheryEventEliminationMatch;
-use App\Models\ArcheryEventEliminationMember;
-use App\Models\ArcheryEventParticipantNumber;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Exports\ArcheryEventSeriesUserPointExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Response;
-use Illuminate\Contracts\View\View;
 
 class GetDownloadUserSeriePoint extends Retrieval
 {
@@ -48,7 +33,7 @@ class GetDownloadUserSeriePoint extends Retrieval
     protected function validation($parameters)
     {
         return [
-            'serie_id' => 'required',
+            'serie_id' => 'required|exists:archery_series,id',
         ];
     }
 
