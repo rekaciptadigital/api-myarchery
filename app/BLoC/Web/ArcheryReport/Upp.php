@@ -339,7 +339,7 @@ class Upp extends Retrieval
                     $query->where("archery_event_elimination_members.elimination_ranked", '>', 0);
                     $query->where("archery_event_elimination_members.elimination_ranked", '<=', 3);
                     $query->orderBy('archery_event_elimination_members.elimination_ranked', 'ASC');
-                } else if ($type == "qualification") {
+                } elseif ($type == "qualification") {
                     $query->where("archery_event_elimination_members.position_qualification", '>', 0);
                     $query->where("archery_event_elimination_members.position_qualification", '<=', 3);
                     $query->orderBy('archery_event_elimination_members.position_qualification', 'ASC');
@@ -379,7 +379,7 @@ class Upp extends Retrieval
                         $medal = 'Gold';
                     } else if ($member->position_qualification == 2) {
                         $medal = 'Silver';
-                    } else {
+                    } elseif ($member->position_qualification == 3) {
                         $medal = 'Bronze';
                     }
                 } else {
@@ -403,7 +403,7 @@ class Upp extends Retrieval
                 }
                 $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
 
-                $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring, "elimination_rank" => $elimination_rank);
+                $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring, "elimination_rank" => $elimination_rank, "qualification_rank" => $member->position_qualification);
 
                 $category_id = $member->category_details_id;
             }
@@ -414,7 +414,7 @@ class Upp extends Retrieval
             return array($sorted_data, $category_id);
         }
 
-        $sorted_data = collect($data_report)->sortByDesc('scoring.total')->values()->all();
+        $sorted_data = collect($data_report)->sortByDesc('scoring.total_tmp')->values()->all();
 
         return array($sorted_data, $category_id);
     }
