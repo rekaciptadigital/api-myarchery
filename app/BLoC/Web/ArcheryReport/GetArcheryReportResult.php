@@ -369,7 +369,7 @@ class GetArcheryReportResult extends Retrieval
             }
         }
 
-        $sorted_data = collect($data_report)->sortByDesc('scoring.total')->values()->all();
+        $sorted_data = collect($data_report)->sortByDesc('scoring.total_tmp')->values()->all();
 
         return array($sorted_data, $category_id);
     }
