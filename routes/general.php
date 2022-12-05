@@ -32,6 +32,7 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
 
     $router->group(['prefix' => 'event-ranked'], function () use ($router) {
         $router->get('/club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventClubRanked']);
+        $router->get('/exportClubRankedGroupByTeamCategory', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportClubRankedGroupByTeamCategory']);
     });
 
     $router->group(['prefix' => 'archery-events'], function () use ($router) {
@@ -43,7 +44,6 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/archery/scorer/qualificaiton', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreQualification']);
         $router->get('/archery/scorer/elimination-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEliminationSelectionLiveScore']);
         $router->get('/archery/scorer/all-result-selection', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantScoreEventSelectionLiveScore']);
-
     });
 
     $router->group(['prefix' => 'general'], function () use ($router) {

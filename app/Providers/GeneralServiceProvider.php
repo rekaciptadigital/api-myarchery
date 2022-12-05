@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
+use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
 use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use App\BLoC\General\GetListTabCategoryByEventId;
@@ -31,6 +32,11 @@ class GeneralServiceProvider extends ServiceProvider
         // ==================================== Fast Open 3 ========================================
         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
         // ==================================== End ================================================
+
+        // ===================================== queen archery =====================================
+        $this->registerService("exportClubRankedGroupByTeamCategory", ExportClubRankedGroupByTeamCategory::class);
+
+        // ======================================= End ==============================================
     }
 
     private function registerService($serviceName, $className)
