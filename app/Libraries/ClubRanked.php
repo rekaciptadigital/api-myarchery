@@ -18,7 +18,6 @@ class ClubRanked
 
     public static function getEventRanked($event_id, $rules_rating_club = null, $group_category_id = null, $age_category_id = null, $competition_category_id = null, $distance_id = null)
     {
-        // dd($rules_rating_club."-".$group_category_id);
         $output = [];
         $club_ids = [];
         $cat_detail = [];
@@ -56,13 +55,6 @@ class ClubRanked
                 $query->where('archery_event_category_details.distance_id', $distance_id);
             })
             ->where(function ($query) use ($rules_rating_club, $group_category_id) {
-                // if ($rules_rating_club == 1 && $group_category_id != 0) {
-                //     return $query->where("archery_event_category_details.group_category_id", $group_category_id)
-                //         ->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
-                // } elseif ($rules_rating_club == 1 && $group_category_id == 0) {
-                //     return $query->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
-                // }
-
                 if ($rules_rating_club == 1) {
                     if ($group_category_id == 0) {
                         return $query->where("archery_event_category_details.rules_rating_club", $rules_rating_club);
@@ -80,6 +72,10 @@ class ClubRanked
             ->get();
 
         foreach ($members as $key => $value) {
+            if (!isset($club_ids[$value->club_id]["individu"]["total"])) {
+                $club_ids[$value->club_id]["individu"]["total"] = 0;
+            }
+
             if (!isset($cat_detail[$value->event_category_id])) {
                 $category_detail = ArcheryEventCategoryDetail::where("id", $value->event_category_id)->first();
                 $cat_detail[$value->event_category_id] = $category_detail;
@@ -89,16 +85,38 @@ class ClubRanked
 
             $medal_qualification = self::getMedalByPos($value->position_qualification);
             if (!empty($medal_qualification)) {
-                $club_ids[$value->club_id][$medal_qualification] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id][$medal_qualification]) ? $club_ids[$value->club_id][$medal_qualification] + 1 : 1;
-                $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification]) ? $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification] + 1 : 1;
+                $club_ids[$value->club_id]["individu"]["total"] = $club_ids[$value->club_id]["individu"]["total"] + 1;
+                $club_ids[$value->club_id][$medal_qualification] = isset($club_ids[$value->club_id])
+                    && isset($club_ids[$value->club_id][$medal_qualification])
+                    ? $club_ids[$value->club_id][$medal_qualification] + 1
+                    : 1;
+
+                $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification] = isset($club_ids[$value->club_id])
+                    && isset($club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification])
+                    ? $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_qualification] + 1
+                    : 1;
+
+                if (isset($club_ids[$value->club_id]["individu"][$medal_qualification])) {
+                    $club_ids[$value->club_id]["individu"][$medal_qualification] = $club_ids[$value->club_id]["individu"][$medal_qualification] + 1;
+                } else {
+                    $club_ids[$value->club_id]["individu"][$medal_qualification] = 1;
+                }
             }
 
             $medal_elimination = self::getMedalByPos($value->elimination_ranked);
             if (!empty($medal_elimination)) {
+                $club_ids[$value->club_id]["individu"]["total"] = $club_ids[$value->club_id]["individu"]["total"] + 1;
                 $club_ids[$value->club_id][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id][$medal_elimination]) ? $club_ids[$value->club_id][$medal_elimination] + 1 : 1;
                 $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination]) ? $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination] + 1 : 1;
+
+                if (isset($club_ids[$value->club_id]["individu"][$medal_elimination])) {
+                    $club_ids[$value->club_id]["individu"][$medal_elimination] = $club_ids[$value->club_id]["individu"][$medal_elimination] + 1;
+                } else {
+                    $club_ids[$value->club_id]["individu"][$medal_elimination] = 1;
+                }
             }
         }
+
 
         // TODO SEMENTARA
         $teams = ArcheryEventCategoryDetail::where("event_id", $event_id)
@@ -154,7 +172,7 @@ class ClubRanked
                 ->where("distance_id", $team->distance_id)
                 ->where("team_category_id", "individu female")->first();
 
-            // dapatin rank kualifikasi beregu
+            // start dapatin rank kualifikasi beregu
             if ($team->team_category_id == "mix_team") {
                 if ($category_detail_male && $category_detail_femaie) {
                     $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
@@ -169,16 +187,30 @@ class ClubRanked
                 $mix_ranked = self::getRankedMixTeam($team, $session);
                 $mix_pos = 0;
                 foreach ($mix_ranked as $mr => $mrank) {
+                    if (!isset($club_ids[$mrank["club_id"]]["team"]["total"])) {
+                        $club_ids[$mrank["club_id"]]["team"]["total"] = 0;
+                    }
                     $mix_pos = $mix_pos + 1;
-                    if ($mrank["total"] < 1) continue;
+                    if ($mrank["total"] < 1) {
+                        continue;
+                    }
 
                     $medal_mix_team = self::getMedalByPos($mix_pos);
                     if (!empty($medal_mix_team)) {
+                        $club_ids[$mrank["club_id"]]["team"]["total"] = $club_ids[$mrank["club_id"]]["team"]["total"] + 1;
                         $club_ids[$mrank["club_id"]][$medal_mix_team] = isset($club_ids[$mrank["club_id"]]) && isset($club_ids[$mrank["club_id"]][$medal_mix_team]) ? $club_ids[$mrank["club_id"]][$medal_mix_team] + 1 : 1;
                         $club_ids[$mrank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_mix_team] = isset($club_ids[$mrank["club_id"]]) && isset($club_ids[$mrank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_mix_team]) ? $club_ids[$mrank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_mix_team] + 1 : 1;
+
+                        if (isset($club_ids[$mrank["club_id"]]["team"][$medal_mix_team])) {
+                            $club_ids[$mrank["club_id"]]["team"][$medal_mix_team] = $club_ids[$mrank["club_id"]]["team"][$medal_mix_team] + 1;
+                        } else {
+                            $club_ids[$mrank["club_id"]]["team"][$medal_mix_team] = 1;
+                        }
                     }
 
-                    if ($mix_pos >= 3) break;
+                    if ($mix_pos >= 3) {
+                        break;
+                    }
                 }
             } else {
                 if ($team->team_category_id == "male_team") {
@@ -206,23 +238,36 @@ class ClubRanked
                 $ranked = self::getRankedTeam($team, $session);
                 $pos = 0;
                 foreach ($ranked as $r => $rank) {
+                    if (!isset($club_ids[$rank["club_id"]]["team"]["total"])) {
+                        $club_ids[$rank["club_id"]]["team"]["total"] = 0;
+                    }
                     $pos = $pos + 1;
-                    if ($rank["total"] < 1) continue;
+                    if ($rank["total"] < 1) {
+                        continue;
+                    }
 
                     $medal_team = self::getMedalByPos($pos);
                     if (!empty($medal_team)) {
+                        $club_ids[$rank["club_id"]]["team"]["total"] = $club_ids[$rank["club_id"]]["team"]["total"] + 1;
                         $club_ids[$rank["club_id"]][$medal_team] = isset($club_ids[$rank["club_id"]]) && isset($club_ids[$rank["club_id"]][$medal_team]) ? $club_ids[$rank["club_id"]][$medal_team] + 1 : 1;
                         $club_ids[$rank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_team] = isset($club_ids[$rank["club_id"]]) && isset($club_ids[$rank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_team]) ? $club_ids[$rank["club_id"]]["detail_medal"]["category"][$team->competition_category_id][$team->age_category_id][$medal_team] + 1 : 1;
+
+                        if (isset($club_ids[$rank["club_id"]]["team"][$medal_team])) {
+                            $club_ids[$rank["club_id"]]["team"][$medal_team] = $club_ids[$rank["club_id"]]["team"][$medal_team] + 1;
+                        } else {
+                            $club_ids[$rank["club_id"]]["team"][$medal_team] = 1;
+                        }
                     }
 
-                    if ($pos >= 3) break;
+                    if ($pos >= 3) {
+                        break;
+                    }
                 }
-                // print_r($ranked);
             }
+            // end dapatkan rank kualifikasi beregu
         }
 
         // dapatkan data eliminasi beregu
-
         $group = ArcheryEventParticipant::select(
             "archery_event_elimination_group_teams.*",
             "archery_event_participants.club_id",
@@ -264,9 +309,10 @@ class ClubRanked
             ->where("archery_event_participants.status", 1)
             ->get();
 
-        // return $group;
-
         foreach ($group as $key => $value) {
+            if (!isset($club_ids[$value["club_id"]]["team"]["total"])) {
+                $club_ids[$value["club_id"]]["team"]["total"] = 0;
+            }
             if (!isset($cat_detail[$value->event_category_id])) {
                 $category_detail = ArcheryEventCategoryDetail::where("id", $value->event_category_id)->first();
                 $cat_detail[$value->event_category_id] = $category_detail;
@@ -276,15 +322,24 @@ class ClubRanked
 
             $medal_elimination = self::getMedalByPos($value->elimination_ranked);
             if (!empty($medal_elimination)) {
+                $club_ids[$value["club_id"]]["team"]["total"] = $club_ids[$value["club_id"]]["team"]["total"] + 1;
                 $club_ids[$value->club_id][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id][$medal_elimination]) ? $club_ids[$value->club_id][$medal_elimination] + 1 : 1;
                 $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination] = isset($club_ids[$value->club_id]) && isset($club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination]) ? $club_ids[$value->club_id]["detail_medal"]["category"][$category_detail->competition_category_id][$category_detail->age_category_id][$medal_elimination] + 1 : 1;
+
+                if (isset($club_ids[$value->club_id]["team"][$medal_elimination])) {
+                    $club_ids[$value->club_id]["team"][$medal_elimination] = $club_ids[$value->club_id]["team"][$medal_elimination] + 1;
+                } else {
+                    $club_ids[$value->club_id]["team"][$medal_elimination] = 1;
+                }
             }
         }
 
         foreach ($club_ids as $k => $v) {
             $club = ArcheryClub::find($k);
 
-            if (!$club) continue;
+            if (!$club) {
+                continue;
+            }
 
             $city = City::find($club->city);
 
@@ -294,17 +349,19 @@ class ClubRanked
             $total_gold = $gold;
             $total_silver = $silver;
             $total_bronze = $bronze;
-            $elimination_team_medal = null;
             $output[] = [
                 "club_name" => $club->name,
                 "club_logo" => $club->logo,
                 "club_city" => $city ? $city->name : "",
                 "detail_medal" => $v["detail_medal"],
-                "elimination_team_medal" => $elimination_team_medal,
                 "gold" => $total_gold,
                 "silver" => $total_silver,
                 "bronze" => $total_bronze,
-                "total" => $total_gold + $total_silver + $total_bronze
+                "total" => $total_gold + $total_silver + $total_bronze,
+                "detail_modal_by_group" => [
+                    "indiividu" => isset($v["individu"]) ? $v["individu"] : null,
+                    "team" => isset($v["team"]) ? $v["team"] : null,
+                ]
             ];
         }
 
@@ -496,8 +553,14 @@ class ClubRanked
     public static function getMedalByPos($pos)
     {
         $output = "";
-        $medal_by_pos = [1 => "gold", 2 => "silver", 3 => "bronze"];
-        if (isset($medal_by_pos[$pos])) $output = $medal_by_pos[$pos];
+        $medal_by_pos = [
+            1 => "gold",
+            2 => "silver",
+            3 => "bronze"
+        ];
+        if (isset($medal_by_pos[$pos])) {
+            $output = $medal_by_pos[$pos];
+        }
         return $output;
     }
 
