@@ -31,7 +31,7 @@ class CancelBuyEvent extends Retrieval
                 "transaction_logs.id",
                 "=",
                 "archery_event_participants.transaction_log_id"
-            )->where("id", $participant_id)
+            )->where("archery_event_participants.id", $participant_id)
             ->first();
 
         if (
