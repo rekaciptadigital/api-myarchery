@@ -50,15 +50,15 @@ class UpdateVerifikasiUser extends Retrieval
         }
 
         if ($is_wna == 0) {
-            $Validator = Validator::make($parameters->all(), [
-                'nik' => [
-                    Rule::unique('users')->ignore($user->id),
-                ],
-            ]);
+            // $Validator = Validator::make($parameters->all(), [
+            //     'nik' => [
+            //         Rule::unique('users')->ignore($user->id),
+            //     ],
+            // ]);
 
-            if ($Validator->fails()) {
-                throw new BLoCException($Validator->errors());
-            }
+            // if ($Validator->fails()) {
+            //     throw new BLoCException($Validator->errors());
+            // }
             
             $user->nik = $nik;
 
