@@ -40,7 +40,8 @@ RUN apk add --no-cache \
     openssh-client \
     rsync \
     zlib-dev \
-    libzip-dev
+    libzip-dev \
+    libxml2-devel
  
 # Install PECL and PEAR extensions
 RUN pecl install \
