@@ -40,7 +40,8 @@ RUN apk add --no-cache \
     openssh-client \
     rsync \
     zlib-dev \
-    libzip-dev
+    libzip-dev \
+    libxml2-dev
  
 # Install PECL and PEAR extensions
 RUN pecl install \
@@ -49,11 +50,24 @@ RUN pecl install \
 
 # Install and enable php extensions
 RUN docker-php-ext-enable \
-    imagick \
-    xdebug
+    imagick
+
+#xdebug
+
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install xdebug-3.0.0 \
+    && docker-php-ext-enable xdebug \
+    && apk del -f .build-deps
+
+RUN echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.log=/var/www/html/xdebug/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.discover_client_host=1" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_port=9000" >> /usr/local/etc/php/conf.d/xdebug.ini
+
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install \
-    curl \
+#curl \
     pdo \
     pdo_mysql \
     pcntl \
