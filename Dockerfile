@@ -41,7 +41,7 @@ RUN apk add --no-cache \
     rsync \
     zlib-dev \
     libzip-dev \
-    libxml2-devel
+    libxml2-dev
  
 # Install PECL and PEAR extensions
 RUN pecl install \
