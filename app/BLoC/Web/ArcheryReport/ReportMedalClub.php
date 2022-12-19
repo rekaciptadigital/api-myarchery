@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Carbon;
 
 class ReportMedalClub extends Retrieval
@@ -166,14 +167,13 @@ class ReportMedalClub extends Retrieval
             ->orderBy('competition_category_id', 'DESC')->get();
 
         foreach ($competition_category as $competition) {
-            $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label")
-                ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
-                ->where("event_id", $event_id)
+            $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
                 ->where("competition_category_id", $competition->competition_category)
                 ->orderBy('competition_category_id', 'DESC')->get();
 
             foreach ($age_category as $age) {
-                $title_header['category'][$competition->competition_category]['age_category'][$age->label] = [
+                $master_age_category = ArcheryMasterAgeCategory::find($age->age_category);
+                $title_header['category'][$competition->competition_category]['age_category'][$master_age_category->label] = [
                     'gold' => null,
                     'silver' => null,
                     'bronze' => null,
@@ -200,9 +200,7 @@ class ReportMedalClub extends Retrieval
                 $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
 
                 foreach ($competition_category as $competition) {
-                    $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label")
-                        ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
-                        ->where("event_id", $event_id)
+                    $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
                         ->where("competition_category_id", $competition->competition_category)
                         ->orderBy('competition_category_id', 'DESC')->get();
 
@@ -211,13 +209,13 @@ class ReportMedalClub extends Retrieval
                         $silver = 0;
                         $bronze = 0;
 
-                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->label])) {
-                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->label]["gold"] ?? 0;
-                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->label]["silver"] ?? 0;
-                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->label]["bronze"] ?? 0;
+                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
+                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
+                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
                         };
 
-                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->label] = [
+                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
                             "gold" => $gold,
                             "silver" => $silver,
                             "bronze" => $bronze
