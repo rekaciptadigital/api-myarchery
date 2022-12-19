@@ -450,7 +450,9 @@ class GetArcheryReportResultV2 extends Retrieval
                 $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
 
                 foreach ($competition_category as $competition) {
-                    $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+                    $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label")
+                        ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
+                        ->where("event_id", $event_id)
                         ->where("competition_category_id", $competition->competition_category)
                         ->orderBy('competition_category_id', 'DESC')->get();
 

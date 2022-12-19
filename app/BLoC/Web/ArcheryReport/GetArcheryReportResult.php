@@ -46,7 +46,9 @@ class GetArcheryReportResult extends Retrieval
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
 
-        if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
+        if ($competition_category->count() == 0) {
+            throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
+        }
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
         $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/cover-event.png").'" alt="" width="100%"></img>';
@@ -61,29 +63,42 @@ class GetArcheryReportResult extends Retrieval
         // ------------------------------------------ END PRINT COVER ------------------------------------------ //
 
         foreach ($competition_category as $competition) {
-            $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+            $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label", "archery_master_age_categories.id as age_category")
+                ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
+                ->where("event_id", $event_id)
                 ->where("competition_category_id", $competition->competition_category)
-                ->orderBy('competition_category_id', 'DESC')->get();
+                ->orderBy('competition_category_id', 'DESC')
+                ->get();
 
-            if (!$age_category) throw new BLoCException("tidak ada data age category terdaftar untuk event tersebut");
+            if ($age_category->count() == 0) {
+                throw new BLoCException("tidak ada data age category terdaftar untuk event tersebut");
+            }
 
             foreach ($age_category as $age) {
-                $distance_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct distance_id as distance_category'))->where("event_id", $event_id)
+                $distance_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct distance_id as distance_category'))
+                    ->where("event_id", $event_id)
                     ->where("competition_category_id", $competition->competition_category)
                     ->where("age_category_id", $age->age_category)
-                    ->orderBy('competition_category_id', 'DESC')->get();
+                    ->orderBy('competition_category_id', 'DESC')
+                    ->get();
 
-                if (!$distance_category) throw new BLoCException("tidak ada data distance category terdaftar untuk event tersebut");
+                if ($distance_category->count() == 0) {
+                    throw new BLoCException("tidak ada data distance category terdaftar untuk event tersebut");
+                }
 
 
                 foreach ($distance_category as $distance) {
-                    $team_category = ArcheryEventCategoryDetail::select(DB::RAW('team_category_id as team_category'), DB::RAW('archery_event_category_details.id as category_detail_id'))->where("event_id", $event_id)
+                    $team_category = ArcheryEventCategoryDetail::select(DB::RAW('team_category_id as team_category'), DB::RAW('archery_event_category_details.id as category_detail_id'))
+                        ->where("event_id", $event_id)
                         ->where("competition_category_id", $competition->competition_category)
                         ->where("age_category_id", $age->age_category)
                         ->where("distance_id", $distance->distance_category)
                         ->leftJoin("archery_master_team_categories", 'archery_master_team_categories.id', 'archery_event_category_details.team_category_id')
-                        ->orderBy("archery_master_team_categories.short", "ASC")->get();
-                    if (!$team_category) throw new BLoCException("tidak ada data team category terdaftar untuk event tersebut");
+                        ->orderBy("archery_master_team_categories.short", "ASC")
+                        ->get();
+                    if ($team_category->count() == 0) {
+                        throw new BLoCException("tidak ada data team category terdaftar untuk event tersebut");
+                    }
 
                     
                     // ------------------------------------------ ELIMINATION MALE ------------------------------------------ //
@@ -361,7 +376,7 @@ class GetArcheryReportResult extends Retrieval
                         $session[] = $i + 1;
                     }
                     $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
-                    
+
                     $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring);
 
                     $category_id = $member->category_details_id;
