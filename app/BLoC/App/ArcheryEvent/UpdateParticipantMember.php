@@ -91,7 +91,6 @@ class UpdateParticipantMember extends Retrieval
         } else {
             Validator::make($parameters->all(), [
                 "user_id" => "required|array",
-                "team_name" => "required|string"
             ])->validate();
             return $this->updateTeam($participant, $user_ids, $club_id, $team_name, $event_category_detail, $user);
         }
