@@ -67,7 +67,7 @@ RUN echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini
 
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install \
-    curl \
+#curl \
     pdo \
     pdo_mysql \
     pcntl \
