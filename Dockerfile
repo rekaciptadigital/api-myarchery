@@ -50,7 +50,7 @@ RUN pecl install \
 
 # Install and enable php extensions
 RUN docker-php-ext-enable \
-    imagick \
+    imagick
 
 #xdebug
 
