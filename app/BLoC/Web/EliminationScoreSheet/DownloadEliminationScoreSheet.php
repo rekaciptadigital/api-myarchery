@@ -166,7 +166,8 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta2_category' => $result['category'][1],
             "qr" => $base64,
             "event_name" => $event_name,
-            "location" => $location_event
+            "location" => $location_event,
+            "elimination_scoring_type" => $elimination->elimination_scoring_type
         ]);
 
         $mpdf->WriteHTML($html);
@@ -301,7 +302,8 @@ class DownloadEliminationScoreSheet extends Retrieval
             'tim2_category' => $result['category'][1],
             "qr" => $base64,
             "event_name" => $event_name,
-            "location" => $location_event
+            "location" => $location_event,
+            "elimination_scoring_type" => $elimination->elimination_scoring_type
         ]);
 
         $mpdf->WriteHTML($html);

@@ -547,7 +547,8 @@ class BudRest extends Model
                     "total_shot_per_stage" => env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION'),
                     "total_stage" => env('COUNT_STAGE_ELIMINATION_SELECTION'),
                     "qr" => $base64,
-                    "event" => $output['event']
+                    "event" => $output['event'],
+                    "elimination_scoring_type" => "all"
                 ]);
                 $mpdf->WriteHTML($html);
             }

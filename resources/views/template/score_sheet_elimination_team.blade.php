@@ -45,7 +45,12 @@
     </style>
     <title>Score Sheet Elimination</title>
 </head>
-
+<?php
+$colSpanHeader = 4;
+if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
+    $colSpanHeader = 7;
+}
+?>
 <body>
     <div class="header">
         <table>
@@ -158,7 +163,7 @@
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
                         <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
-                            colspan="9">1/4</th>
+                            colspan="{{$colSpanHeader}}">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -169,7 +174,9 @@
                         <th style="width: 10%;font-size:12pt;">5</th>
                         <th style="width: 10%;font-size:12pt;">6</th>
                         <th style="font-size:12pt">Set Total</th>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
+                        <?php }?>
                         <th style="width: 21%; font-size:12pt">Total Set Points</th>
                     </tr>
                 </thead>
@@ -185,9 +192,11 @@
                         <td></td>
                         <td></td>
                         <td style="width: 12%"></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td style="width: 10%"></td>
                         <td style="width: 10%"></td>
                         <td style="width: 10%"></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -201,9 +210,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -217,9 +228,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -233,9 +246,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -249,9 +264,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
                     <tr>
@@ -273,7 +290,7 @@
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
                         <th style="width: 10%;background-color: #808080;border-left: none; font-size:12pt"
-                            colspan="9">1/4</th>
+                            colspan="{{$colSpanHeader}}">1/4</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -284,7 +301,9 @@
                         <th style="width: 10%;font-size:12pt;">5</th>
                         <th style="width: 10%;font-size:12pt;">6</th>
                         <th style="font-size:12pt">Set Total</th>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
+                        <?php }?>
                         <th style="width: 21%; font-size:12pt">Total Set Points</th>
                     </tr>
                 </thead>
@@ -300,9 +319,11 @@
                         <td></td>
                         <td></td>
                         <td style="width: 12%"></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td style="width: 10%"></td>
                         <td style="width: 10%"></td>
                         <td style="width: 10%"></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -316,9 +337,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -332,9 +355,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -348,9 +373,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
 
@@ -364,9 +391,11 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <td></td>
                         <td></td>
                         <td></td>
+                        <?php } ?>
                         <td></td>
                     </tr>
                     <tr>
