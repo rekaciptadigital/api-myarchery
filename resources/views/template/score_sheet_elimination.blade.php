@@ -47,8 +47,10 @@
 </head>
 
 <?php
-$colSpanHeader = 4;
+$colSpanHeader = 3;
+$colspanTotal = 5;
 if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
+    $colspanTotal = 8;
     $colSpanHeader = 7;
 }
 ?>
@@ -156,9 +158,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">1</th>
                         <th style="width: 10%">2</th>
-                        <th style="width: 10%">3</th>
+                        <th style="width: 10%">1</th>
+                        <th style="width: 10%">0</th>
                         <th>Set Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th colspan="3">Set Points</th>
@@ -176,9 +178,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -191,9 +193,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -206,9 +208,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -221,9 +223,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -236,15 +238,15 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
 
                     <tr>
-                        <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -264,9 +266,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">1</th>
                         <th style="width: 10%">2</th>
-                        <th style="width: 10%">3</th>
+                        <th style="width: 10%">1</th>
+                        <th style="width: 10%">0</th>
                         <th>Set Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th colspan="3">Set Points</th>
@@ -285,9 +287,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -300,9 +302,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -315,9 +317,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -330,9 +332,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
@@ -345,15 +347,15 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                         <td></td>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>1</td>
                         <td>2</td>
-                        <td>3</td>
+                        <td>1</td>
+                        <td>0</td>
                         <?php } ?>
                         <td></td>
                     </tr>
 
                     <tr>
-                        <td colspan="8" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
                         <td></td>
                     </tr>
                 </tbody>
