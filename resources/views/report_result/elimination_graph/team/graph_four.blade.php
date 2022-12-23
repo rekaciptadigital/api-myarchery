@@ -309,9 +309,9 @@
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round semifinals">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     1/4
-                </div>
+                </div> -->
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -377,9 +377,9 @@
                                 </div>
             </section>
             <section class="round finals">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     Final
-                </div>
+                </div> -->
                 <div class="title">
                     <p>Medali Emas</p>
                 </div>
@@ -422,9 +422,9 @@
                         </div>
             </section>
             <section class="round finals">
-                <div class="label-group-3rd">
+                <!-- <div class="label-group-3rd">
                     3rd Place
-                </div>
+                </div> -->
                 <div class="title">
                     <p>Medali Perunggu</p>
                 </div>
