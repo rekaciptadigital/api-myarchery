@@ -7,7 +7,7 @@
     <style>
         .vl {
             border-left: 2px solid black;
-            height: 150px;
+            height: 100px;
         }
 
         .bracket {
@@ -173,28 +173,12 @@
             margin-bottom: 0.3rem;
         }
 
-        .bracket .round.best-16 .label-group-match {
-            font-size: 13px;
-            font-weight: bold;
-            background-color: #009EFF;
-            color: white;
-            padding-top: 5px;
-            padding-right: auto;
-            padding-left: auto;
-            padding-bottom: 5px;
-            text-align: center;
-            width: 18rem;
-            border-radius: 10px;
-            align-items: left;
-            margin-bottom: 0.3rem;
-        }
-
         .bracket .round.quarterfinals .winners:not(:last-child) {
-            margin-bottom: 13rem;
+            margin-bottom: 8rem;
         }
 
         .bracket .round.quarterfinals .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 17rem;
+            margin-bottom: 13rem;
         }
 
         .bracket .round.quarterfinals .winners .connector .merger {
@@ -323,24 +307,24 @@
         <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%">  -->
         <table style="width: 100%; height: 20px;" border="0">
             <tbody>
-                <tr style="height: 40px;">
-                    <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">
+                <tr style="height: 20px;">
+                    <td style="width: 1%; height: 25px;" rowspan="2"></td>
+                    <td style="width: 10%; height: 25px;" rowspan="2">
                         <img src="{{ $logo_event }}" alt="" srcset="" width="80%">
                     </td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
-                    <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 42%; height: 50px; ">
+                    <td style="width: 10%; height: 25px;" rowspan="2">{!! $logo_archery !!}</td>
+                    <td style="width: 1%; height: 25px;" rowspan="2"></td>
+                    <td style="width: 42%; height: 25px; ">
                         <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
                             <strong><span style="font-size: 30px;">{{ $event_name_report }}</span></strong> <br /><br />
                             {{ $event_location_report }}<br />
                             {{ $event_date_report }}
                         </p>
                     </td>
-                    <td style="width: 2%; height: 50px;" rowspan="2">
+                    <td style="width: 2%; height: 25px;" rowspan="2">
                         <div class="vl"></div>
                     </td>
-                    <td style="width: 10%; height: 50px; ">
+                    <td style="width: 10%; height: 25px; ">
                         <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
                             {{ $competition }}<br />
                             Elimination<br />
@@ -352,10 +336,11 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <br>
-        <h1 style="text-align: center;margin-top:0;padding-top:0;margin-bottom:0; padding-bottom:0;">{{ $category }}</h1>
+        <h1 style="text-align: center;margin-top:0;padding-top:0;margin-bottom:0; padding-bottom:0;">{{ $category }}
+        </h1>
         <br>
 
-        <div class="bracket">
+        <div class="bracket" style="margin-top: 0;margin-bottom:0;padding-top:0;padding-bottom:0">
             <section class="round quarterfinals">
                 <div class="label-group-match">
                     1/8
