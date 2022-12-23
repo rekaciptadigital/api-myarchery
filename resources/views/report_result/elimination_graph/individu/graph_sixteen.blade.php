@@ -173,6 +173,22 @@
             margin-bottom: 0.3rem;
         }
 
+        .bracket .round.best-16 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.quarterfinals .winners:not(:last-child) {
             margin-bottom: 16rem;
         }

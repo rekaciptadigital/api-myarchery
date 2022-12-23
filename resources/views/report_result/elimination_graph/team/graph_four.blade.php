@@ -309,6 +309,9 @@
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round semifinals">
+                <div class="label-group-match">
+                    1/4
+                </div>
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
