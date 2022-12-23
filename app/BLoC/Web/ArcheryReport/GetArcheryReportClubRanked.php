@@ -4,14 +4,9 @@ namespace App\BLoC\Web\ArcheryReport;
 
 use DAI\Utils\Abstracts\Retrieval;
 use App\Libraries\ClubRanked;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventEliminationGroup;
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryMasterTeamCategory;
-use App\Models\ArcheryScoring;
-use DAI\Utils\Exceptions\BLoCException;
 use App\Exports\ClubRankReport;
+use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -28,8 +23,6 @@ class GetArcheryReportClubRanked extends Retrieval
         $event_id = $parameters->get("event_id");
         $data = ClubRanked::getEventRanked($event_id);
 
-        // return $data;
-
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -40,14 +33,14 @@ class GetArcheryReportClubRanked extends Retrieval
                 ->orderBy('competition_category_id', 'DESC')->get();
 
             foreach ($age_category as $age) {
-                $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                $master_age_category = ArcheryMasterAgeCategory::find($age->age_category);
+                $title_header['category'][$competition->competition_category]['age_category'][$master_age_category->label] = [
                     'gold' => null,
                     'silver' => null,
                     'bronze' => null,
                 ];
             }
 
-            // colspan header title
             $count_colspan = [
                 'count_colspan' => count($age_category) * 3
             ];
@@ -57,7 +50,6 @@ class GetArcheryReportClubRanked extends Retrieval
         $result = [];
         $detail_club_with_medal_response = [];
         foreach ($data as $key => $d) {
-            // return $d;
             $detail_club_with_medal_response["club_name"] = $d["club_name"];
             $detail_club_with_medal_response["total_gold"] = $d["gold"];
             $detail_club_with_medal_response["total_silver"] = $d["silver"];
@@ -88,7 +80,6 @@ class GetArcheryReportClubRanked extends Retrieval
             }
             $medal_array = [];
             foreach ($detail_club_with_medal_response["category"] as $c) {
-                // return $detail_club_with_medal_response;
                 foreach ($c as $a) {
                     foreach ($a as $s) {
                         foreach ($s as $b) {

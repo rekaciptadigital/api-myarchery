@@ -129,7 +129,7 @@
                             <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
                             <?php if($total_shot_per_stage > 2){ ?>
                             <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
-                            <?php }if($total_shot_per_stage > 4){ ?>
+                            <?php }if($total_shot_per_stage >= 3){ ?>
                             <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
                             <?php }if($total_shot_per_stage > 6){ ?>
                             <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
@@ -143,20 +143,20 @@
                             <td class="border" style="height: 25px; width: 50px;">&nbsp;</td>
                         </tr>
                         <tr <?php if(($i%2==0)){?> style="background-color: #e3e2de;" <?php } ?>>
-                            <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 4) { echo "background-color:black;"; }?> height: 25px; width: 20px;">&nbsp;</td>
                             <?php if($total_shot_per_stage > 2){ ?>
-                            <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
-                            <?php }if($total_shot_per_stage > 4){ ?>
-                            <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 5) { echo "background-color:black;"; }?>height: 25px; width: 20px;">&nbsp;</td>
+                            <?php }if($total_shot_per_stage >= 3){ ?>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 6) { echo "background-color:black;"; }?>height: 25px; width: 20px;">&nbsp;</td>
                             <?php }if($total_shot_per_stage > 6){ ?>
                             <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
                             <?php } ?>
                             <?php if($total_shot_per_stage > 8){ ?>
-                            <td class="border" style="height: 25px; width: 20px;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 10) { echo "background-color:black;"; }?>height: 25px; width: 20px;">&nbsp;</td>
                             <?php } ?>
-                            <td class="border" style="height: 25px; width: 50.2;">&nbsp;</td>
-                            <td class="border" style="height: 25px; width: 50.01px;">&nbsp;</td>
-                            <td class="border" style="height: 25px; width: 50px;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 4) { echo "background-color:black;"; }?>height: 25px; width: 50.2;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 4) { echo "background-color:black;"; }?>height: 25px; width: 50.01px;">&nbsp;</td>
+                            <td class="border" style="<?php if ($total_shot_per_stage < 4) { echo "background-color:black;"; }?>height: 25px; width: 50px;">&nbsp;</td>
                         </tr>
                         <?php } ?>
 

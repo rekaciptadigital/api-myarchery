@@ -32,7 +32,7 @@ class GetMemberAccessCategories extends Retrieval
         $age = $user->age;
 
         // cek gender participant
-        $gender_participant = $participant->gender;
+        $gender_participant = $user->gender;
         if ($gender_participant == "male") {
             $list_gender = ["individu male", "individu_mix"];
         } else {

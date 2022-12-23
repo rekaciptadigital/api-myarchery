@@ -120,6 +120,22 @@
             margin-bottom: 2rem;
         }
 
+        .bracket .round.best-16 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.quarterfinals .winners:not(:last-child) {
             margin-bottom: 10rem;
         }
@@ -136,6 +152,22 @@
             height: 8rem;
         }
 
+        .bracket .round.quarterfinals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.semifinals .winners .matchups .matchup:not(:last-child) {
             margin-bottom: 26rem;
         }
@@ -146,6 +178,22 @@
 
         .bracket .round.semifinals .winners .connector .line {
             height: 16rem;
+        }
+
+        .bracket .round.semifinals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .bracket .round.finals .winners .connector .merger {
@@ -160,6 +208,22 @@
         .bracket .round.finals .winners .connector .line {
             height: 1.5rem;
             border-color: transparent;
+        }
+
+        .bracket .round.finals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 1px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 1px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .styling {
@@ -223,6 +287,9 @@
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round best-16">
+                <div class="label-group-match">
+                    1/16
+                </div>
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -481,6 +548,9 @@
     </div>
     </section>
     <section class="round quarterfinals">
+        <div class="label-group-match">
+            1/8
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">
@@ -611,6 +681,9 @@
         </div>
     </section>
     <section class="round semifinals">
+        <div class="label-group-match">
+            Semi
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">
@@ -677,6 +750,9 @@
         </div>
     </section>
     <section class="round finals">
+        <div class="label-group-match">
+            Final
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">

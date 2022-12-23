@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Carbon;
 
 class ReportMedalClub extends Retrieval
@@ -171,7 +172,8 @@ class ReportMedalClub extends Retrieval
                 ->orderBy('competition_category_id', 'DESC')->get();
 
             foreach ($age_category as $age) {
-                $title_header['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                $master_age_category = ArcheryMasterAgeCategory::find($age->age_category);
+                $title_header['category'][$competition->competition_category]['age_category'][$master_age_category->label] = [
                     'gold' => null,
                     'silver' => null,
                     'bronze' => null,
@@ -370,7 +372,7 @@ class ReportMedalClub extends Retrieval
             return array($sorted_data, $category_id);
         }
 
-        $sorted_data = collect($data_report)->sortByDesc('scoring.total')->values()->all();
+        $sorted_data = collect($data_report)->sortByDesc('scoring.total_tmp')->values()->all();
 
         return array($sorted_data, $category_id);
     }

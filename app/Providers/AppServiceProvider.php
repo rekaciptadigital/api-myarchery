@@ -44,6 +44,7 @@ use App\BLoC\App\ArcheryEventOfficial\AddOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetDetailOrderOfficial;
 use App\BLoC\App\ArcheryEventOfficial\GetEventOfficialDetail;
 use App\BLoC\App\ArcheryEventOfficial\GetOrderEventOfficial;
+use App\BLoC\App\EventOrder\CancelBuyEvent;
 use App\BLoC\App\Series\GetDetailSeriesById;
 use App\BLoC\App\Series\GetListCategorySeries;
 use App\BLoC\App\Series\GetListEventBySeriesId;
@@ -126,18 +127,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getListParticipantByCategorySeriesId", GetListParticipantByCategorySeriesId::class);
         $this->registerService("getDetailSeriesById", GetDetailSeriesById::class);
         $this->registerService("getEventOrderV2", getEventOrderV2::class);
-
-
-        // ------------------------------------------------ Archery Enterprise Service ------------------------------------------------ //
-        $this->registerService("getDetailVenuePlace", GetDetailVenuePlace::class);
-        $this->registerService("getListProductByVenuePlace", GetListProductByVenuePlace::class);
-        $this->registerService("getInfoOrderProduct", GetInfoOrderProduct::class);
-        $this->registerService("addOrderVenueProduct", AddOrderVenueProduct::class);
-        $this->registerService("getTransactionVenueUser", GetTransactionVenueUser::class);
-
-        // -------------------------------------------- End of Archery Enterprise Service --------------------------------------------- //
-
-
+        $this->registerService("cancelBuyEvent", CancelBuyEvent::class);
     }
 
     private function registerService($serviceName, $className)

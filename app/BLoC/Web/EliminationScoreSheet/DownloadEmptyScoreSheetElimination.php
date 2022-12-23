@@ -80,7 +80,8 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
                 'tim2_category' => $label,
                 "qr" => "",
                 "event_name" => $event_name,
-                "location" => $location_event
+                "location" => $location_event,
+                "elimination_scoring_type" => 0
             ]);
         } else {
             $html = view('template.score_sheet_elimination', [
@@ -94,7 +95,8 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
                 'peserta2_category' => $label,
                 "qr" => "",
                 "event_name" => $event_name,
-                "location" => $location_event
+                "location" => $location_event,
+                "elimination_scoring_type" => 0
             ]);
         }
 

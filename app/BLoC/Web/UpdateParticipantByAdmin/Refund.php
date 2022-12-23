@@ -62,7 +62,7 @@ class Refund extends Transactional
         $now = Carbon::now();
         $new_format = Carbon::parse($category_participant->start_event);
         if ($now > $new_format) {
-            throw new BLoCException("event telah lewat");
+            // throw new BLoCException("event telah lewat");
         }
         if ($new_format->diffInDays($now) < 1) {
             // throw new BLoCException("tidak dapat refund, minimal refund adalah 24 jam sebelum berlangsungnya event");

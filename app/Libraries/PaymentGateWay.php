@@ -491,9 +491,8 @@ class PaymentGateWay
         $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
-        } else if ($result->data->status == 'processing') {
+        } else if ($result->data->status == 'processing' || $result->data->status == "created" || $result->data->status == 'waiting_payment') {
             $status = 4;
-            // $transaction_log->expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 30) . " minutes", time());
         } else if ($result->data->status == 'expired') {
             $status = 2;
         }

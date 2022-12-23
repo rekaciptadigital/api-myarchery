@@ -176,7 +176,8 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                 'peserta2_category' => $result['category'][1],
                 "qr" => $base64,
                 "event_name" => $event_name,
-                "location" => $location_event
+                "location" => $location_event,
+                "elimination_scoring_type" => $elimination->elimination_scoring_type
             ]);
 
             $all[] = $html;
@@ -300,7 +301,8 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                 'tim2_category' => $result['category'][1],
                 "qr" => $base64,
                 "event_name" => $event_name,
-                "location" => $location_event
+                "location" => $location_event,
+                "elimination_scoring_type" => $elimination->elimination_scoring_type
             ]);
 
             $all[] = $html;

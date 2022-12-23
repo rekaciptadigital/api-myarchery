@@ -662,6 +662,7 @@ class ArcheryEvent extends Model
             "event_type" => $data->event_type,
             "event_competition" => $data->event_competition,
             "is_private" => $data->is_private,
+            "need_verify" => $data->need_verify,
             "public_information" => [
                 'event_name' => $data->event_name,
                 'event_banner' => $data->poster,
