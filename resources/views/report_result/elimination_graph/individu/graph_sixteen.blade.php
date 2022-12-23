@@ -123,7 +123,7 @@
         .bracket .round.best-16 .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #A9AF7E;
+            background-color: #009EFF;
             color: white;
             padding-top: 5px;
             padding-right: auto;
@@ -155,7 +155,7 @@
         .bracket .round.quarterfinals .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #7D8F69;
+            background-color: #009EFF;
             color: white;
             padding-top: 5px;
             padding-right: auto;
@@ -183,7 +183,7 @@
         .bracket .round.semifinals .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #557153;
+            background-color: #009EFF;
             color: white;
             padding-top: 5px;
             padding-right: auto;
@@ -213,7 +213,7 @@
         .bracket .round.finals .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #285430;
+            background-color: #009EFF;
             color: white;
             padding-top: 1px;
             padding-right: auto;
