@@ -175,11 +175,11 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <th style="width: 10%;font-size:12pt;">4</th>
                         <th style="width: 10%;font-size:12pt;">5</th>
                         <th style="width: 10%;font-size:12pt;">6</th>
-                        <th style="font-size:12pt">Set Total</th>
+                        <th style="font-size:12pt">End Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
                         <?php }?>
-                        <th style="width: 21%; font-size:12pt">Total Set Points</th>
+                        <th style="width: 21%; font-size:12pt">Running Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -302,11 +302,11 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <th style="width: 10%;font-size:12pt;">4</th>
                         <th style="width: 10%;font-size:12pt;">5</th>
                         <th style="width: 10%;font-size:12pt;">6</th>
-                        <th style="font-size:12pt">Set Total</th>
+                        <th style="font-size:12pt">End Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th style="font-size:12pt" colspan="3">Set Points</th>
                         <?php }?>
-                        <th style="width: 21%; font-size:12pt">Total Set Points</th>
+                        <th style="width: 21%; font-size:12pt">Running Total</th>
                     </tr>
                 </thead>
                 <tbody>
