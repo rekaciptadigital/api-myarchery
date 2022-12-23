@@ -287,9 +287,9 @@
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round best-16">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     1/16
-                </div>
+                </div>  -->
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -547,9 +547,9 @@
                                                                                 </div>
             </section>
             <section class="round quarterfinals">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     1/8
-                </div>
+                </div> -->
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -680,9 +680,9 @@
                                                 </div>
             </section>
             <section class="round semifinals">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     Semi
-                </div>
+                </div> -->
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -749,9 +749,9 @@
                                 </div>
             </section>
             <section class="round finals">
-                <div class="label-group-match">
+                <!-- <div class="label-group-match">
                     Final
-                </div>
+                </div> -->
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
