@@ -23,7 +23,7 @@ class CallbackMidtrans extends Transactional
     {
         $gateway = $parameters->get("gateway");
         if($gateway == "OY"){
-            return PaymentGateWay::notificationCallbackPaymnetOy($parameters->get('partner_tx_id'));
+            return PaymentGateWay::notificationCallbackPaymnetOy($parameters);
         }
         return PaymentGateWay::notificationCallbackPaymnet();
     }

@@ -112,9 +112,6 @@ class ArcheryMemberCertificate extends Model
                             }
 
                             $type_certificate_label = "Eliminasi Beregu";
-
-                            $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_team->id);
-                            $item["{%category_name%}"] = $label;
                             $rank = $elimination_group_team->elimination_ranked;
                         } else {
                             $team_participant = ArcheryEventParticipant::select("archery_event_participants.event_category_id")
@@ -297,9 +294,9 @@ class ArcheryMemberCertificate extends Model
                 if (count($category_arr) > 3)
                     $category = trim($category_arr[0]) . " - " . trim($category_arr[1]) . " - " . trim($category_arr[2]);
                 $file_name = $path . "/" . "[" . $member_certificate_id . "]" . $category . "-" . $type_certificate_label . ".pdf";
-                // if (!file_exists(public_path() . "/" . $file_name)) {
-                PdfLibrary::setFinalDoc($html_template_clean)->setFileName($file_name)->savePdf();
-                // }
+                if (!file_exists(public_path() . "/" . $file_name)) {
+                    PdfLibrary::setFinalDoc($html_template_clean)->setFileName($file_name)->savePdf();
+                }
 
                 $files[] = [
                     "name" => $type_certificate_label,
