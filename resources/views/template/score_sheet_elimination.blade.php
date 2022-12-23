@@ -158,14 +158,14 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">2</th>
                         <th style="width: 10%">1</th>
-                        <th style="width: 10%">0</th>
-                        <th>Set Total</th>
+                        <th style="width: 10%">2</th>
+                        <th style="width: 10%">3</th>
+                        <th>End Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th colspan="3">Set Points</th>
                         <?php } ?>
-                        <th>Total Set Points</th>
+                        <th>Running Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -266,14 +266,14 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
-                        <th style="width: 10%">2</th>
                         <th style="width: 10%">1</th>
-                        <th style="width: 10%">0</th>
-                        <th>Set Total</th>
+                        <th style="width: 10%">2</th>
+                        <th style="width: 10%">3</th>
+                        <th>End Total</th>
                         <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
                         <th colspan="3">Set Points</th>
                         <?php } ?>
-                        <th>Total Set Points</th>
+                        <th>Running Total</th>
                     </tr>
                 </thead>
                 <tbody>
