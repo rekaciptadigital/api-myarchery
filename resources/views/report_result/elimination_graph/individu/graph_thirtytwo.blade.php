@@ -128,8 +128,8 @@
         .bracket .round.best-32 .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #E6E5A3;
-            color:#3D5656;
+            background-color: #009EFF;
+            color: white;
             padding-top: 5px;
             padding-right: auto;
             padding-left: auto;
@@ -160,8 +160,8 @@
         .bracket .round.best-16-of-32 .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #A9AF7E;
-            color:white;
+            background-color: #009EFF;
+            color: white;
             padding-top: 5px;
             padding-right: auto;
             padding-left: auto;
@@ -192,8 +192,8 @@
         .bracket .round.quarterfinals-of-32 .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #7D8F69;
-            color:white;
+            background-color: #009EFF;
+            color: white;
             padding-top: 5px;
             padding-right: auto;
             padding-left: auto;
@@ -220,8 +220,8 @@
         .bracket .round.semifinals32 .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #557153;
-            color:white;
+            background-color: #009EFF;
+            color: white;
             padding-top: 5px;
             padding-right: auto;
             padding-left: auto;
@@ -255,8 +255,8 @@
         .bracket .round.finals .label-group-match {
             font-size: 13px;
             font-weight: bold;
-            background-color: #285430;
-            color:white;
+            background-color: #009EFF;
+            color: white;
             padding-top: 5px;
             padding-right: auto;
             padding-left: auto;
@@ -1373,7 +1373,7 @@
             </section>
             <section class="round finals" style="margin-top: -15px;">
                 <div class="label-group-match">
-                   Final
+                    Final
                 </div>
                 <div class="title">
                     <p>Medali Emas</span>
