@@ -460,8 +460,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
         $router->group(['prefix' => 'enterprise'], function () use ($router) {
-            $router->group(['prefix' => 'v1'], function () use ($router) {
-
                 $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
                     $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
                     $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
@@ -491,8 +489,24 @@ $router->group(['prefix' => 'web'], function () use ($router) {
                             $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
                         });
                     });
+
+                    $router->group(['prefix' => 'product'], function () use ($router) {
+                        $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProductVenuePlace']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteProductVenuePlace']);
+    
+                        $router->group(['prefix' => 'session-setting'], function () use ($router) {
+                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
+                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueSessionSetting']);
+                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
+                            $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
+                            $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
+                        });
+                    });
+    
                 });
-            });
         });
         // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
     });

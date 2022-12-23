@@ -55,6 +55,11 @@ use App\BLoC\General\GetListOfficial;
 use App\BLoC\App\EventOrder\GetEventOrderV2;
 use App\BLoC\App\UserAuth\ResendOtpAccountVerificationCode;
 use App\BLoC\App\UserAuth\ValidateAccoutVerification;
+use App\BLoC\App\Enterprise\GetDetailVenuePlace;
+use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
+use App\BLoC\App\Enterprise\GetInfoOrderProduct;
+use App\BLoC\App\Enterprise\AddOrderVenueProduct;
+use App\BLoC\App\Enterprise\GetTransactionVenueUser;
 
 class AppServiceProvider extends ServiceProvider
 {

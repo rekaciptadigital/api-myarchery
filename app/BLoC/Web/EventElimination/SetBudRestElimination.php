@@ -59,16 +59,26 @@ class SetBudRestElimination extends Transactional
         }
 
         if (strtolower($team_category->type) == "team") {
-            Validator::make($parameters->all(), [
+            $validator = Validator::make($parameters->all(), [
                 "participant_id" => "required|integer"
-            ])->validate();
+            ]);
+
+            if ($validator->fails()) {
+                throw new BLoCException($validator->errors());
+            }
+
             return $this->setBudrestTeam($elimination_id, $match, $round, $bud_rest, $target_face, $participant_id);
         }
 
         if (strtolower($team_category->type) == "individual") {
-            Validator::make($parameters->all(), [
+            $validator = Validator::make($parameters->all(), [
                 "member_id" => "required|integer"
-            ])->validate();
+            ]);
+
+            if ($validator->fails()) {
+                throw new BLoCException($validator->errors());
+            }
+            
             return $this->setBudrestIndividu($elimination_id, $match, $round, $bud_rest, $target_face, $member_id);
         }
 
