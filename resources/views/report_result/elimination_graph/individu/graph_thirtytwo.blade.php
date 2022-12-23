@@ -125,6 +125,22 @@
             margin-bottom: 1rem;
         }
 
+        .bracket .round.best-32 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 10rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.best-16-of-32 .winners:not(:last-child) {
             margin-bottom: 6rem;
         }
@@ -139,6 +155,22 @@
 
         .bracket .round.best-16-of-32 .winners .connector .line {
             height: 8rem;
+        }
+
+        .bracket .round.best-16-of-32 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 10rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .bracket .round.quarterfinals-of-32 .winners:not(:last-child) {
@@ -157,6 +189,22 @@
             height: 8rem;
         }
 
+        .bracket .round.quarterfinals-of-32 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 10rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.semifinals32 .winners .matchups .matchup:not(:last-child) {
             margin-bottom: 14rem;
         }
@@ -167,6 +215,22 @@
 
         .bracket .round.semifinals32 .winners .connector .line {
             height: 16rem;
+        }
+
+        .bracket .round.semifinals32 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 10rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .bracket .round.semifinals32 .title {
@@ -186,6 +250,22 @@
         .bracket .round.finals .winners .connector .line {
             height: 1.5rem;
             border-color: transparent;
+        }
+
+        .bracket .round.finals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 10rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .bracket .round.finals .title {
@@ -255,13 +335,18 @@
             </tbody>
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
-        <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
+        <h2 style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></h2>
         <h2 style="text-align: center">Elimination & Final (Bracket)</h2>
+
         <div class="bracket">
             <section class="round best-32">
+                <div class="label-group-match">
+                    1/32
+                </div>
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
+
                             <div class="participants">
                                 @if ($round1member1status === 'win')
                                     <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
@@ -779,6 +864,9 @@
     </div>
     </section>
     <section class="round best-16-of-32">
+        <div class="label-group-match">
+            1/16
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">
@@ -1049,6 +1137,9 @@
         </div>
     </section>
     <section class="round quarterfinals-of-32">
+        <div class="label-group-match">
+            1/8
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">
@@ -1185,6 +1276,9 @@
         </div>
     </section>
     <section class="round semifinals32">
+        <div class="label-group-match">
+            Semi
+        </div>
         <div class="winners">
             <div class="matchups">
                 <div class="matchup">
@@ -1288,6 +1382,9 @@
         </div>
     </section>
     <section class="round finals" style="margin-top: -15px;">
+        <div class="label-group-match">
+            Final
+        </div>
         <div class="title">
             <p>Medali Emas</span>
         </div>
