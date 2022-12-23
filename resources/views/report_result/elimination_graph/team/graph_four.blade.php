@@ -271,6 +271,7 @@
 
 <body translate="no">
     <div class="page" style="break-after:page">
+        <!-- <p>pelengkap aja</p> -->
         <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
@@ -309,9 +310,6 @@
         <br>
         <div class="bracket" style="padding-left:20px">
             <section class="round semifinals">
-                <div class="label-group-match">
-                    1/4
-                </div>
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
@@ -377,9 +375,6 @@
                                 </div>
             </section>
             <section class="round finals">
-                <div class="label-group-match">
-                    Final
-                </div>
                 <div class="title">
                     <p>Medali Emas</p>
                 </div>
@@ -422,9 +417,6 @@
                         </div>
             </section>
             <section class="round finals">
-                <div class="label-group-3rd">
-                    3rd Place
-                </div>
                 <div class="title">
                     <p>Medali Perunggu</p>
                 </div>
