@@ -37,11 +37,21 @@ class UpdateParticipantMember extends Retrieval
         $club_id = $parameters->get('club_id');
         $participant_id = $parameters->get('participant_id');
 
-
+        
         // tangkap data yang daftar
         $participant = ArcheryEventParticipant::find($participant_id);
         if (!$participant) {
             throw new BLoCException("participant not found");
+        }
+        
+        // tangkap event category detail dari yang diikuti users
+        $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
+        if (!$event_category_detail) {
+            throw new BLoCException("event category not found");
+        }
+
+        if($event_category_detail->qualification_mode == "best_of_three") {
+            $user_ids = [];
         }
 
         if ($participant->status != 1) {
@@ -62,11 +72,6 @@ class UpdateParticipantMember extends Retrieval
             }
         }
 
-        // tangkap event category detail dari yang diikuti users
-        $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
-        if (!$event_category_detail) {
-            throw new BLoCException("event category not found");
-        }
 
         $now = Carbon::now();
         $new_format = Carbon::parse($event_category_detail->start_event, new DateTimeZone('Asia/jakarta'));
@@ -86,7 +91,6 @@ class UpdateParticipantMember extends Retrieval
         } else {
             Validator::make($parameters->all(), [
                 "user_id" => "required|array",
-                "team_name" => "required|string"
             ])->validate();
             return $this->updateTeam($participant, $user_ids, $club_id, $team_name, $event_category_detail, $user);
         }
@@ -163,7 +167,7 @@ class UpdateParticipantMember extends Retrieval
 
         if ($gender_category == 'mix') {
             if (count($user_ids) != 2 && count($user_ids) != 4) {
-                throw new BLoCException("total participants do not meet the requirements");
+                // throw new BLoCException("total participants do not meet the requirements");
             }
 
             $male = [];
@@ -187,7 +191,7 @@ class UpdateParticipantMember extends Retrieval
             }
         } else {
             if (count($user_ids) < 3 || count($user_ids) > 5) {
-                throw new BLoCException("total participants do not meet the requirements");
+                // throw new BLoCException("total participants do not meet the requirements");
             }
         }
 

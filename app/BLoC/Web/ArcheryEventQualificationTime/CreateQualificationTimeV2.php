@@ -31,8 +31,8 @@ class CreateQualificationTimeV2 extends Transactional
 
         $today = time();
         // ubah string mulai dan string selesai event menjadi objek timestamp
-        $date_time_event_start_timestamp = strtotime($event->event_start_datetime);
-        $date_time_event_end_timestamp = strtotime($event->event_end_datetime);
+        $date_time_event_start_datetime = strtotime($event->event_start_datetime);
+        $date_time_event_end_datetime = strtotime($event->event_end_datetime);
 
         // validasi hanya bisa set jadwal sebelum event mulai
         if ($today > $date_time_event_start_timestamp) {

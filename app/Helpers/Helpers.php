@@ -20,5 +20,12 @@ function dateFormatTranslate($date, $withDay = true)
         $date_ina = $days[$date_explode[0]] . ", " . $date_explode[1] . " " . $months[$date_explode[2]] . " " . $date_explode[3];
     }
 
-    return $date_ina;
-}
+        return $date_ina;
+    }
+
+    function dayTranslate($day)
+    {
+        $days   = ['Senin' => "Monday", 'Selasa' => "Tuesday", 'Rabu' => "Wednesday", 'Kamis' => "Thursday", 'Jumat' => "Friday", 'Sabtu' => "Saturday", 'Minggu' => "Sunday"];
+        $result = array_keys($days, $day);
+        return $result[0];
+    }
