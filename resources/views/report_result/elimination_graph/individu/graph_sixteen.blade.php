@@ -313,7 +313,7 @@
                         <img src="{{ $logo_event }}" alt="" srcset="" width="80%">
                     </td>
                     <td style="width: 10%; height: 25px;" rowspan="2">
-                        <img src="{{ $logo_archery }}" alt="" srcset="" width="80%">
+                        <img src="https://api.myarchery.id/storage/logo/logo-archery.png" alt="" srcset="" width="80%">
                     </td>
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
