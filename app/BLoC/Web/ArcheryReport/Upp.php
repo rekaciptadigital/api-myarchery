@@ -254,7 +254,7 @@ class Upp extends Retrieval
                         $silver = 0;
                         $bronze = 0;
 
-                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                        if (isset($d["detail_medal"]) && isset($d["detail_medal"]["category"]) && isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
                             $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
                             $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
                             $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
@@ -280,6 +280,7 @@ class Upp extends Retrieval
                 $detail_club_with_medal_response["medal_array"] = $medal_array;
                 array_push($result, $detail_club_with_medal_response);
             }
+
 
             // start: total medal emas, perak, perunggu dari setiap kategori semua klub
             $array_of_total_medal_by_category = [];
