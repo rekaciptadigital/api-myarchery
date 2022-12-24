@@ -375,10 +375,10 @@ class GetArcheryReportResultV2 extends Retrieval
             'images' => true,
             'cover' => $cover_page,
             // 'header-html' => $header_html,
-            'footer-html' => $footer_html,
-            'toc' => true,
-            'toc-level-indentation' => '2rem',
-            'enable-toc-back-links' => true,
+            // 'footer-html' => $footer_html,
+            // 'toc' => true,
+            // 'toc-level-indentation' => '2rem',
+            // 'enable-toc-back-links' => true,
         ]);
 
         $digits = 3;
