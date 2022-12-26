@@ -13,10 +13,12 @@ class RemoveFieldPriceAtVenuePlaces extends Migration
      */
     public function up()
     {
-        Schema::table('venue_places', function (Blueprint $table) {
-            $table->dropColumn('weekday_price');
-            $table->dropColumn('weekend_price');
-        });
+        if (Schema::hasColumn('venue_places', 'weekday_price') && Schema::hasColumn('venue_places', 'weekend_price')) {
+            Schema::table('venue_places', function (Blueprint $table) {
+                $table->dropColumn('weekday_price');
+                $table->dropColumn('weekend_price');
+            });
+        }
     }
 
     /**
