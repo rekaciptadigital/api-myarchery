@@ -254,7 +254,7 @@ class Upp extends Retrieval
                         $silver = 0;
                         $bronze = 0;
 
-                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+                        if (isset($d["detail_medal"]) && isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
                             $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
                             $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
                             $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
