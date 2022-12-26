@@ -120,6 +120,22 @@
             margin-bottom: 2rem;
         }
 
+        .bracket .round.best-16 .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.quarterfinals .winners:not(:last-child) {
             margin-bottom: 10rem;
         }
@@ -136,6 +152,22 @@
             height: 8rem;
         }
 
+        .bracket .round.quarterfinals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
         .bracket .round.semifinals .winners .matchups .matchup:not(:last-child) {
             margin-bottom: 26rem;
         }
@@ -146,6 +178,22 @@
 
         .bracket .round.semifinals .winners .connector .line {
             height: 16rem;
+        }
+
+        .bracket .round.semifinals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .bracket .round.finals .winners .connector .merger {
@@ -160,6 +208,38 @@
         .bracket .round.finals .winners .connector .line {
             height: 1.5rem;
             border-color: transparent;
+        }
+
+        .bracket .round.finals .label-group-match {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
+        }
+
+        .bracket .round.finals .label-group-3rd {
+            font-size: 13px;
+            font-weight: bold;
+            background-color: #009EFF;
+            color: white;
+            padding-top: 5px;
+            padding-right: auto;
+            padding-left: auto;
+            padding-bottom: 5px;
+            text-align: center;
+            width: 18rem;
+            border-radius: 10px;
+            align-items: left;
+            margin-bottom: 0.3rem;
         }
 
         .styling {
@@ -191,15 +271,18 @@
 
 <body translate="no">
     <div class="page" style="break-after:page">
+        <!-- <p>pelengkap aja</p> -->
         <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">
+                    <td style="width: 10%; height: 25px;" rowspan="2">
                         <img src="{{ $logo_event }}" alt="" srcset="" width="80%">
                     </td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_archery !!}</td>
+                    <td style="width: 10%; height: 25px;" rowspan="2">
+                        <img src="https://api.myarchery.id/storage/logo/logo-archery.png" alt="" srcset="" width="80%">
+                    </td>
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
                         <p style="text-align: left; font-size: 18pt; font-family: helvetica;">

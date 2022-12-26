@@ -221,7 +221,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                 if (strtolower($category_of_team->type) == "team") {
                                     if (!empty($data_elimination_team)) {
                                         // print qualification team yang ada round eliminasi
-                                        if ($data_elimination['updated'] != false) {
+                                        if (isset($data_elimination['updated']) && $data_elimination['updated'] != false) {
                                             $pages[] = view('report_result/qualification_team', [
                                                 'data_report' => $data_qualification,
                                                 'competition' => $competition->competition_category,
@@ -269,7 +269,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                         $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_detail->id)->first();
                                         $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
 
-                                        if ($data_elimination['updated'] == false) {
+                                        if (isset($data_elimination['updated']) && $data_elimination['updated'] == false) {
                                             if ($elimination_individu->count_participant == 32) {
                                                 $data_graph_individu = EliminationFormatPDFV2::getViewDataGraphIndividuOfBigTwentyTwo($data_elimination);
                                                 $view_path = 'report_result/elimination_graph/individu/graph_thirtytwo';
@@ -314,7 +314,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                     $elimination_team = ArcheryEventEliminationGroup::where("category_id", $category_detail->id)->first();
 
                                     //print bagan eliminasi
-                                    if ($data_elimination['updated'] == false) {
+                                    if (isset($data_elimination['updated']) && $data_elimination['updated'] == false) {
                                         if ($elimination_team->count_participant == 4) {
                                             // return ($data_elimination); die;
                                             $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
