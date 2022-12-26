@@ -255,24 +255,6 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <?php } ?>
                         <td></td>
                     </tr>
-
-                    {{-- baris 5 --}}
-                    <tr style="border: 1px solid black;">
-                        <th style="font-size:13pt">5</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <?php } ?>
-                        <td></td>
-                    </tr>
                     <tr>
                         <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;font-size:13pt;">Total
                         </td>
@@ -368,24 +350,6 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                     {{-- baris 4 --}}
                     <tr style="border: 1px solid black;">
                         <th style="font-size:13pt">4</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <?php } ?>
-                        <td></td>
-                    </tr>
-
-                    {{-- baris 5 --}}
-                    <tr style="border: 1px solid black;">
-                        <th style="font-size:13pt">5</th>
                         <td></td>
                         <td></td>
                         <td></td>
