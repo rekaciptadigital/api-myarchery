@@ -228,7 +228,21 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td>0</td>
                         <?php } ?>
                         <td></td>
-                    </tr>
+                    
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>5</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <?php } ?>
+                        <td></td>
+                    </tr></tr>
                     <tr>
                         <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
                         <td></td>
@@ -323,6 +337,20 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                     </tr>
 
+                    {{-- baris 5 --}}
+                    <tr style="border: 1px solid black;">
+                        <th>5</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <?php if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){ ?>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <?php } ?>
+                        <td></td>
+                    </tr>
                     <tr>
                         <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
                         <td></td>
