@@ -95,6 +95,7 @@ class ArcheryMemberCertificate extends Model
 
                     $rank = 0;
                     if ($category_team) {
+                        $item["{%category_name%}"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_team->id);
                         $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
                         if ($elimination_group) {
                             $group_member_team =  ArcheryEventEliminationGroupMemberTeam::where("member_id", $value->id)->first();
@@ -129,7 +130,6 @@ class ArcheryMemberCertificate extends Model
 
 
                             foreach ($team_participant as $tp => $team) {
-                                $item["{%category_name%}"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($team->event_category_id);
                                 $team_category_detail = ArcheryEventCategoryDetail::find($team->event_category_id);
                                 if ($team_category_detail->qualification_mode == "best_of_three") {
                                     $team_score = ArcheryScoring::teamBestOfThree($category_detail->id, $category_detail->session_in_qualification, $team->event_category_id);
@@ -179,6 +179,7 @@ class ArcheryMemberCertificate extends Model
                     $rank = 0;
 
                     if ($category_team) {
+                        $item["{%category_name%}"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_team->id);
                         $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category_team->id)->first();
                         if ($elimination_group) {
                             $group_member_team =  ArcheryEventEliminationGroupMemberTeam::where("member_id", $value->id)->first();
