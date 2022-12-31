@@ -32,7 +32,7 @@ class ResetBudrestQualification extends Retrieval
             }
         }
 
-        return ArcheryEventParticipant::join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+        return ArcheryEventParticipant::select("archery_event_qualification_schedule_full_day.*")->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->join("archery_event_qualification_schedule_full_day", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
             ->where("archery_event_participants.event_id", $parameters->get("event_id"))->get();
     }
