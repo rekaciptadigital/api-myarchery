@@ -444,6 +444,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
         $router->group(["prefix" => "support", "middleware" => 'auth.admin'], function () use ($router) {
             $router->post("insert-budrest-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertMemberBudrestByCsv']);
             $router->post("insert-skoring-csv", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:inserSkoringByExcell']);
+            $router->post("reset-budrest-qualification", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetBudrestQualification']);
         });
 
         $router->group(['prefix' => 'eo'], function () use ($router) {
