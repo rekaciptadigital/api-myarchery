@@ -5,7 +5,6 @@ namespace App\BLoC\Web\ScheduleFullDay;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
-use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -28,9 +27,6 @@ class DownloadMemberBudrest extends Retrieval
         $admin = Auth::user();
 
         $event = ArcheryEvent::find($event_id);
-        if (!$event) {
-            throw new BLoCException("event tidak ditemukan");
-        }
 
         if ($event->admin_id != $admin->id) {
             throw new BLoCException('you are not owner this event');
@@ -41,7 +37,7 @@ class DownloadMemberBudrest extends Retrieval
 
         $data = $this->getScheduleFullday($event_id, $date);
         $file_excel = new ArcheryEventBudrestExport($data);
-        $download= Excel::store($file_excel, $filename, 'public');
+        Excel::store($file_excel, $filename, 'public');
        
         $destinationPath = Storage::url($filename);
         $file_path = env('STOREG_PUBLIC_DOMAIN').$destinationPath;
@@ -53,7 +49,7 @@ class DownloadMemberBudrest extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "event_id" => "required|integer",
+            "event_id" => "required|integer|exists:archery_events,id",
             "date" => "required"
         ];
     }

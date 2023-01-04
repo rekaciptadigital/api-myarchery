@@ -183,7 +183,7 @@ use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
 use App\BLoC\Web\ConfigTargetFace\GetConfigTargetFace;
 use App\BLoC\Web\ConfigTargetFace\SetConfigTargetFace;
-
+use App\BLoC\Web\EndpointSupport\ResetBudrestQualification;
 // Archery Enterprise Section //
 use App\BLoC\Web\Enterprise\Venue\CreateVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetVenuePlace;
@@ -366,6 +366,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("downloadEliminationScoreSheet", DownloadEliminationScoreSheet::class);
         $this->registerService("downloadQualificationSelectionScoresheet", DownloadQualificationSelectionScoresheet::class);
         $this->registerService("downloadEliminationSelectionScoresheet", DownloadEliminationSelectionScoresheet::class);
+        $this->registerService("resetBudrestQualification", ResetBudrestQualification::class);
 
         $this->registerService("updateParticipantCategory", UpdateParticipantCategory::class);
         $this->registerService("getDownloadUserSeriePoint", GetDownloadUserSeriePoint::class);

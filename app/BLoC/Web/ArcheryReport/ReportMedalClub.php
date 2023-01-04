@@ -76,6 +76,7 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = $this->getMedalStanding($event_id);
+        // return $data_medal_standing;
 
         if (count($data_medal_standing["datatable"]) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
@@ -162,6 +163,7 @@ class ReportMedalClub extends Retrieval
     protected function getMedalStanding($event_id)
     {
         $data = ClubRanked::getEventRanked($event_id, 1, null);
+        // return $data;
         $title_header = array();
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -209,13 +211,15 @@ class ReportMedalClub extends Retrieval
                         $silver = 0;
                         $bronze = 0;
 
-                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
-                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
-                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
-                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
+                        $master_age = ArcheryMasterAgeCategory::find($age->age_category);
+
+                        if (isset($d["detail_medal"]["category"][$competition->competition_category][$master_age->label])) {
+                            $gold += $d["detail_medal"]["category"][$competition->competition_category][$master_age->label]["gold"] ?? 0;
+                            $silver += $d["detail_medal"]["category"][$competition->competition_category][$master_age->label]["silver"] ?? 0;
+                            $bronze += $d["detail_medal"]["category"][$competition->competition_category][$master_age->label]["bronze"] ?? 0;
                         };
 
-                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+                        $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$master_age->label] = [
                             "gold" => $gold,
                             "silver" => $silver,
                             "bronze" => $bronze

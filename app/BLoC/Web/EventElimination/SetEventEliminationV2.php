@@ -242,10 +242,15 @@ class SetEventEliminationV2 extends Transactional
             foreach ($lis_team as $value1) {
                 if (count($value1["teams"]) > 0) {
                     foreach ($value1["teams"] as $value2) {
-                        ArcheryEventEliminationGroupMemberTeam::create([
-                            "participant_id" => $value1["participant_id"],
-                            "member_id" => $value2["id"]
-                        ]);
+                        $check_group_member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $value1["participant_id"])
+                            ->where("member_id", $value2["id"])
+                            ->first();
+                        if (!$check_group_member_team) {
+                            ArcheryEventEliminationGroupMemberTeam::create([
+                                "participant_id" => $value1["participant_id"],
+                                "member_id" => $value2["id"]
+                            ]);
+                        }
                     }
                 }
             }
