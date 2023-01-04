@@ -120,17 +120,16 @@ class CleanEliminationMatch extends Retrieval
 
         $list_match = ArcheryEventEliminationGroupMatch::where("elimination_group_id", $elimination->id)->get();
         foreach ($list_match as $value) {
-            if ($value->group_team_id != 0) {
-                $group_team = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
-                if ($group_team) {
-                    $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $group_team->participant_id)->get();
+            $group_team = ArcheryEventEliminationGroupTeams::find($value->group_team_id);
+            if ($group_team) {
+                $member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $group_team->participant_id)
+                    ->get();
 
-                    foreach ($member_team as $mt) {
-                        $mt->delete();
-                    }
-
-                    $group_team->delete();
+                foreach ($member_team as $mt) {
+                    $mt->delete();
                 }
+
+                $group_team->delete();
             }
             $scoring = ArcheryScoringEliminationGroup::where("elimination_match_group_id", $value->id)->first();
             if ($scoring) {
