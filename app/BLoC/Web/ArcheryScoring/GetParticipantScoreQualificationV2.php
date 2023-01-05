@@ -97,6 +97,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
         // if ($score_type == 3) $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
+        $total_rambahan = $category->count_stage;
 
         $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);
 
@@ -111,6 +112,23 @@ class GetParticipantScoreQualificationV2 extends Retrieval
                     break;
                 }
             }
+        }
+
+        foreach ($response as $key_r => $r) {
+            $total_shot = 0;
+            foreach ($session as $key_s => $s) {
+                if (isset($r["sessions"][$s]["score"])) {
+                    foreach ($r["sessions"][$s]["score"] as $key_sccores => $scores) {
+                        foreach ($scores as $key_sc => $sc) {
+                            if ($sc != "") {
+                                $total_shot++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $r["total_shoot"] = $total_shot;
         }
 
         return $response;
