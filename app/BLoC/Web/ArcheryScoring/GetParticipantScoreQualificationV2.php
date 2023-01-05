@@ -114,23 +114,6 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             }
         }
 
-        foreach ($response as $key_r => $r) {
-            $total_shot = 0;
-            foreach ($session as $key_s => $s) {
-                if (isset($r["sessions"][$s]["score"])) {
-                    foreach ($r["sessions"][$s]["score"] as $key_sccores => $scores) {
-                        foreach ($scores as $key_sc => $sc) {
-                            if ($sc != "") {
-                                $total_shot++;
-                            }
-                        }
-                    }
-                }
-            }
-
-            $r["total_shoot"] = $total_shot;
-        }
-
         return $response;
     }
 
