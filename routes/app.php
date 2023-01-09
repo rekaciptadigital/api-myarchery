@@ -21,6 +21,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
             $router->get('/my-category-event-detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventCategoryDetail']);
             $router->get('/my-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getParticipantMemberByCategory']);
             $router->post('/update-category-event-member', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateParticipantMember']);
+            $router->post('/entry-by-name-participant-team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:entryByNameParticipantTeam']);
         });
 
         $router->group(['prefix' => 'archery-series', 'middleware' => 'auth.user'], function () use ($router) {
