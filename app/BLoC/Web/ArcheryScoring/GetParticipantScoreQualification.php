@@ -6,6 +6,7 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryEventParticipant;
+use App\Models\TeamMemberSpecial;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Redis;
@@ -103,11 +104,29 @@ class GetParticipantScoreQualification extends Retrieval
                     if ($member_rank["total"]  < 1) {
                         continue;
                     }
-                    foreach ($member_rank["total_per_points"] as $p => $t) {
-                        $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+
+                    if ($value->is_special_team_member == 1) {
+                        $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
+                        foreach ($tem_member_special as $tms_key => $tms) {
+                            if ($tms->participant_individual_id == $member_rank["member"]["participant_id"]) {
+                                foreach ($member_rank["total_per_points"] as $p => $t) {
+                                    $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                                }
+                                $total = $total + $member_rank["total"];
+                                $club_members[] = $member_rank["member"];
+                            }
+                        }
+                    } else {
+                        $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])->first();
+                        if ($check_is_exists) {
+                            continue;
+                        }
+                        foreach ($member_rank["total_per_points"] as $p => $t) {
+                            $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                        }
+                        $total = $total + $member_rank["total"];
+                        $club_members[] = $member_rank["member"];
                     }
-                    $total = $total + $member_rank["total"];
-                    $club_members[] = $member_rank["member"];
                     unset($qualification_rank[$k]);
                 }
                 if (count($club_members) == 3)
@@ -159,35 +178,74 @@ class GetParticipantScoreQualification extends Retrieval
             $total_per_point = $this->total_per_points;
             $total = 0;
             $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
+
+            // kualifikasi individu male
             foreach ($qualification_male as $k => $male_rank) {
                 if ($value->club_id == $male_rank["club_id"]) {
                     if ($male_rank["total"]  < 1) {
                         continue;
                     }
-                    foreach ($male_rank["total_per_points"] as $p => $t) {
-                        $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                    if ($value->is_special_team_member == 1) {
+                        $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
+                        foreach ($tem_member_special as $tms_key => $tms) {
+                            if ($tms->participant_individual_id == $male_rank["member"]["participant_id"]) {
+                                foreach ($male_rank["total_per_points"] as $p => $t) {
+                                    $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                                }
+                                $total = $total + $male_rank["total"];
+                                $club_members[] = $male_rank["member"];
+                            }
+                        }
+                    } else {
+                        $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])->first();
+                        if ($check_is_exists) {
+                            continue;
+                        }
+                        foreach ($male_rank["total_per_points"] as $p => $t) {
+                            $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                        }
+                        $total = $total + $male_rank["total"];
+                        $club_members[] = $male_rank["member"];
                     }
-                    $total = $total + $male_rank["total"];
-                    $club_members[] = $male_rank["member"];
                     unset($qualification_male[$k]);
                 }
                 if (count($club_members) == 1)
                     break;
             }
+
+            // kualifikasi individu female
             foreach ($qualification_female as $ky => $female_rank) {
                 if ($value->club_id == $female_rank["club_id"]) {
                     if ($female_rank["total"]  < 1) {
                         continue;
                     }
-                    foreach ($female_rank["total_per_points"] as $p => $t) {
-                        $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                    if ($value->is_special_team_member == 1) {
+                        $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
+                        foreach ($tem_member_special as $tms_key => $tms) {
+                            if ($tms->participant_individual_id == $female_rank["member"]["participant_id"]) {
+                                foreach ($female_rank["total_per_points"] as $p => $t) {
+                                    $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                                }
+                                $total = $total + $female_rank["total"];
+                                $club_members[] = $female_rank["member"];
+                            }
+                        }
+                    } else {
+                        $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])->first();
+                        if ($check_is_exists) {
+                            continue;
+                        }
+                        foreach ($female_rank["total_per_points"] as $p => $t) {
+                            $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
+                        }
+                        $total = $total + $female_rank["total"];
+                        $club_members[] = $female_rank["member"];
                     }
-                    $total = $total + $female_rank["total"];
-                    $club_members[] = $female_rank["member"];
                     unset($qualification_female[$ky]);
                 }
-                if (count($club_members) == 2)
+                if (count($club_members) == 2) {
                     break;
+                }
             }
 
             $participant_club[] = [
