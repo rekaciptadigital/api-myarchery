@@ -6,6 +6,7 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\TeamMemberSpecial;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -39,7 +40,8 @@ class GetParticipantMemberByCategory extends Retrieval
             $user_member['member_id'] = $archery_member->id;
         } else {
             $gender_category = $participant->team_category_id;
-            $category_team = ArcheryEventParticipant::where("archery_event_participants.age_category_id", $participant->age_category_id)
+            $category_team = ArcheryEventParticipant::select("archery_event_participants.*")
+                ->where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.club_id", $participant->club_id)
                 ->where("archery_event_participants.status", 1)
                 ->where("archery_event_participants.event_id", $participant->event_id)
@@ -66,6 +68,14 @@ class GetParticipantMemberByCategory extends Retrieval
                     }
 
                     $user->participant_id = $ct->id;
+
+                    $check_member_selected_team = TeamMemberSpecial::where("participant_individual_id", $ct->id)->first();
+                    $is_selected_for_team = 0;
+                    if ($check_member_selected_team) {
+                        $is_selected_for_team = 1;
+                    }
+
+                    $user->is_selected_for_team = $is_selected_for_team;
                     array_push($user_member, $user);
                 }
             }

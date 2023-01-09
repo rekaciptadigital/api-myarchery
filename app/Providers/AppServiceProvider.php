@@ -29,6 +29,7 @@ use App\BLoC\App\ArcheryClub\UpdateArcheryClub;
 use App\BLoC\App\ArcheryClub\GetProfileClub;
 use App\BLoC\App\ArcheryClub\GetMyClub;
 use App\BLoC\App\ArcheryClub\GetAllMemberByClubId;
+use App\BLoC\App\ArcheryEvent\EntryByNameParticipantTeam;
 use App\BLoC\App\ArcheryEvent\GetDetailEventById;
 use App\BLoC\App\ArcheryEvent\GetEventCategoryDetail;
 use App\BLoC\App\ArcheryEvent\GetListCategoryByUserLogin;
@@ -98,6 +99,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService('getProvince', GetProvince::class);
         $this->registerService('getCity', GetCity::class);
         $this->registerService('getAllMemberByClubId', GetAllMemberByClubId::class);
+        $this->registerService('entryByNameParticipantTeam', EntryByNameParticipantTeam::class);
 
         $this->registerService('userUpdateProfile', UpdateUserProfile::class);
         $this->registerService('userUpdateAvatar', UpdateUserAvatar::class);
