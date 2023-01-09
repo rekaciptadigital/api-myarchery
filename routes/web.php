@@ -400,6 +400,11 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventElimination']);
             $router->post('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationSchedule']);
             $router->delete('/schedule', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:removeEventEliminationSchedule']);
+            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
+            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
+            $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
+            $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
+            $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
 
             // ===================================== Fast Open ======================================================================================
             $router->get('/get-member-can-join-elimination-group', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberCanJoinEliminationGroup']);
@@ -582,14 +587,6 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             // ====================================== Fast Open 3 ======================================
             $router->post('/bulk-inser-user-participant', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkInsertUserParticipant']);
             $router->post('/import-participant-excell', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importParticipantExcell']);
-        });
-
-        $router->group(['prefix' => 'event-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
-            $router->post('/set', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationV2']);
-            $router->put('/set-count-participant-elimination', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setEventEliminationCountParticipant']);
-            $router->post('/set-budrest', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:setBudRestElimination']);
-            $router->post('/clean-elimination-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanEliminationMatch']);
-            $router->post('/clean-qualification-scoring', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cleanScoringQualification']);
         });
 
         $router->group(['prefix' => 'scorer-elimination', 'middleware' => 'auth.admin'], function () use ($router) {
