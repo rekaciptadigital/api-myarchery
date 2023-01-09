@@ -9,8 +9,6 @@ use App\Models\ArcheryEventParticipantMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use DAI\Utils\Helpers\BLoC;
-use Illuminate\Support\Facades\Auth;
 
 class GetParticipantMemberByCategory extends Retrieval
 {
@@ -21,11 +19,7 @@ class GetParticipantMemberByCategory extends Retrieval
 
     protected function process($parameters)
     {
-        $user_login =  $user = Auth::guard('app-api')->user();
         $participant = ArcheryEventParticipant::find($parameters->get('participant_id'));
-        if (!$participant) {
-            throw new BLoCException('participant not found');
-        }
 
         $club = ArcheryClub::find($participant->club_id);
 
@@ -70,6 +64,8 @@ class GetParticipantMemberByCategory extends Retrieval
                     if (!$user) {
                         throw new BLoCException("user tidak ada");
                     }
+
+                    $user->participant_id = $ct->id;
                     array_push($user_member, $user);
                 }
             }
@@ -107,7 +103,7 @@ class GetParticipantMemberByCategory extends Retrieval
     protected function validation($parameters)
     {
         return [
-            'participant_id' => 'required|integer'
+            'participant_id' => 'required|integer|exists:archery_event_participants,id'
         ];
     }
 }
