@@ -18,7 +18,7 @@ class DownloadPdf extends Retrieval
         $category_id = $parameters->get('event_category_id');
         $session = $parameters->get('session') ? $parameters->get('session') : 1;
         $download = BudRest::downloadQualificationScoreSheet($category_id,true,$session);
-        return $download;
+        // return $download;
         return env('APP_HOSTNAME') . $download["url"]."#".time();
     }
 
