@@ -146,11 +146,11 @@ class EntryByNameParticipantTeam extends Retrieval
     {
         $rules = [];
         $rules["is_entry_by_name"] = "required|in:0,1";
-        $rules["participant_team_id"] = "required|exists:archery_event_participant,id";
+        $rules["participant_team_id"] = "required|exists:archery_event_participants,id";
 
         if ($parameters->get("is_entry_by_name") == 1) {
             $rules["members"] =  "required|array";
-            $rules["members.*.participant_id"] =  "required|exists:archery_event_participant,id";
+            $rules["members.*.participant_id"] =  "required|exists:archery_event_participants,id";
         }
         return $rules;
     }
