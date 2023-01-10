@@ -2,12 +2,8 @@
 
 namespace App\BLoC\Web\ArcheryScoreSheet;
 
-use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ParticipantMemberTeam;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
-use DAI\Utils\Exceptions\BLoCException;
 
 
 class DownloadPdf extends Retrieval
@@ -22,6 +18,7 @@ class DownloadPdf extends Retrieval
         $category_id = $parameters->get('event_category_id');
         $session = $parameters->get('session') ? $parameters->get('session') : 1;
         $download = BudRest::downloadQualificationScoreSheet($category_id,true,$session);
+        return $download;
         return env('APP_HOSTNAME') . $download["url"]."#".time();
     }
 
