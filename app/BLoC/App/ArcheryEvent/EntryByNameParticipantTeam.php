@@ -44,7 +44,7 @@ class EntryByNameParticipantTeam extends Retrieval
                 if (count($member_list) != 3) {
                     throw new BLoCException("member harus terdiri dari 3 anggota");
                 }
-                $team_category_id = $category_team->team_category_id == "male_team" ? "individu_male" : "individu_female";
+                $team_category_id = $category_team->team_category_id == "male_team" ? "individu male" : "individu female";
 
                 $category_individu = ArcheryEventCategoryDetail::where("event_id", $participant_team->event_id)
                     ->where("age_category_id", $participant_team->age_category_id)
