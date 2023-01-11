@@ -92,7 +92,7 @@ class GetParticipantScoreQualification extends Retrieval
         $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")
             ->where("event_category_id", $category_detail->id)
             ->where("status", 1)
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
+            ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
         foreach ($participants as $key => $value) {
             $club_members = [];
             $total_per_point = $this->total_per_points;
@@ -110,8 +110,9 @@ class GetParticipantScoreQualification extends Retrieval
                     $club_members[] = $member_rank["member"];
                     unset($qualification_rank[$k]);
                 }
-                if (count($club_members) == 3)
+                if (count($club_members) == 3) {
                     break;
+                }
             }
             $participant_club[] = [
                 "participant_id" => $value->id,
@@ -130,7 +131,14 @@ class GetParticipantScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        return $participant_club;
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+
+        return $new_array;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
@@ -153,7 +161,7 @@ class GetParticipantScoreQualification extends Retrieval
         $sequence_club = [];
         $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")->where("event_category_id", $category_detail->id)
             ->where("status", 1)
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
+            ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
         foreach ($participants as $key => $value) {
             $club_members = [];
             $total_per_point = $this->total_per_points;
