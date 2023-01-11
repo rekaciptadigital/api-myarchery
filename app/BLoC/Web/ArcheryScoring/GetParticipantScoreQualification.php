@@ -92,7 +92,7 @@ class GetParticipantScoreQualification extends Retrieval
         $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")
             ->where("event_category_id", $category_detail->id)
             ->where("status", 1)
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
+            ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
         foreach ($participants as $key => $value) {
             $club_members = [];
             $total_per_point = $this->total_per_points;
@@ -161,7 +161,7 @@ class GetParticipantScoreQualification extends Retrieval
         $sequence_club = [];
         $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")->where("event_category_id", $category_detail->id)
             ->where("status", 1)
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
+            ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
         foreach ($participants as $key => $value) {
             $club_members = [];
             $total_per_point = $this->total_per_points;
