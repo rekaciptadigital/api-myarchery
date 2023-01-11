@@ -7,7 +7,6 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEvent;
 use App\Models\ParticipantMemberTeam;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Redis;
 use Mpdf\Mpdf;
 use Mpdf\QrCode\QrCode;
 use Mpdf\QrCode\Output;
@@ -70,8 +69,6 @@ class BudRest extends Model
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
 
-        // return $output;
-
         $array_pesrta_baru = [];
         $distance = $category->session_in_qualification <= 2  ? [$category->distance_id, $category->distance_id] : [
             substr($category->distance_id, 0, 2),
@@ -95,38 +92,80 @@ class BudRest extends Model
         }
         $member_in_budrest = [];
         $member_not_have_budrest = [];
-        $i = 0;
+        $i = 1;
         foreach ($output['data_member'] as $m) {
             if ($m["detail_member"]["bud_rest_number"] == 0) {
                 $member_not_have_budrest[] = $m["detail_member"]["member_id"];
+                continue;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
                 $i++;
-                // return $m;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
         }
 
         // return $member_in_budrest;
 
+
         foreach ($member_in_budrest as $key => $data) {
-            if ($key != 0 && count($data["members"]) > 1) {
-                // return $data;
+            if (isset($data["members"]) && count($data["members"]) == 1) {
+                foreach ($data["members"] as $dm_key => $dm) {
+                    if (count($dm) == 1) {
+                        $qrCode = new QrCode($data['code']);
+                        $output_qrcode = new Output\Png();
+                        $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
+                        $full_path = $path . $qrCode_name_file;
+                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
+                        $html = \view('template.score_sheet_qualification', [
+                            "data" => $dm[0],
+                            "category" => $output['category'],
+                            "category_label" => $output['category_label'],
+                            "qr" => $base64,
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
+                            "event" => $output['event'],
+                            "row_height" => "45px"
+                        ]);
+                        $mpdf->AddPage("P");
+                        $mpdf->WriteHTML($html);
+                        // $mpdf->AddPage();
+                    } else {
+                        $qrCode = new QrCode($data['code']);
+                        $output_qrcode = new Output\Png();
+                        $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
+                        $full_path = $path . $qrCode_name_file;
+                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
+                        $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                            "data" => $data["members"],
+                            "category" => $output['category'],
+                            "category_label" => $output['category_label'],
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
+                            "qr" => $base64,
+                            "event" => $output['event'],
+                            "row_height" => "35px"
+                        ]);
+                        $mpdf->AddPage("L");
+                        $mpdf->WriteHTML($html);
+                        // $mpdf->AddPage();
+                    }
+                }
+            } else {
                 $qrCode = new QrCode($data['code']);
                 $output_qrcode = new Output\Png();
-                // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
                 $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
                 $full_path = $path . $qrCode_name_file;
                 $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
                 file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                // return $type;
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                // return $data_get_qr_code;
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                // return $base64;
-                $orientation = "@page { sheet-size: A4; }";
                 $html = \view('template.score_sheet_qualification_group_by_budrest', [
                     "data" => $data["members"],
                     "category" => $output['category'],
@@ -135,78 +174,10 @@ class BudRest extends Model
                     "total_stage" => $category->count_stage,
                     "qr" => $base64,
                     "event" => $output['event'],
-                    "orientation" => $orientation,
+                    "row_height" => "40px",
                 ]);
+                $mpdf->AddPage("P");
                 $mpdf->WriteHTML($html);
-                // $mpdf->AddPage();
-            } else {
-                // return $data;
-                // return $data["code"];
-                if (isset($data["members"][0])) {
-                    // return $data;
-                    $coba["members"]["1"] = $data["members"][0];
-                    $coba["code"] =  $data["code"];
-                    // return $coba;
-
-                    $qrCode = new QrCode($coba['code']);
-                    $output_qrcode = new Output\Png();
-                    // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-                    $qrCode_name_file = "qr_code_" . $coba['code'] . ".png";
-                    $full_path = $path . $qrCode_name_file;
-                    $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-                    file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                    // return $type;
-                    $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                    // return $data_get_qr_code;
-                    $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                    // return $base64;
-                    $orientation = "@page { sheet-size: A4-L; }";
-                    $html = \view('template.score_sheet_qualification_group_by_budrest', [
-                        "data" => $coba["members"],
-                        "category" => $output['category'],
-                        "category_label" => $output['category_label'],
-                        "total_shot_per_stage" => $category->count_shot_in_stage,
-                        "total_stage" => $category->count_stage,
-                        "qr" => $base64,
-                        "event" => $output['event'],
-                        "orientation" => $orientation,
-                    ]);
-                    $mpdf->WriteHTML($html);
-                    // $mpdf->AddPage();
-                    continue;
-                }
-
-                // return $coba;
-                foreach ($data["members"] as $group_member) {
-                    foreach ($group_member as $m) {
-                        $qrCode = new QrCode($m['code']);
-                        $output_qrcode = new Output\Png();
-                        // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-                        $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
-                        $full_path = $path . $qrCode_name_file;
-                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                        // return $type;
-                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                        // return $data_get_qr_code;
-                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                        // return $base64;
-                        $orientation = "@page { sheet-size: A4; }";
-                        $html = \view('template.score_sheet_qualification', [
-                            "data" => $m,
-                            "category" => $output['category'],
-                            "category_label" => $output['category_label'],
-                            "qr" => $base64,
-                            "total_shot_per_stage" => $category->count_shot_in_stage,
-                            "total_stage" => $category->count_stage,
-                            "event" => $output['event']
-                        ]);
-                        $mpdf->WriteHTML($html);
-                        // $mpdf->AddPage();
-                    }
-                }
             }
         }
 
