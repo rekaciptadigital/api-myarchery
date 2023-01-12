@@ -39,6 +39,9 @@ class EntryByNameParticipantTeam extends Retrieval
             foreach ($team_member_special_list as $tmsl_key => $tmsl) {
                 $tmsl->delete();
             }
+
+            $participant_team->is_special_team_member = 0;
+            $participant_team->save();
         } else {
             if ($participant_team->team_category_id != "mix_team") {
                 if (count($member_list) != 3) {
@@ -137,6 +140,9 @@ class EntryByNameParticipantTeam extends Retrieval
                     $team_member_special->save();
                 }
             }
+
+            $participant_team->is_special_team_member = 1;
+            $participant_team->save();
         }
 
         return TeamMemberSpecial::where("participant_team_id", $participant_team_id)->get();
