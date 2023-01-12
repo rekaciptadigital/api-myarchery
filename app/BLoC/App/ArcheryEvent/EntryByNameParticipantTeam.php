@@ -34,15 +34,11 @@ class EntryByNameParticipantTeam extends Retrieval
         $category_team = ArcheryEventCategoryDetail::find($participant_team->event_category_id);
 
         if ($is_entry_by_name == 0) {
-            $team_member_special_list = TeamMemberSpecial::where("participant_team_id", $participant_team_id)
-                ->get();
-            foreach ($team_member_special_list as $tmsl_key => $tmsl) {
-                $tmsl->delete();
-            }
-
+            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
             $participant_team->is_special_team_member = 0;
             $participant_team->save();
         } else {
+            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
             if ($participant_team->team_category_id != "mix_team") {
                 if (count($member_list) != 3) {
                     throw new BLoCException("member harus terdiri dari 3 anggota");
