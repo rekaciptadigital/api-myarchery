@@ -69,7 +69,9 @@ class GetParticipantMemberByCategory extends Retrieval
 
                     $user->participant_id = $ct->id;
 
-                    $check_member_selected_team = TeamMemberSpecial::where("participant_individual_id", $ct->id)->first();
+                    $check_member_selected_team = TeamMemberSpecial::where("participant_individual_id", $ct->id)
+                        ->where("participant_team_id", $participant->id)
+                        ->first();
                     $is_selected_for_team = 0;
                     if ($check_member_selected_team) {
                         $is_selected_for_team = 1;
