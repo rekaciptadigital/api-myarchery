@@ -430,7 +430,7 @@ class ArcheryEventParticipant extends Model
           continue;
         }
 
-        if ($member_rank["total"]  < 1) {
+        if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
           continue;
         }
 
