@@ -132,7 +132,7 @@ class ArcheryMemberCertificate extends Model
                             foreach ($team_participant as $tp => $team) {
                                 $team_category_detail = ArcheryEventCategoryDetail::find($team->event_category_id);
                                 if ($team_category_detail->qualification_mode == "best_of_three") {
-                                    $team_score = ArcheryScoring::teamBestOfThree($category_detail->id, $category_detail->session_in_qualification, $team->event_category_id);
+                                    $team_score = ArcheryEventParticipant::teamBestOfThree($team_category_detail);
                                     foreach ($team_score as $ts => $score) {
                                         $matching = false;
                                         if ($ts >= 3) {
