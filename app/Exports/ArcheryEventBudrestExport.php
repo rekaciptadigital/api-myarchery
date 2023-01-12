@@ -23,7 +23,7 @@ class ArcheryEventBudrestExport implements WithMultipleSheets
 {
     use Exportable;
 
-    protected $data;
+    protected $datas;
 
     function __construct($data)
     {

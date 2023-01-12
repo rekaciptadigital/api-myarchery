@@ -14,17 +14,18 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnWidths; 
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\WithHeadings; 
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Illuminate\Support\Facades\DB;
 
 class BudrestMemberSheet implements FromView, WithColumnWidths, WithHeadings
 {
-    private $value;
+    private $data;
 
-    function __construct($value) {
+    function __construct($value)
+    {
         $this->data = $value;
     }
 

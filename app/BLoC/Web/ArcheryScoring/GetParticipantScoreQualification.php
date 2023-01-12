@@ -129,8 +129,9 @@ class GetParticipantScoreQualification extends Retrieval
                     }
                     unset($qualification_rank[$k]);
                 }
-                if (count($club_members) == 3)
+                if (count($club_members) == 3) {
                     break;
+                }
             }
             $participant_club[] = [
                 "participant_id" => $value->id,
@@ -149,7 +150,14 @@ class GetParticipantScoreQualification extends Retrieval
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        return $participant_club;
+        $new_array = [];
+        foreach ($participant_club as $key => $value) {
+            if (count($value["teams"]) == 3) {
+                array_push($new_array, $value);
+            }
+        }
+
+        return $new_array;
     }
 
     private function mixTeamBestOfThree($category_detail, $team_category, $session)
