@@ -16,6 +16,7 @@ use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcherySeriesUserPoint;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventMasterCompetitionCategory;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\UrlReport;
@@ -212,19 +213,7 @@ class SetEventEliminationV2 extends Transactional
             $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         } else {
-            $team_cat = ($group) == "male_team" ? "individu male" : "individu female";
-            $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)
-                ->where("age_category_id", $category_team->age_category_id)
-                ->where("competition_category_id", $category_team->competition_category_id)
-                ->where("distance_id", $category_team->distance_id)
-                ->where("team_category_id", $team_cat)
-                ->first();
-
-            if (!$category_detail_individu) {
-                throw new BLoCException("category individu tidak ditemukan");
-            }
-
-            $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category_team->id);
+            $lis_team = ArcheryEventParticipant::teamBestOfThree($category_team);
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }
 

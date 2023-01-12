@@ -12,6 +12,7 @@ use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoringEliminationGroup;
@@ -227,7 +228,7 @@ class GetEventEliminationTemplate extends Retrieval
                     throw new BLoCException("category individu tidak ditemukan");
                 }
 
-                $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category_team->id);
+                $lis_team = ArcheryEventParticipant::teamBestOfThree($category_team);
             }
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         }

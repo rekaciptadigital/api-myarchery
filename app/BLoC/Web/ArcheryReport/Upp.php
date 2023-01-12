@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Carbon;
@@ -483,7 +484,7 @@ class Upp extends Retrieval
             if ($team_category->id == "mix_team") {
                 $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->mixTeamBestOfThree($category_detail, $team_category, $session);
             } else {
-                $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->teamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
         }
 

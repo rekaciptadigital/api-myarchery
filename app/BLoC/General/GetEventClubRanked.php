@@ -6,6 +6,7 @@ use DAI\Utils\Abstracts\Retrieval;
 use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventEliminationGroup;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoring;
 use DAI\Utils\Exceptions\BLoCException;
@@ -66,7 +67,7 @@ class GetEventClubRanked extends Retrieval
             $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category->id);
             if (!$elimination_group) {
                 if ($category->team_category_id == "mix_team") {
-                    $mix_team_rank = ArcheryScoring::teamBestOfThree($category);
+                    $mix_team_rank = ArcheryScoring::mixTeamBestOfThree($category);
                     foreach ($mix_team_rank as $key_club => $mtr) {
                         if ($mtr["club_id"] == $club_id) {
                             if ($key_club + 1 == 1) {
@@ -98,7 +99,7 @@ class GetEventClubRanked extends Retrieval
                     if (!$category_detail_individu) {
                         throw new BLoCException("category individu tidak ditemukan");
                     }
-                    $team = ArcheryScoring::mixTeamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category->id);
+                    $team = ArcheryEventParticipant::teamBestOfThree($category);
                     foreach ($team as $key_team => $t) {
                         if ($t["club_id"] == $club_id) {
                             if ($t + 1 == 1) {

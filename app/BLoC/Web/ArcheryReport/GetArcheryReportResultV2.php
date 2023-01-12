@@ -665,7 +665,7 @@ class GetArcheryReportResultV2 extends Retrieval
             if ($team_category->id == "mix_team") {
                 $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail, $team_category, $session);
             } else {
-                $data = ArcheryEventParticipant::teamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
         }
 
