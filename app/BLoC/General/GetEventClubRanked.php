@@ -67,7 +67,7 @@ class GetEventClubRanked extends Retrieval
             $elimination_group = ArcheryEventEliminationGroup::where("category_id", $category->id);
             if (!$elimination_group) {
                 if ($category->team_category_id == "mix_team") {
-                    $mix_team_rank = ArcheryScoring::mixTeamBestOfThree($category);
+                    $mix_team_rank = ArcheryEventParticipant::mixTeamBestOfThree($category);
                     foreach ($mix_team_rank as $key_club => $mtr) {
                         if ($mtr["club_id"] == $club_id) {
                             if ($key_club + 1 == 1) {

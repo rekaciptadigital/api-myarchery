@@ -214,7 +214,7 @@ class GetEventEliminationTemplate extends Retrieval
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_team_2, $elimination_member_count);
         } else {
             if ($category_team->team_category_id == "mix_team") {
-                $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
+                $lis_team = ArcheryEventParticipant::mixTeamBestOfThree($category_team);
             } else {
                 $team_cat = ($category_team->team_category_id) == "male_team" ? "individu male" : "individu female";
                 $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_team->event_id)

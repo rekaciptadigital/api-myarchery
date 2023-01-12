@@ -210,7 +210,7 @@ class SetEventEliminationV2 extends Transactional
     private function makeTemplateTeam($group, $category_team, $elimination_member_count, $scoring_type)
     {
         if ($group == "mix_team") {
-            $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
+            $lis_team = ArcheryEventParticipant::mixTeamBestOfThree($category_team);
             $template = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
         } else {
             $lis_team = ArcheryEventParticipant::teamBestOfThree($category_team);

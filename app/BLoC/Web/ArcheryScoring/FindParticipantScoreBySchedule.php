@@ -312,7 +312,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->get();
 
         if ($category->team_category_id == "mix_team") {
-            $lis_team = ArcheryScoring::mixTeamBestOfThree($category);
+            $lis_team = ArcheryEventParticipant::mixTeamBestOfThree($category);
         } else {
             $lis_team = ArcheryEventParticipant::teamBestOfThree($category);
         }
