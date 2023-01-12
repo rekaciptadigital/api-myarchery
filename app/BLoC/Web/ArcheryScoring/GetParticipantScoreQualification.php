@@ -60,7 +60,7 @@ class GetParticipantScoreQualification extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                $data = $this->mixTeamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail);
             } else {
                 $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
@@ -76,122 +76,6 @@ class GetParticipantScoreQualification extends Retrieval
         return $data;
 
         throw new BLoCException("gagal get live score");
-    }
-
-    private function mixTeamBestOfThree($category_detail, $team_category, $session)
-    {
-        $category_detail_male = ArcheryEventCategoryDetail::where("event_id", $category_detail->event_id)
-            ->where("age_category_id", $category_detail->age_category_id)
-            ->where("competition_category_id", $category_detail->competition_category_id)
-            ->where("distance_id", $category_detail->distance_id)
-            ->where("team_category_id", "individu male")->first();
-        $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id, 1, $session);
-
-        $category_detail_female = ArcheryEventCategoryDetail::where("event_id", $category_detail->event_id)
-            ->where("age_category_id", $category_detail->age_category_id)
-            ->where("competition_category_id", $category_detail->competition_category_id)
-            ->where("distance_id", $category_detail->distance_id)
-            ->where("team_category_id", "individu female")->first();
-        $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id, 1, $session);
-
-        $participant_club = [];
-        $sequence_club = [];
-        $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")->where("event_category_id", $category_detail->id)
-            ->where("status", 1)
-            ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")->get();
-        foreach ($participants as $key => $value) {
-            $club_members = [];
-            $total_per_point = $this->total_per_points;
-            $total = 0;
-            $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
-
-            // kualifikasi individu male
-            foreach ($qualification_male as $k => $male_rank) {
-                if ($value->club_id == $male_rank["club_id"]) {
-                    if ($male_rank["total"]  < 1) {
-                        continue;
-                    }
-                    if ($value->is_special_team_member == 1) {
-                        $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-                        foreach ($tem_member_special as $tms_key => $tms) {
-                            if ($tms->participant_individual_id == $male_rank["member"]["participant_id"]) {
-                                foreach ($male_rank["total_per_points"] as $p => $t) {
-                                    $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
-                                }
-                                $total = $total + $male_rank["total"];
-                                $club_members[] = $male_rank["member"];
-                            }
-                        }
-                    } else {
-                        $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])->first();
-                        if ($check_is_exists) {
-                            continue;
-                        }
-                        foreach ($male_rank["total_per_points"] as $p => $t) {
-                            $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
-                        }
-                        $total = $total + $male_rank["total"];
-                        $club_members[] = $male_rank["member"];
-                    }
-                    unset($qualification_male[$k]);
-                }
-                if (count($club_members) == 1)
-                    break;
-            }
-
-            // kualifikasi individu female
-            foreach ($qualification_female as $ky => $female_rank) {
-                if ($value->club_id == $female_rank["club_id"]) {
-                    if ($female_rank["total"]  < 1) {
-                        continue;
-                    }
-                    if ($value->is_special_team_member == 1) {
-                        $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-                        foreach ($tem_member_special as $tms_key => $tms) {
-                            if ($tms->participant_individual_id == $female_rank["member"]["participant_id"]) {
-                                foreach ($female_rank["total_per_points"] as $p => $t) {
-                                    $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
-                                }
-                                $total = $total + $female_rank["total"];
-                                $club_members[] = $female_rank["member"];
-                            }
-                        }
-                    } else {
-                        $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])->first();
-                        if ($check_is_exists) {
-                            continue;
-                        }
-                        foreach ($female_rank["total_per_points"] as $p => $t) {
-                            $total_per_point[$p] = isset($total_per_point[$p]) ? $total_per_point[$p] + $t : $t;
-                        }
-                        $total = $total + $female_rank["total"];
-                        $club_members[] = $female_rank["member"];
-                    }
-                    unset($qualification_female[$ky]);
-                }
-                if (count($club_members) == 2) {
-                    break;
-                }
-            }
-
-            $participant_club[] = [
-                "participant_id" => $value->id,
-                "club_id" => $value->club_id,
-                "club_name" => $value->club_name,
-                "team" => $value->club_name . " - " . $sequence_club[$value->club_id],
-                "total" => $total,
-                "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
-                "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
-                "total_per_points" => $total_per_point,
-                "total_tmp" => count($club_members) == 2 ? ArcheryScoring::getTotalTmp($total_per_point, $total) : 0,
-                "teams" => $club_members
-            ];
-        }
-        usort($participant_club, function ($a, $b) {
-            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-        });
-
-        return $participant_club;
     }
 
     protected function validation($parameters)

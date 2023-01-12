@@ -482,7 +482,7 @@ class Upp extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->mixTeamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail);
             } else {
                 $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
