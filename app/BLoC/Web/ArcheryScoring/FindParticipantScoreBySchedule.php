@@ -312,21 +312,9 @@ class FindParticipantScoreBySchedule extends Retrieval
             ->get();
 
         if ($category->team_category_id == "mix_team") {
-            $lis_team = ArcheryScoring::mixTeamBestOfThree($category);
+            $lis_team = ArcheryEventParticipant::mixTeamBestOfThree($category);
         } else {
-            $team_cat = ($category->team_category_id) == "male_team" ? "individu male" : "individu female";
-            $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category->event_id)
-                ->where("age_category_id", $category->age_category_id)
-                ->where("competition_category_id", $category->competition_category_id)
-                ->where("distance_id", $category->distance_id)
-                ->where("team_category_id", $team_cat)
-                ->first();
-
-            if (!$category_detail_individu) {
-                throw new BLoCException("category individu tidak ditemukan");
-            }
-
-            $lis_team = ArcheryScoring::teamBestOfThree($category_detail_individu->id, $category_detail_individu->session_in_qualification, $category->id);
+            $lis_team = ArcheryEventParticipant::teamBestOfThree($category);
         }
 
         foreach ($get_participant_match as $key => $value) {

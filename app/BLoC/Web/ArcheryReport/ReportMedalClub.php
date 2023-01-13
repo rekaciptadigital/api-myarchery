@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Libraries\ClubRanked;
+use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Carbon;
 
@@ -422,9 +423,9 @@ class ReportMedalClub extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->mixTeamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail);
             } else {
-                $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->teamBestOfThree($category_detail, $team_category, $session);
+                $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
         }
 
