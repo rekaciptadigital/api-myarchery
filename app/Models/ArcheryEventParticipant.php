@@ -281,7 +281,7 @@ class ArcheryEventParticipant extends Model
           continue;
         }
 
-        if ($male_rank["total"]  < 1) {
+        if ($male_rank["total"]  < 1 && $male_rank["total_arrow"] == 0) {
           continue;
         }
 
@@ -326,7 +326,7 @@ class ArcheryEventParticipant extends Model
         if ($value->club_id != $female_rank["club_id"]) {
           continue;
         }
-        if ($female_rank["total"]  < 1) {
+        if ($female_rank["total"]  < 1 && $female_rank["total_arrow"] == 0) {
           continue;
         }
         $is_insert = 0;
@@ -360,9 +360,10 @@ class ArcheryEventParticipant extends Model
           $club_members[] = $female_rank["member"];
         }
         unset($qualification_female[$ky]);
-      }
-      if (count($club_members) == 2) {
-        break;
+
+        if (count($club_members) == 2) {
+          break;
+        }
       }
 
 
