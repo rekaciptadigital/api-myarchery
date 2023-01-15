@@ -831,7 +831,7 @@ class ArcheryEventParticipant extends Model
       $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_team_2, $elimination_member_count);
     } else {
       if ($category_team->team_category_id == "mix_team") {
-        $lis_team = ArcheryScoring::mixTeamBestOfThree($category_team);
+        $lis_team = self::mixTeamBestOfThree($category_team);
       } else {
         $lis_team = self::teamBestOfThree($category_team);
       }
