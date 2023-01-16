@@ -6,7 +6,9 @@ use App\Exports\MemberContingentExport;
 use App\Libraries\Upload;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventParticipant;
 use App\Models\City;
+use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
@@ -48,6 +50,7 @@ class ExportmemberCollective extends Retrieval
         }
 
         $new_list_member = [];
+        $total_price = 0;
         foreach ($list_members as $member) {
             $email = $member["email"];
             $phone_number = $member["phone_number"];
@@ -79,11 +82,14 @@ class ExportmemberCollective extends Retrieval
             )
                 ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
                 ->where("archery_event_category_details.id", $category_id)
+                ->where("archery_event_category_details.event_id", $event_id)
                 ->first();
 
-            if ($category->event_id != $event_id) {
-                throw new BLoCException("category invalid");
+            if (!$category) {
+                throw new BLoCException("category not found");
             }
+
+            $total_price += (int)$category->fee;
 
             $today = Carbon::today('Asia/jakarta');
             $age = $today->diffInYears($date_of_birth);
@@ -92,6 +98,18 @@ class ExportmemberCollective extends Retrieval
 
             if ($age > $category->max_age_category || $age < $category->min_age_category) {
                 throw new BLoCException("age invalid");
+            }
+
+            $user = User::where("email", $email)->first();
+            if ($user) {
+                $check_participant = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->first();
+                if ($check_participant) {
+                    throw new BLoCException("user dengan email " . $email . " telah terdaftar di categori " . $category->label_category);
+                }
+
+                if ($user->gender != $category->gender_category) {
+                    throw new BLoCException("gender invalid for email " . $email);
+                }
             }
 
             $member["city_id"] = $city_id;
@@ -108,7 +126,12 @@ class ExportmemberCollective extends Retrieval
         Excel::store($excel, $final_doc, 'public');
         $destinationPath = Storage::url($final_doc);
         $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
-        return $file_path;
+
+
+        return [
+            "file_excell" => $file_path,
+            "total_price" => $total_price
+        ];
     }
 
     protected function validation($parameters)
