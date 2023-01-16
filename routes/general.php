@@ -26,6 +26,7 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         'as' => 'api_download', 'uses' => 'Controller@download'
     ]);
 
+    $router->post("/bulk-insert-member-contingent-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollective']);
     $router->group(['prefix' => 'download-template'], function () use ($router) {
         $router->get('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
     });

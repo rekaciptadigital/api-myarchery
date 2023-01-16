@@ -53,13 +53,11 @@ class ExportmemberCollective extends Retrieval
         $total_price = 0;
         foreach ($list_members as $member) {
             $email = $member["email"];
-            $phone_number = $member["phone_number"];
-            $name = $member["name"];
+            $phone_number = $member["phone_number"];            
             $category_id = $member["category_id"];
             $gender = $member["gender"];
             $date_of_birth = date("Y-m-d", strtotime($member["date_of_birth"]));
             $ktp_kk = $member["ktp_kk"];
-            $no_recomendation_later = $member["no_recomendation_later"];
             $binaan_later = $member["binaan_later"];
 
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $phone_number);
@@ -102,7 +100,10 @@ class ExportmemberCollective extends Retrieval
 
             $user = User::where("email", $email)->first();
             if ($user) {
-                $check_participant = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->first();
+                $check_participant = ArcheryEventParticipant::where("event_category_id", $category_id)
+                    ->where("user_id", $user->id)
+                    ->where("status", 1)
+                    ->first();
                 if ($check_participant) {
                     throw new BLoCException("user dengan email " . $email . " telah terdaftar di categori " . $category->label_category);
                 }
