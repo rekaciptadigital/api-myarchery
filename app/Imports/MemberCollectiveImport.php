@@ -55,10 +55,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $phone_number);
             if ($chec_format_phone_number != 1) {
                 throw new BLoCException("invalid phone number format");
-            }
-
-            $today = Carbon::today('Asia/jakarta');
-            $age = $today->diffInYears($date_of_birth);
+            }            
 
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type as type_team")
                 ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
@@ -69,9 +66,11 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
                 throw new BLoCException("category not found");
             }
 
-            if ($age > $category->max_age_category || $age < $category->min_age_category) {
+            // dd("ok");
+            if ($user_new->age > $category->max_age || $user_new->age < $category->min_age) {
                 throw new BLoCException("age invalid");
             }
+
 
             if (strtolower($category->type_team) == "individual") {
                 $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $category->id)->first();
