@@ -2,6 +2,7 @@
 
 namespace App\BLoC\General;
 
+use App\Exports\MemberContingentExport;
 use App\Libraries\Upload;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
@@ -9,6 +10,8 @@ use App\Models\City;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExportmemberCollective extends Retrieval
 {
@@ -44,7 +47,7 @@ class ExportmemberCollective extends Retrieval
             throw new BLoCException("province and city invalid");
         }
 
-        $neW_list_member = [];
+        $new_list_member = [];
         foreach ($list_members as $member) {
             $email = $member["email"];
             $phone_number = $member["phone_number"];
@@ -96,10 +99,16 @@ class ExportmemberCollective extends Retrieval
             $member["responsible_phone_number"] = $responsible_phone_number;
             $member["responsible_email"] = $responsible_email;
 
-            $neW_list_member[] = $member;
+            $new_list_member[] = $member;
         }
 
-        
+        $file_name = "member_collective_" . $city_id . "_.xlsx";
+        $final_doc = '/member_collective/' . $event_id . '/' . $file_name;
+        $excel = new MemberContingentExport($new_list_member);
+        Excel::store($excel, $final_doc, 'public');
+        $destinationPath = Storage::url($final_doc);
+        $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
+        return $file_path;
     }
 
     protected function validation($parameters)
