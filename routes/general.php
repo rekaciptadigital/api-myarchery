@@ -26,6 +26,10 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         'as' => 'api_download', 'uses' => 'Controller@download'
     ]);
 
+    $router->group(['prefix' => 'download-template'], function () use ($router) {
+        $router->get('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
+    });
+
     $router->group(['prefix' => 'event-elimination'], function () use ($router) {
         $router->get('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
     });
