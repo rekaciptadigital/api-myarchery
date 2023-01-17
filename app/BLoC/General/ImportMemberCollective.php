@@ -29,11 +29,11 @@ class ImportMemberCollective extends Retrieval
         try {
             $import = new MemberCollectiveImport();
             Excel::import($import, $file);
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            $failures = $e->failures();
-            return $failures;
+        } catch (BLoCException $e) {
+            $message = $e->getMessage();
+            $error = $e->errors();
+            throw new BLoCException($message, $error);
         }
-
     }
 
     protected function validation($parameters)

@@ -55,7 +55,6 @@ class ExportmemberCollective extends Retrieval
             $email = $member["email"];
             $phone_number = $member["phone_number"];            
             $category_id = $member["category_id"];
-            $gender = $member["gender"];
             $date_of_birth = date("Y-m-d", strtotime($member["date_of_birth"]));
             $ktp_kk = $member["ktp_kk"];
             $binaan_later = $member["binaan_later"];
@@ -151,7 +150,6 @@ class ExportmemberCollective extends Retrieval
         $rules["list_members.*.gender"] = "required|in:male,female";
         $rules["list_members.*.date_of_birth"] = "required";
         $rules["list_members.*.ktp_kk"] = "required";
-        $rules["list_members.*.no_recomendation_later"] = "required";
         $rules["list_members.*.binaan_later"] = "required";
 
         return $rules;

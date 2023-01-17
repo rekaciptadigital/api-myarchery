@@ -14,16 +14,18 @@ use App\Models\City;
 use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Carbon;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValidation
+
+class MemberCollectiveImport implements ToCollection, WithHeadingRow
 {
     protected $error_message = [];
     /**
@@ -31,6 +33,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
      */
     public function collection(Collection $collection)
     {
+        $list_errors = [];
         foreach ($collection as $key => $c) {
             $gender = $c["gender"];
             $email = $c["email"];
@@ -40,8 +43,47 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
             $category_id = $c["kategori_id"];
             $city_id = $c["kota_id"];
 
+            if (
+                !$gender
+                && !$email
+                && !$name
+                && !$phone_number
+                && !$date_of_birth
+                && !$category_id
+                && !$city_id
+            ) {
+                continue;
+            }
+
+            $validator = Validator::make($c->toArray(), [
+                'email' => 'required|email',
+                'nama' => "required",
+                "gender" => "in:male,female",
+                "no_hp" => "required",
+                "kategori_id" => "required|exists:archery_event_category_details,id",
+                "tanggal_lahir" => "required",
+                "kota_id" => "required|exists:cities,id",
+                "nama_penanggung_jawab" => "required",
+                "no_hp_penanggung_jawab" => "required",
+                "email_penanggung_jawab" => "required|email"
+            ]);
+
+            if ($validator->fails()) {
+                $row = $key;
+                $message = $validator->errors();
+                $list_errors[] = [
+                    "message" => $message,
+                    "row" => $row + 1
+                ];
+                continue;
+            }
+
             $user_new = User::where("email", $email)->first();
             if (!$user_new) {
+                $check_phone_number_exists = User::where("phone_number", $phone_number)->first();
+                if ($check_phone_number_exists) {
+                    throw new BLoCException("phone number already exists");
+                }
                 $user_new = new User;
                 $user_new->gender = $gender;
                 $user_new->name = $name;
@@ -52,10 +94,10 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
                 $user_new->save();
             }
 
-            $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $phone_number);
+            $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $user_new->phone_number);
             if ($chec_format_phone_number != 1) {
                 throw new BLoCException("invalid phone number format");
-            }            
+            }
 
             $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type as type_team")
                 ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
@@ -66,7 +108,6 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
                 throw new BLoCException("category not found");
             }
 
-            // dd("ok");
             if ($user_new->age > $category->max_age || $user_new->age < $category->min_age) {
                 throw new BLoCException("age invalid");
             }
@@ -153,22 +194,9 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow, WithValida
                 ParticipantMemberTeam::saveParticipantMemberTeam($category->id, $participant->id, $member->id, $category->category_team);
             }
         }
-    }
 
-    public function rules(): array
-    {
-        $rules = [
-            'email' => 'required|email',
-            'nama' => "required",
-            "gender" => "in:male,female",
-            "no_hp" => "required",
-            "kategori_id" => "required|exists:archery_event_category_details,id",
-            "tanggal_lahir" => "required",
-            "kota_id" => "required|exists:cities,id",
-            "nama_penanggung_jawab" => "required",
-            "no_hp_penanggung_jawab" => "required",
-            "email_penanggung_jawab" => "required|email"
-        ];
-        return $rules;
+        if (count($list_errors) > 0) {
+            throw new BLoCException("failed", $list_errors);
+        }
     }
 }
