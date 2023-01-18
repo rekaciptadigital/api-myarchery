@@ -53,7 +53,7 @@ class ExportmemberCollective extends Retrieval
         $total_price = 0;
         foreach ($list_members as $member) {
             $email = $member["email"];
-            $phone_number = $member["phone_number"];            
+            $phone_number = $member["phone_number"];
             $category_id = $member["category_id"];
             $date_of_birth = date("Y-m-d", strtotime($member["date_of_birth"]));
             $ktp_kk = $member["ktp_kk"];
@@ -75,7 +75,10 @@ class ExportmemberCollective extends Retrieval
             $category = ArcheryEventCategoryDetail::select(
                 "archery_event_category_details.*",
                 "archery_master_age_categories.min_age as min_age_category",
-                "archery_master_age_categories.max_age as max_age_category"
+                "archery_master_age_categories.max_age as max_age_category",
+                "archery_master_age_categories.is_age",
+                "archery_master_age_categories.min_date_of_birth",
+                "archery_master_age_categories.max_date_of_birth"
             )
                 ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
                 ->where("archery_event_category_details.id", $category_id)
@@ -93,8 +96,13 @@ class ExportmemberCollective extends Retrieval
 
 
 
-            if ($age > $category->max_age_category || $age < $category->min_age_category) {
-                throw new BLoCException("age invalid");
+            if ($category->is_age == 1) {
+                if ($age > $category->max_age_category || $age < $category->min_age_category) {
+                    throw new BLoCException("age invalid");
+                }
+            } else {
+                if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth) || strtotime($date_of_birth) < strtotime($category->min_date_of_birth)) {
+                }
             }
 
             $user = User::where("email", $email)->first();
