@@ -102,6 +102,7 @@ class ExportmemberCollective extends Retrieval
                 }
             } else {
                 if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth) || strtotime($date_of_birth) < strtotime($category->min_date_of_birth)) {
+                    throw new BLoCException("invalid date of birth");
                 }
             }
 

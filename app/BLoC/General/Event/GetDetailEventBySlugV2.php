@@ -49,6 +49,8 @@ class GetDetailEventBySlugV2 extends Retrieval
             $response["more_information"] = $event->more_information;
             $response["event_price"] = $event->event_price;
             $response["can_register"] = $event->getCanRegister();
+            $response["with_contingent"] = $event->with_contingent;
+            $response["province_id"] = $event->province_id;
         }
 
         return $response;
