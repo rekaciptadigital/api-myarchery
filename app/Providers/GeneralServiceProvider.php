@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
 use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
 use App\BLoC\General\ExportmemberCollective;
+use App\BLoC\General\ExportMemberCollectiveTeam;
 use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use App\BLoC\General\GetListTabCategoryByEventId;
@@ -39,6 +40,8 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("exportClubRankedGroupByTeamCategory", ExportClubRankedGroupByTeamCategory::class);
         $this->registerService("exportmemberCollective", ExportmemberCollective::class);
         $this->registerService("importMemberCollective", ImportMemberCollective::class);
+
+        $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
 
         // ======================================= End ==============================================
     }

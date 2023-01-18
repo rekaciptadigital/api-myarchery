@@ -26,7 +26,9 @@
                 <th style="text-align: center;"><strong>Gender</strong></th>
                 <th style="text-align: center;"><strong>NO HP</strong></th>
                 <th style="text-align: center;"><strong>Kategori ID</strong></th>
+                <th style="text-align: center;"><strong>Label Kategori</strong></th>
                 <th style="text-align: center;"><strong>Kota ID</strong></th>
+                <th style="text-align: center;"><strong>Nama Kota</strong></th>
                 <th style="text-align: center;"><strong>KTP/KK</strong></th>
                 <th style="text-align: center;"><strong>Surat Binaan</strong></th>
                 <th style="text-align: center;"><strong>Nama Penanggung Jawab</strong></th>
@@ -43,7 +45,9 @@
                     <td style="text-align: center;">{{ $d['gender'] }}</td>
                     <td style="text-align: center;">{{ $d['phone_number'] }}</td>
                     <td style="text-align: center;">{{ $d['category_id'] }}</td>
+                    <td style="text-align: center;">{{ $d['category_label'] }}</td>
                     <td style="text-align: center;">{{ $d['city_id'] }}</td>
+                    <td style="text-align: center;">{{ $d['city_label'] }}</td>
                     <td style="text-align: center;">{{ $d['ktp_kk'] }}</td>
                     <td style="text-align: center;">{{ $d['binaan_later'] }}</td>
                     <td style="text-align: center;">{{ $d['responsible_name'] }}</td>

@@ -12,6 +12,7 @@ use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -24,18 +25,10 @@ class ExportmemberCollective extends Retrieval
 
     protected function process($parameters)
     {
+        $user_login = Auth::guard('app-api')->user();
         $event_id = $parameters->get("event_id");
         $city_id = $parameters->get("city_id");
-        $responsible_name = $parameters->get("responsible_name");
-        $responsible_phone_number = $parameters->get("responsible_phone_number");
-        $responsible_email = $parameters->get("responsible_email");
         $list_members = $parameters->get("list_members");
-
-
-        $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $responsible_phone_number);
-        if ($chec_format_phone_number != 1) {
-            throw new BLoCException("invalid phone number format");
-        }
 
         $event = ArcheryEvent::find($event_id);
         if ($event->with_contingent != 1) {
@@ -89,13 +82,17 @@ class ExportmemberCollective extends Retrieval
                 throw new BLoCException("category not found");
             }
 
+            if (strtolower($category->category_team) != "individual") {
+                throw new BLoCException("category must be individual type type");
+            }
+
             $total_price += (int)$category->fee;
 
             $today = Carbon::today('Asia/jakarta');
             $age = $today->diffInYears($date_of_birth);
 
 
-
+            // start : cek category umur
             if ($category->is_age == 1) {
                 if ($age > $category->max_age_category || $age < $category->min_age_category) {
                     throw new BLoCException("age invalid");
@@ -105,6 +102,7 @@ class ExportmemberCollective extends Retrieval
                     throw new BLoCException("invalid date of birth");
                 }
             }
+            // End: Cek kategory umur
 
             $user = User::where("email", $email)->first();
             if ($user) {
@@ -122,9 +120,11 @@ class ExportmemberCollective extends Retrieval
             }
 
             $member["city_id"] = $city_id;
-            $member["responsible_name"] = $responsible_name;
-            $member["responsible_phone_number"] = $responsible_phone_number;
-            $member["responsible_email"] = $responsible_email;
+            $member["city_label"] = $city->name;
+            $member["category_label"] = $category->label_category;
+            $member["responsible_name"] = $user_login->name;
+            $member["responsible_phone_number"] = $user_login->phone_number;
+            $member["responsible_email"] = $user_login->email;
 
             $new_list_member[] = $member;
         }
@@ -147,10 +147,7 @@ class ExportmemberCollective extends Retrieval
     {
         $rules = [];
         $rules["event_id"] = "required|exists:archery_events,id";
-        $rules["responsible_name"] = "required|string";
         $rules["city_id"] = "required|exists:cities,id";
-        $rules["responsible_email"] = "required|email";
-        $rules["responsible_phone_number"] = "required|numeric";
         $rules["list_members"] = "required|array";
         $rules["list_members.*.category_id"] = "required|exists:archery_event_category_details,id";
         $rules["list_members.*.email"] = "required|email";

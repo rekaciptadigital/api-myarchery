@@ -4,6 +4,8 @@ namespace App\Imports;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventOfficial;
+use App\Models\ArcheryEventOfficialDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
@@ -42,6 +44,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             $date_of_birth = $c["tanggal_lahir"];
             $category_id = $c["kategori_id"];
             $city_id = $c["kota_id"];
+            $email_penanggung_jawab = $c["email_penanggung_jawab"];
 
             if (
                 !$gender
@@ -120,22 +123,44 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 }
             }
 
+            $penanggung_jawab = User::where("email", $email_penanggung_jawab)->first();
+            if (!$penanggung_jawab) {
+                throw new BLoCException("user penanggung jawab belum terdaftar");
+            }
+
             $event = ArcheryEvent::find($category->event_id);
             if (!$event) {
                 throw new BLoCException("event tidak ditemukan");
             }
-
             if ($event->with_contingent != 1) {
                 throw new BLoCException("event must be with_contingent_format");
+            }
+
+            $archery_event_official_detail = ArcheryEventOfficialDetail::where("event_id", $event->id)
+                ->first();
+            if (!$archery_event_official_detail) {
+                throw new BLoCException("official for this event not set");
             }
 
             $city = City::find($city_id);
             if (!$city) {
                 throw new BLoCException("Kota not found");
             }
-
             if ($city->province_id != $event->province_id) {
                 throw new BLoCException("invalid city");
+            }
+
+            $archery_event_official = ArcheryEventOfficial::where("event_official_detail_id", $archery_event_official_detail->id)->where("user_id", $penanggung_jawab->id)
+                ->where("city_id", $city_id)
+                ->first();
+            if (!$archery_event_official) {
+                $archery_event_official = new ArcheryEventOfficial();
+                $archery_event_official->user_id = $penanggung_jawab->id;
+                $archery_event_official->status = 1;
+                $archery_event_official->transaction_log_id = 0;
+                $archery_event_official->event_official_detail_id = $archery_event_official_detail->id;
+                $archery_event_official->city_id = $city_id;
+                $archery_event_official->save();
             }
 
 
