@@ -44,7 +44,8 @@ class ExportmemberCollective extends Retrieval
 
         $new_list_member = [];
         $total_price = 0;
-        foreach ($list_members as $member) {
+        $list_email = [];
+        foreach ($list_members as $key => $member) {
             $email = $member["email"];
             $phone_number = $member["phone_number"];
             $category_id = $member["category_id"];
@@ -52,9 +53,17 @@ class ExportmemberCollective extends Retrieval
             $ktp_kk = $member["ktp_kk"];
             $binaan_later = $member["binaan_later"];
 
+
+            // start : memastikan tidak ada email duplicate
+            if (array_search($email, $list_email) == $key) {
+                continue;
+            }
+            $list_email[$key] = $email;
+            // end : memastikan tidak ada email duplicate
+
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $phone_number);
             if ($chec_format_phone_number != 1) {
-                throw new BLoCException("invalid phone number format");
+                throw new BLoCException("invalid phone number format for email " . $email);
             }
 
             // upload ktp_kk dan surat binaan
@@ -114,9 +123,13 @@ class ExportmemberCollective extends Retrieval
                     throw new BLoCException("user dengan email " . $email . " telah terdaftar di categori " . $category->label_category);
                 }
 
-                if ($user->gender != $category->gender_category) {
-                    throw new BLoCException("gender invalid for email " . $email);
-                }
+                $gender = $user->gender;
+            } else {
+                $gender = $member["gender"];
+            }
+
+            if ($gender != $category->gender_category) {
+                throw new BLoCException("gender invalid for email " . $email);
             }
 
             $member["city_id"] = $city_id;
