@@ -123,8 +123,7 @@ class ExportMemberCollectiveTeam extends Retrieval
             // end blok validasi total peserta
 
             $city = City::find($city_id);
-
-            $total_price += (int)$category_team->fee;
+            $total_price += (int)$category_team->fee * $count_team;
 
 
             $team["city_id"] = $city_id;
