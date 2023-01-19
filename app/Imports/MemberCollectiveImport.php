@@ -16,13 +16,11 @@ use App\Models\City;
 use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
@@ -111,6 +109,10 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 throw new BLoCException("category not found");
             }
 
+            if (strtolower($category->category_team) != "individual") {
+                throw new BLoCException("category must be individual type");
+            }
+
             if ($user_new->age > $category->max_age || $user_new->age < $category->min_age) {
                 throw new BLoCException("age invalid");
             }
@@ -177,7 +179,6 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             // insert data participant
             $participant = new ArcheryEventParticipant();
             $participant->club_id = 0;
-            $participant->city_id = $city_id;
             $participant->user_id = $user_new->id;
             $participant->status = 1;
             $participant->event_id = $event->id;
@@ -194,7 +195,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             $participant->transaction_log_id = 0;
             $participant->unique_id = Str::uuid();
             $participant->event_category_id = $category->id;
-            $participant->register_by = 1;
+            $participant->register_by = 2;
             $participant->city_id = $city_id;
             $participant->save();
 
