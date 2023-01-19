@@ -26,6 +26,7 @@
                 <th style="text-align: center;"><strong>Kota ID</strong></th>
                 <th style="text-align: center;"><strong>Nama Kota</strong></th>
                 <th style="text-align: center;"><strong>Nama Penanggung Jawab</strong></th>
+                <th style="text-align: center;"><strong>Total Team</strong></th>
             </tr>
         </thead>
         <tbody>
@@ -37,6 +38,7 @@
                     <td style="text-align: center;">{{ $d['city_id'] }}</td>
                     <td style="text-align: center;">{{ $d['city_name'] }}</td>
                     <td style="text-align: center;">{{ $d['responsible_name'] }}</td>
+                    <td style="text-align: center;">{{ $d['count_team'] }}</td>
                 </tr>
             @endforeach
         </tbody>
