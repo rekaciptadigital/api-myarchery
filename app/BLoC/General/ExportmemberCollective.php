@@ -103,8 +103,10 @@ class ExportmemberCollective extends Retrieval
 
             // start : cek category umur
             if ($category->is_age == 1) {
-                if ($age > $category->max_age_category || $age < $category->min_age_category) {
-                    throw new BLoCException("age invalid");
+                if ($category->max_age_category != 0 && $category->min_age_category != 0) {
+                    if ($age > $category->max_age_category || $age < $category->min_age_category) {
+                        throw new BLoCException("age invalid");
+                    }
                 }
             } else {
                 if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth) || strtotime($date_of_birth) < strtotime($category->min_date_of_birth)) {
