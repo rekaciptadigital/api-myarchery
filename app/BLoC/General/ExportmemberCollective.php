@@ -100,21 +100,6 @@ class ExportmemberCollective extends Retrieval
             $today = Carbon::today('Asia/jakarta');
             $age = $today->diffInYears($date_of_birth);
 
-
-            // start : cek category umur
-            if ($category->is_age == 1) {
-                if ($category->max_age_category != 0 && $category->min_age_category != 0) {
-                    if ($age > $category->max_age_category || $age < $category->min_age_category) {
-                        throw new BLoCException("age invalid");
-                    }
-                }
-            } else {
-                if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth) || strtotime($date_of_birth) < strtotime($category->min_date_of_birth)) {
-                    throw new BLoCException("invalid date of birth");
-                }
-            }
-            // End: Cek kategory umur
-
             $user = User::where("email", $email)->first();
             if ($user) {
                 $check_participant = ArcheryEventParticipant::where("event_category_id", $category_id)
@@ -126,9 +111,39 @@ class ExportmemberCollective extends Retrieval
                 }
 
                 $gender = $user->gender;
+                $age = $user->age;
             } else {
                 $gender = $member["gender"];
             }
+
+            // start : cek category umur
+            if ($category->is_age == 1) {
+                if ($category->max_age_category > 0) {
+                    if ($age > $category->max_age_category) {
+                        throw new BLoCException("age invalid");
+                    }
+                }
+
+                if ($category->min_age_category > 0) {
+                    if ($age < $category->min_age_category) {
+                        throw new BLoCException("age invalid");
+                    }
+                }
+            } else {
+                // cek jika ada persyaratan tanggal minimal kelahiran
+                if ($category->min_date_of_birth != null) {
+                    if (strtotime($user->date_of_birth) < strtotime($category->min_date_of_birth)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($category->min_date_of_birth)));
+                    }
+                }
+
+                if ($category->max_date_of_birth != null) {
+                    if (strtotime($user->date_of_birth) > strtotime($category->max_date_of_birth)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($category->max_date_of_birth)));
+                    }
+                }
+            }
+            // End: Cek kategory umur
 
             if ($gender != $category->gender_category) {
                 throw new BLoCException("gender invalid for email " . $email);
