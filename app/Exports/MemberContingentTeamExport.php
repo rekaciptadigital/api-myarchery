@@ -29,8 +29,12 @@ class MemberContingentTeamExport implements FromView, WithColumnWidths
     {
         return [
             'A' => 40,
-            'B' => 25,
+            'B' => 20,
             'C' => 40,
+            'D' => 20,
+            'E' => 40,
+            'F' => 40,
+            'G' => 20
         ];
     }
 }
