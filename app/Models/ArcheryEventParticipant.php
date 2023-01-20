@@ -397,6 +397,11 @@ class ArcheryEventParticipant extends Model
 
   public static function teamBestOfThree($category_detail_team)
   {
+    $event = ArcheryEvent::find($category_detail_team->event_id);
+    if (!$event) {
+      throw new BLoCException("event not found");
+    }
+
     $team_cat = ($category_detail_team->team_category_id) == "male_team" ? "individu male" : "individu female";
     $category_detail_individu = ArcheryEventCategoryDetail::where("event_id", $category_detail_team->event_id)
       ->where("age_category_id", $category_detail_team->age_category_id)
@@ -415,22 +420,40 @@ class ArcheryEventParticipant extends Model
     }
     $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_individu->id, 1, $session);
 
-    $participant_club = [];
-    $sequence_club = [];
-    $participants = ArcheryEventParticipant::select("archery_event_participants.*", "archery_clubs.name as club_name")
-      ->where("event_category_id", $category_detail_team->id)
-      ->where("status", 1)
-      ->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
-      ->get();
+    $participant_club_or_city = [];
+    $sequence = [];
+
+    $participants = ArcheryEventParticipant::where("event_category_id", $category_detail_team->id)
+      ->where("status", 1);
+
+    if ($event->with_contingent == 1) {
+      $participants->join("cities", "archery_event_participants.city_id", "=", "cities.id");
+    } else {
+      $participants->join("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id");
+    }
+
+    $participants = $participants->select("archery_event_participants.*")->get();
 
     foreach ($participants as $key => $value) {
-      $club_members = [];
+      $list_data_members = [];
       $total_per_point = self::$total_per_points;
       $total = 0;
-      $sequence_club[$value->club_id] = isset($sequence_club[$value->club_id]) ? $sequence_club[$value->club_id] + 1 : 1;
+
+      if ($event->with_contingent == 1) {
+        $sequence[$value->city_id] = isset($sequence[$value->city_id]) ? $sequence[$value->city_id] + 1 : 1;
+      } else {
+        $sequence[$value->club_id] = isset($sequence[$value->club_id]) ? $sequence[$value->club_id] + 1 : 1;
+      }
+
       foreach ($qualification_rank as $k => $member_rank) {
-        if ($value->club_id != $member_rank["club_id"]) {
-          continue;
+        if ($event->with_contingent == 1) {
+          if ($value->city_id != $member_rank["city_id"]) {
+            continue;
+          }
+        } else {
+          if ($value->club_id != $member_rank["club_id"]) {
+            continue;
+          }
         }
 
         if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
@@ -465,36 +488,50 @@ class ArcheryEventParticipant extends Model
           }
           $member_rank["member"]["total"] = $member_rank["total"];
           $total = $total + $member_rank["total"];
-          $club_members[] = $member_rank["member"];
+          $list_data_members[] = $member_rank["member"];
         }
 
         unset($qualification_rank[$k]);
 
-        if (count($club_members) == 3) {
+        if (count($list_data_members) == 3) {
           break;
         }
       }
 
-      $participant_club[] = [
+      $city_name = "";
+      $city = City::find($value->city_id);
+      if ($city) {
+        $city_name = $city->name;
+      }
+
+      $club_name = "";
+      $club = ArcheryClub::find($value->club_id);
+      if ($club) {
+        $club_name = $club->name;
+      }
+
+      $participant_club_or_city[] = [
         "participant_id" => $value->id,
         "club_id" => $value->club_id,
-        "club_name" => $value->club_name,
-        "team" => $value->club_name . " " . $sequence_club[$value->club_id],
+        "club_name" => $club_name,
+        "city_id" => $value->city_id,
+        "city_name" => $city_name,
+        "team" => $value->club_name . " " . $sequence[$value->club_id],
         "total" => $total,
         "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
         "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
         "total_per_points" => $total_per_point,
         "total_tmp" => ArcheryScoring::getTotalTmp($total_per_point, $total),
-        "teams" => $club_members
+        "teams" => $list_data_members
       ];
     }
 
-    usort($participant_club, function ($a, $b) {
+    usort($participant_club_or_city, function ($a, $b) {
       return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
     });
 
     $new_array = [];
-    foreach ($participant_club as $key => $value) {
+    foreach ($participant_club_or_city as $key => $value) {
       if (count($value["teams"]) == 3) {
         array_push($new_array, $value);
       }
@@ -537,14 +574,6 @@ class ArcheryEventParticipant extends Model
       foreach ($members as $member) {
 
         $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($member->category_details_id);
-
-        // if ($member->elimination_ranked == 1 || $member->position_qualification == 1) {
-        //     $medal = 'Gold';
-        // } else if ($member->elimination_ranked == 2 || $member->position_qualification == 2) {
-        //     $medal = 'Silver';
-        // } else {
-        //     $medal = 'Bronze';
-        // }
 
         if ($type == "elimination") {
           $elimination_rank = $member->elimination_ranked;
