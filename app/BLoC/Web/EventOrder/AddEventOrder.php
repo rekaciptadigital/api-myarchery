@@ -219,7 +219,7 @@ class AddEventOrder extends Transactional
 
 
         if ($event_category_detail->is_age == 1) {
-            if ($user->age == null) {
+            if ($user->date_of_birth == null) {
                 throw new BLoCException("tgl lahir anda belum di set");
             }
             $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
