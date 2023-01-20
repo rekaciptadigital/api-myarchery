@@ -22,6 +22,7 @@ use App\Models\TemporaryParticipantMember;
 use App\Models\TransactionLog;
 use App\Models\User;
 use App\Models\ArcherySeriesUserPoint;
+use App\Models\City;
 use DateTime;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redis;
@@ -57,15 +58,12 @@ class AddEventOrder extends Transactional
         }
 
         $event_category_id = $parameters->get('event_category_id');
+        $city_id = 0;
         $day_choice = $parameters->get("day_choice");
         $club_id = $parameters->get("club_id");
         $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY", "midtrans");
 
-        // get event_category_detail by id
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
-        if (!$event_category_detail) {
-            throw new BLoCException("category event not found");
-        }
 
         $with_early_bird = 0;
         // cek harga apakah normal atau early bird
@@ -105,6 +103,18 @@ class AddEventOrder extends Transactional
             Validator::make($parameters->all(), ["day_choice" => "required|date"])->validate();
         }
 
+        // cek apakah event menggunakan format contingent
+        if ($event->with_contingent == 1) {
+            Validator::make($parameters->all(), ["city_id" => "required|exists:cities,id"])
+                ->validate();
+            $city_id = $parameters->get("city_id");
+            $province_id = $event->province_id;
+            $city = City::where("id", $city_id)->where("province_id", $province_id)->first();
+            if (!$city) {
+                throw new BLoCException("city not found");
+            }
+        }
+
         // cek apakah event butuh verifikasi user atau tidak
         if ($event->need_verify == 1) {
             if ($user->verify_status != 1) {
@@ -112,6 +122,7 @@ class AddEventOrder extends Transactional
             }
         }
 
+        // blok: cek waktu pendaftaran
         $now = time();
         if (!$event->registration_start_datetime || !$event->registration_end_datetime) {
             throw new BLoCException("tanggal pendaftaran default belum di set");
@@ -134,6 +145,7 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("waktu pendaftaran tidak sesuai dengan periode pendaftaran untuk category ini");
             }
         }
+        // end blok : cek waktu pendaftaran
 
 
         if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
@@ -152,13 +164,13 @@ class AddEventOrder extends Transactional
         }
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
-            return $this->registerIndividu($event_category_detail, $user, $club_member, $event, $price, $is_marathon, $day_choice, $with_early_bird);
+            return $this->registerIndividu($event_category_detail, $user, $club_member, $event, $price, $is_marathon, $day_choice, $with_early_bird, $city_id);
         } else {
-            return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $price, $with_early_bird);
+            return $this->registerTeamBestOfThree($event_category_detail, $user, $club_member, $price, $with_early_bird, $city_id);
         }
     }
 
-    private function registerIndividu($event_category_detail, $user, $club_member, $event, $price, $is_marathon, $day_choice, $with_early_bird)
+    private function registerIndividu($event_category_detail, $user, $club_member, $event, $price, $is_marathon, $day_choice, $with_early_bird, $city_id)
     {
         $time_now = time();
 
@@ -278,14 +290,10 @@ class AddEventOrder extends Transactional
         }
 
         if ($participant) {
-            $participant->status = 4;
-            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
-            $participant->is_early_bird_payment = $with_early_bird;
-            $participant->save();
-        } else {
-            // insert data participant
-            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0, $with_early_bird);
+            $participant->delete();
         }
+
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0, $with_early_bird, $city_id);
 
         $order_id = env("ORDER_ID_PREFIX", "OE-S") . $participant->id;
 
@@ -498,7 +506,7 @@ class AddEventOrder extends Transactional
         return $this->composeResponse($res);
     }
 
-    private function registerTeamBestOfThree($event_category_detail, $user, $club_member, $price, $with_early_bird)
+    private function registerTeamBestOfThree($event_category_detail, $user, $club_member, $price, $with_early_bird, $city_id)
     {
         // mengambil gender category
 
@@ -524,23 +532,6 @@ class AddEventOrder extends Transactional
             })->count();
 
         if ($gender_category == 'mix') {
-            // if ($check_register_same_category >= 2) {
-            //     $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
-            //         ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            //         ->where('archery_event_participants.club_id', $club_member->club_id)
-            //         ->where("archery_event_participants.status", 4)
-            //         ->where("transaction_logs.expired_time", ">", $time_now)
-            //         ->count();
-
-            //     if ($check_panding > 0) {
-            //         throw new BLoCException("ada transaksi yang belum diselesaikan oleh club pada category ini");
-            //     } else {
-            //         throw new BLoCException("club anda sudah terdaftar 2 kali di kategory ini");
-            //     }
-            // } else {
-            //     ArcheryEventParticipant::checkParticipantMixteamOrder($event_category_detail->event_id, $event_category_detail->age_category_id, $event_category_detail->competition_category_id, $event_category_detail->distance_id, $club_member->club_id, $check_register_same_category);
-            // }
-
             $check_success_category_mix = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                 ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                 ->where('archery_event_participants.club_id', $club_member->club_id)
@@ -635,15 +626,13 @@ class AddEventOrder extends Transactional
         }
 
         if ($participant) {
-            $participant->status = 4;
-            $participant->club_id = $club_member != null ? $club_member->club_id : 0;
-            $participant->is_early_bird_payment = $with_early_bird;
-            $participant->save();
-        } else {
-            // insert data participant
-            // $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member != null ? $club_member->club_id : 0, $is_marathon == 1 ? $day_choice : null, 0);
-            $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0, $with_early_bird);
+            $participant->delete();
         }
+
+
+        // insert data participant
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0, $with_early_bird, $city_id);
+
 
 
         if ($price < 1) {
