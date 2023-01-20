@@ -510,13 +510,20 @@ class ArcheryEventParticipant extends Model
         $club_name = $club->name;
       }
 
+      $team = "";
+      if ($event->with_contingent == 1) {
+        $team = $city_name . " " . $sequence[$value->city_id];
+      } else {
+        $team = $club_name . " " . $sequence[$value->club_id];
+      }
+
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
         "club_id" => $value->club_id,
         "club_name" => $club_name,
         "city_id" => $value->city_id,
         "city_name" => $city_name,
-        "team" => $value->club_name . " " . $sequence[$value->club_id],
+        "team" => $team,
         "total" => $total,
         "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
         "total_x" => isset($total_per_point["x"]) ? $total_per_point["x"] : 0,
