@@ -4,9 +4,13 @@ namespace App\Providers;
 
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
 use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
+use App\BLoC\General\ExportmemberCollective;
+use App\BLoC\General\ExportMemberCollectiveTeam;
 use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use App\BLoC\General\GetListTabCategoryByEventId;
+use App\BLoC\General\ImportMemberCollective;
+use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
@@ -35,6 +39,10 @@ class GeneralServiceProvider extends ServiceProvider
 
         // ===================================== queen archery =====================================
         $this->registerService("exportClubRankedGroupByTeamCategory", ExportClubRankedGroupByTeamCategory::class);
+        $this->registerService("exportmemberCollective", ExportmemberCollective::class);
+        $this->registerService("importMemberCollective", ImportMemberCollective::class);
+        $this->registerService("importMemberCollectiveTeam", ImportMemberCollectiveTeam::class);
+        $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
 
         // ======================================= End ==============================================
     }

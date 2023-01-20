@@ -26,6 +26,15 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         'as' => 'api_download', 'uses' => 'Controller@download'
     ]);
 
+    $router->post("/bulk-insert-member-contingent-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollective']);
+    $router->post("/bulk-insert-member-contingent-team-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollectiveTeam']);
+    $router->group(["middleware" => "auth.user"], function () use ($router) {
+        $router->group(['prefix' => 'download-template'], function () use ($router) {
+            $router->post('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
+            $router->post('/member-contingent-team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberCollectiveTeam']);
+        });
+    });
+
     $router->group(['prefix' => 'event-elimination'], function () use ($router) {
         $router->get('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
     });
