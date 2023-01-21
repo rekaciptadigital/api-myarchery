@@ -274,6 +274,7 @@ class ArcheryEvent extends Model
         $datas = ArcheryEvent::select(
             '*',
             'archery_events.id as id_event',
+            'archery_events.province_id as province_id_contingent',
             'cities.id as cities_id',
             'cities.name as cities_name',
             'provinces.id as province_id',
@@ -365,6 +366,8 @@ class ArcheryEvent extends Model
                 $event = ArcheryEvent::find($data->id_event);
 
                 $detail['id'] = $data->id_event;
+                $detail['with_contingent'] = $data->with_contingent;
+                $detail['province_id_contingent'] = $data->province_id_contingent;
                 $detail['event_type'] = $data->event_type;
                 $detail['event_competition'] = $data->event_competition;
                 $detail['is_private'] = $data->is_private;
