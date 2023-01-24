@@ -158,7 +158,7 @@ class AddEventOrder extends Transactional
         // start blok: validasi club
         if ($event->with_contingent == 0) {
             $validator = Validator::make($parameters->all(), [
-                "club_id" => "required|exists:archery_clubs,id",
+                "club_id" => "required",
                 "with_club" => "required|in:yes,no"
             ]);
 
