@@ -408,7 +408,6 @@ class ArcheryEventParticipant extends Model
         $club_name = $club->name;
       }
 
-      $team = "";
       if ($event->with_contingent == 1) {
         $team = $city_name . " " . $sequence[$value->city_id];
       } else {
