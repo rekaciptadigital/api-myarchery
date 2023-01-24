@@ -55,7 +55,7 @@ class ExportmemberCollective extends Retrieval
 
 
             // start : memastikan tidak ada email duplicate
-            if (array_search($email, $list_email) == $key) {
+            if (array_search($email, $list_email) != false) {
                 continue;
             }
             $list_email[$key] = $email;
