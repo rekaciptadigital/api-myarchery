@@ -728,7 +728,7 @@ class AddEventOrder extends Transactional
     protected function validation($parameters)
     {
         return [
-            "event_category_id" => "required",
+            "event_category_id" => "required|exists:archery_event_category_details,id",
             "club_id" => "required",
             "with_club" => "required"
         ];
