@@ -61,7 +61,8 @@ class AddEventOrder extends Transactional
         $event_category_id = $parameters->get('event_category_id');
         $city_id = 0;
         $day_choice = $parameters->get("day_choice");
-        $club_id = $parameters->get("club_id");
+        $club_id = 0;
+        $club_member = null;
         $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY", "midtrans");
 
         $event_category_detail = ArcheryEventCategoryDetail::find($event_category_id);
@@ -154,21 +155,28 @@ class AddEventOrder extends Transactional
         }
         // end blok : cek waktu pendaftaran
 
+        // start blok: validasi club
+        if ($event->with_contingent == 0) {
+            $validator = Validator::make($parameters->all(), [
+                "club_id" => "required|exists:archery_clubs,id",
+                "with_club" => "required|in:yes,no"
+            ]);
 
-        if (($parameters->get("with_club") == "yes") && ($parameters->get("club_id") == 0)) {
-            throw new BLoCException("club harus diisi");
-        }
+            if ($validator->fails()) {
+                throw new BLoCException("error validation", $validator->errors());
+            }
 
+            $club_id = $parameters->get("club_id");
+            $with_club = $parameters->get("with_club");
 
-
-        // cek apakah user sudah tergabung dalam club atau belum
-        $club_member = null;
-        if ($club_id != 0) {
-            $club_member = ClubMember::where('club_id', $club_id)->where('user_id', $user->id)->first();
-            if (!$club_member) {
-                throw new BLoCException("member not joined this club");
+            if ($with_club == "yes" && $club_id != 0) {
+                $club_member = ClubMember::where('club_id', $club_id)->where('user_id', $user->id)->first();
+                if (!$club_member) {
+                    throw new BLoCException("member not joined this club");
+                }
             }
         }
+        // end blok: validasi blok
 
         if ($event_category_detail->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
             return $this->registerIndividu($event_category_detail, $user, $club_member, $event, $price, $is_marathon, $day_choice, $with_early_bird, $city_id);
