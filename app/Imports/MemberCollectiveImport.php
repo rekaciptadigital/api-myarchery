@@ -100,8 +100,16 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 throw new BLoCException("invalid phone number format");
             }
 
-            $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type as type_team")
+            $category = ArcheryEventCategoryDetail::select(
+                "archery_event_category_details.*",
+                "archery_master_team_categories.type as type_team",
+                "archery_master_age_categories.min_age as min_age_master",
+                "archery_master_age_categories.max_age as max_age_master",
+                "archery_master_age_categories.min_date_of_birth as min_date_of_birth_master",
+                "archery_master_age_categories.max_date_of_birth as max_date_of_birth_master"
+            )
                 ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+                ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
                 ->where("archery_event_category_details.id", $category_id)
                 ->first();
 
@@ -113,8 +121,32 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 throw new BLoCException("category must be individual type");
             }
 
-            if ($user_new->age > $category->max_age || $user_new->age < $category->min_age) {
-                throw new BLoCException("age invalid");
+            // start : cek category umur
+            if ($category->is_age == 1) {
+                if ($category->max_age_master > 0) {
+                    if ($user_new->age > $category->max_age_master) {
+                        throw new BLoCException("age invalid");
+                    }
+                }
+
+                if ($category->min_age_master > 0) {
+                    if ($user_new->age < $category->min_age_master) {
+                        throw new BLoCException("age invalid");
+                    }
+                }
+            } else {
+                // cek jika ada persyaratan tanggal minimal kelahiran
+                if ($category->min_date_of_birth_master != null) {
+                    if (strtotime($user_new->date_of_birth) < strtotime($category->min_date_of_birth_master)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($category->min_date_of_birth_master)));
+                    }
+                }
+
+                if ($category->max_date_of_birth_master != null) {
+                    if (strtotime($user_new->date_of_birth) > strtotime($category->max_date_of_birth_master)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($category->max_date_of_birth_master)));
+                    }
+                }
             }
 
 

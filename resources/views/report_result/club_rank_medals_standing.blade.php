@@ -99,7 +99,13 @@
                 @foreach ($datatables as $key => $data)
                     <tr>
                         <td style="text-align:center;">{{ $i }}</td>
-                        <td>{{ $data['club_name'] }}</td>
+                        <td>
+                            @if ($data['with_contingent'] == 1)
+                                {{ $data['contingent_name'] }}
+                            @else
+                                {{ $data['club_name'] }}
+                            @endif
+                        </td>
                         @foreach ($data['medal_array'] as $item)
                             <td style="text-align:center;">{{ $item === 0 ? '' : $item }}</td>
                         @endforeach

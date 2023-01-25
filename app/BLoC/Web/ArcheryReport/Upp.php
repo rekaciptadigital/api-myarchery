@@ -7,7 +7,6 @@ use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoring;
@@ -87,7 +86,7 @@ class Upp extends Retrieval
                 $category_detail = ArcheryEventCategoryDetail::find($value2->id);
                 $category_team_type = $value2->getCategoryType();
 
-                $data_qualification = $this->getQualification($category_detail);
+                $data_qualification = $this->getQualification($category_detail); // daptakan data kualifikasi individu dan beregu
                 $data_report_qualification_individu = $this->getData($category_detail->id, "qualification", $event_id);
                 $data_report_by_team_qualification_individu = [];
 
@@ -105,6 +104,7 @@ class Upp extends Retrieval
                 $data_report_by_team_qualification_team = [];
                 if (strtolower($category_team_type) == "team") {
                     if ($data_elimination_team == []) {
+                        // start blok : daptkan juara 1 2 3 kualifikasi beregu
                         $new_data_qualification_best_of_three = [];
                         foreach ($data_qualification as $dq) {
                             $new_data_qualification_best_of_three[] = $dq;
@@ -112,6 +112,7 @@ class Upp extends Retrieval
                                 break;
                             }
                         }
+                        // end blok : daptkan juara 1 2 3 kualifikasi beregu
                         $data_report_by_team_qualification_team["team"] = "team";
                         $data_report_by_team_qualification_team["data"] = $new_data_qualification_best_of_three;
                         $data_report_by_team_qualification_team["category_label"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
@@ -151,6 +152,7 @@ class Upp extends Retrieval
 
             }
             $pages[] = view('upp/data', [
+                "with_contingent" => $archery_event->with_contingent,
                 'data_report' => $data_all_category_in_day,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
@@ -179,7 +181,6 @@ class Upp extends Retrieval
             // 'enable-toc-back-links' => true,
         ]);
 
-        $digits = 3;
         $fileName   = 'upp_' . $event_id . "_" . time() . '.pdf';
         // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/upp';
@@ -241,9 +242,11 @@ class Upp extends Retrieval
             $detail_club_with_medal_response = [];
             foreach ($data as $key => $d) {
                 $detail_club_with_medal_response["club_name"] = $d["club_name"];
+                $detail_club_with_medal_response["contingent_name"] = $d["contingent_name"];
                 $detail_club_with_medal_response["total_gold"] = $d["gold"];
                 $detail_club_with_medal_response["total_silver"] = $d["silver"];
                 $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+                $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
 
                 foreach ($competition_category as $competition) {
                     $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
@@ -330,11 +333,24 @@ class Upp extends Retrieval
     {
         $data_report = [];
         $category_id = null;
-        $elimination_rank = 0;
 
-        $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
+        $members = ArcheryEventEliminationMember::select(
+            "*",
+            "archery_event_category_details.id as category_details_id",
+            "archery_event_category_details.session_in_qualification",
+            "archery_event_participant_members.id as participant_member_id",
+            "archery_clubs.name as club_name",
+            "cities.name as city_name",
+            "archery_events.with_contingent",
+            "users.name as user_name",
+            DB::RAW('date(archery_event_elimination_members.created_at) as date')
+        )
             ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->join("users", "users.id", "=", "archery_event_participants.user_id")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+            ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
             ->where("archery_event_category_details.id", $category_detail_id)
             ->where("archery_event_participants.event_id", $event_id)
@@ -358,56 +374,74 @@ class Upp extends Retrieval
 
         if ($members) {
             foreach ($members as $member) {
-
                 $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($member->category_details_id);
-
-                // if ($member->elimination_ranked == 1 || $member->position_qualification == 1) {
-                //     $medal = 'Gold';
-                // } else if ($member->elimination_ranked == 2 || $member->position_qualification == 2) {
-                //     $medal = 'Silver';
-                // } else {
-                //     $medal = 'Bronze';
-                // }
-
                 if ($type == "elimination") {
-                    $elimination_rank = $member->elimination_ranked;
                     if ($member->elimination_ranked == 1) {
                         $medal = 'Gold';
-                    } else if ($member->elimination_ranked == 2) {
+                    }
+
+                    if ($member->elimination_ranked == 2) {
                         $medal = 'Silver';
-                    } else {
+                    }
+
+                    if ($member->elimination_ranked == 3) {
                         $medal = 'Bronze';
                     }
                 } elseif ($type == "qualification") {
                     if ($member->position_qualification == 1) {
                         $medal = 'Gold';
-                    } else if ($member->position_qualification == 2) {
+                    }
+
+                    if ($member->position_qualification == 2) {
                         $medal = 'Silver';
-                    } elseif ($member->position_qualification == 3) {
+                    }
+
+                    if ($member->position_qualification == 3) {
                         $medal = 'Bronze';
                     }
                 } else {
                     $medal = '-';
                 }
 
-                $athlete = $member->name;
+                $athlete = $member->user_name;
                 $date = $member->date;
+                $club_or_city = "";
+                $club = "";
+                $city = "";
 
-                $club = ArcheryClub::find($member->club_id);
-                if (!$club) {
-                    $club = '';
-                } else {
-                    $club = $club->name;
+                if ($member->club_name) {
+                    $club = $member->club_name;
                 }
 
-                $category = ArcheryEventCategoryDetail::find($member->category_details_id);
+                if ($member->city_name) {
+                    $city = $member->city_name;
+                }
+
+                if ($member->with_contingent == 1) {
+                    $club_or_city = $city;
+                } else {
+                    $club_or_city = $club;
+                }
+
                 $session = [];
-                for ($i = 0; $i < $category->session_in_qualification; $i++) {
+                for ($i = 0; $i < $member->session_in_qualification; $i++) {
                     $session[] = $i + 1;
                 }
                 $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
 
-                $data_report[] = array("athlete" => $athlete, "club" => $club, "category" => $categoryLabel, "medal" => $medal, "date" => $date, "scoring" => $scoring, "elimination_rank" => $elimination_rank, "qualification_rank" => $member->position_qualification);
+                $data_report[] = array(
+                    "member_id" => $member->member_id,
+                    "athlete" => $athlete,
+                    "club" => $club,
+                    "category" => $categoryLabel,
+                    "medal" => $medal,
+                    "date" => $date,
+                    "scoring" => $scoring,
+                    "elimination_rank" => $member->elimination_ranked,
+                    "qualification_rank" => $member->position_qualification,
+                    "city" => $city,
+                    "club_or_city" => $club_or_city
+                );
 
                 $category_id = $member->category_details_id;
             }
@@ -431,9 +465,7 @@ class Upp extends Retrieval
 
             $data = array();
             foreach ($elimination_group_match as $key => $value) {
-
-                $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
-
+                $elimination_group_team = ArcheryEventEliminationGroupTeams::find($value->teamid);
                 if ($elimination_group_team) {
                     if ($elimination_group_team->elimination_ranked <= 3) {
                         $data[] = [
@@ -463,10 +495,14 @@ class Upp extends Retrieval
         $score_type = 1;
         $name = null;
         $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
-        if (!$team_category) throw new BLoCException("team category not found");
+        if (!$team_category) {
+            throw new BLoCException("team category not found");
+        }
 
         $event = ArcheryEvent::find($category_detail->event_id);
-        if (!$event) throw new BLoCException("CATEGORY INVALID");
+        if (!$event) {
+            throw new BLoCException("CATEGORY INVALID");
+        }
 
         $session = [];
         for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
@@ -474,9 +510,7 @@ class Upp extends Retrieval
         }
 
         if ($category_detail->category_team == "Individual") {
-            // $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
             $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name);
-
             return $qualification_member;
         }
 
@@ -486,9 +520,10 @@ class Upp extends Retrieval
             } else {
                 $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
             }
+            return $data;
         }
 
-        return $data;
+        throw new BLoCException("failed to get data qualification");
     }
 
     protected function getElimination($category_detail)

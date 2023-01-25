@@ -76,7 +76,14 @@
                                 <strong>Athlete</strong>
                             </th>
                             <th style="text-align: center;border: 1px solid black; font-size: 14pt">
-                                <strong>Club</strong>
+                                <strong>
+                                    {{-- @if ($with_contingent == 1)
+                                        Kontingen
+                                    @else
+                                        Club
+                                    @endif --}}
+                                    Club/Kontingen
+                                </strong>
                             </th>
                             <th style="text-align: center;border: 1px solid black;font-size: 14pt">
                                 <strong>Sesi 1</strong>
@@ -131,7 +138,7 @@
                                     {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                                    {{ $data['club'] ? ucwords(strtolower($data['club'])) : '-' }}
+                                    {{ $data['club_or_city'] ? ucwords(strtolower($data['club_or_city'])) : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
@@ -171,7 +178,7 @@
                                     <strong>Athlete</strong>
                                 </th>
                                 <th style="text-align: center;border: 1px solid black; ">
-                                    <strong>Club</strong>
+                                    <strong>Nama Tim</strong>
                                 </th>
                                 <th style="text-align: center; border: 1px solid black;">
                                     <strong>Total</strong>
@@ -205,7 +212,7 @@
                                         @endif
                                     </td>
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['club_name'] ? $data['club_name'] : '-' }}</td>
+                                        {{ $data['team'] ? $data['team'] : '-' }}</td>
                                     <td style="text-align: center;border: 1px solid black;">{{ $data['total'] }}</td>
                                     <td style="text-align: center;border: 1px solid black;">{{ $data['total_x'] }}</td>
                                     <td style="text-align: center;border: 1px solid black;">
@@ -250,7 +257,14 @@
                                     <strong>Athlete</strong>
                                 </th>
                                 <th style="text-align: center;border: 1px solid black; ">
-                                    <strong>Club</strong>
+                                    <strong>
+                                        {{-- @if ($with_contingent == 1)
+                                            Kontingen
+                                        @else
+                                            Club
+                                        @endif --}}
+                                        Club/Kontingen
+                                    </strong>
                                 </th>
                             </tr>
                             @php
@@ -281,7 +295,8 @@
                                     <td style="text-align: center;border: 1px solid black;">
                                         {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}</td>
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['club'] ? ucwords(strtolower($data['club'])) : '-' }}</td>
+                                        {{ $data['club_or_city'] ? ucwords(strtolower($data['club_or_city'])) : '-' }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -317,7 +332,7 @@
                                     <strong>Medal</strong>
                                 </th>
                                 <th style="text-align: center;border: 1px solid black; ">
-                                    <strong>Club</strong>
+                                    <strong>Nama Tim</strong>
                                 </th>
                             </tr>
                             @php
@@ -353,7 +368,8 @@
                                     @endif
                                     <!-- end medals -->
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['team_name'] ? $data['team_name'] : '-' }}</td>
+                                        {{ $data['team_name'] ? $data['team_name'] : '-' }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
