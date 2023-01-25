@@ -152,6 +152,7 @@ class Upp extends Retrieval
 
             }
             $pages[] = view('upp/data', [
+                "with_contingent" => $archery_event->with_contingent,
                 'data_report' => $data_all_category_in_day,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
@@ -241,9 +242,11 @@ class Upp extends Retrieval
             $detail_club_with_medal_response = [];
             foreach ($data as $key => $d) {
                 $detail_club_with_medal_response["club_name"] = $d["club_name"];
+                $detail_club_with_medal_response["contingent_name"] = $d["contingent_name"];
                 $detail_club_with_medal_response["total_gold"] = $d["gold"];
                 $detail_club_with_medal_response["total_silver"] = $d["silver"];
                 $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+                $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
 
                 foreach ($competition_category as $competition) {
                     $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)

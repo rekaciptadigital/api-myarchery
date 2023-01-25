@@ -76,7 +76,14 @@
                                 <strong>Athlete</strong>
                             </th>
                             <th style="text-align: center;border: 1px solid black; font-size: 14pt">
-                                <strong>Club</strong>
+                                <strong>
+                                    {{-- @if ($with_contingent == 1)
+                                        Kontingen
+                                    @else
+                                        Club
+                                    @endif --}}
+                                    Club/Kontingen
+                                </strong>
                             </th>
                             <th style="text-align: center;border: 1px solid black;font-size: 14pt">
                                 <strong>Sesi 1</strong>
@@ -250,7 +257,14 @@
                                     <strong>Athlete</strong>
                                 </th>
                                 <th style="text-align: center;border: 1px solid black; ">
-                                    <strong>Club</strong>
+                                    <strong>
+                                        {{-- @if ($with_contingent == 1)
+                                            Kontingen
+                                        @else
+                                            Club
+                                        @endif --}}
+                                        Club/Kontingen
+                                    </strong>
                                 </th>
                             </tr>
                             @php
