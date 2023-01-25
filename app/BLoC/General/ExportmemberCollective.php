@@ -44,7 +44,7 @@ class ExportmemberCollective extends Retrieval
 
         $new_list_member = [];
         $total_price = 0;
-        $list_email = [];
+        $list_email_and_category_object = [];
         foreach ($list_members as $key => $member) {
             $email = $member["email"];
             $phone_number = $member["phone_number"];
@@ -52,13 +52,19 @@ class ExportmemberCollective extends Retrieval
             $date_of_birth = date("Y-m-d", strtotime($member["date_of_birth"]));
             $ktp_kk = $member["ktp_kk"];
             $binaan_later = $member["binaan_later"];
+            $gender = $member["gender"];
 
-
-            // start : memastikan tidak ada email duplicate
-            if (array_search($email, $list_email) != false) {
-                continue;
+            // start : memastikan tidak ada email duplicate dengan insert satu object ke list untuk pengecekan di akhir
+            foreach ($list_email_and_category_object as $key_lec => $lec) {
+                $row = $key+1;
+                if ($lec->email == $email && $lec->category_id == $category_id) {
+                    throw new BLoCException("email duplikat pada form " . $row);
+                }
             }
-            $list_email[$key] = $email;
+            $list_email_and_category_object[] = (object)[
+                "email" => $email,
+                "category_id" => $category_id
+            ];
             // end : memastikan tidak ada email duplicate
 
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $phone_number);
@@ -76,11 +82,11 @@ class ExportmemberCollective extends Retrieval
 
             $category = ArcheryEventCategoryDetail::select(
                 "archery_event_category_details.*",
-                "archery_master_age_categories.min_age as min_age_category",
-                "archery_master_age_categories.max_age as max_age_category",
+                "archery_master_age_categories.min_age as min_age_category_master_age",
+                "archery_master_age_categories.max_age as max_age_category_master_age",
                 "archery_master_age_categories.is_age",
-                "archery_master_age_categories.min_date_of_birth",
-                "archery_master_age_categories.max_date_of_birth"
+                "archery_master_age_categories.min_date_of_birth as min_date_of_birth_master_age",
+                "archery_master_age_categories.max_date_of_birth as max_date_of_birth_master_age"
             )
                 ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
                 ->where("archery_event_category_details.id", $category_id)
@@ -112,34 +118,33 @@ class ExportmemberCollective extends Retrieval
 
                 $gender = $user->gender;
                 $age = $user->age;
-            } else {
-                $gender = $member["gender"];
-            }
+                $date_of_birth = $user->date_of_birth;
+            } 
 
             // start : cek category umur
             if ($category->is_age == 1) {
-                if ($category->max_age_category > 0) {
-                    if ($age > $category->max_age_category) {
+                if ($category->max_age_category_master_age > 0) {
+                    if ($age > $category->max_age_category_master_age) {
                         throw new BLoCException("age invalid");
                     }
                 }
 
-                if ($category->min_age_category > 0) {
-                    if ($age < $category->min_age_category) {
+                if ($category->min_age_category_master_age > 0) {
+                    if ($age < $category->min_age_category_master_age) {
                         throw new BLoCException("age invalid");
                     }
                 }
             } else {
                 // cek jika ada persyaratan tanggal minimal kelahiran
-                if ($category->min_date_of_birth != null) {
-                    if (strtotime($user->date_of_birth) < strtotime($category->min_date_of_birth)) {
-                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($category->min_date_of_birth)));
+                if ($category->min_date_of_birth_master_age != null) {
+                    if (strtotime($date_of_birth) < strtotime($category->min_date_of_birth_master_age)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($category->min_date_of_birth_master_age)));
                     }
                 }
 
-                if ($category->max_date_of_birth != null) {
-                    if (strtotime($user->date_of_birth) > strtotime($category->max_date_of_birth)) {
-                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($category->max_date_of_birth)));
+                if ($category->max_date_of_birth_master_age != null) {
+                    if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth_master_age)) {
+                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($category->max_date_of_birth_master_age)));
                     }
                 }
             }
