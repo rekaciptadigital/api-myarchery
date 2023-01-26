@@ -110,7 +110,7 @@ class InsertParticipantByAdmin extends Transactional
                 null,
                 null,
                 1,
-                1,
+                2,
                 null,
                 0,
                 0,
