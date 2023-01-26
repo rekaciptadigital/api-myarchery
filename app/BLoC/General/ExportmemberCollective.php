@@ -8,6 +8,7 @@ use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\City;
+use App\Models\ExcellCollective;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -55,7 +56,7 @@ class ExportmemberCollective extends Retrieval
 
             // start : memastikan tidak ada email duplicate dengan insert satu object ke list untuk pengecekan di akhir
             foreach ($list_email_and_category_object as $key_lec => $lec) {
-                $row = $key+1;
+                $row = $key + 1;
                 if ($lec->email == $email && $lec->category_id == $category_id) {
                     throw new BLoCException("email duplikat pada form " . $row);
                 }
@@ -116,7 +117,7 @@ class ExportmemberCollective extends Retrieval
                 $gender = $user->gender;
                 $age = $user->age;
                 $date_of_birth = $user->date_of_birth;
-            } 
+            }
 
             // start : cek category umur
             if ($category->is_age == 1) {
@@ -161,17 +162,14 @@ class ExportmemberCollective extends Retrieval
             $new_list_member[] = $member;
         }
 
-        $file_name = "member_collective_" . $city_id . "_.xlsx";
+        $file_name = "member_collective_" . $user_login->id . "_" . $city_id . "_" . time() . "_.xlsx";
         $final_doc = '/member_collective/' . $event_id . '/' . $file_name;
         $excel = new MemberContingentExport($new_list_member);
         Excel::store($excel, $final_doc, 'public');
         $destinationPath = Storage::url($final_doc);
         $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
 
-        // membuat table di db untuk penampungan data eksel yang telah di submit oleh user
-        // isi field nya berupa user_id event_id city_id filepahth excell 
-        // mengubah nama file excell
-        // insertkan ke table tersebut setelah ngisi form
+        ExcellCollective::saveExcellCollective($user_login->id, $event_id, $city_id, $file_path);
 
 
         return [

@@ -7,6 +7,7 @@ use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\City;
+use App\Models\ExcellCollective;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -135,13 +136,14 @@ class ExportMemberCollectiveTeam extends Retrieval
             $new_list_team[] = $team;
         }
 
-        $file_name = "member_collective_team_" . $city_id . "_.xlsx";
+        $file_name = "member_collective_team_" . $user->id . "_" . $city_id . "_" . time() . "_.xlsx";
         $final_doc = '/member_collective/' . $event_id . '/' . $file_name;
         $excel = new MemberContingentTeamExport($new_list_team);
         Excel::store($excel, $final_doc, 'public');
         $destinationPath = Storage::url($final_doc);
         $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
 
+        ExcellCollective::saveExcellCollective($user->id, $event_id, $city_id, $file_path);
 
         return [
             "file_excell" => $file_path,
