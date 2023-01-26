@@ -31,6 +31,7 @@ class ArcheryEventParticipant extends Model
     "m" => 0,
   ];
 
+  // save participant
   public static function saveArcheryEventParticipant(
     User $user,
     ArcheryEventCategoryDetail $category,
@@ -282,7 +283,7 @@ class ArcheryEventParticipant extends Model
     return $data;
   }
 
-  public static function mixTeamBestOfThree($category_detail_team)
+  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -496,7 +497,7 @@ class ArcheryEventParticipant extends Model
     return $new_array;
   }
 
-  public static function teamBestOfThree($category_detail_team)
+  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {

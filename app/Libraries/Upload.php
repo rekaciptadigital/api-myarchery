@@ -2,6 +2,8 @@
 
 namespace App\Libraries;
 
+use DAI\Utils\Exceptions\BLoCException;
+
 class Upload
 {
 
@@ -42,6 +44,9 @@ class Upload
     {
         $image_parts = explode(";base64,", self::$base_64);
         $image_type_aux = explode("image/", $image_parts[0]);
+        if (!isset($image_type[1])) {
+            throw new BLoCException("file must be image");
+        }
         $image_type = $image_type_aux[1];
         if (!empty(self::$ext)) {
             $image_type = self::$ext;
