@@ -51,7 +51,6 @@ class ExportmemberCollective extends Retrieval
             $category_id = $member["category_id"];
             $date_of_birth = date("Y-m-d", strtotime($member["date_of_birth"]));
             $ktp_kk = $member["ktp_kk"];
-            $binaan_later = $member["binaan_later"];
             $gender = $member["gender"];
 
             // start : memastikan tidak ada email duplicate dengan insert satu object ke list untuk pengecekan di akhir
@@ -74,11 +73,9 @@ class ExportmemberCollective extends Retrieval
 
             // upload ktp_kk dan surat binaan
             $url_ktp_kk = Upload::setPath("asset/ktp_kk/")->setFileName("ktp_kk_" . $email)->setBase64($ktp_kk)->save();
-            $url_binaan_later = Upload::setPath("asset/binaan_later/")->setFileName("binaan_later_" . $email)->setBase64($binaan_later)->save();
 
             // replace data array
             $member["ktp_kk"] = $url_ktp_kk;
-            $member["binaan_later"] = $url_binaan_later;
 
             $category = ArcheryEventCategoryDetail::select(
                 "archery_event_category_details.*",
@@ -171,6 +168,11 @@ class ExportmemberCollective extends Retrieval
         $destinationPath = Storage::url($final_doc);
         $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
 
+        // membuat table di db untuk penampungan data eksel yang telah di submit oleh user
+        // isi field nya berupa user_id event_id city_id filepahth excell 
+        // mengubah nama file excell
+        // insertkan ke table tersebut setelah ngisi form
+
 
         return [
             "file_excell" => $file_path,
@@ -191,7 +193,6 @@ class ExportmemberCollective extends Retrieval
         $rules["list_members.*.gender"] = "required|in:male,female";
         $rules["list_members.*.date_of_birth"] = "required";
         $rules["list_members.*.ktp_kk"] = "required";
-        $rules["list_members.*.binaan_later"] = "required";
 
         return $rules;
     }

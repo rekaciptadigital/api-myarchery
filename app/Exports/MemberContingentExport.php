@@ -53,8 +53,7 @@ class MemberContingentExport implements FromView, WithColumnWidths, WithColumnFo
             'J' => 40,
             'K' => 40,
             'L' => 25,
-            'M' => 40,
-            'N' => 40
+            'M' => 40
         ];
     }
 
