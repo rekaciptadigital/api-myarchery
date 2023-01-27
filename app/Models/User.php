@@ -135,7 +135,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     public function checkIsCompleteUserData()
     {
         $is_complete = 0;
-        if ($this->gender && $this->address && $this->date_of_birth) {
+        if ($this->gender && $this->address && $this->date_of_birth && $this->phone_number) {
             if ($this->is_wna == 1) {
                 if (
                     $this->passport_number
