@@ -17,5 +17,7 @@ class ExcellCollective extends Model
         $excellCollective->city_id = $city_id;
         $excellCollective->url = $url;
         $excellCollective->save();
+
+        return $excellCollective;
     }
 }
