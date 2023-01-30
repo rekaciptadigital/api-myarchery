@@ -9,6 +9,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventMoreInformation;
 use App\Models\City;
 use App\Models\ArcheryEventParticipant;
+use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 
 class ArcheryEvent extends Model
@@ -18,6 +19,110 @@ class ArcheryEvent extends Model
         'detail_admin', 'more_information', "event_price", "location_date_event"
     ];
     protected $guarded = ['id'];
+
+    // cek usia user sesuai dengan persyaratan kategori
+    public static function checUserAgeCanOrderCategory(string $date_of_birth, ArcheryMasterAgeCategory $age_category, ArcheryEvent $event)
+    {
+        $date_of_birth = date("Y-m-d", strtotime($date_of_birth));
+        $event_start_datetime = date("Y-m-d H-i-s", strtotime($event->event_start_datetime));
+
+        if ($date_of_birth == false) {
+            return "invalid date of birth format";
+        }
+
+        if ($event_start_datetime == false) {
+            return "invalid date start event format";
+        }
+
+        if ($age_category->is_age == 1) {
+            $check_date = User::getAge($date_of_birth, $event_start_datetime);
+            // cek jika memiliki syarat max umur
+            if ($age_category->max_age > 0) {
+                // cek apakah usia user memenuhi syarat categori event
+                if ($check_date->y > $age_category->max_age) {
+                    return "tidak memenuhi syarat usia, syarat maksimal usia adalah " . $age_category->max_age . " tahun";
+                }
+                if ($check_date->y == $age_category->max_age && ($check_date->m > 0 || $check_date->d > 0)) {
+                    return "tidak memenuhi syarat usia, syarat maksimal usia adalah " . $age_category->max_age . " tahun";
+                }
+            }
+
+            // cek jika memiliki syarat minimal umur
+            if ($age_category->min_age > 0) {
+                // cek apakah usia user memenuhi syarat categori event
+                if ($check_date->y < $age_category->min_age) {
+                    return "tidak memenuhi syarat usia, minimal usia adalah " . $age_category->min_age . " tahun";
+                }
+            }
+        } else {
+            // cek jika ada persyaratan tanggal minimal kelahiran
+            if ($age_category->min_date_of_birth != null) {
+                if (strtotime($date_of_birth) < strtotime($age_category->min_date_of_birth)) {
+                    return "tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($age_category->min_date_of_birth)) . " sedangkan tanggal lagir anda adalah " . $date_of_birth;
+                }
+            }
+
+            if ($age_category->max_date_of_birth != null) {
+                if (strtotime($date_of_birth) > strtotime($age_category->max_date_of_birth)) {
+                    return "tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($age_category->max_date_of_birth)) . " sedangkan tanggal lagir anda adalah " . $date_of_birth;
+                }
+            }
+        }
+
+        return 1;
+    }
+
+    public static function getPriceCategory(ArcheryEventCategoryDetail $category, User $user)
+    {
+        $with_early_bird = 0;
+        // cek harga apakah normal atau early bird
+        if ($user->is_wna == 0) {
+            $price = $category->fee == null ? 0 : $category->fee;
+            if ($category->is_early_bird == 1) {
+                $price = $category->early_bird;
+                $with_early_bird = 1;
+            }
+        } else {
+            $price = $category->normal_price_wna;
+            if ($category->getIsEarlyBirdWna() == 1) {
+                $price = $category->early_price_wna;
+                $with_early_bird = 1;
+            }
+        }
+
+        return (object)[
+            "with_early_bird" => $with_early_bird,
+            "price" => $price
+        ];
+    }
+
+    public static function checkIsCanOrderEventByDatetimeOrder(ArcheryEvent $event, ArcheryEventCategoryDetail $category)
+    {
+        $now = time();
+        if (!$event->registration_start_datetime || !$event->registration_end_datetime) {
+            return "tanggal pendaftaran default belum di set";
+        }
+
+        $time_register_event_start = strtotime($event->registration_start_datetime);
+        $time_register_event_end = strtotime($event->registration_end_datetime);
+
+        if ($category->start_registration && $category->end_registration) {
+            $time_registration_start_category = strtotime($category->start_registration);
+            $time_registration_end_category = strtotime($category->end_registration);
+        }
+
+        if (!isset($time_registration_start_category) || !isset($time_registration_end_category)) {
+            if (($now < $time_register_event_start) || ($now > $time_register_event_end)) {
+                return "waktu pendaftaran tidak sesuai dengan periode pendaftaran event";
+            }
+        } else {
+            if (($now < $time_registration_start_category) || ($now > $time_registration_end_category)) {
+                return "waktu pendaftaran tidak sesuai dengan periode pendaftaran untuk category ini";
+            }
+        }
+
+        return 1;
+    }
 
     public function getEventPriceAttribute()
     {
