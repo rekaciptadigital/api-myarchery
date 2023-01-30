@@ -205,7 +205,8 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if ($isExist) {
-                throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $c["email"]);
+                $row = $key + 1;
+                throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $c["email"] . " pada row " . $row);
             }
 
             // insert data participant
