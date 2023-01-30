@@ -83,7 +83,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             if (!$user_new) {
                 $check_phone_number_exists = User::where("phone_number", $phone_number)->first();
                 if ($check_phone_number_exists) {
-                    throw new BLoCException("phone number already exists");
+                    // throw new BLoCException("phone number already exists");
                 }
                 $user_new = new User;
                 $user_new->gender = $gender;
