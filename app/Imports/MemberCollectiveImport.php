@@ -97,7 +97,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
 
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $user_new->phone_number);
             if ($chec_format_phone_number != 1) {
-                throw new BLoCException("invalid phone number format");
+                // throw new BLoCException("invalid phone number format");
             }
 
             $category = ArcheryEventCategoryDetail::select(
