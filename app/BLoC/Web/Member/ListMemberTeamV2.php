@@ -5,6 +5,7 @@ namespace App\BLoC\Web\Member;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
+use App\Models\City;
 use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -96,6 +97,9 @@ class ListMemberTeamV2 extends Retrieval
             $club = ArcheryClub::find($participant->club_id);
             $club_name = $club ? $club->name : "";
 
+            $city = City::find($participant->city_id);
+            $city_name = $city ? $city->name : "";
+
             $status_payment = "";
             if ($participant->status_payment != null) {
                 if ($participant->status == 1) {
@@ -128,6 +132,7 @@ class ListMemberTeamV2 extends Retrieval
                 "name" => $participant->name,
                 "email" => $participant->email,
                 "club_name" => $club_name,
+                "city_name" => $city_name,
                 "phone_number" => $participant->phone_number,
                 "competition_category" => $participant->competition_category_id,
                 "status_payment" => $status_payment,
