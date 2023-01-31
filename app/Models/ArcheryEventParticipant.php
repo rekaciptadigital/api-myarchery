@@ -31,6 +31,61 @@ class ArcheryEventParticipant extends Model
     "m" => 0,
   ];
 
+  // save participant
+  public static function saveArcheryEventParticipant(
+    User $user,
+    ArcheryEventCategoryDetail $category,
+    string $type,
+    int $transaction_log_id = 0,
+    string $unique_id,
+    string $qualification_date = null,
+    string $team_name = null,
+    int $status,
+    int $club_id = 0,
+    string $reason_refund = null,
+    string $upload_image_refund = null,
+    int $is_present = 1,
+    int $register_by = 1,
+    string $day_choice = null,
+    int $expired_booking_time = 0,
+    int $is_early_bird_payment = 0,
+    int $is_special_team_member = 0,
+    int $city_id = 0
+  ) {
+    $participant = new ArcheryEventParticipant();
+    $participant->event_id = $category->event_id;
+    $participant->user_id = $user->id;
+    $participant->name = $user->name;
+    $participant->type = $type;
+    $participant->email = $user->email;
+    $participant->phone_number = $user->phone_number;
+    $participant->age = $user->age;
+    $participant->gender = $user->gender;
+    $participant->team_category_id = $category->team_category_id;
+    $participant->age_category_id = $category->age_category_id;
+    $participant->competition_category_id = $category->competition_category_id;
+    $participant->distance_id = $category->distance_id;
+    $participant->transaction_log_id = $transaction_log_id;
+    $participant->unique_id = $unique_id;
+    $participant->qualification_date = $qualification_date;
+    $participant->team_name = $team_name;
+    $participant->event_category_id = $category->id;
+    $participant->status = $status;
+    $participant->club_id = $club_id;
+    $participant->reason_refund = $reason_refund;
+    $participant->upload_image_refund = $upload_image_refund;
+    $participant->is_present = $is_present;
+    $participant->register_by = $register_by;
+    $participant->day_choice = $day_choice;
+    $participant->expired_booking_time = $expired_booking_time;
+    $participant->is_early_bird_payment = $is_early_bird_payment;
+    $participant->is_special_team_member = $is_special_team_member;
+    $participant->city_id = $city_id;
+    $participant->save();
+
+    return $participant;
+  }
+
   public function archeryEventParticipantMembers()
   {
     return $this->hasMany(ArcheryEventParticipantMember::class, 'archery_event_participant_id', 'id');
@@ -228,7 +283,7 @@ class ArcheryEventParticipant extends Model
     return $data;
   }
 
-  public static function mixTeamBestOfThree($category_detail_team)
+  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -442,7 +497,7 @@ class ArcheryEventParticipant extends Model
     return $new_array;
   }
 
-  public static function teamBestOfThree($category_detail_team)
+  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {

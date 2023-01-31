@@ -7,6 +7,7 @@ use App\Libraries\Upload;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryMasterAgeCategory;
 use App\Models\City;
 use App\Models\ExcellCollective;
 use App\Models\User;
@@ -120,31 +121,10 @@ class ExportmemberCollective extends Retrieval
             }
 
             // start : cek category umur
-            if ($category->is_age == 1) {
-                if ($category->max_age_category_master_age > 0) {
-                    if ($age > $category->max_age_category_master_age) {
-                        throw new BLoCException("age invalid");
-                    }
-                }
-
-                if ($category->min_age_category_master_age > 0) {
-                    if ($age < $category->min_age_category_master_age) {
-                        throw new BLoCException("age invalid");
-                    }
-                }
-            } else {
-                // cek jika ada persyaratan tanggal minimal kelahiran
-                if ($category->min_date_of_birth_master_age != null) {
-                    if (strtotime($date_of_birth) < strtotime($category->min_date_of_birth_master_age)) {
-                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran minimal adalah " . date("Y-m-d", strtotime($category->min_date_of_birth_master_age)));
-                    }
-                }
-
-                if ($category->max_date_of_birth_master_age != null) {
-                    if (strtotime($date_of_birth) > strtotime($category->max_date_of_birth_master_age)) {
-                        throw new BLoCException("tidak memenuhi syarat kelahiran, syarat kelahiran maksimal adalah " . date("Y-m-d", strtotime($category->max_date_of_birth_master_age)));
-                    }
-                }
+            $master_age = ArcheryMasterAgeCategory::find($category->age_category_id);
+            $chec_user_age_can_order_event = ArcheryEvent::checUserAgeCanOrderCategory($date_of_birth, $master_age, $event);
+            if ($chec_user_age_can_order_event != 1) {
+                throw new BLoCException($chec_user_age_can_order_event);
             }
             // End: Cek kategory umur
 

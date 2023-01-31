@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Jobs\AccountVerificationJob;
 use Queue;
 use DAI\Utils\Exceptions\BLoCException;
+use DateTime;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -35,6 +36,29 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     protected $hidden = [
         'password',
     ];
+
+    // function untuk mnghitung umur pesrta berdasarkan tanggal mulai event
+    public static function getAge(string $date_of_birth, string $event_start_datetime)
+    {
+        $date_of_birth = date("Y-m-d", strtotime($date_of_birth));
+        $event_start_datetime = date("Y-m-d H-i-s", strtotime($event_start_datetime));
+
+        if ($date_of_birth == false) {
+            throw new BLoCException("invalid date of birth format");
+        }
+
+        if ($event_start_datetime == false) {
+            throw new BLoCException("invalid date start event format");
+        }
+
+        $birthDt = new DateTime($date_of_birth);
+        $date = new DateTime($event_start_datetime);
+        return (object)[
+            "y" => $date->diff($birthDt)->y,
+            "m" => $date->diff($birthDt)->m,
+            "d" => $date->diff($birthDt)->d
+        ];
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -135,7 +159,7 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     public function checkIsCompleteUserData()
     {
         $is_complete = 0;
-        if ($this->gender && $this->address && $this->date_of_birth) {
+        if ($this->gender && $this->address && $this->date_of_birth && $this->phone_number) {
             if ($this->is_wna == 1) {
                 if (
                     $this->passport_number

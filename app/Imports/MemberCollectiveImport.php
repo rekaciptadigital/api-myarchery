@@ -42,7 +42,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             $date_of_birth = $c["tanggal_lahir"];
             $category_id = $c["kategori_id"];
             $city_id = $c["kota_id"];
-            $email_penanggung_jawab = $c["email_penanggung_jawab"];
+            // $email_penanggung_jawab = $c["email_penanggung_jawab"];
 
             if (
                 !$gender
@@ -64,9 +64,9 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 "kategori_id" => "required|exists:archery_event_category_details,id",
                 "tanggal_lahir" => "required",
                 "kota_id" => "required|exists:cities,id",
-                "nama_penanggung_jawab" => "required",
-                "no_hp_penanggung_jawab" => "required",
-                "email_penanggung_jawab" => "required|email"
+                // "nama_penanggung_jawab" => "required",
+                // "no_hp_penanggung_jawab" => "required",
+                // "email_penanggung_jawab" => "required|email"
             ]);
 
             if ($validator->fails()) {
@@ -83,7 +83,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             if (!$user_new) {
                 $check_phone_number_exists = User::where("phone_number", $phone_number)->first();
                 if ($check_phone_number_exists) {
-                    throw new BLoCException("phone number already exists");
+                    // throw new BLoCException("phone number already exists");
                 }
                 $user_new = new User;
                 $user_new->gender = $gender;
@@ -97,7 +97,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
 
             $chec_format_phone_number = preg_match("^(\+62|62|0)8[1-9][0-9]{6,9}$^", $user_new->phone_number);
             if ($chec_format_phone_number != 1) {
-                throw new BLoCException("invalid phone number format");
+                // throw new BLoCException("invalid phone number format");
             }
 
             $category = ArcheryEventCategoryDetail::select(
@@ -157,10 +157,10 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 }
             }
 
-            $penanggung_jawab = User::where("email", $email_penanggung_jawab)->first();
-            if (!$penanggung_jawab) {
-                throw new BLoCException("user penanggung jawab belum terdaftar");
-            }
+            // $penanggung_jawab = User::where("email", $email_penanggung_jawab)->first();
+            // if (!$penanggung_jawab) {
+            //     throw new BLoCException("user penanggung jawab belum terdaftar");
+            // }
 
             $event = ArcheryEvent::find($category->event_id);
             if (!$event) {
@@ -205,7 +205,8 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
                 ->first();
 
             if ($isExist) {
-                throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $c["email"]);
+                $row = $key + 1;
+                throw new BLoCException("event dengan kategori ini sudah di ikuti oleh user dengan email " . $c["email"] . " pada row " . $row);
             }
 
             // insert data participant

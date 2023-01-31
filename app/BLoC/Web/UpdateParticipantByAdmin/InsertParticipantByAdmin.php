@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\UpdateParticipantByAdmin;
 
+use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
@@ -10,6 +11,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
+use App\Models\City;
 use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -34,6 +36,16 @@ class InsertParticipantByAdmin extends Transactional
         $object = $parameters->get("object");
 
         foreach ($object as $key => $o) {
+            $club_id = $o["club_id"];
+            $city_id = $o["city_id"];
+
+            if ($club_id > 0) {
+                $club = ArcheryClub::find($club_id);
+                if (!$club) {
+                    throw new BLoCException("club not found");
+                }
+            }
+
             $user_new = User::where("email", $o["email"])->first();
             if (!$user_new) {
                 $user_new = new User;
@@ -66,6 +78,13 @@ class InsertParticipantByAdmin extends Transactional
                 throw new BLoCException("event tidak ditemukan");
             }
 
+            if ($city_id > 0) {
+                $city = City::where("id", $city_id)->where("province_id", $event->province_id)->first();
+                if (!$city) {
+                    throw new BLoCException("city not found");
+                }
+            }
+
             // cek apakah user telah pernah mendaftar di categori tersebut
             $isExist = ArcheryEventParticipant::where('event_category_id', $category->id)
                 ->where('user_id', $user_new->id)->get();
@@ -78,26 +97,26 @@ class InsertParticipantByAdmin extends Transactional
             }
 
             // insert data participant
-            $participant = new ArcheryEventParticipant();
-            $participant->club_id = 0;
-            $participant->user_id = $user_new->id;
-            $participant->status = 1;
-            $participant->event_id = $event->id;
-            $participant->name = $user_new->name;
-            $participant->type = $category->category_team;
-            $participant->email = $user_new->email;
-            $participant->phone_number = $user_new->phone_number;
-            $participant->age = $user_new->age;
-            $participant->gender = $user_new->gender;
-            $participant->team_category_id = $category->team_category_id;
-            $participant->age_category_id = $category->age_category_id;
-            $participant->competition_category_id = $category->competition_category_id;
-            $participant->distance_id = $category->distance_id;
-            $participant->transaction_log_id = 0;
-            $participant->unique_id = Str::uuid();
-            $participant->event_category_id = $category->id;
-            $participant->register_by = 2;
-            $participant->save();
+            $participant = ArcheryEventParticipant::saveArcheryEventParticipant(
+                $user_new,
+                $event,
+                "individual",
+                0,
+                Str::uuid(),
+                null,
+                null,
+                1,
+                $club_id,
+                null,
+                null,
+                1,
+                2,
+                null,
+                0,
+                0,
+                0,
+                $city_id
+            );
 
             if (strtolower($category->type_team) == "individual") {
                 // insert ke archery_event_participant_member
@@ -146,6 +165,8 @@ class InsertParticipantByAdmin extends Transactional
             "object.*.phone_number" => "required",
             "object.*.category_id" => "required|numeric|exists:archery_event_category_details,id",
             "object.*.gender" => "required|in:male,female",
+            "object.*.club_id" => "required",
+            "object.*.city_id" => "required",
         ];
     }
 }

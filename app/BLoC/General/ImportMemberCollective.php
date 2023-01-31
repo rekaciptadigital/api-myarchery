@@ -39,7 +39,7 @@ class ImportMemberCollective extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "file" => "required|mimes:xlsx"
+            "file" => "required"
         ];
     }
 }
