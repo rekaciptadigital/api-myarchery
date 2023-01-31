@@ -52,6 +52,7 @@ class ListMemberV2 extends Retrieval
             'archery_event_participants.event_category_id',
             'users.name',
             'users.email',
+            'cities.name as city_name',
             'archery_clubs.name as club_name',
             'archery_event_participants.phone_number',
             'archery_event_participants.competition_category_id',
@@ -61,6 +62,7 @@ class ListMemberV2 extends Retrieval
         )->leftJoin('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
             ->leftJoin('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->join("users", "users.id", "=", "archery_event_participants.user_id")
             ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.event_id", $event_id)
@@ -111,6 +113,7 @@ class ListMemberV2 extends Retrieval
                 $response["age_category_id"] = $pc->age_category_id;
                 $response["member_id"] = $pc->member_id;
                 $response["participant_id"] = $pc->participant_id;
+                $response["city_name"] = $pc->city_name;
                 $response["user_id"] = $pc->user_id;
                 $response["event_id"] = $pc->event_id;
                 $response["event_category_id"] = $pc->event_category_id;
