@@ -99,7 +99,7 @@ class InsertParticipantByAdmin extends Transactional
             // insert data participant
             $participant = ArcheryEventParticipant::saveArcheryEventParticipant(
                 $user_new,
-                $event,
+                $category,
                 "individual",
                 0,
                 Str::uuid(),
