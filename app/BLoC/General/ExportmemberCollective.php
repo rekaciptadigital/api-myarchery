@@ -10,6 +10,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\City;
 use App\Models\ExcellCollective;
+use App\Models\ExcellCollectiveMember;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -149,7 +150,11 @@ class ExportmemberCollective extends Retrieval
         $destinationPath = Storage::url($final_doc);
         $file_path = env('STOREG_PUBLIC_DOMAIN') . $destinationPath;
 
-        ExcellCollective::saveExcellCollective($user_login->id, $event_id, $city_id, $file_path);
+        $excellCollective = ExcellCollective::saveExcellCollective($user_login->id, $event_id, $city_id, $file_path);
+        foreach ($new_list_member as $nlm_key => $nlm) {
+            ExcellCollectiveMember::saveExcellCollectiveMember($nlm["name"], $nlm["city_id"], $nlm["city_label"], $nlm["category_id"], $excellCollective->id,  $nlm["category_label"]);
+        }
+
 
 
         return [
