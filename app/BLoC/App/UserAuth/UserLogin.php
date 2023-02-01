@@ -26,7 +26,7 @@ class UserLogin extends Transactional
                 "password" => $parameters->password,
                 "email_verified" => 1
             ]);
-            
+
             if (!$token) {
                 $user = User::where("email", $parameters->get("email"))->first();
                 if (!$user) {
@@ -67,17 +67,19 @@ class UserLogin extends Transactional
                 'email_verified' => $user->email_verified,
                 'status' => $user->email_verified == 1 ? "Verified" : "Not Verified",
             ];
-        }else{
+        } else {
             $token = Auth::guard('app-api')->setTTL(60 * 24 * 7)->attempt([
                 "email" => $parameters->email,
                 "password" => $parameters->password,
             ]);
 
             if (!$token) {
-                $user = User::where("email", $parameters->get("email"))->first();
-                if (!$user) {
-                    throw new BLoCException("Email anda belum terdaftar");
-                }
+                // $user = User::where("email", $parameters->get("email"))->first();
+                // if (!$user) {
+                //     throw new BLoCException("Email anda belum terdaftar");
+                // }
+
+                throw new BLoCException("email or password invalid");
             }
 
             $user = Auth::guard('app-api')->user();
