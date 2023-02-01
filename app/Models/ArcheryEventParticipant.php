@@ -50,7 +50,8 @@ class ArcheryEventParticipant extends Model
     int $expired_booking_time = 0,
     int $is_early_bird_payment = 0,
     int $is_special_team_member = 0,
-    int $city_id = 0
+    int $city_id = 0,
+    int $order_event_id
   ) {
     $participant = new ArcheryEventParticipant();
     $participant->event_id = $category->event_id;
@@ -81,6 +82,7 @@ class ArcheryEventParticipant extends Model
     $participant->is_early_bird_payment = $is_early_bird_payment;
     $participant->is_special_team_member = $is_special_team_member;
     $participant->city_id = $city_id;
+    $participant->order_event_id = $order_event_id;
     $participant->save();
 
     return $participant;

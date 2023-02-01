@@ -12,7 +12,31 @@ use DAI\Utils\Abstracts\Retrieval;
 class ArcheryEventParticipantMember extends Model
 {
     protected $guarded = ['id'];
-    protected function memberDetail($participant_member_id){
+
+
+    public static function saveArcheryEventParticipantMember(ArcheryEventParticipant $participant, User $user, ArcheryEventCategoryDetail $category, $is_series = 0)
+    {
+        $member = new ArcheryEventParticipantMember();
+        $member->archery_event_participant_id = $participant->id;
+        $member->name = $user->name;
+        $member->team_category_id = $category->team_category_id;
+        $member->email = $user->email;
+        $member->phone_number = $user->phone_number;
+        $member->club = null;
+        $member->age = $user->age;
+        $member->gender = $user->gender;
+        $member->qualification_date = null;
+        $member->birthdate = $user->date_of_birth;
+        $member->user_id = $user->id;
+        $member->is_series = $is_series;
+        $member->have_shoot_off = 0;
+        $member->city_id = 0;
+        $member->save();
+
+        return $member;
+    }
+    protected function memberDetail($participant_member_id)
+    {
         $member = $this->find($participant_member_id);
         $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
         $archery_event = ArcheryEvent::find($participant->event_id);
