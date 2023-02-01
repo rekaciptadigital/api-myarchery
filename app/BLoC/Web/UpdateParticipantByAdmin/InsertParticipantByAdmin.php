@@ -12,6 +12,7 @@ use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\City;
+use App\Models\OrderEvent;
 use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -34,6 +35,8 @@ class InsertParticipantByAdmin extends Transactional
         $admin = Auth::user();
 
         $object = $parameters->get("object");
+
+        $order_event = OrderEvent::saveOrderEvent($admin->id, 1, 0, 0, 0);
 
         foreach ($object as $key => $o) {
             $club_id = $o["club_id"];
@@ -115,7 +118,8 @@ class InsertParticipantByAdmin extends Transactional
                 0,
                 0,
                 0,
-                $city_id
+                $city_id,
+                $order_event->id
             );
 
             if (strtolower($category->type_team) == "individual") {

@@ -97,6 +97,12 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         });
     });
 
+    $router->group(["prefix" => "v2"], function () use ($router) {
+        $router->group(['prefix' => 'archery', 'middleware' => 'auth.user'], function () use ($router) {
+            $router->post('/event-order', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrderV2']);
+        });
+    });
+
 
     // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
     $router->group(['prefix' => 'enterprise'], function () use ($router) {
@@ -113,9 +119,6 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                     $router->get('/transactions', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getTransactionVenueUser']);
                 });
             });
-
-            
-            
         });
     });
     // ----------------------------------------------------------- End Archery Enterprise ----------------------------------------------------------- //
