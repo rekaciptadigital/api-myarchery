@@ -655,7 +655,7 @@ class ArcheryEventParticipant extends Model
     $category_id = null;
     $elimination_rank = 0;
 
-    $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", "cities.name as city_name" ,DB::RAW('date(archery_event_elimination_members.created_at) as date'))
+    $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", "cities.name as city_name", "archery_event_participant_members.name as member_name", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
       ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
       ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
       ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
@@ -706,7 +706,7 @@ class ArcheryEventParticipant extends Model
           $medal = '-';
         }
 
-        $athlete = $member->name;
+        $athlete = $member->member_name;
         $date = $member->date;
 
         $club = ArcheryClub::find($member->club_id);
