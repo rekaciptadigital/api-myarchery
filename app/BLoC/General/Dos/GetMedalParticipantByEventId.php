@@ -44,6 +44,7 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "category_id" => $category_detail->id,
                                 "winner_name" => $athlete["athlete"],
                                 "club_name" => $athlete["club"],
+                                "city_name" => $athlete["city_name"],
                                 "rank" => $key + 1,
                                 "participant_id" => $athlete["participant_id"],
                                 "category_label" => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id)
