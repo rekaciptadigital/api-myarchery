@@ -86,7 +86,9 @@ class AddEventOrderTeam extends Transactional
         $club_id = 0;
 
         if ($event->with_contingent == 1) {
-            $city = City::find($club_or_city_id);
+            $city = City::where("id", $club_or_city_id)
+                ->where("province_id", $event->province_id)
+                ->first();
             if (!$city) {
                 throw new BLoCException("city not found");
             }
