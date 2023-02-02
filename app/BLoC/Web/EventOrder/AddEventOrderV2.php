@@ -66,6 +66,8 @@ class AddEventOrderV2 extends Transactional
             $city = City::find($club_or_city_id);
             if ($city) {
                 $city_id = $city->id;
+            } else {
+                throw new BLoCException("city not found");
             }
         } else {
             if ($club_or_city_id != 0) {
@@ -492,7 +494,6 @@ class AddEventOrderV2 extends Transactional
     {
         return [
             "event_id" => "required|exists:archery_events,id",
-            "is_collective" => "required|in:0,1",
             "club_or_city_id" => "required",
             "members" => "required|array",
             "members.*.event_category_id" => "required|exists:archery_event_category_details,id",
