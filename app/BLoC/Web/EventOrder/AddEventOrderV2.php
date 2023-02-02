@@ -64,9 +64,10 @@ class AddEventOrderV2 extends Transactional
 
         if ($event->with_contingent == 1) {
             $city = City::find($club_or_city_id);
-            if ($city) {
-                $city_id = $city->id;
+            if (!$city) {
+                throw new BLoCException("city not found");
             }
+            $city_id = $city->id;
         } else {
             if ($club_or_city_id != 0) {
                 $club = ArcheryClub::find($club_or_city_id);
@@ -82,7 +83,10 @@ class AddEventOrderV2 extends Transactional
         $total_price = 0;
         $with_early_bird = 0;
         foreach ($members as $key => $m) {
-            $event_category_detail = ArcheryEventCategoryDetail::find($m["event_category_id"]);
+            $event_category_detail = ArcheryEventCategoryDetail::where("id", $m["event_category_id"])->where("event_id", $event->id)->first();
+            if (!$event_category_detail) {
+                throw new BLoCException("category not found");
+            }
             // dapatkan harga category
             $price_with_early_bird = ArcheryEventCategoryDetail::getPriceCategory($event_category_detail);
             $total_price += $price_with_early_bird->price;
@@ -211,6 +215,7 @@ class AddEventOrderV2 extends Transactional
         if ($total_price < 1) {
 
             $order_event->status = 1;
+            $order_event->total_price = 0;
             $order_event->save();
 
             $list_participants = ArcheryEventParticipant::where("order_event_id", $order_event->id)->get();
@@ -241,6 +246,11 @@ class AddEventOrderV2 extends Transactional
                 ];
                 ArcherySeriesUserPoint::setAutoUserMemberCategory($event->id, $member_participant->user_id);
             }
+
+            $res = [
+                "order_event_id" => $order_event->id,
+                'payment_info' => null
+            ];
         }
 
         if ($event->my_archery_fee_percentage > 0) {
@@ -261,6 +271,7 @@ class AddEventOrderV2 extends Transactional
         }
 
         $order_event->transaction_log_id = $payment->transaction_log_id;
+        $order_event->total_price = (int)$total_price;
         $order_event->save();
 
         $list_participants = ArcheryEventParticipant::where("order_event_id", $order_event->id)->get();
@@ -492,7 +503,6 @@ class AddEventOrderV2 extends Transactional
     {
         return [
             "event_id" => "required|exists:archery_events,id",
-            "is_collective" => "required|in:0,1",
             "club_or_city_id" => "required",
             "members" => "required|array",
             "members.*.event_category_id" => "required|exists:archery_event_category_details,id",

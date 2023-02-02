@@ -63,6 +63,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         $router->group(['prefix' => 'archery'], function () use ($router) {
             $router->group(['prefix' => 'event-order', 'middleware' => 'auth.user'], function () use ($router) {
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrder']);
+                $router->post('/team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addEventOrderTeam']);
                 $router->post('/cancel-buy-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:cancelBuyEvent']);
                 $router->post('/booking-temporary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bookingTemporary']);
                 $router->post('/delete-booking-temporary', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteBookingTemporary']);
