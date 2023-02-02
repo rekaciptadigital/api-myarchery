@@ -11,6 +11,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ArcheryEventEmailWhiteList;
 use App\Models\City;
 use App\Models\OrderEvent;
 
@@ -56,7 +57,7 @@ class AddEventOrderTeam extends Transactional
             "archery_master_team_categories.id",
             "=",
             "archery_event_category_details.team_category_id"
-        )->where("archery_event_category_details", $event_category_id)
+        )->where("archery_event_category_details.id", $event_category_id)
             ->where("archery_master_team_categories.type", "Team")
             ->where("archery_event_category_details.event_id", $event_id)
             ->first();
@@ -65,11 +66,29 @@ class AddEventOrderTeam extends Transactional
             throw new BLoCException("category not found");
         }
 
+        if ($event->is_private) {
+            $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user_login->email)
+                ->where("event_id", $event->id)
+                ->first();
+            if (!$check_email_whitelist) {
+                throw new BLoCException("Mohon maaf akun anda tidak terdaftar sebagai peserta");
+            }
+        }
+
+        // blok: cek waktu pendaftaran
+        $check_datetime_can_order_event = ArcheryEvent::checkIsCanOrderEventByDatetimeOrder($event, $category);
+        if ($check_datetime_can_order_event != 1) {
+            throw new BLoCException($check_datetime_can_order_event);
+        }
+        // end blok : cek waktu pendaftaran
+
         $city_id = 0;
         $club_id = 0;
 
         if ($event->with_contingent == 1) {
-            $city = City::find($club_or_city_id);
+            $city = City::where("id", $club_or_city_id)
+                ->where("province_id", $event->province_id)
+                ->first();
             if (!$city) {
                 throw new BLoCException("city not found");
             }
