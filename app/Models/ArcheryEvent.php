@@ -296,6 +296,11 @@ class ArcheryEvent extends Model
             "archery_event_category_details.id AS key",
             "archery_master_age_categories.label as label_age",
             "archery_master_age_categories.id as id_age",
+            "archery_master_age_categories.min_age as min_age_master",
+            "archery_master_age_categories.max_age as max_age_master",
+            "archery_master_age_categories.min_date_of_birth as min_date_of_birth_master",
+            "archery_master_age_categories.max_date_of_birth as max_date_of_birth_master",
+            "archery_master_age_categories.is_age as is_age_master",
             "archery_master_competition_categories.label as label_competition_categories",
             "archery_master_competition_categories.id as id_competition_categories",
             "archery_master_distances.label as label_distances",
@@ -445,7 +450,14 @@ class ArcheryEvent extends Model
                     "label" => $value->label_category,
                     "is_show" => $value->is_show,
                     "start_registration" => $value->start_registration,
-                    "end_registration" => $value->end_registration
+                    "end_registration" => $value->end_registration,
+                    "age_rules" => [
+                        "is_age" => $value->is_age_master,
+                        "min_age" => $value->min_age_master,
+                        "max_age" => $value->max_age_master,
+                        "min_date_of_birth" => $value->min_date_of_birth_master,
+                        "max_date_of_birth" => $value->max_date_of_birth_master,
+                    ]
                 ];
             }
         }
