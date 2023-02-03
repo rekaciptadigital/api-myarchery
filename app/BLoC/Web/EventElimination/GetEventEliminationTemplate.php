@@ -128,14 +128,19 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
-                    $club =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
+                    $club_and_city =  ArcheryEventParticipant::select("archery_clubs.name as club_name", "cities.name as city_name")
+                        ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+                        ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
+                        ->where("archery_event_participants.id", $value->participant_id)
+                        ->where("archery_event_participants.status", 1)
+                        ->first();
 
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" =>  $club->name ?? '-',
+                        "club" =>  $club_and_city->club_name ?? '-',
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
@@ -144,6 +149,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "result" => $value->result,
                         "budrest_number" => $value->bud_rest != 0 ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
+                        "city" => $club_and_city->city_name ?? "-"
                     );
                 } else {
                     $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
