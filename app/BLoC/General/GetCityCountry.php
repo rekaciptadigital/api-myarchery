@@ -18,12 +18,17 @@ class GetCityCountry extends Retrieval
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
         $country_id = $parameters->get('country_id');
+        $province_id = $parameters->get("province_id");
         $name = $parameters->get("name");
 
         $city_country = CityCountry::query();
 
         $city_country->when($country_id, function ($query) use ($country_id) {
             return $query->where("country_id", $country_id);
+        });
+
+        $city_country->when($province_id, function ($query) use ($province_id) {
+            return $query->where("state_id", $province_id);
         });
 
         $city_country->when($name, function ($query) use ($name) {
