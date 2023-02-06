@@ -50,9 +50,27 @@ class CheckEmailIsRegister extends Transactional
         $emails = $parameters->get("emails");
         $data = [];
         foreach ($emails as $key => $e) {
-            $user = User::where("email", $e)->first();
+            $user = User::select(
+                "users.*",
+                "cities.name as address_city_name",
+                "provinces.name as address_province_name",
+                "countries.name as country_name",
+                "states.name as province_of_country_name",
+                "cities_of_countries.name as city_of_country_name"
+            )
+                ->leftJoin("cities", "cities.id", "=", "users.address_city_id")
+                ->leftJoin("provinces", "provinces.id", "=", "users.address_province_id")
+                ->leftJoin("countries", "countries.id", "=", "users.country_id")
+                ->leftJoin("states", "states.id", "=", "users.province_of_country_id")
+                ->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "users.city_of_country_id")
+                ->where("email", $e)
+                ->first();
 
             if ($user) {
+                if ($user->is_wna == 0) {
+                    $user->country_id = 102;
+                    $user->country_name = "Indonesia";
+                }
                 $data[] = (object)[
                     "data" => $user,
                     "message" => "email " . $e . " sudah terdaftar sebagai user"
