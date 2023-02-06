@@ -14,7 +14,7 @@ class MemberRank extends Model
         $list_member_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $sessions, false, null, false);
         foreach ($list_member_rank as $key => $value) {
             $member_id = $value["member"]->id;
-            $member_rank = MemberRank::where("member_id", $member_id)->first();
+            $member_rank = MemberRank::where("member_id", $member_id)->where("category_id", $category->id)->first();
             if (!$member_rank) {
                 $member_rank = new MemberRank();
             }

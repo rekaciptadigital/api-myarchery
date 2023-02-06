@@ -20,6 +20,10 @@ class CreateTableMemberRankTable extends Migration
             $table->integer("category_id");
             $table->timestamps();
         });
+
+        Schema::table('archery_event_participant_members', function (Blueprint $table) {
+            $table->integer("have_coint_tost")->default(0);
+        });
     }
 
     /**
@@ -30,5 +34,8 @@ class CreateTableMemberRankTable extends Migration
     public function down()
     {
         Schema::dropIfExists('member_rank');
+        Schema::table('archery_event_participant_members', function (Blueprint $table) {
+            $table->dropColumn("have_coint_tost");
+        });
     }
 }
