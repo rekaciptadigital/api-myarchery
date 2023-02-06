@@ -21,7 +21,11 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcherySeriesUserPoint;
 use App\Models\City;
+use App\Models\CityCountry;
+use App\Models\Country;
 use App\Models\OrderEvent;
+use App\Models\ProvinceCountry;
+use App\Models\Provinces;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
@@ -102,6 +106,51 @@ class AddEventOrderV2 extends Transactional
                 $user_new->password = Hash::make("12345678");
                 $user_new->email = $m["email"];
                 $user_new->date_of_birth = date("Y-m-d", strtotime($m["date_of_birth"]));
+
+                if ($m["country_id"] == 102) {
+                    $user_new->is_wna = 0;
+                    $province = Provinces::find($m["province_id"]);
+                    if (!$province) {
+                        throw new BLoCException("province not found");
+                    }
+
+                    $user_new->address_province_id = $province->id;
+
+                    $city = City::where("id", $m["city_id"])
+                        ->where("province_id", $m["province_id"])
+                        ->first();
+                    if (!$city) {
+                        throw new BLoCException("city not found");
+                    }
+
+                    $user_new->address_city_id  = $city->id;
+                } else {
+                    $user_new->is_wna = 1;
+                    $country = Country::find($m["country_id"]);
+                    if (!$country) {
+                        throw new BLoCException("country not found");
+                    }
+
+                    $user_new->country_id = $country->id;
+
+                    $province = ProvinceCountry::where("country_id", $m["country_id"])
+                        ->where("id", $m["province_id"])
+                        ->first();
+
+                    if (!$province) {
+                        throw new BLoCException("province not found");
+                    }
+
+                    $city = CityCountry::where("id", $m["city_id"])
+                        ->where("state_id", $m["province_id"])
+                        ->where("country_id", $m["country_id"])
+                        ->first();
+                    if (!$city) {
+                        throw new BLoCException("city not found");
+                    }
+
+                    $user_new->city_of_country_id = $city->id;
+                }
                 $user_new->save();
             }
 
