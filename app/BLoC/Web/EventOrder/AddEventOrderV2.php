@@ -101,7 +101,7 @@ class AddEventOrderV2 extends Transactional
                 $user_new->name = $m["name"];
                 $user_new->password = Hash::make("12345678");
                 $user_new->email = $m["email"];
-                $user_new->date_of_birtg = date("Y-m-d", strtotime($m["date_of_birth"]));
+                $user_new->date_of_birth = date("Y-m-d", strtotime($m["date_of_birth"]));
                 $user_new->save();
             }
 
