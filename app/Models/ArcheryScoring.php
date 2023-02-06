@@ -851,6 +851,23 @@ class ArcheryScoring extends Model
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+        foreach ($archery_event_score as $key_value_2 => $value_2) {
+            foreach ($archery_event_score as $key_value_3 => $value_3) {
+                if (
+                    $value_2["total"] == $value_3["total"]
+                    && $value_2["total_x"] == $value_3["total_x"]
+                    && $value_2["total_x_plus_ten"] == $value_3["total_x_plus_ten"]
+                    && $value_2["member"]["id"] !=  $value_3["member"]["id"]
+                ) {
+                    $member = ArcheryEventParticipantMember::find($value_2["member"]["id"]);
+                    if ($member) {
+                        $member->have_coint_tost == 1;
+                        $member->save();
+                    }
+                }
+            }
+        }
+
         $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
 
         // cek apakah template telah di set atau belum
@@ -875,12 +892,21 @@ class ArcheryScoring extends Model
                                 if ($value["total"] === $total) {
                                     $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
                                     if (!$scooring_session_11_member) {
-                                        $member->update(["have_shoot_off" => 1]);
+                                        $member->update([
+                                            "have_shoot_off" => 1,
+                                            "have_coint_tost" => 0
+                                        ]);
                                     } else {
                                         if ($scooring_session_11_member->total == 0) {
-                                            $member->update(["have_shoot_off" => 1]);
+                                            $member->update([
+                                                "have_shoot_off" => 1,
+                                                "have_coint_tost" => 0
+                                            ]);
                                         } else {
-                                            $member->update(["have_shoot_off" => 2]);
+                                            $member->update([
+                                                "have_shoot_off" => 2,
+                                                "have_coint_tost" => 0
+                                            ]);
                                         }
                                     }
                                 } else {
