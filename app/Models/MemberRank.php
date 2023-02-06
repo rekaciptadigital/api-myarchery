@@ -21,7 +21,7 @@ class MemberRank extends Model
 
             $member_rank->category_id = $category->id;
             $member_rank->member_id = $member_id;
-            $member_rank = $key + 1;
+            $member_rank->rank = $key + 1;
             $member_rank->save();
         }
     }
