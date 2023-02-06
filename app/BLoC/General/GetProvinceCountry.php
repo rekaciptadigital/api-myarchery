@@ -18,8 +18,13 @@ class GetProvinceCountry extends Retrieval
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
         $name = $parameters->get("name");
+        $country_id = $parameters->get("country_id");
 
         $provinceCountry = ProvinceCountry::query();
+
+        $provinceCountry->when($country_id, function ($query) use ($country_id) {
+            return $query->where("country_id", $country_id);
+        });
         
         $provinceCountry->when($name, function ($query) use ($name) {
             return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
