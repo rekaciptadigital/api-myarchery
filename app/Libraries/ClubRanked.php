@@ -429,11 +429,7 @@ class ClubRanked
             }
 
             // city
-            dd("ok");
             $contingent = City::find($v["city_id"]);
-            if (!isset($v["city_id"])) {
-                dd($v);
-            }
             $contingent_name = "";
             if ($contingent) {
                 $contingent_name = $contingent->name;
