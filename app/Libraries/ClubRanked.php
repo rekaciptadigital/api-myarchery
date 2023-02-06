@@ -429,7 +429,11 @@ class ClubRanked
             }
 
             // city
+            dd("ok");
             $contingent = City::find($v["city_id"]);
+            if (!isset($v["city_id"])) {
+                dd($v);
+            }
             $contingent_name = "";
             if ($contingent) {
                 $contingent_name = $contingent->name;
@@ -459,7 +463,6 @@ class ClubRanked
                 ]
             ];
         }
-
         usort($output, function ($a, $b) {
             if ($a["gold"] == $b["gold"]) {
                 if ($a["silver"] == $b["silver"]) {
@@ -479,6 +482,7 @@ class ClubRanked
             }
             return -1;
         });
+
 
         return $output;
     }
