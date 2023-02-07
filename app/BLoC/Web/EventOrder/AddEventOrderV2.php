@@ -141,13 +141,15 @@ class AddEventOrderV2 extends Transactional
                         throw new BLoCException("province not found");
                     }
 
-                    $city = CityCountry::where("id", $m["city_id"])
-                        ->where("state_id", $m["province_id"])
-                        ->where("country_id", $m["country_id"])
-                        ->first();
-                        
-                    if ($city) {
-                        $user_new->city_of_country_id = $city->id;
+                    if (isset($m["city_id"])) {
+                        $city = CityCountry::where("id", $m["city_id"])
+                            ->where("state_id", $m["province_id"])
+                            ->where("country_id", $m["country_id"])
+                            ->first();
+
+                        if ($city) {
+                            $user_new->city_of_country_id = $city->id;
+                        }
                     }
                 }
                 $user_new->save();
@@ -559,7 +561,9 @@ class AddEventOrderV2 extends Transactional
             "members.*.email" => "required|email",
             "members.*.gender" => "required|in:male,female",
             "members.*.date_of_birth" => "required",
-            "members.*.name" => "required"
+            "members.*.name" => "required",
+            "members.*.country_id" => "required",
+            "members.*.province_id" => "required",
         ];
     }
 }
