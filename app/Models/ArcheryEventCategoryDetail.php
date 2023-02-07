@@ -57,6 +57,17 @@ class ArcheryEventCategoryDetail extends Model
         return $type;
     }
 
+    public function getArraySessionCategory()
+    {
+        $session_in_qualification = $this->session_in_qualification;
+        $array_session = [];
+        for ($i = 1; $i <= $session_in_qualification; $i++) {
+            $array_session[] = $i;
+        }
+
+        return $array_session;
+    }
+
     public function getCategoryDetailById($category_id)
     {
         $user = Auth::guard('app-api')->user();
