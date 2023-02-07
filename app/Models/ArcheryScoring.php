@@ -773,6 +773,8 @@ class ArcheryScoring extends Model
             "archery_event_participant_members.name",
             "archery_event_participant_members.gender",
             "archery_event_participant_members.have_shoot_off",
+            "archery_event_participant_members.have_coint_tost",
+            "archery_event_participant_members.rank_can_change",
             "archery_clubs.name as club_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face",
@@ -838,6 +840,8 @@ class ArcheryScoring extends Model
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
+            $score["rank_can_change"] = $value["rank_can_change"];
+            $score["have_coint_tost"] = $value["have_coint_tost"];
             $archery_event_score[] = $score;
         }
 
