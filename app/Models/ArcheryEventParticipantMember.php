@@ -65,9 +65,11 @@ class ArcheryEventParticipantMember extends Model
                     }
 
                     $rank_can_change = [];
-                    if ($member_i->rank_can_change) {
+                    if ($member_i->rank_can_change != null) {
                         $rank_can_change = json_decode($member_i->rank_can_change);
-                        $rank_can_change[] = $member_rank_j->rank;
+                        if (!in_array($member_rank_j->rank, $rank_can_change)) {
+                            $rank_can_change[] = $member_rank_j->rank;
+                        }
                     } else {
                         $rank_can_change[] = $member_rank_j->rank;
                     }
