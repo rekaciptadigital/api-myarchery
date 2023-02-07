@@ -23,6 +23,7 @@ class ArcheryEventParticipantMember extends Model
             }
 
             $member->have_coint_tost = 0;
+            $member->rank_can_change = null;
             $member->save();
         }
     }
