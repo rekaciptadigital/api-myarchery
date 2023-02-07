@@ -67,12 +67,46 @@ class CheckEmailIsRegister extends Transactional
                 ->first();
 
             if ($user) {
+
+                $country = (object)[];
                 if ($user->is_wna == 0) {
-                    $user->country_id = 102;
-                    $user->country_name = "Indonesia";
+                    $country->id = 102;
+                    $country->name = "Indonesia";
+                } else {
+                    $country->id = $user->country_id;
+                    $country->name = $user->country_name;
                 }
+
+                $province = (object)[];
+                if ($user->is_wna == 0) {
+                    $province->id = (int)$user->address_province_id;
+                    $province->name = $user->address_province_name;
+                } else {
+                    $province->id = (int)$user->province_of_country_id;
+                    $province->name = $user->province_of_country_name;
+                }
+
+                $city = (object)[];
+                if ($user->is_wna == 0) {
+                    $city->id = (int)$user->address_city_id;
+                    $city->name = $user->address_city_name;
+                } else {
+                    $city->id = (int)$user->city_of_country_id;
+                    $city->name = $user->city_of_country_name;
+                }
+
+                $response = (object)[];
+                $response->id = $user->id;
+                $response->name = $user->name;
+                $response->email = $user->email;
+                $response->gender = $user->gender;
+                $response->date_of_birth = $user->date_of_birth;
+                $response->country = $country;
+                $response->province = $province;
+                $response->city = $city;
+                $response->is_wna = $user->is_wna;
                 $data[] = (object)[
-                    "data" => $user,
+                    "data" => $response,
                     "message" => "email " . $e . " sudah terdaftar sebagai user"
                 ];
             } else {
