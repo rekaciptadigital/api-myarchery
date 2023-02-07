@@ -8,6 +8,7 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
+use App\Models\MemberRank;
 use App\Models\TeamMemberSpecial;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -105,10 +106,19 @@ class GetParticipantScoreQualificationV2 extends Retrieval
         $response = [];
 
         foreach ($qualification_member as $key1 => $value1) {
+            $member_rank = MemberRank::where("member_id", $value1["member"]["id"])
+                ->where("category_id", $category_id)
+                ->first();
             foreach ($qualification_rank as $key2 => $value2) {
                 if ($value1["member"]["id"] === $value2["member"]["id"]) {
-                    $value1["rank"] = $key2 + 1;
+                    $rank = $key2 + 1;
+                    if ($member_rank) {
+                        $rank =  $member_rank->rank;
+                    }
+                    $value1["rank"] = $rank;
                     $value1["have_shoot_off"] = $value2["have_shoot_off"];
+                    $value1["have_coint_tost"] = $value2["have_coint_tost"];
+                    $value1["rank_can_change"] = $value2["rank_can_change"];
                     array_push($response, $value1);
                     break;
                 }
@@ -117,6 +127,4 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
         return $response;
     }
-
-   
 }

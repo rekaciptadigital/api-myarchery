@@ -700,6 +700,7 @@ class ArcheryScoring extends Model
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
+            "archery_event_participant_members.have_coint_tost",
             "users.name",
             "archery_event_participant_members.user_id",
             "users.gender",
@@ -745,6 +746,7 @@ class ArcheryScoring extends Model
             $score["club_name"] = $value->club_name;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
+            $score["have_coint_tost"] = $value->have_coint_tost;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
             $archery_event_score[] = $score;
         }
@@ -771,6 +773,8 @@ class ArcheryScoring extends Model
             "archery_event_participant_members.name",
             "archery_event_participant_members.gender",
             "archery_event_participant_members.have_shoot_off",
+            "archery_event_participant_members.have_coint_tost",
+            "archery_event_participant_members.rank_can_change",
             "archery_clubs.name as club_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face",
@@ -836,6 +840,8 @@ class ArcheryScoring extends Model
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
+            $score["rank_can_change"] = $value["rank_can_change"];
+            $score["have_coint_tost"] = $value["have_coint_tost"];
             $archery_event_score[] = $score;
         }
 
@@ -849,6 +855,9 @@ class ArcheryScoring extends Model
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
+
+        $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
+
         // cek apakah template telah di set atau belum
         if (!$event_elimination) {
             $elimination_template = $category->default_elimination_count;
@@ -857,8 +866,8 @@ class ArcheryScoring extends Model
             // cek apakah peserta yang is_preasent 1 lebih besar dari elimination template
             if ($elimination_template > 0 && $participant_is_present->count() > $elimination_template) {
                 // cek apakah archer terakhir sesuai di yang sesuai template eliminasi udah melakukan shoot secara lengkap
-                if ($archery_event_score[$elimination_template - 1]["sessions"][$category->session_in_qualification]["total"] > 0 && $archery_event_score[$elimination_template]["sessions"][$category->session_in_qualification]["total"] > 0) {
-                    // cek apakah terdapat total point yang sama
+                if ($archery_event_score[$elimination_template - 1]["total_arrow"] == $max_arrow) {
+                    // cek apakah terdapat total point yang sama anatar peringkat terakhir dan peringkat setelah terakhir
                     if ($archery_event_score[$elimination_template - 1]["total"] === $archery_event_score[$elimination_template]["total"]) {
                         $total = $archery_event_score[$elimination_template - 1]["total"];
                         foreach ($archery_event_score as $key => $value) {
@@ -871,12 +880,21 @@ class ArcheryScoring extends Model
                                 if ($value["total"] === $total) {
                                     $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)->where("participant_member_id", $member->id)->first();
                                     if (!$scooring_session_11_member) {
-                                        $member->update(["have_shoot_off" => 1]);
+                                        $member->update([
+                                            "have_shoot_off" => 1,
+                                            "have_coint_tost" => 0
+                                        ]);
                                     } else {
                                         if ($scooring_session_11_member->total == 0) {
-                                            $member->update(["have_shoot_off" => 1]);
+                                            $member->update([
+                                                "have_shoot_off" => 1,
+                                                "have_coint_tost" => 0
+                                            ]);
                                         } else {
-                                            $member->update(["have_shoot_off" => 2]);
+                                            $member->update([
+                                                "have_shoot_off" => 2,
+                                                "have_coint_tost" => 0
+                                            ]);
                                         }
                                     }
                                 } else {

@@ -19,6 +19,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryScoringEliminationGroup;
 use App\Models\ConfigTargetFace;
 use App\Models\ConfigTargetFacePerCategory;
+use App\Models\MemberRank;
 use App\Models\UrlReport;
 use Illuminate\Support\Facades\Redis;
 
@@ -434,6 +435,17 @@ class AddParticipantMemberScore extends Transactional
         }
 
         $scoring->save();
+
+        // update rank member
+        MemberRank::updateMemberRank($category);
+
+        // reset have_coint_tost_member
+        ArcheryEventParticipantMember::resetHaveCoinTostMember($category);
+        
+        // update have member cost
+        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
+
+
         return $scoring;
     }
 
