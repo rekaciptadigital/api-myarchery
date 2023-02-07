@@ -711,6 +711,7 @@ class ArcheryScoring extends Model
             "archery_clubs.id as club_id",
             "cities.id as city_id",
             "cities.name as city_name",
+            "member_rank.rank as member_rank",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )
@@ -719,6 +720,7 @@ class ArcheryScoring extends Model
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
             ->leftJoin("cities", "archery_event_participants.city_id", "=", "cities.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+            ->leftJoin("member_rank", "member_rank.member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id);
 
@@ -759,6 +761,11 @@ class ArcheryScoring extends Model
                     }
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
+
+                if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                    return $b["member"]["member_rank"] > $a["member"]["member_rank"];
+                }
+                
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
