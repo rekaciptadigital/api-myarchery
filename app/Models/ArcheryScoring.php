@@ -840,6 +840,7 @@ class ArcheryScoring extends Model
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
+            
             $score["rank_can_change"] = $value["rank_can_change"];
             $score["have_coint_tost"] = $value["have_coint_tost"];
             $archery_event_score[] = $score;
