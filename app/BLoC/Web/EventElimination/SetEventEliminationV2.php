@@ -71,10 +71,7 @@ class SetEventEliminationV2 extends Transactional
         }
 
 
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
 
         if (strtolower($team_category->type) == "team") {

@@ -840,7 +840,6 @@ class ArcheryScoring extends Model
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
-            
             $score["rank_can_change"] = $value["rank_can_change"];
             $score["have_coint_tost"] = $value["have_coint_tost"];
             $archery_event_score[] = $score;
@@ -908,6 +907,8 @@ class ArcheryScoring extends Model
                             $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
+                            $newValue["have_coint_tost"] = $member->have_coint_tost;
+                            $newValue["rank_can_change"] = $member->rank_can_change;
                             array_push($newArray, $newValue);
                         }
                         usort($newArray, function ($a, $b) {
@@ -930,6 +931,8 @@ class ArcheryScoring extends Model
                             $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
+                            $newValue["have_coint_tost"] = $member->have_coint_tost;
+                            $newValue["rank_can_change"] = $member->rank_can_change;
                             array_push($newArray, $newValue);
                         }
                         usort($newArray, function ($a, $b) {
@@ -953,6 +956,8 @@ class ArcheryScoring extends Model
                         $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                         $newValue["member"] = $value["member"];
                         $newValue["have_shoot_off"] = $member->have_shoot_off;
+                        $newValue["have_coint_tost"] = $member->have_coint_tost;
+                        $newValue["rank_can_change"] = $member->rank_can_change;
                         array_push($newArray, $newValue);
                     }
                     usort($newArray, function ($a, $b) {
@@ -987,6 +992,8 @@ class ArcheryScoring extends Model
                     $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                     $newValue["member"] = $value["member"];
                     $newValue["have_shoot_off"] = $member->have_shoot_off;
+                    $newValue["have_coint_tost"] = $member->have_coint_tost;
+                    $newValue["rank_can_change"] = $member->rank_can_change;
                     array_push($newArray, $newValue);
                 }
                 usort($newArray, function ($a, $b) {
