@@ -439,6 +439,9 @@ class AddParticipantMemberScore extends Transactional
         // update rank member
         MemberRank::updateMemberRank($category);
 
+        // update have member cost
+        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
+
 
         return $scoring;
     }
