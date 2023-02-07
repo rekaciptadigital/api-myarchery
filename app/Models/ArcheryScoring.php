@@ -851,22 +851,6 @@ class ArcheryScoring extends Model
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
-        foreach ($archery_event_score as $key_value_2 => $value_2) {
-            foreach ($archery_event_score as $key_value_3 => $value_3) {
-                if (
-                    $value_2["total"] == $value_3["total"]
-                    && $value_2["total_x"] == $value_3["total_x"]
-                    && $value_2["total_x_plus_ten"] == $value_3["total_x_plus_ten"]
-                    && $value_2["member"]["id"] !=  $value_3["member"]["id"]
-                ) {
-                    $member = ArcheryEventParticipantMember::find($value_2["member"]["id"]);
-                    if ($member) {
-                        $member->have_coint_tost == 1;
-                        $member->save();
-                    }
-                }
-            }
-        }
 
         $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
 
