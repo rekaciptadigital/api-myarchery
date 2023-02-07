@@ -145,11 +145,10 @@ class AddEventOrderV2 extends Transactional
                         ->where("state_id", $m["province_id"])
                         ->where("country_id", $m["country_id"])
                         ->first();
-                    if (!$city) {
-                        throw new BLoCException("city not found");
+                        
+                    if ($city) {
+                        $user_new->city_of_country_id = $city->id;
                     }
-
-                    $user_new->city_of_country_id = $city->id;
                 }
                 $user_new->save();
             }
