@@ -12,10 +12,12 @@ use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
+use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryScoringEliminationGroup;
+use App\Models\MemberRank;
 use App\Models\UrlReport;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +78,20 @@ class CleanEliminationMatch extends Retrieval
 
     private function cleanEliminationMatch($category_id)
     {
-        $elimination = ArcheryEventElimination::where('event_category_id', $category_id)->first();
+        $elimination = ArcheryEventElimination::where('event_category_id', $category_id)
+            ->first();
+
+        $category = ArcheryEventCategoryDetail::find($category_id);
+
+        // update member rank
+        MemberRank::updateMemberRank($category);
+
+        // reset have coin tost member
+        ArcheryEventParticipantMember::resetHaveCoinTostMember($category);
+
+        // update have coint tost member
+        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
+
         if (!$elimination) {
             throw new BLoCException("elimination tidak ditemukan");
         }
