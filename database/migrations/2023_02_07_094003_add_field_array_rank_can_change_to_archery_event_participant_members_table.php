@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableMemberRankTable extends Migration
+class AddFieldArrayRankCanChangeToArcheryEventParticipantMembersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,8 @@ class CreateTableMemberRankTable extends Migration
      */
     public function up()
     {
-        Schema::create('member_rank', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer("rank")->default(0);
-            $table->integer("member_id")->index();
-            $table->integer("category_id")->index();
-            $table->timestamps();
-        });
-
         Schema::table('archery_event_participant_members', function (Blueprint $table) {
-            $table->integer("have_coint_tost")->default(0);
+            $table->text("rank_can_change")->nullable();
         });
     }
 
@@ -33,9 +25,8 @@ class CreateTableMemberRankTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('member_rank');
         Schema::table('archery_event_participant_members', function (Blueprint $table) {
-            $table->dropColumn("have_coint_tost");
+            $table->dropColumn("rank_can_change");
         });
     }
 }
