@@ -232,7 +232,7 @@ class WebServiceProvider extends ServiceProvider
     {
         $this->registerService("forgotPassword", ForgotPassword::class);
         $this->registerService("login", Login::class);
-        $this->registerService("changeRankMemberQualification", Login::class);
+        $this->registerService("changeRankMemberQualification", ChangeRankMemberQualification::class);
         $this->registerService("register", Register::class);
         $this->registerService("checkAdminRegister", CheckAdminRegister::class);
         $this->registerService("resetPassword", ResetPassword::class);
