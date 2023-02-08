@@ -28,7 +28,7 @@ class ChangeRankMemberQualification extends Transactional
             throw new BLoCException("rank can join null");
         }
 
-        if (!in_array($rank, $member->rank_can_change)) {
+        if (!in_array($rank, json_decode($member->rank_can_change))) {
             throw new BLoCException("invalid rank input");
         }
 
