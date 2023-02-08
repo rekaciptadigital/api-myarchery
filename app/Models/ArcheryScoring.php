@@ -765,7 +765,7 @@ class ArcheryScoring extends Model
                 if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
                     return $b["member"]["member_rank"] > $a["member"]["member_rank"];
                 }
-                
+
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
@@ -785,10 +785,12 @@ class ArcheryScoring extends Model
             "archery_clubs.name as club_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face",
-            "archery_event_participants.is_present"
+            "archery_event_participants.is_present",
+            "member_rank.rank as member_rank",
         )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participants.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+            ->leftJoin("member_rank", "member_rank.member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
@@ -859,6 +861,12 @@ class ArcheryScoring extends Model
                 }
                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
             }
+
+
+            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
+            }
+
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
@@ -925,6 +933,11 @@ class ArcheryScoring extends Model
                                 }
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
+
+                            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
+                            }
+
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -948,6 +961,10 @@ class ArcheryScoring extends Model
                                     return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
                                 }
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                            }
+
+                            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
                             }
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
@@ -974,6 +991,11 @@ class ArcheryScoring extends Model
                             }
                             return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                         }
+
+                        if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                            return $b["member"]["member_rank"] > $a["member"]["member_rank"];
+                        }
+
                         return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                     });
                     return $newArray;
@@ -1009,6 +1031,10 @@ class ArcheryScoring extends Model
                             return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
                         }
                         return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                    }
+
+                    if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
+                        return $b["member"]["member_rank"] > $a["member"]["member_rank"];
                     }
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                 });
