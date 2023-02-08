@@ -303,6 +303,8 @@ class AddEventOrderV2 extends Transactional
                 "order_event_id" => $order_event->id,
                 'payment_info' => null
             ];
+
+            return $res;
         }
 
         if ($event->my_archery_fee_percentage > 0) {
