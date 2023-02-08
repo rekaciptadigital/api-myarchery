@@ -228,8 +228,8 @@ class ClubRanked
                 $mix_ranked = ArcheryEventParticipant::mixTeamBestOfThree($team);
                 $mix_pos = 0;
                 foreach ($mix_ranked as $mr => $mrank) {
-                    $club_or_city_ids[$value[$tag_ranked]]["city_id"] = $mrank["city_id"];
-                    $club_or_city_ids[$value[$tag_ranked]]["club_id"] = $mrank["club_id"];
+                    $club_or_city_ids[$mrank[$tag_ranked]]["city_id"] = $mrank["city_id"];
+                    $club_or_city_ids[$mrank[$tag_ranked]]["club_id"] = $mrank["club_id"];
                     if (!isset($club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"])) {
                         $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] = 0;
                     }
@@ -284,8 +284,8 @@ class ClubRanked
                 $ranked = ArcheryEventParticipant::teamBestOfThree($team);;
                 $pos = 0;
                 foreach ($ranked as $r => $rank) {
-                    $club_or_city_ids[$value[$tag_ranked]]["city_id"] = $rank["city_id"];
-                    $club_or_city_ids[$value[$tag_ranked]]["club_id"] = $rank["club_id"];
+                    $club_or_city_ids[$rank[$tag_ranked]]["city_id"] = $rank["city_id"];
+                    $club_or_city_ids[$rank[$tag_ranked]]["club_id"] = $rank["club_id"];
                     if (!isset($club_or_city_ids[$rank[$tag_ranked]]["team"]["total"])) {
                         $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] = 0;
                     }
