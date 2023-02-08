@@ -24,6 +24,10 @@ class ChangeRankMemberQualification extends Transactional
             throw new BLoCException("member not have coint tost");
         }
 
+        if ($member->rank_can_join == null) {
+            throw new BLoCException("rank can join null");
+        }
+
         if (!in_array($rank, $member->rank_can_join)) {
             throw new BLoCException("invalid rank input");
         }
