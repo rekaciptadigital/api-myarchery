@@ -762,10 +762,6 @@ class ArcheryScoring extends Model
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
 
-                if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                    return $b["member"]["member_rank"] > $a["member"]["member_rank"];
-                }
-
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
@@ -862,11 +858,6 @@ class ArcheryScoring extends Model
                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
             }
 
-
-            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
-            }
-
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
@@ -934,10 +925,6 @@ class ArcheryScoring extends Model
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
 
-                            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
-                            }
-
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -963,9 +950,6 @@ class ArcheryScoring extends Model
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
 
-                            if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                                return $b["member"]["member_rank"] > $a["member"]["member_rank"];
-                            }
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -990,10 +974,6 @@ class ArcheryScoring extends Model
                                 return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
                             }
                             return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
-                        }
-
-                        if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                            return $b["member"]["member_rank"] > $a["member"]["member_rank"];
                         }
 
                         return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
@@ -1033,9 +1013,6 @@ class ArcheryScoring extends Model
                         return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                     }
 
-                    if ($a["member"]["member_rank"] > 0 && $b["member"]["member_rank"] > 0) {
-                        return $b["member"]["member_rank"] > $a["member"]["member_rank"];
-                    }
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                 });
                 return $newArray;

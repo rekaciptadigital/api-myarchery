@@ -146,6 +146,10 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
 
+        usort($qualification_rank, function ($a, $b) {
+            return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+        });
+
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 
         $elimination = ArcheryEventElimination::where("event_category_id", $category_id)->first();
