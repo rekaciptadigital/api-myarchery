@@ -121,23 +121,6 @@ class SetEventEliminationV2 extends Transactional
             ->distinct()
             ->get();
 
-        $participant_collection_score_elimination = ArcheryScoring::select(
-            "archery_event_participant_members.*",
-            "archery_scorings.id as scoring_id",
-        )
-            ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_scorings.participant_member_id")
-            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-            ->where('archery_event_participants.status', 1)
-            ->where('archery_event_participants.event_category_id', $category_id)
-            ->where("archery_scorings.type", 2)
-            ->distinct()
-            ->get();
-
-
-        if ($participant_collection_score_elimination->count() > 0) {
-            throw new BLoCException("sudah ada yang melakukan eliminasi");
-        }
-
         if ($participant_collection_have_shoot_off->count() > 0) {
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
@@ -152,6 +135,7 @@ class SetEventEliminationV2 extends Transactional
         if ($elimination) {
             throw new BLoCException("elimination sudah ditentukan");
         }
+        
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $category_id;
         $elimination->count_participant = $elimination_member_count;
