@@ -262,7 +262,7 @@ class AddEventOrderV2 extends Transactional
             $member = ArcheryEventParticipantMember::saveArcheryEventParticipantMember($participant, $user_new, $event_category_detail, 0);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $order_event->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . "-" . Str::uuid() . "-" . $order_event->id;
 
         if ($total_price < 1) {
 
