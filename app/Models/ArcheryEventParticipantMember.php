@@ -36,9 +36,7 @@ class ArcheryEventParticipantMember extends Model
         }
 
         $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $category->getArraySessionCategory(), false, null, false);
-        // for ($i = 0; $i < $elimination_count; $i++) {
-        foreach ($archery_event_score as $i => $v) {
-            // for ($j = 0; $j < $elimination_count; $j++) {
+        foreach ($archery_event_score as $i => $v) {            
             foreach ($archery_event_score as $j => $v2) {
                 if (
                     $v["total"] == $v2["total"]
@@ -56,13 +54,6 @@ class ArcheryEventParticipantMember extends Model
                         throw new BLoCException("member_j not found");
                     }
                     $member_rank_j = MemberRank::where("member_id", $member_j->id)->first();
-                    if (!$member_rank_j) {
-                        $member_rank_j = new MemberRank();
-                        $member_rank_j->rank = $j + 1;
-                        $member_rank_j->category_id = $category->id;
-                        $member_rank_j->member_id = $member_rank_j->id;
-                        $member_rank_j->save();
-                    }
 
                     $rank_can_change = [];
                     if ($member_i->rank_can_change != null) {
