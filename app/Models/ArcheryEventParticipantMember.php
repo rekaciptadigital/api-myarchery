@@ -53,15 +53,23 @@ class ArcheryEventParticipantMember extends Model
 
     public static function updateHaveCoinTostMember(ArcheryEventCategoryDetail $category)
     {
-        $elimination_count = $category->default_elimination_count;
-        if ($elimination_count == 0) {
-            throw new BLoCException("elimination count not found");
+        $elimination_template = $category->default_elimination_count;
+        if ($elimination_template == 0) {
+            throw new BLoCException("elimination template have't set");
         }
 
         $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $category->getArraySessionCategory(), false, null, false);
-        // for ($i = 0; $i < $elimination_count; $i++) {
         foreach ($archery_event_score as $i => $v) {
-            // for ($j = 0; $j < $elimination_count; $j++) {
+            $member_i = ArcheryEventParticipantMember::find($v["member"]["id"]);
+            if (!$member_i) {
+                throw new BLoCException("member_i not found");
+            }
+
+            $member_rank_i = MemberRank::where("member_id", $member_i->id)->first();
+            if ($member_rank_i->rank > $elimination_template) {
+                continue;
+            }
+
             foreach ($archery_event_score as $j => $v2) {
                 if (
                     $v["total"] == $v2["total"]
@@ -69,23 +77,11 @@ class ArcheryEventParticipantMember extends Model
                     && $v["total_x_plus_ten"] == $v2["total_x_plus_ten"]
                     && $v["member"]["id"] !=  $v2["member"]["id"]
                 ) {
-                    $member_i = ArcheryEventParticipantMember::find($v["member"]["id"]);
-                    if (!$member_i) {
-                        throw new BLoCException("member_i not found");
-                    }
-
                     $member_j = ArcheryEventParticipantMember::find($v2["member"]["id"]);
                     if (!$member_j) {
                         throw new BLoCException("member_j not found");
                     }
                     $member_rank_j = MemberRank::where("member_id", $member_j->id)->first();
-                    if (!$member_rank_j) {
-                        $member_rank_j = new MemberRank();
-                        $member_rank_j->rank = $j + 1;
-                        $member_rank_j->category_id = $category->id;
-                        $member_rank_j->member_id = $member_rank_j->id;
-                        $member_rank_j->save();
-                    }
 
                     $rank_can_change = [];
                     if ($member_i->rank_can_change != null) {

@@ -106,10 +106,6 @@ class SetEventEliminationV2 extends Transactional
                 if ($value["total_arrow"] < $max_arrow) {
                     throw new BLoCException("masih ada yang belum melakukan shoot kualifikasi secara full");
                 }
-
-                if ($value["have_coint_tost"] == 1) {
-                    throw new BLoCException("masih ada yang harus coint tost");
-                }
             }
         }
 
