@@ -106,52 +106,54 @@ class AddEventOrderV2 extends Transactional
                 $user_new->password = Hash::make("12345678");
                 $user_new->email = $m["email"];
                 $user_new->date_of_birth = date("Y-m-d", strtotime($m["date_of_birth"]));
+            }
 
-                if ($m["country_id"] == 102) {
-                    $user_new->is_wna = 0;
-                    $province = Provinces::find($m["province_id"]);
-                    if (!$province) {
-                        throw new BLoCException("province not found");
-                    }
+            if ($m["country_id"] == 102) {
+                $user_new->is_wna = 0;
+                $province = Provinces::find($m["province_id"]);
+                if (!$province) {
+                    throw new BLoCException("province not found");
+                }
 
-                    $user_new->address_province_id = $province->id;
+                $user_new->address_province_id = $province->id;
 
-                    $city = City::where("id", $m["city_id"])
-                        ->where("province_id", $m["province_id"])
-                        ->first();
-                    if (!$city) {
-                        throw new BLoCException("city not found");
-                    }
+                $city = City::where("id", $m["city_id"])
+                    ->where("province_id", $m["province_id"])
+                    ->first();
+                if (!$city) {
+                    throw new BLoCException("city not found");
+                }
 
-                    $user_new->address_city_id  = $city->id;
-                } else {
-                    $user_new->is_wna = 1;
-                    $country = Country::find($m["country_id"]);
-                    if (!$country) {
-                        throw new BLoCException("country not found");
-                    }
+                $user_new->address_city_id  = $city->id;
+            } else {
+                $user_new->is_wna = 1;
+                $country = Country::find($m["country_id"]);
+                if (!$country) {
+                    throw new BLoCException("country not found");
+                }
 
-                    $user_new->country_id = $country->id;
+                $user_new->country_id = $country->id;
 
-                    $province = ProvinceCountry::where("country_id", $m["country_id"])
-                        ->where("id", $m["province_id"])
-                        ->first();
+                $province = ProvinceCountry::where("country_id", $m["country_id"])
+                    ->where("id", $m["province_id"])
+                    ->first();
 
-                    if (!$province) {
-                        throw new BLoCException("province not found");
-                    }
+                if (!$province) {
+                    throw new BLoCException("province not found");
+                }
 
+                if (isset($m["city_id"])) {
                     $city = CityCountry::where("id", $m["city_id"])
                         ->where("state_id", $m["province_id"])
                         ->where("country_id", $m["country_id"])
                         ->first();
-                        
+
                     if ($city) {
                         $user_new->city_of_country_id = $city->id;
                     }
                 }
-                $user_new->save();
             }
+            $user_new->save();
 
             if ($event->is_private) {
                 $check_email_whitelist = ArcheryEventEmailWhiteList::where("email", $user_new->email)
@@ -260,7 +262,7 @@ class AddEventOrderV2 extends Transactional
             $member = ArcheryEventParticipantMember::saveArcheryEventParticipantMember($participant, $user_new, $event_category_detail, 0);
         }
 
-        $order_id = env("ORDER_ID_PREFIX", "OE-S") . $order_event->id;
+        $order_id = env("ORDER_ID_PREFIX", "OE-S") . "-" . Str::uuid() . "-" . $order_event->id;
 
         if ($total_price < 1) {
 
@@ -301,6 +303,8 @@ class AddEventOrderV2 extends Transactional
                 "order_event_id" => $order_event->id,
                 'payment_info' => null
             ];
+
+            return $res;
         }
 
         if ($event->my_archery_fee_percentage > 0) {
@@ -559,7 +563,9 @@ class AddEventOrderV2 extends Transactional
             "members.*.email" => "required|email",
             "members.*.gender" => "required|in:male,female",
             "members.*.date_of_birth" => "required",
-            "members.*.name" => "required"
+            "members.*.name" => "required",
+            "members.*.country_id" => "required",
+            "members.*.province_id" => "required",
         ];
     }
 }

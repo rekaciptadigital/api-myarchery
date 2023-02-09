@@ -118,7 +118,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
                     $value1["rank"] = $rank;
                     $value1["have_shoot_off"] = $value2["have_shoot_off"];
                     $value1["have_coint_tost"] = $value2["have_coint_tost"];
-                    $value1["rank_can_change"] = $value2["rank_can_change"];
+                    $value1["rank_can_change"] = json_decode($value2["rank_can_change"]);
                     array_push($response, $value1);
                     break;
                 }

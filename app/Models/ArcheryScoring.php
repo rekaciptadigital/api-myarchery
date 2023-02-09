@@ -711,6 +711,7 @@ class ArcheryScoring extends Model
             "archery_clubs.id as club_id",
             "cities.id as city_id",
             "cities.name as city_name",
+            "member_rank.rank as member_rank",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )
@@ -719,6 +720,7 @@ class ArcheryScoring extends Model
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
             ->leftJoin("cities", "archery_event_participants.city_id", "=", "cities.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+            ->leftJoin("member_rank", "member_rank.member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id);
 
@@ -759,6 +761,7 @@ class ArcheryScoring extends Model
                     }
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
+
                 return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
@@ -778,10 +781,12 @@ class ArcheryScoring extends Model
             "archery_clubs.name as club_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face",
-            "archery_event_participants.is_present"
+            "archery_event_participants.is_present",
+            "member_rank.rank as member_rank",
         )->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participants.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
+            ->leftJoin("member_rank", "member_rank.member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_id', $event_id);
         if (!is_null($team_category_id)) {
@@ -831,16 +836,12 @@ class ArcheryScoring extends Model
 
         $archery_event_score = [];
 
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
         foreach ($participants as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
-            
             $score["rank_can_change"] = $value["rank_can_change"];
             $score["have_coint_tost"] = $value["have_coint_tost"];
             $archery_event_score[] = $score;
@@ -853,6 +854,7 @@ class ArcheryScoring extends Model
                 }
                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
             }
+
             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
         });
 
@@ -908,6 +910,8 @@ class ArcheryScoring extends Model
                             $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
+                            $newValue["have_coint_tost"] = $member->have_coint_tost;
+                            $newValue["rank_can_change"] = $member->rank_can_change;
                             array_push($newArray, $newValue);
                         }
                         usort($newArray, function ($a, $b) {
@@ -917,6 +921,7 @@ class ArcheryScoring extends Model
                                 }
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
+
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -930,6 +935,8 @@ class ArcheryScoring extends Model
                             $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                             $newValue["member"] = $value["member"];
                             $newValue["have_shoot_off"] = $member->have_shoot_off;
+                            $newValue["have_coint_tost"] = $member->have_coint_tost;
+                            $newValue["rank_can_change"] = $member->rank_can_change;
                             array_push($newArray, $newValue);
                         }
                         usort($newArray, function ($a, $b) {
@@ -939,6 +946,7 @@ class ArcheryScoring extends Model
                                 }
                                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                             }
+
                             return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                         });
                         return $newArray;
@@ -953,6 +961,8 @@ class ArcheryScoring extends Model
                         $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                         $newValue["member"] = $value["member"];
                         $newValue["have_shoot_off"] = $member->have_shoot_off;
+                        $newValue["have_coint_tost"] = $member->have_coint_tost;
+                        $newValue["rank_can_change"] = $member->rank_can_change;
                         array_push($newArray, $newValue);
                     }
                     usort($newArray, function ($a, $b) {
@@ -962,6 +972,7 @@ class ArcheryScoring extends Model
                             }
                             return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                         }
+
                         return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                     });
                     return $newArray;
@@ -987,6 +998,8 @@ class ArcheryScoring extends Model
                     $newValue = $this->generateScoreBySession($value["member"]->id, $score_type, $session);
                     $newValue["member"] = $value["member"];
                     $newValue["have_shoot_off"] = $member->have_shoot_off;
+                    $newValue["have_coint_tost"] = $member->have_coint_tost;
+                    $newValue["rank_can_change"] = $member->rank_can_change;
                     array_push($newArray, $newValue);
                 }
                 usort($newArray, function ($a, $b) {
@@ -996,6 +1009,7 @@ class ArcheryScoring extends Model
                         }
                         return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                     }
+
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                 });
                 return $newArray;

@@ -71,10 +71,7 @@ class SetEventEliminationV2 extends Transactional
         }
 
 
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
 
         if (strtolower($team_category->type) == "team") {
@@ -99,22 +96,15 @@ class SetEventEliminationV2 extends Transactional
     private function makeTemplateIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
     {
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true);
+        $category = ArcheryEventCategoryDetail::find($category_id);
+
+        $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
 
         // cek apakah terdapat peserta yang belum melakukan shoot qualifikasi
         if (count($qualification_rank) > 0) {
             foreach ($qualification_rank as $key => $value) {
-                // if ($value["total"] == 0) {
-                //     throw new BLoCException("skor kualifikasi masih kosong");
-                // }
-
-                foreach ($session as $key => $s) {
-                    $scoring_per_session =  ArcheryScoring::where("participant_member_id", $value["member"]->id)
-                        ->where("type", 1)
-                        ->where("scoring_session", $s)
-                        ->first();
-                    if (!$scoring_per_session) {
-                        // throw new BLoCException("terdapat peserta yang belum melakukan shoot kualifikasi secara lengkap");
-                    }
+                if ($value["total_arrow"] < $max_arrow) {
+                    throw new BLoCException("masih ada yang belum melakukan shoot kualifikasi secara full");
                 }
             }
         }
@@ -151,6 +141,10 @@ class SetEventEliminationV2 extends Transactional
         if ($participant_collection_have_shoot_off->count() > 0) {
             throw new BLoCException("masih terdapat peserta yang harus melakukan shoot off");
         }
+
+        usort($qualification_rank, function ($a, $b) {
+            return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+        });
 
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
 

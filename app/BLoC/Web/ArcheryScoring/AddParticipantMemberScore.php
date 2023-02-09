@@ -445,7 +445,6 @@ class AddParticipantMemberScore extends Transactional
         // update have member cost
         ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
 
-
         return $scoring;
     }
 
