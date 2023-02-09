@@ -83,15 +83,6 @@ class CleanEliminationMatch extends Retrieval
 
         $category = ArcheryEventCategoryDetail::find($category_id);
 
-        // update member rank
-        MemberRank::updateMemberRank($category);
-
-        // reset have coin tost member
-        ArcheryEventParticipantMember::resetHaveCoinTostMember($category);
-
-        // update have coint tost member
-        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
-
         if (!$elimination) {
             throw new BLoCException("elimination tidak ditemukan");
         }
@@ -123,6 +114,22 @@ class CleanEliminationMatch extends Retrieval
         }
 
         $elimination->delete();
+
+        // update member rank
+        MemberRank::updateMemberRank($category);
+
+        // reset have coin tost member
+        ArcheryEventParticipantMember::resetHaveCoinTostMember($category);
+
+        // update have coint tost member
+        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
+
+        // reset have shoot off member
+        ArcheryEventParticipantMember::resetHaveShootOffMember($category);
+
+        // update have shoot off member
+        ArcheryEventParticipantMember::updateHaveShootOffMember($category);
+        
         return "success";
     }
 
