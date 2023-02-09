@@ -836,10 +836,7 @@ class ArcheryScoring extends Model
 
         $archery_event_score = [];
 
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
         foreach ($participants as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type, $session);
