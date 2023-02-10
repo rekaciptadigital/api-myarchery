@@ -80,7 +80,7 @@ class ArcheryEventParticipantMember extends Model
                                 $scooring_session_11_member = ArcheryScoring::where("scoring_session", 11)
                                     ->where("participant_member_id", $member->id)
                                     ->first();
-                                    
+
                                 if (!$scooring_session_11_member || $scooring_session_11_member->total == 0) {
                                     $member->have_shoot_off = 1;
                                 } else {
@@ -127,6 +127,10 @@ class ArcheryEventParticipantMember extends Model
             $member_i = ArcheryEventParticipantMember::find($v["member"]["id"]);
             if (!$member_i) {
                 throw new BLoCException("member_i not found");
+            }
+
+            if ($v["member"]["is_present"] != 1) {
+                continue;
             }
 
             $member_rank_i = MemberRank::where("member_id", $member_i->id)->first();
