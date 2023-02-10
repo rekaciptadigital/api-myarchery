@@ -8,6 +8,7 @@ use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\City;
+use App\Models\Provinces;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -75,21 +76,78 @@ class GetMemberParticipantIndividual extends Retrieval
         if ($category->count() > 0) {
             foreach ($category as $c) {
                 // mengambil participant yang satu grup yang sama dan join di category individual
-                $participants = ArcheryEventParticipant::select("users.*")
+                $participants = ArcheryEventParticipant::select(
+                    "users.*",
+                    "cities.name as address_city_name",
+                    "provinces.name as address_province_name",
+                    "countries.name as country_name",
+                    "states.name as province_of_country_name",
+                    "cities_of_countries.name as city_of_country_name"
+                )
                     ->join("users", "users.id", "=", "archery_event_participants.user_id")
+                    ->leftJoin("cities", "cities.id", "=", "users.address_city_id")
+                    ->leftJoin("provinces", "provinces.id", "=", "users.address_province_id")
+                    ->leftJoin("countries", "countries.id", "=", "users.country_id")
+                    ->leftJoin("states", "states.id", "=", "users.province_of_country_id")
+                    ->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "users.city_of_country_id")
                     ->where('archery_event_participants.event_category_id', $c->id)
                     ->where('archery_event_participants.status', 1);
 
                 if ($event->with_contingent == 1) {
-                    $participants->where("city_id", $club_or_city_id);
+                    $participants->where("archery_event_participants.city_id", $club_or_city_id);
                 } else {
-                    $participants->where("club_id", $club_or_city_id);
+                    $participants->where("archery_event_participants.club_id", $club_or_city_id);
                 }
 
                 $participants = $participants->get();
 
                 foreach ($participants as $key => $p) {
-                    $list_users[] = $p;
+
+                    $country = (object)[];
+                    if ($p->is_wna == 0) {
+                        $country->id = 102;
+                        $country->name = "Indonesia";
+                    } else {
+                        $country->id = $p->country_id;
+                        $country->name = $p->country_name;
+                    }
+
+                    $province = (object)[];
+                    if ($p->is_wna == 0) {
+                        $province->id = (int)$p->address_province_id;
+                        $province->name = $p->address_province_name;
+                    } else {
+                        $province->id = (int)$p->province_of_country_id;
+                        $province->name = $p->province_of_country_name;
+                    }
+
+                    $city = (object)[];
+                    if ($p->is_wna == 0) {
+                        if ($p->address_city_id) {
+                            $city->id = (int)$p->address_city_id;
+                            $city->name = $p->address_city_name;
+                        }
+                    } else {
+                        if ($p->city_of_country_id) {
+                            $city->id = (int)$p->city_of_country_id;
+                            $city->name = $p->city_of_country_name;
+                        }
+                    }
+
+
+                    $response = (object)[];
+                    $response->id = $p->id;
+                    $response->name = $p->name;
+                    $response->email = $p->email;
+                    $response->date_of_birth = $p->date_of_birth;
+                    $response->gender = $p->gender;
+                    $response->province = $province;
+                    $response->city = $city;
+                    $response->country = $country;
+                    $response->is_wna = $p->is_wna;
+
+
+                    $list_users[] = $response;
                 }
             }
         } else {
