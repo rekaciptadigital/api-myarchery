@@ -762,7 +762,11 @@ class ArcheryScoring extends Model
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
 
-                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                if ($a["member"]["member_rank"] == null && $b["member"]["member_rank"] == null) {
+                    return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                }
+
+                return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
             });
         }
 
@@ -833,6 +837,7 @@ class ArcheryScoring extends Model
             $archery_event_score[] = $score;
         }
 
+
         usort($archery_event_score, function ($a, $b) {
             if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
                 if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
@@ -841,8 +846,13 @@ class ArcheryScoring extends Model
                 return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
             }
 
-            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            if ($a["member"]["member_rank"] == null && $b["member"]["member_rank"] == null) {
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            }
+
+            return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
         });
+
 
         return $archery_event_score;
     }
