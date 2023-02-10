@@ -79,10 +79,6 @@ class ArcherySeriesUserPoint extends Model
         $pos = 0;
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session, false, null, false);
 
-        usort($qualification_rank, function ($a, $b) {
-            return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
-        });
-
         foreach ($qualification_rank as $key => $value) {
             $pos = $pos + 1;
             $this->setPoint($value["member"]->id, "qualification", $pos);
