@@ -95,7 +95,7 @@ class SetEventEliminationV2 extends Transactional
 
     private function makeTemplateIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
     {
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true);
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true, 1);
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
@@ -131,7 +131,7 @@ class SetEventEliminationV2 extends Transactional
         if ($elimination) {
             throw new BLoCException("elimination sudah ditentukan");
         }
-        
+
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $category_id;
         $elimination->count_participant = $elimination_member_count;

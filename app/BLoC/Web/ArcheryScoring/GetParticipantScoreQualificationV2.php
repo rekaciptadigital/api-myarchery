@@ -9,7 +9,6 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\MemberRank;
-use App\Models\TeamMemberSpecial;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -96,7 +95,7 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
-        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name);
+        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name, 1);
         // if ($score_type == 3) $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
         $category = ArcheryEventCategoryDetail::find($category_id);
         $total_rambahan = $category->count_stage;

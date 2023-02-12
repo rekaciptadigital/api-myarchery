@@ -695,7 +695,7 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false)
+    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false, $with_member_rank = 0)
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -754,7 +754,7 @@ class ArcheryScoring extends Model
         }
 
         if (!$orderByBudrestNumber) {
-            usort($archery_event_score, function ($a, $b) {
+            usort($archery_event_score, function ($a, $b) use ($with_member_rank) {
                 if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
                     if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
                         return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
@@ -762,11 +762,14 @@ class ArcheryScoring extends Model
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
 
-                if ($a["member"]["member_rank"] == null && $b["member"]["member_rank"] == null) {
+                if ($with_member_rank == 1) {
+                    if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
+                        return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+                    }
                     return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
                 }
-
-                return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+                
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
             });
         }
 
