@@ -9,7 +9,7 @@ use App\Models\ArcherySeriesCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
-class AddAllCategoryEventToSeries extends Retrieval
+class InsertAllCategoryEventToSeries extends Retrieval
 {
     public function getDescription()
     {
