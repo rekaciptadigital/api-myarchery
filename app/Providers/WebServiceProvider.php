@@ -52,7 +52,7 @@ use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
 use App\BLoC\General\GetEventClubRanked;
-use App\BloC\General\InsertAllCategoryEventToSeries;
+use App\BLoC\General\InsertAllCategoryEventToSeries;
 use App\BLoC\General\QandA\GetQandAByEventId;
 use App\BLoC\Web\AdminAuth\UpdateProfile;
 use App\BLoC\Web\ArcheryScoring\AddParticipantMemberScore;
