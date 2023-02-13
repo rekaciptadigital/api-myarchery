@@ -754,7 +754,7 @@ class ArcheryScoring extends Model
         }
 
         if (!$orderByBudrestNumber) {
-            usort($archery_event_score, function ($a, $b) use ($with_member_rank) {
+            usort($archery_event_score, function ($a, $b) {
                 if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
                     if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
                         return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
@@ -762,15 +762,16 @@ class ArcheryScoring extends Model
                     return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
 
-                if ($with_member_rank == 1) {
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            });
+
+            if ($with_member_rank == 1) {
+                usort($archery_event_score, function ($a, $b) {
                     if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
                         return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
                     }
-                    return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-                }
-                
-                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-            });
+                });
+            }
         }
 
         return $archery_event_score;
