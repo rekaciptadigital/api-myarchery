@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\BloC\General\AddAllCategoryEventToSeries;
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
 use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
 use App\BLoC\General\ExportmemberCollective;
@@ -13,7 +14,6 @@ use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
-use App\BloC\General\Support\AddAllCategoryEventToSeries;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
 use Illuminate\Support\ServiceProvider;

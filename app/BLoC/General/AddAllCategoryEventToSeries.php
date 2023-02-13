@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BloC\General\Support;
+namespace App\BloC\General;
 
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventSerie;
