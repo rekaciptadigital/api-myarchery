@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\BloC\General\AddAllCategoryEventToSeries;
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
 use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
 use App\BLoC\General\ExportmemberCollective;
@@ -33,7 +32,6 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getListTabCategoryByEventId", GetListTabCategoryByEventId::class);
         $this->registerService("getParticipantScoreEliminationSelectionLiveScore", GetParticipantScoreEliminationSelectionLiveScore::class);
         $this->registerService("getParticipantScoreEventSelectionLiveScore", GetParticipantScoreEventSelectionLiveScore::class);
-        $this->registerService("addAllCategoryEventToSeries", AddAllCategoryEventToSeries::class);
 
         // ==================================== Fast Open 3 ========================================
         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
