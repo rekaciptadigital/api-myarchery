@@ -47,6 +47,7 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BloC\General\AddAllCategoryEventToSeries;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
 use App\BLoC\General\Event\GetDetailEventBySlugV2;
@@ -248,6 +249,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("addArcheryCategory", AddArcheryCategory::class);
         $this->registerService("editArcheryCategory", EditArcheryCategory::class);
         $this->registerService("getArcheryCategory", GetArcheryCategory::class);
+        $this->registerService("addAllCategoryEventToSeries", AddAllCategoryEventToSeries::class);
 
         // ================================ queen series 4 =========================================
         $this->registerService("reportRankQualification", ReportRankQualification::class);
