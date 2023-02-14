@@ -61,10 +61,13 @@ class ChangeRankMemberQualification extends Transactional
 
                 $member_2 = ArcheryEventParticipantMember::where("id", $mr->member_id)->first();
 
-                $member->rank_can_change = $member_2->rank_can_change;
+                $rank_can_change_member_1 = $member->rank_can_change;
+                $rank_can_change_member_2 = $member_2->rank_can_change;
 
-                $member_2->rank_can_change = $member->rank_can_change;
+                $member_2->rank_can_change = $rank_can_change_member_1;
                 $member_2->save();
+
+                $member->rank_can_change = $rank_can_change_member_2;
                 $member->save();
             }
         }
