@@ -58,7 +58,7 @@ class SetEventElimination extends Transactional
             $session[] = $i + 1;
         }
 
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session);
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, false, 1);
         $template = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $event_category_id;

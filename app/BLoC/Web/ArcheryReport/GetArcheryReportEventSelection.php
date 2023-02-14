@@ -80,8 +80,8 @@ class GetArcheryReportEventSelection extends Retrieval
                     $session_qualification[] = $i + 1;
                 }
 
-                $data_qualification = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 3, $session_qualification);
-                if (sizeof($data_qualification) == 0) continue;
+            $data_qualification = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 3, $session_qualification, false, null, false, 1);
+            if (sizeof($data_qualification) == 0) continue;
 
                 $qualification['category'] = $category_detail->label_category;
                 $qualification['total_arrow'] = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;

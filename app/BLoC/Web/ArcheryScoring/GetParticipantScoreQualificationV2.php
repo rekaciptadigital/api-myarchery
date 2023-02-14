@@ -95,35 +95,8 @@ class GetParticipantScoreQualificationV2 extends Retrieval
 
     public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
-        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name, 1);
-        // if ($score_type == 3) $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, $name);
-        $category = ArcheryEventCategoryDetail::find($category_id);
-        $total_rambahan = $category->count_stage;
-
-        $qualification_rank = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);
-
-        $response = [];
-
-        foreach ($qualification_member as $key1 => $value1) {
-            $member_rank = MemberRank::where("member_id", $value1["member"]["id"])
-                ->where("category_id", $category_id)
-                ->first();
-            foreach ($qualification_rank as $key2 => $value2) {
-                if ($value1["member"]["id"] === $value2["member"]["id"]) {
-                    $rank = $key2 + 1;
-                    if ($member_rank) {
-                        $rank =  $member_rank->rank;
-                    }
-                    $value1["rank"] = $rank;
-                    $value1["have_shoot_off"] = $value2["have_shoot_off"];
-                    $value1["have_coint_tost"] = $value2["have_coint_tost"];
-                    $value1["rank_can_change"] = json_decode($value2["rank_can_change"]);
-                    array_push($response, $value1);
-                    break;
-                }
-            }
-        }
-
-        return $response;
+        $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name, false, 1);
+        return $qualification_member;
+        // return "b" < "a";
     }
 }

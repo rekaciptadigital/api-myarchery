@@ -695,12 +695,13 @@ class ArcheryScoring extends Model
         return $output;
     }
 
-    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false, $with_member_rank = 0)
+    protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false, $with_member_rank = 1)
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
             "archery_event_participant_members.have_coint_tost",
+            "archery_event_participant_members.rank_can_change",
             "users.name",
             "archery_event_participant_members.user_id",
             "users.gender",
@@ -728,12 +729,6 @@ class ArcheryScoring extends Model
             $participants_query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
         }
 
-
-        if ($orderByBudrestNumber) {
-            $participants_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
-                ->orderBy("archery_event_qualification_schedule_full_day.target_face");
-        }
-
         if ($is_present) {
             $participants_query->where("archery_event_participants.is_present", 1);
         }
@@ -753,25 +748,48 @@ class ArcheryScoring extends Model
             $archery_event_score[] = $score;
         }
 
-        if (!$orderByBudrestNumber) {
-            usort($archery_event_score, function ($a, $b) {
-                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
-                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
-                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
-                    }
-                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+        // urutkan berdasarkan skor
+        usort($archery_event_score, function ($a, $b) {
+            if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                    return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
                 }
+                return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+            }
 
-                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+        });
+
+        // set rank user jika tidak ada di member rank
+        foreach ($archery_event_score as $key3 => $value3) {
+            $archery_event_score[$key3]["rank"] = $value3["member"]["member_rank"] ? $value3["member"]["member_rank"] : $key3 + 1;
+            $archery_event_score[$key3]["have_shoot_off"] = $value3["have_shoot_off"];
+            $archery_event_score[$key3]["have_coint_tost"] = $value3["have_coint_tost"];
+            $archery_event_score[$key3]["rank_can_change"] = json_decode($value3["member"]["rank_can_change"]);
+        }
+
+        // urut berdasarkan member rank
+        if ($with_member_rank == 1) {
+            usort($archery_event_score, function ($a, $b) {
+                if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
+                    return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+                }
+            });
+        }
+
+
+        // urut berdasarkan target face dan budrest number
+        if ($orderByBudrestNumber) {
+            usort($archery_event_score, function ($a, $b) {
+                return $b["member"]["bud_rest_number"] < $a["member"]["bud_rest_number"] ? 1 : -1;
             });
 
-            if ($with_member_rank == 1) {
-                usort($archery_event_score, function ($a, $b) {
-                    if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
-                        return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
-                    }
-                });
-            }
+
+            usort($archery_event_score, function ($a, $b) {
+                if ($a["member"]["bud_rest_number"] == $b["member"]["bud_rest_number"]) {
+                    return $b["member"]["target_face"] < $a["member"]["target_face"] ? 1 : -1;
+                }
+            });
         }
 
         return $archery_event_score;
