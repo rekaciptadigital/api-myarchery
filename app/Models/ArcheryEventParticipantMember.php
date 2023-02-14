@@ -102,7 +102,7 @@ class ArcheryEventParticipantMember extends Model
             throw new BLoCException("elimination template have't set");
         }
 
-        $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $category->getArraySessionCategory(), false, null, false);
+        $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $category->getArraySessionCategory(), false, null, false, 1);
         foreach ($archery_event_score as $i => $v) {
             $member_i = ArcheryEventParticipantMember::find($v["member"]["id"]);
             if (!$member_i) {
