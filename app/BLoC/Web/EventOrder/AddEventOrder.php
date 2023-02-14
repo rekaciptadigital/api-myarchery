@@ -89,6 +89,10 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
+        if ($event->with_contingent == 1) {
+            throw new BLoCException("cannot order event with contingent");
+        }
+
         if ($event->my_archery_fee_percentage > 0)
             $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage / 100));
 
