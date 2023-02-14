@@ -65,6 +65,7 @@ class ChangeRankMemberQualification extends Transactional
 
                 $member_2->rank_can_change = $member->rank_can_change;
                 $member_2->save();
+                $member->save();
             }
         }
 
