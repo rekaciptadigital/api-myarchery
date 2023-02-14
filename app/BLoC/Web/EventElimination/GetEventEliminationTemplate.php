@@ -70,10 +70,7 @@ class GetEventEliminationTemplate extends Retrieval
 
 
         $score_type = 1; // 1 for type qualification
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
         $fix_members1 = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.position_qualification",
@@ -170,6 +167,7 @@ class GetEventEliminationTemplate extends Retrieval
             $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
         } else {
             $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true, 1);
+            return $qualification_rank;
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         }
         $template["updated"] = $updated;
