@@ -772,7 +772,7 @@ class ArcheryScoring extends Model
         if ($with_member_rank == 1) {
             usort($archery_event_score, function ($a, $b) {
                 if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
-                    return $b["member"]["member_rank"] > $a["member"]["member_rank"] ? 1 : -1;
+                    return $b["member"]["member_rank"] < $a["member"]["member_rank"] ? 1 : -1;
                 }
             });
         }
