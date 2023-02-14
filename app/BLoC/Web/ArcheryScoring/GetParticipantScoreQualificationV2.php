@@ -8,7 +8,6 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
-use App\Models\MemberRank;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -97,6 +96,5 @@ class GetParticipantScoreQualificationV2 extends Retrieval
     {
         $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, true, $name, false, 1);
         return $qualification_member;
-        // return "b" < "a";
     }
 }
