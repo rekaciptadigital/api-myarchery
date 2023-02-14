@@ -510,7 +510,7 @@ class Upp extends Retrieval
         }
 
         if ($category_detail->category_team == "Individual") {
-            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name);
+            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name, false, 1);
             return $qualification_member;
         }
 

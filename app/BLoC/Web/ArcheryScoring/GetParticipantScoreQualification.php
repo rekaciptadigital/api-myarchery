@@ -67,7 +67,7 @@ class GetParticipantScoreQualification extends Retrieval
         }
 
         if (strtolower($team_category->type) == "individual") {
-            $data = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session);
+            $data = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, false, 1);
         }
 
         $redis = Redis::connection();

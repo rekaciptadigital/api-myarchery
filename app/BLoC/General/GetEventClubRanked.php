@@ -47,7 +47,7 @@ class GetEventClubRanked extends Retrieval
             $session[] = $i + 1;
         }
         if ($category->categoryTeam == "Individual") {
-            $member_rank = ArcheryScoring::getScoringRankByCategoryId($category, 1, $session, false, null, true);
+            $member_rank = ArcheryScoring::getScoringRankByCategoryId($category, 1, $session, false, null, true, 1);
             foreach ($member_rank as $key => $mr) {
                 if ($mr["club_id"] == $club_id) {
                     if ($key + 1 == 1) {

@@ -656,7 +656,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
         if ($category_detail->category_team == "Individual") {
             // $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
-            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name);
+            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name, false, 1);
 
             return $qualification_member;
         }
