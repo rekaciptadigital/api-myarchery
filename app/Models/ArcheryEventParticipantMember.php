@@ -81,7 +81,8 @@ class ArcheryEventParticipantMember extends Model
     {
         $archery_event_participant_members = ArcheryEventParticipantMember::join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where("archery_event_participants.event_category_id", $category->id)
-            ->where("status", 1);
+            ->where("status", 1)
+            ->get();
 
         foreach ($archery_event_participant_members as $key => $member) {
             $member->have_coint_tost = 0;
