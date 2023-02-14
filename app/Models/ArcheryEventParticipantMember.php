@@ -120,6 +120,8 @@ class ArcheryEventParticipantMember extends Model
 
     public static function updateHaveCoinTostMember(ArcheryEventCategoryDetail $category)
     {
+        $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
+
         $elimination_template = $category->default_elimination_count;
         if ($elimination_template == 0) {
             throw new BLoCException("elimination template have't set");
@@ -130,6 +132,10 @@ class ArcheryEventParticipantMember extends Model
             $member_i = ArcheryEventParticipantMember::find($v["member"]["id"]);
             if (!$member_i) {
                 throw new BLoCException("member_i not found");
+            }
+
+            if ($v["total_arrow"] != $max_arrow) {
+                continue;
             }
 
             if ($v["member"]["is_present"] != 1) {
