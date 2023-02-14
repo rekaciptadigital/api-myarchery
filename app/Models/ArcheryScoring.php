@@ -779,7 +779,7 @@ class ArcheryScoring extends Model
 
 
         // urut berdasarkan target face dan budrest number
-        if ($orderByBudrestNumber) {
+        if ($orderByBudrestNumber == true) {
             usort($archery_event_score, function ($a, $b) {
                 return $b["member"]["bud_rest_number"] < $a["member"]["bud_rest_number"] ? 1 : -1;
             });
