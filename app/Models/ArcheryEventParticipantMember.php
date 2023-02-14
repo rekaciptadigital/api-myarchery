@@ -13,9 +13,11 @@ class ArcheryEventParticipantMember extends Model
 
     public static function resetHaveShootOffMember(ArcheryEventCategoryDetail $category)
     {
-        $archery_event_participant_members = ArcheryEventParticipantMember::join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
+        $archery_event_participant_members = ArcheryEventParticipantMember::select("archery_event_participant_members.*")
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->where("archery_event_participants.event_category_id", $category->id)
-            ->where("status", 1);
+            ->where("archery_event_participants.status", 1)
+            ->get();
 
         foreach ($archery_event_participant_members as $member) {
             $member->have_shoot_off = 0;
