@@ -108,6 +108,12 @@ class SetEventEliminationV2 extends Transactional
                 if ($value["total_arrow"] < $max_arrow) {
                     throw new BLoCException("masih ada yang belum melakukan shoot kualifikasi secara full");
                 }
+
+                foreach ($qualification_rank as $key_3 => $value_3) {
+                    if ($value["member"]->id != $value_3["member"]->id && $value["rank"] == $value_3["rank"]) {
+                        throw new BLoCException("masih ada peserta dengan rank yang sama");
+                    }
+                }
             }
         }
 
