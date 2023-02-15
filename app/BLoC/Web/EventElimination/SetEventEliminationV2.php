@@ -96,8 +96,12 @@ class SetEventEliminationV2 extends Transactional
 
     private function makeTemplateIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
     {
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true, 1);
         $category = ArcheryEventCategoryDetail::find($category_id);
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true, 1);
 
         $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
 
@@ -109,6 +113,8 @@ class SetEventEliminationV2 extends Transactional
                 }
             }
         }
+
+        return "ok";
 
         // cek apakah ada yang telah melakukan shoot di eliminasi
         $participant_collection_have_shoot_off = ArcheryScoring::select(

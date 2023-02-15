@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
+use DAI\Utils\Exceptions\BLoCException;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -79,6 +80,10 @@ class ArcherySeriesUserPoint extends Model
     protected function setMemberQualificationPoint($event_category_id)
     {
         $category = ArcheryEventCategoryDetail::find($event_category_id);
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+        
         $session = $category->getArraySessionCategory();
         $pos = 0;
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session, false, null, false, 1);
