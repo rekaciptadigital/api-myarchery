@@ -70,7 +70,7 @@ class ArcherySeriesUserPoint extends Model
         $member_point->status = $is_series;
         $member_point->position = $pos;
         $member_point->event_serie_id = $event_serie->id;
-        $member_point->user_id = $user_id->id;
+        $member_point->user_id = $user_id;
         $member_point->event_category_id = $archerySeriesCategory->id;
         $member_point->type = $type;
         $member_point->member_id = $member_id;
