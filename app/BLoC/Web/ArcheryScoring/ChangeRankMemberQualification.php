@@ -49,28 +49,32 @@ class ChangeRankMemberQualification extends Transactional
             throw new BLoCException("member rank not found");
         }
 
-        $list_member_rank = MemberRank::where("category_id", $participant->event_category_id)->get();
-        foreach ($list_member_rank as $mr) {
-            if ($mr->id == $member_rank->id) {
-                continue;
-            }
-
-            if ($mr->rank == $rank) {
-                $mr->rank = $member_rank->rank;
-                $mr->save();
-
-                $member_2 = ArcheryEventParticipantMember::where("id", $mr->member_id)->first();
-
-                $rank_can_change_member_1 = $member->rank_can_change;
-                $rank_can_change_member_2 = $member_2->rank_can_change;
-
-                $member_2->rank_can_change = $rank_can_change_member_1;
-                $member_2->save();
-
-                $member->rank_can_change = $rank_can_change_member_2;
-                $member->save();
-            }
+        if ($rank == $member_rank->rank) {
+            throw new BLoCException("rank nggak boleh sama dengan rank saat ini");
         }
+
+        // $list_member_rank = MemberRank::where("category_id", $participant->event_category_id)->get();
+        // foreach ($list_member_rank as $mr) {
+        //     if ($mr->id == $member_rank->id) {
+        //         continue;
+        //     }
+
+        //     if ($mr->rank == $rank) {
+        //         $mr->rank = $member_rank->rank;
+        //         $mr->save();
+
+        //         $member_2 = ArcheryEventParticipantMember::where("id", $mr->member_id)->first();
+
+        //         $rank_can_change_member_1 = $member->rank_can_change;
+        //         $rank_can_change_member_2 = $member_2->rank_can_change;
+
+        //         $member_2->rank_can_change = $rank_can_change_member_1;
+        //         $member_2->save();
+
+        //         $member->rank_can_change = $rank_can_change_member_2;
+        //         $member->save();
+        //     }
+        // }
 
         $member_rank->rank = $rank;
         $member_rank->save();
