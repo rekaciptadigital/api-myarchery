@@ -170,7 +170,6 @@ class ArcheryEventParticipantMember extends Model
                         $rank_can_change[] = $member_rank_j->rank;
                     }
 
-                    $rank_can_change[] = $member_rank_i->rank;
 
                     $member_i->have_coint_tost = 1;
                     $member_i->rank_can_change = json_encode($rank_can_change);
