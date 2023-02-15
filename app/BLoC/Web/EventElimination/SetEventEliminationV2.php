@@ -114,8 +114,6 @@ class SetEventEliminationV2 extends Transactional
             }
         }
 
-        return "ok";
-
         // cek apakah ada yang telah melakukan shoot di eliminasi
         $participant_collection_have_shoot_off = ArcheryScoring::select(
             "archery_event_participant_members.*",
@@ -138,6 +136,8 @@ class SetEventEliminationV2 extends Transactional
         if ($elimination) {
             throw new BLoCException("elimination sudah ditentukan");
         }
+
+        return "ok";
 
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $category_id;
