@@ -37,18 +37,14 @@ class GetArcheryReportResultV2 extends Retrieval
 
     protected function process($parameters)
     {
-
-        $admin = Auth::user();
         $event_id = $parameters->get('event_id');
-        $date_filter = $parameters->get('date');
-        // $id = array();
 
-        $check_is_exist_report = UrlReport::where("event_id", $event_id)->where("type", "report_event")->first();
-        if ($check_is_exist_report) {
-            return [
-                "file_path" => $check_is_exist_report->url
-            ];
-        }
+        // $check_is_exist_report = UrlReport::where("event_id", $event_id)->where("type", "report_event")->first();
+        // if ($check_is_exist_report) {
+        //     return [
+        //         "file_path" => $check_is_exist_report->url
+        //     ];
+        // }
 
         $pages = array();
         $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
@@ -365,10 +361,10 @@ class GetArcheryReportResultV2 extends Retrieval
             'images' => true,
             'cover' => $cover_page,
             // 'header-html' => $header_html,
-            'footer-html' => $footer_html,
-            'toc' => true,
-            'toc-level-indentation' => '2rem',
-            'enable-toc-back-links' => true,
+            // 'footer-html' => $footer_html,
+            // 'toc' => true,
+            // 'toc-level-indentation' => '2rem',
+            // 'enable-toc-back-links' => true,
         ]);
 
         $digits = 3;
