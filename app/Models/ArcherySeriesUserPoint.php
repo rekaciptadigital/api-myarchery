@@ -85,12 +85,12 @@ class ArcherySeriesUserPoint extends Model
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session, false, null, false, 1);
 
         foreach ($qualification_rank as $key => $value) {
-            $member = ArcheryEventParticipantMember::find($value["member"]->id);
+            $member = ArcheryEventParticipantMember::find($value["member"]["id"]);
             if (!$member) {
                 throw new BLoCException("member not found");
             }
             $pos = $pos + 1;
-            $this->setPoint($value["member"]->id, "qualification", $pos);
+            $this->setPoint($member->id, "qualification", $pos);
         }
     }
 
