@@ -182,9 +182,9 @@ class SetEventEliminationV2 extends Transactional
             }
         }
 
-        throw new BLoCException("gagal");
-
         ArcherySeriesUserPoint::setMemberQualificationPoint($category_id);
+
+        throw new BLoCException("gagal");
 
         return $template;
     }
