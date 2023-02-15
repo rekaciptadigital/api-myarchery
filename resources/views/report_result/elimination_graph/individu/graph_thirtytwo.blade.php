@@ -348,1119 +348,1222 @@
                 <div class="winners">
                     <div class="matchups">
                         <div class="matchup">
-
                             <div class="participants">
                                 @if ($round1member1status === 'win')
-                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                    <span class="participant_name"> {!! $round1member1 !!} </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round1member1result !!}</span>
-                                    @else
+                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                        <span class="participant_name"> {!! $round1member1 !!} </span>
+                                        <span class="log_output_32"
+                                            style="background:black;">{!! $round1member1result !!}</span>
+                                    </div>
+                                @else
                                     <div class="participant32" style="background:white;border:1.8px solid gray">
                                         <span class="participant_name"> {!! $round1member1 !!} </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round1member1result !!}</span>
-                                        @endif
+                                        <span class="log_output_32"
+                                            style="background:gray;">{!! $round1member1result !!}</span>
                                     </div>
+                                @endif
 
-                                    @if ($round1member2status === 'win')
+                                @if ($round1member2status === 'win')
                                     <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
                                         <span class="participant_name"> {!! $round1member2 !!} </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round1member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round1member2 !!} </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round1member2result !!}</span>
-                                            @endif
-                                        </div>
+                                        <span class="log_output_32"
+                                            style="background:black;">{!! $round1member2result !!}</span>
                                     </div>
-                                </div>
-                                <div class="matchup">
-                                    <div class="participants">
-                                        @if ($round1member3status === 'win')
-                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                            <span class="participant_name"> {!! $round1member3 !!} </span>
-                                            <span class="log_output_32" style="background:black;">{!! $round1member3result !!}</span>
-                                            @else
-                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                <span class="participant_name"> {!! $round1member3 !!} </span>
-                                                <span class="log_output_32" style="background:gray;">{!! $round1member3result !!}</span>
-                                                @endif
-                                            </div>
-
-                                            @if ($round1member4status === 'win')
-                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                <span class="participant_name"> {!! $round1member4 !!} </span>
-                                                <span class="log_output_32" style="background:black;">{!! $round1member4result !!}</span>
-                                                @else
-                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                    <span class="participant_name"> {!! $round1member4 !!} </span>
-                                                    <span class="log_output_32" style="background:gray;">{!! $round1member4result !!}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
+                                @else
+                                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                                        <span class="participant_name"> {!! $round1member2 !!} </span>
+                                        <span class="log_output_32"
+                                            style="background:gray;">{!! $round1member2result !!}</span>
                                     </div>
-                                    <div class="connector">
-                                        <div class="merger"></div>
-                                        <div class="line"></div>
-                                    </div>
-                                </div>
-                                <div class="winners">
-                                    <div class="matchups">
-                                        <div class="matchup">
-                                            <div class="participants">
-                                                @if ($round1member5status === 'win')
-                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                    <span class="participant_name"> {!! $round1member5 !!} </span>
-                                                    <span class="log_output_32" style="background:black;">{!! $round1member5result !!}</span>
-                                                    @else
-                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                        <span class="participant_name"> {!! $round1member5 !!} </span>
-                                                        <span class="log_output_32" style="background:gray;">{!! $round1member5result !!}</span>
-                                                        @endif
-                                                    </div>
-
-                                                    @if ($round1member6status === 'win')
-                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                        <span class="participant_name"> {!! $round1member6 !!} </span>
-                                                        <span class="log_output_32" style="background:black;">{!! $round1member6result !!}</span>
-                                                        @else
-                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                            <span class="participant_name"> {!! $round1member6 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:gray;">{!! $round1member6result !!}</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="matchup">
-                                                    <div class="participants">
-                                                        @if ($round1member7status === 'win')
-                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                            <span class="participant_name"> {!! $round1member7 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:black;">{!! $round1member7result !!}</span>
-                                                            @else
-                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                <span class="participant_name"> {!! $round1member7 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:gray;">{!! $round1member7result !!}</span>
-                                                                @endif
-                                                            </div>
-
-                                                            @if ($round1member8status === 'win')
-                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                <span class="participant_name"> {!! $round1member8 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:black;">{!! $round1member8result !!}</span>
-                                                                @else
-                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                    <span class="participant_name"> {!! $round1member8 !!}
-                                                                    </span>
-                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member8result !!}</span>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="connector">
-                                                        <div class="merger"></div>
-                                                        <div class="line"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="winners">
-                                                    <div class="matchups">
-                                                        <div class="matchup">
-                                                            <div class="participants">
-                                                                @if ($round1member9status === 'win')
-                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                    <span class="participant_name"> {!! $round1member9 !!} </span>
-                                                                    <span class="log_output_32" style="background:black;">{!! $round1member9result !!}</span>
-                                                                    @else
-                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                        <span class="participant_name"> {!! $round1member9 !!} </span>
-                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member9result !!}</span>
-                                                                        @endif
-                                                                    </div>
-
-                                                                    @if ($round1member10status === 'win')
-                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                        <span class="participant_name"> {!! $round1member10 !!}
-                                                                        </span>
-                                                                        <span class="log_output_32" style="background:black;">{!! $round1member10result !!}</span>
-                                                                        @else
-                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                            <span class="participant_name"> {!! $round1member10 !!}
-                                                                            </span>
-                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member10result !!}</span>
-                                                                            @endif
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="matchup">
-                                                                    <div class="participants">
-                                                                        @if ($round1member11status === 'win')
-                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                            <span class="participant_name"> {!! $round1member11 !!}
-                                                                            </span>
-                                                                            <span class="log_output_32" style="background:black;">{!! $round1member11result !!}</span>
-                                                                            @else
-                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                <span class="participant_name"> {!! $round1member11 !!}
-                                                                                </span>
-                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member11result !!}</span>
-                                                                                @endif
-                                                                            </div>
-
-                                                                            @if ($round1member12status === 'win')
-                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                <span class="participant_name"> {!! $round1member12 !!}
-                                                                                </span>
-                                                                                <span class="log_output_32" style="background:black;">{!! $round1member12result !!}</span>
-                                                                                @else
-                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                    <span class="participant_name"> {!! $round1member12 !!}
-                                                                                    </span>
-                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member12result !!}</span>
-                                                                                    @endif
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="connector">
-                                                                        <div class="merger"></div>
-                                                                        <div class="line"></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="winners">
-                                                                    <div class="matchups">
-                                                                        <div class="matchup">
-                                                                            <div class="participants">
-                                                                                @if ($round1member13status === 'win')
-                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                    <span class="participant_name"> {!! $round1member13 !!}
-                                                                                    </span>
-                                                                                    <span class="log_output_32" style="background:black;">{!! $round1member13result !!}</span>
-                                                                                    @else
-                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                        <span class="participant_name"> {!! $round1member13 !!}
-                                                                                        </span>
-                                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member13result !!}</span>
-                                                                                        @endif
-                                                                                    </div>
-
-                                                                                    @if ($round1member14status === 'win')
-                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                        <span class="participant_name"> {!! $round1member14 !!}
-                                                                                        </span>
-                                                                                        <span class="log_output_32" style="background:black;">{!! $round1member14result !!}</span>
-                                                                                        @else
-                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                            <span class="participant_name"> {!! $round1member14 !!}
-                                                                                            </span>
-                                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member14result !!}</span>
-                                                                                            @endif
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="matchup">
-                                                                                    <div class="participants">
-                                                                                        @if ($round1member15status === 'win')
-                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                            <span class="participant_name"> {!! $round1member15 !!}
-                                                                                            </span>
-                                                                                            <span class="log_output_32" style="background:black;">{!! $round1member15result !!}</span>
-                                                                                            @else
-                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                <span class="participant_name"> {!! $round1member15 !!}
-                                                                                                </span>
-                                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member15result !!}</span>
-                                                                                                @endif
-                                                                                            </div>
-
-                                                                                            @if ($round1member16status === 'win')
-                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                <span class="participant_name"> {!! $round1member16 !!}
-                                                                                                </span>
-                                                                                                <span class="log_output_32" style="background:black;">{!! $round1member16result !!}</span>
-                                                                                                @else
-                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                    <span class="participant_name"> {!! $round1member16 !!}
-                                                                                                    </span>
-                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member16result !!}</span>
-                                                                                                    @endif
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="connector">
-                                                                                        <div class="merger"></div>
-                                                                                        <div class="line"></div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="winners">
-                                                                                    <div class="matchups">
-                                                                                        <div class="matchup">
-                                                                                            <div class="participants">
-                                                                                                @if ($round1member17status === 'win')
-                                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                    <span class="participant_name"> {!! $round1member17 !!}
-                                                                                                    </span>
-                                                                                                    <span class="log_output_32" style="background:black;">{!! $round1member17result !!}</span>
-                                                                                                    @else
-                                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                        <span class="participant_name"> {!! $round1member17 !!}
-                                                                                                        </span>
-                                                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member17result !!}</span>
-                                                                                                        @endif
-                                                                                                    </div>
-
-                                                                                                    @if ($round1member18status === 'win')
-                                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                        <span class="participant_name"> {!! $round1member18 !!}
-                                                                                                        </span>
-                                                                                                        <span class="log_output_32" style="background:black;">{!! $round1member18result !!}</span>
-                                                                                                        @else
-                                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                            <span class="participant_name"> {!! $round1member18 !!}
-                                                                                                            </span>
-                                                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member18result !!}</span>
-                                                                                                            @endif
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="matchup">
-                                                                                                    <div class="participants">
-                                                                                                        @if ($round1member19status === 'win')
-                                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                            <span class="participant_name"> {!! $round1member19 !!}
-                                                                                                            </span>
-                                                                                                            <span class="log_output_32" style="background:black;">{!! $round1member19result !!}</span>
-                                                                                                            @else
-                                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                <span class="participant_name"> {!! $round1member19 !!}
-                                                                                                                </span>
-                                                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member19result !!}</span>
-                                                                                                                @endif
-                                                                                                            </div>
-
-                                                                                                            @if ($round1member20status === 'win')
-                                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                <span class="participant_name"> {!! $round1member20 !!}
-                                                                                                                </span>
-                                                                                                                <span class="log_output_32" style="background:black;">{!! $round1member20result !!}</span>
-                                                                                                                @else
-                                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                    <span class="participant_name"> {!! $round1member20 !!}
-                                                                                                                    </span>
-                                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member20result !!}</span>
-                                                                                                                    @endif
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="connector">
-                                                                                                        <div class="merger"></div>
-                                                                                                        <div class="line"></div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="winners">
-                                                                                                    <div class="matchups">
-                                                                                                        <div class="matchup">
-                                                                                                            <div class="participants">
-                                                                                                                @if ($round1member21status === 'win')
-                                                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                    <span class="participant_name"> {!! $round1member21 !!}
-                                                                                                                    </span>
-                                                                                                                    <span class="log_output_32" style="background:black;">{!! $round1member21result !!}</span>
-                                                                                                                    @else
-                                                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                        <span class="participant_name"> {!! $round1member21 !!}
-                                                                                                                        </span>
-                                                                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member21result !!}</span>
-                                                                                                                        @endif
-                                                                                                                    </div>
-
-                                                                                                                    @if ($round1member22status === 'win')
-                                                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                        <span class="participant_name"> {!! $round1member22 !!}
-                                                                                                                        </span>
-                                                                                                                        <span class="log_output_32" style="background:black;">{!! $round1member22result !!}</span>
-                                                                                                                        @else
-                                                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                            <span class="participant_name"> {!! $round1member22 !!}
-                                                                                                                            </span>
-                                                                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member22result !!}</span>
-                                                                                                                            @endif
-                                                                                                                        </div>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                                <div class="matchup">
-                                                                                                                    <div class="participants">
-                                                                                                                        @if ($round1member23status === 'win')
-                                                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                            <span class="participant_name"> {!! $round1member23 !!}
-                                                                                                                            </span>
-                                                                                                                            <span class="log_output_32" style="background:black;">{!! $round1member23result !!}</span>
-                                                                                                                            @else
-                                                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                <span class="participant_name"> {!! $round1member23 !!}
-                                                                                                                                </span>
-                                                                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member23result !!}</span>
-                                                                                                                                @endif
-                                                                                                                            </div>
-
-                                                                                                                            @if ($round1member24status === 'win')
-                                                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                <span class="participant_name"> {!! $round1member24 !!}
-                                                                                                                                </span>
-                                                                                                                                <span class="log_output_32" style="background:black;">{!! $round1member24result !!}</span>
-                                                                                                                                @else
-                                                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                    <span class="participant_name"> {!! $round1member24 !!}
-                                                                                                                                    </span>
-                                                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member24result !!}</span>
-                                                                                                                                    @endif
-                                                                                                                                </div>
-                                                                                                                            </div>
-                                                                                                                        </div>
-                                                                                                                    </div>
-                                                                                                                    <div class="connector">
-                                                                                                                        <div class="merger"></div>
-                                                                                                                        <div class="line"></div>
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                                <div class="winners">
-                                                                                                                    <div class="matchups">
-                                                                                                                        <div class="matchup">
-                                                                                                                            <div class="participants">
-                                                                                                                                @if ($round1member25status === 'win')
-                                                                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                    <span class="participant_name"> {!! $round1member25 !!}
-                                                                                                                                    </span>
-                                                                                                                                    <span class="log_output_32" style="background:black;">{!! $round1member25result !!}</span>
-                                                                                                                                    @else
-                                                                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                        <span class="participant_name"> {!! $round1member25 !!}
-                                                                                                                                        </span>
-                                                                                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member25result !!}</span>
-                                                                                                                                        @endif
-                                                                                                                                    </div>
-
-                                                                                                                                    @if ($round1member26status === 'win')
-                                                                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                        <span class="participant_name"> {!! $round1member26 !!}
-                                                                                                                                        </span>
-                                                                                                                                        <span class="log_output_32" style="background:black;">{!! $round1member26result !!}</span>
-                                                                                                                                        @else
-                                                                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                            <span class="participant_name"> {!! $round1member26 !!}
-                                                                                                                                            </span>
-                                                                                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member26result !!}</span>
-                                                                                                                                            @endif
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                </div>
-                                                                                                                                <div class="matchup">
-                                                                                                                                    <div class="participants">
-                                                                                                                                        @if ($round1member27status === 'win')
-                                                                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                            <span class="participant_name"> {!! $round1member27 !!}
-                                                                                                                                            </span>
-                                                                                                                                            <span class="log_output_32" style="background:black;">{!! $round1member27result !!}</span>
-                                                                                                                                            @else
-                                                                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                <span class="participant_name"> {!! $round1member27 !!}
-                                                                                                                                                </span>
-                                                                                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member27result !!}</span>
-                                                                                                                                                @endif
-                                                                                                                                            </div>
-
-                                                                                                                                            @if ($round1member28status === 'win')
-                                                                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                                <span class="participant_name"> {!! $round1member28 !!}
-                                                                                                                                                </span>
-                                                                                                                                                <span class="log_output_32" style="background:black;">{!! $round1member28result !!}</span>
-                                                                                                                                                @else
-                                                                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                    <span class="participant_name"> {!! $round1member28 !!}
-                                                                                                                                                    </span>
-                                                                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member28result !!}</span>
-                                                                                                                                                    @endif
-                                                                                                                                                </div>
-                                                                                                                                            </div>
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                    <div class="connector">
-                                                                                                                                        <div class="merger"></div>
-                                                                                                                                        <div class="line"></div>
-                                                                                                                                    </div>
-                                                                                                                                </div>
-                                                                                                                                <div class="winners">
-                                                                                                                                    <div class="matchups">
-                                                                                                                                        <div class="matchup">
-                                                                                                                                            <div class="participants">
-                                                                                                                                                @if ($round1member29status === 'win')
-                                                                                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                                    <span class="participant_name"> {!! $round1member29 !!}
-                                                                                                                                                    </span>
-                                                                                                                                                    <span class="log_output_32" style="background:black;">{!! $round1member29result !!}</span>
-                                                                                                                                                    @else
-                                                                                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                        <span class="participant_name"> {!! $round1member29 !!}
-                                                                                                                                                        </span>
-                                                                                                                                                        <span class="log_output_32" style="background:gray;">{!! $round1member29result !!}</span>
-                                                                                                                                                        @endif
-                                                                                                                                                    </div>
-
-                                                                                                                                                    @if ($round1member30status === 'win')
-                                                                                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                                        <span class="participant_name"> {!! $round1member30 !!}
-                                                                                                                                                        </span>
-                                                                                                                                                        <span class="log_output_32" style="background:black;">{!! $round1member30result !!}</span>
-                                                                                                                                                        @else
-                                                                                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                            <span class="participant_name"> {!! $round1member30 !!}
-                                                                                                                                                            </span>
-                                                                                                                                                            <span class="log_output_32" style="background:gray;">{!! $round1member30result !!}</span>
-                                                                                                                                                            @endif
-                                                                                                                                                        </div>
-                                                                                                                                                    </div>
-                                                                                                                                                </div>
-                                                                                                                                                <div class="matchup">
-                                                                                                                                                    <div class="participants">
-                                                                                                                                                        @if ($round1member31status === 'win')
-                                                                                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                                            <span class="participant_name"> {!! $round1member31 !!}
-                                                                                                                                                            </span>
-                                                                                                                                                            <span class="log_output_32" style="background:black;">{!! $round1member31result !!}</span>
-                                                                                                                                                            @else
-                                                                                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                                <span class="participant_name"> {!! $round1member31 !!}
-                                                                                                                                                                </span>
-                                                                                                                                                                <span class="log_output_32" style="background:gray;">{!! $round1member31result !!}</span>
-                                                                                                                                                                @endif
-                                                                                                                                                            </div>
-
-                                                                                                                                                            @if ($round1member32status === 'win')
-                                                                                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                                                                                <span class="participant_name"> {!! $round1member32 !!}
-                                                                                                                                                                </span>
-                                                                                                                                                                <span class="log_output_32" style="background:black;">{!! $round1member32result !!}</span>
-                                                                                                                                                                @else
-                                                                                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                                                                                    <span class="participant_name"> {!! $round1member32 !!}
-                                                                                                                                                                    </span>
-                                                                                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round1member32result !!}</span>
-                                                                                                                                                                    @endif
-                                                                                                                                                                </div>
-                                                                                                                                                            </div>
-                                                                                                                                                        </div>
-                                                                                                                                                    </div>
-                                                                                                                                                    <div class="connector">
-                                                                                                                                                        <div class="merger"></div>
-                                                                                                                                                        <div class="line"></div>
-                                                                                                                                                    </div>
-                                                                                                                                                </div>
-            </section>
-            <section class="round best-16-of-32">
-                <div class="label-group-match">
-                    1/16
-                </div>
-                <div class="winners">
-                    <div class="matchups">
-                        <div class="matchup">
-                            <div class="participants">
-                                @if ($round2member1status === 'win')
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="matchup">
+                        <div class="participants">
+                            @if ($round1member3status === 'win')
                                 <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                    <span class="participant_name"> {!! $round1member3 !!} </span>
+                                    <span class="log_output_32" style="background:black;">{!! $round1member3result !!}</span>
+                                </div>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round1member3 !!} </span>
+                                    <span class="log_output_32" style="background:gray;">{!! $round1member3result !!}</span>
+                                </div>
+                            @endif
+
+
+                            @if ($round1member4status === 'win')
+                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                    <span class="participant_name"> {!! $round1member4 !!} </span>
+                                    <span class="log_output_32"
+                                        style="background:black;">{!! $round1member4result !!}</span>
+                                </div>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round1member4 !!} </span>
+                                    <span class="log_output_32" style="background:gray;">{!! $round1member4result !!}</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member5status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member5 !!} </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member5result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member5 !!} </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member5result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member6status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member6 !!} </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member6result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member6 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member6result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member7status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member7 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member7result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member7 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member7result !!}</span>
+                    </div>
+                @endif
+
+
+                @if ($round1member8status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name">
+                            {!! $round1member8 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">
+                            {!! $round1member8result !!}
+                        </span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name">
+                            {!! $round1member8 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">
+                            {!! $round1member8result !!}
+                        </span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member9status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name">
+                                {!! $round1member9 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">
+                                {!! $round1member9result !!}
+                            </span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name">
+                                {!! $round1member9 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">
+                                {!! $round1member9result !!}
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($round1member10status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name">
+                                {!! $round1member10 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">
+                                {!! $round1member10result !!}
+                            </span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name">
+                                {!! $round1member10 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">
+                                {!! $round1member10result !!}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member11status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name">
+                            {!! $round1member11 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">
+                            {!! $round1member11result !!}
+                        </span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name">
+                            {!! $round1member11 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">
+                            {!! $round1member11result !!}
+                        </span>
+                    </div>
+                @endif
+
+                @if ($round1member12status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name">
+                            {!! $round1member12 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">
+                            {!! $round1member12result !!}
+                        </span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name">
+                            {!! $round1member12 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">
+                            {!! $round1member12result !!}
+                        </span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member13status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member13 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member13result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member13 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member13result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member14status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member14 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member14result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member14 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member14result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member15status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member15 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member15result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member15 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member15result !!}</span>
+                    </div>
+                @endif
+
+                @if ($round1member16status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member16 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member16result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member16 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member16result !!}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member17status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member17 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member17result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member17 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member17result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member18status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member18 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member18result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member18 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member18result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member19status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member19 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member19result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member19 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member19result !!}</span>
+                    </div>
+                @endif
+
+
+                @if ($round1member20status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member20 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member20result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member20 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member20result !!}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member21status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member21 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member21result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member21 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member21result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member22status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member22 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member22result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member22 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member22result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member23status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member23 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member23result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member23 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member23result !!}</span>
+                @endif
+
+
+                @if ($round1member24status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member24 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member24result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member24 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member24result !!}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member25status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member25 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member25result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member25 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member25result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member26status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member26 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member26result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member26 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member26result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member27status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member27 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member27result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member27 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member27result !!}</span>
+                    </div>
+                @endif
+
+
+                @if ($round1member28status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member28 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member28result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member28 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member28result !!}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+    <div class="winners">
+        <div class="matchups">
+            <div class="matchup">
+                <div class="participants">
+                    @if ($round1member29status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member29 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member29result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member29 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member29result !!}</span>
+                        </div>
+                    @endif
+
+
+                    @if ($round1member30status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round1member30 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round1member30result !!}</span>
+                        </div>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round1member30 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round1member30result !!}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="matchup">
+            <div class="participants">
+                @if ($round1member31status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member31 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member31result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member31 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member31result !!}</span>
+                    </div>
+                @endif
+
+
+                @if ($round1member32status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round1member32 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round1member32result !!}</span>
+                    </div>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round1member32 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round1member32result !!}</span>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="connector">
+        <div class="merger"></div>
+        <div class="line"></div>
+    </div>
+
+
+    <section class="round best-16-of-32">
+        <div class="label-group-match">
+            1/16
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round2member1status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round2member1 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round2member1result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
                                     <span class="participant_name"> {!! $round2member1 !!}
                                     </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round2member1result !!}</span>
-                                    @else
-                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                        <span class="participant_name"> {!! $round2member1 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round2member1result !!}</span>
-                                        @endif
-                                    </div>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round2member1result !!}</span>
+                        @endif
+                    </div>
 
-                                    @if ($round2member2status === 'win')
-                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                        <span class="participant_name"> {!! $round2member2 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round2member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round2member2 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round2member2result !!}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="matchup">
-                                    <div class="participants">
-                                        @if ($round2member3status === 'win')
-                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                            <span class="participant_name"> {!! $round2member3 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:black;">{!! $round2member3result !!}</span>
-                                            @else
-                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                <span class="participant_name"> {!! $round2member3 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:gray;">{!! $round2member3result !!}</span>
-                                                @endif
-                                            </div>
-
-                                            @if ($round2member4status === 'win')
-                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                <span class="participant_name"> {!! $round2member4 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:black;">{!! $round2member4result !!}</span>
-                                                @else
-                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                    <span class="participant_name"> {!! $round2member4 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:gray;">{!! $round2member4result !!}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="connector">
-                                        <div class="merger"></div>
-                                        <div class="line"></div>
-                                    </div>
-                                </div>
-                                <div class="winners">
-                                    <div class="matchups">
-                                        <div class="matchup">
-                                            <div class="participants">
-                                                @if ($round2member5status === 'win')
-                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                    <span class="participant_name"> {!! $round2member5 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:black;">{!! $round2member5result !!}</span>
-                                                    @else
-                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                        <span class="participant_name"> {!! $round2member5 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:gray;">{!! $round2member5result !!}</span>
-                                                        @endif
-                                                    </div>
-
-                                                    @if ($round2member6status === 'win')
-                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                        <span class="participant_name"> {!! $round2member6 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:black;">{!! $round2member6result !!}</span>
-                                                        @else
-                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                            <span class="participant_name"> {!! $round2member6 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:gray;">{!! $round2member6result !!}</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="matchup">
-                                                    <div class="participants">
-                                                        @if ($round2member7status === 'win')
-                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                            <span class="participant_name"> {!! $round2member7 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:black;">{!! $round2member7result !!}</span>
-                                                            @else
-                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                <span class="participant_name"> {!! $round2member7 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:gray;">{!! $round2member7result !!}</span>
-                                                                @endif
-                                                            </div>
-
-                                                            @if ($round2member8status === 'win')
-                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                <span class="participant_name"> {!! $round2member8 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:black;">{!! $round2member8result !!}</span>
-                                                                @else
-                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                    <span class="participant_name"> {!! $round2member8 !!}
-                                                                    </span>
-                                                                    <span class="log_output_32" style="background:gray;">{!! $round2member8result !!}</span>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="connector">
-                                                        <div class="merger"></div>
-                                                        <div class="line"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="winners">
-                                                    <div class="matchups">
-                                                        <div class="matchup">
-                                                            <div class="participants">
-                                                                @if ($round2member9status === 'win')
-                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                    <span class="participant_name"> {!! $round2member9 !!}
-                                                                    </span>
-                                                                    <span class="log_output_32" style="background:black;">{!! $round2member9result !!}</span>
-                                                                    @else
-                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                        <span class="participant_name"> {!! $round2member9 !!}
-                                                                        </span>
-                                                                        <span class="log_output_32" style="background:gray;">{!! $round2member9result !!}</span>
-                                                                        @endif
-                                                                    </div>
-
-                                                                    @if ($round2member10status === 'win')
-                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                        <span class="participant_name"> {!! $round2member10 !!}
-                                                                        </span>
-                                                                        <span class="log_output_32" style="background:black;">{!! $round2member10result !!}</span>
-                                                                        @else
-                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                            <span class="participant_name"> {!! $round2member10 !!}
-                                                                            </span>
-                                                                            <span class="log_output_32" style="background:gray;">{!! $round2member10result !!}</span>
-                                                                            @endif
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="matchup">
-                                                                    <div class="participants">
-                                                                        @if ($round2member11status === 'win')
-                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                            <span class="participant_name"> {!! $round2member11 !!}
-                                                                            </span>
-                                                                            <span class="log_output_32" style="background:black;">{!! $round2member11result !!}</span>
-                                                                            @else
-                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                <span class="participant_name"> {!! $round2member11 !!}
-                                                                                </span>
-                                                                                <span class="log_output_32" style="background:gray;">{!! $round2member11result !!}</span>
-                                                                                @endif
-                                                                            </div>
-
-                                                                            @if ($round2member12status === 'win')
-                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                <span class="participant_name"> {!! $round2member12 !!}
-                                                                                </span>
-                                                                                <span class="log_output_32" style="background:black;">{!! $round2member12result !!}</span>
-                                                                                @else
-                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                    <span class="participant_name"> {!! $round2member12 !!}
-                                                                                    </span>
-                                                                                    <span class="log_output_32" style="background:gray;">{!! $round2member12result !!}</span>
-                                                                                    @endif
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="connector">
-                                                                        <div class="merger"></div>
-                                                                        <div class="line"></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="winners">
-                                                                    <div class="matchups">
-                                                                        <div class="matchup">
-                                                                            <div class="participants">
-                                                                                @if ($round2member13status === 'win')
-                                                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                    <span class="participant_name"> {!! $round2member13 !!}
-                                                                                    </span>
-                                                                                    <span class="log_output_32" style="background:black;">{!! $round2member13result !!}</span>
-                                                                                    @else
-                                                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                        <span class="participant_name"> {!! $round2member13 !!}
-                                                                                        </span>
-                                                                                        <span class="log_output_32" style="background:gray;">{!! $round2member13result !!}</span>
-                                                                                        @endif
-                                                                                    </div>
-
-                                                                                    @if ($round2member14status === 'win')
-                                                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                        <span class="participant_name"> {!! $round2member14 !!}
-                                                                                        </span>
-                                                                                        <span class="log_output_32" style="background:black;">{!! $round2member14result !!}</span>
-                                                                                        @else
-                                                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                            <span class="participant_name"> {!! $round2member14 !!}
-                                                                                            </span>
-                                                                                            <span class="log_output_32" style="background:gray;">{!! $round2member14result !!}</span>
-                                                                                            @endif
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="matchup">
-                                                                                    <div class="participants">
-                                                                                        @if ($round2member15status === 'win')
-                                                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                            <span class="participant_name"> {!! $round2member15 !!}
-                                                                                            </span>
-                                                                                            <span class="log_output_32" style="background:black;">{!! $round2member15result !!}</span>
-                                                                                            @else
-                                                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                <span class="participant_name"> {!! $round2member15 !!}
-                                                                                                </span>
-                                                                                                <span class="log_output_32" style="background:gray;">{!! $round2member15result !!}</span>
-                                                                                                @endif
-                                                                                            </div>
-
-                                                                                            @if ($round2member16status === 'win')
-                                                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                                                <span class="participant_name"> {!! $round2member16 !!}
-                                                                                                </span>
-                                                                                                <span class="log_output_32" style="background:black;">{!! $round2member16result !!}</span>
-                                                                                                @else
-                                                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                                                    <span class="participant_name"> {!! $round2member16 !!}
-                                                                                                    </span>
-                                                                                                    <span class="log_output_32" style="background:gray;">{!! $round2member16result !!}</span>
-                                                                                                    @endif
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="connector">
-                                                                                        <div class="merger"></div>
-                                                                                        <div class="line"></div>
-                                                                                    </div>
-                                                                                </div>
-            </section>
-            <section class="round quarterfinals-of-32">
-                <div class="label-group-match">
-                    1/8
+                    @if ($round2member2status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round2member2 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round2member2result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round2member2 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round2member2result !!}</span>
+                    @endif
                 </div>
-                <div class="winners">
-                    <div class="matchups">
-                        <div class="matchup">
-                            <div class="participants">
-                                @if ($round3member1status === 'win')
-                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round2member3status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round2member3 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round2member3result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round2member3 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round2member3result !!}</span>
+                @endif
+            </div>
+
+            @if ($round2member4status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round2member4 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round2member4result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round2member4 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round2member4result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round2member5status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round2member5 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round2member5result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round2member5 !!}
+                                    </span>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round2member5result !!}</span>
+                        @endif
+                    </div>
+
+                    @if ($round2member6status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round2member6 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round2member6result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round2member6 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round2member6result !!}</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round2member7status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round2member7 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round2member7result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round2member7 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round2member7result !!}</span>
+                @endif
+            </div>
+
+            @if ($round2member8status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round2member8 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round2member8result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round2member8 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round2member8result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round2member9status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round2member9 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round2member9result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round2member9 !!}
+                                    </span>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round2member9result !!}</span>
+                        @endif
+                    </div>
+
+                    @if ($round2member10status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round2member10 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round2member10result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round2member10 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round2member10result !!}</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round2member11status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round2member11 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round2member11result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round2member11 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round2member11result !!}</span>
+                @endif
+            </div>
+
+            @if ($round2member12status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round2member12 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round2member12result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round2member12 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round2member12result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round2member13status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round2member13 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round2member13result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round2member13 !!}
+                                    </span>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round2member13result !!}</span>
+                        @endif
+                    </div>
+
+                    @if ($round2member14status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round2member14 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round2member14result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round2member14 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round2member14result !!}</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round2member15status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round2member15 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round2member15result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round2member15 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round2member15result !!}</span>
+                @endif
+            </div>
+
+            @if ($round2member16status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round2member16 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round2member16result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round2member16 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round2member16result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+    </section>
+    <section class="round quarterfinals-of-32">
+        <div class="label-group-match">
+            1/8
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round3member1status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round3member1 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round3member1result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
                                     <span class="participant_name"> {!! $round3member1 !!}
                                     </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round3member1result !!}</span>
-                                    @else
-                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                        <span class="participant_name"> {!! $round3member1 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round3member1result !!}</span>
-                                        @endif
-                                    </div>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round3member1result !!}</span>
+                        @endif
+                    </div>
 
-                                    @if ($round3member2status === 'win')
-                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                        <span class="participant_name"> {!! $round3member2 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round3member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round3member2 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round3member2result !!}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="matchup">
-                                    <div class="participants">
-                                        @if ($round3member3status === 'win')
-                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                            <span class="participant_name"> {!! $round3member3 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:black;">{!! $round3member3result !!}</span>
-                                            @else
-                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                <span class="participant_name"> {!! $round3member3 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:gray;">{!! $round3member3result !!}</span>
-                                                @endif
-                                            </div>
-
-                                            @if ($round3member4status === 'win')
-                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                <span class="participant_name"> {!! $round3member4 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:black;">{!! $round3member4result !!}</span>
-                                                @else
-                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                    <span class="participant_name"> {!! $round3member4 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:gray;">{!! $round3member4result !!}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="connector">
-                                        <div class="merger"></div>
-                                        <div class="line"></div>
-                                    </div>
-                                </div>
-                                <div class="winners">
-                                    <div class="matchups">
-                                        <div class="matchup">
-                                            <div class="participants">
-                                                @if ($round3member5status === 'win')
-                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                    <span class="participant_name"> {!! $round3member5 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:black;">{!! $round3member5result !!}</span>
-                                                    @else
-                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                        <span class="participant_name"> {!! $round3member5 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:gray;">{!! $round3member5result !!}</span>
-                                                        @endif
-                                                    </div>
-
-                                                    @if ($round3member6status === 'win')
-                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                        <span class="participant_name"> {!! $round3member6 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:black;">{!! $round3member6result !!}</span>
-                                                        @else
-                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                            <span class="participant_name"> {!! $round3member6 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:gray;">{!! $round3member6result !!}</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="matchup">
-                                                    <div class="participants">
-                                                        @if ($round3member7status === 'win')
-                                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                            <span class="participant_name"> {!! $round3member7 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:black;">{!! $round3member7result !!}</span>
-                                                            @else
-                                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                <span class="participant_name"> {!! $round3member7 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:gray;">{!! $round3member7result !!}</span>
-                                                                @endif
-                                                            </div>
-
-                                                            @if ($round3member8status === 'win')
-                                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                                <span class="participant_name"> {!! $round3member8 !!}
-                                                                </span>
-                                                                <span class="log_output_32" style="background:black;">{!! $round3member8result !!}</span>
-                                                                @else
-                                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                                    <span class="participant_name"> {!! $round3member8 !!}
-                                                                    </span>
-                                                                    <span class="log_output_32" style="background:gray;">{!! $round3member8result !!}</span>
-                                                                    @endif
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="connector">
-                                                        <div class="merger"></div>
-                                                        <div class="line"></div>
-                                                    </div>
-                                                </div>
-            </section>
-            <section class="round semifinals32">
-                <div class="label-group-match">
-                    Semi
+                    @if ($round3member2status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round3member2 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round3member2result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round3member2 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round3member2result !!}</span>
+                    @endif
                 </div>
-                <div class="winners">
-                    <div class="matchups">
-                        <div class="matchup">
-                            <div class="participants">
-                                @if ($round4member1status === 'win')
-                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round3member3status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round3member3 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round3member3result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round3member3 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round3member3result !!}</span>
+                @endif
+            </div>
+
+            @if ($round3member4status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round3member4 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round3member4result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round3member4 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round3member4result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round3member5status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round3member5 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round3member5result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
+                                    <span class="participant_name"> {!! $round3member5 !!}
+                                    </span>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round3member5result !!}</span>
+                        @endif
+                    </div>
+
+                    @if ($round3member6status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round3member6 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round3member6result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round3member6 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round3member6result !!}</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="matchup">
+            <div class="participants">
+                @if ($round3member7status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round3member7 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round3member7result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round3member7 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round3member7result !!}</span>
+                @endif
+            </div>
+
+            @if ($round3member8status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round3member8 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round3member8result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round3member8 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round3member8result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+    </section>
+    <section class="round semifinals32">
+        <div class="label-group-match">
+            Semi
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round4member1status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round4member1 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round4member1result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
                                     <span class="participant_name"> {!! $round4member1 !!}
                                     </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round4member1result !!}</span>
-                                    @else
-                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                        <span class="participant_name"> {!! $round4member1 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round4member1result !!}</span>
-                                        @endif
-                                    </div>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round4member1result !!}</span>
+                        @endif
+                    </div>
 
-                                    @if ($round4member2status === 'win')
-                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                        <span class="participant_name"> {!! $round4member2 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round4member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round4member2 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round4member2result !!}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- medal bronze -->
-                                <div class="matchup">
-                                    <div class="participants">
-                                        @if ($round6member1status === 'win')
-                                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                            <span class="participant_name"> {!! $round6member1 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:black;">{!! $round6member1result !!}</span>
-                                            @else
-                                            <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                <span class="participant_name"> {!! $round6member1 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:gray;">{!! $round6member1result !!}</span>
-                                                @endif
-                                            </div>
-
-                                            @if ($round6member2status === 'win')
-                                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                <span class="participant_name"> {!! $round6member2 !!}
-                                                </span>
-                                                <span class="log_output_32" style="background:black;">{!! $round6member2result !!}</span>
-                                                @else
-                                                <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                    <span class="participant_name"> {!! $round6member2 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:gray;">{!! $round6member2result !!}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- end medal bronze -->
-                                        <div class="matchup">
-                                            <div class="participants">
-                                                @if ($round4member3status === 'win')
-                                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                    <span class="participant_name"> {!! $round4member3 !!}
-                                                    </span>
-                                                    <span class="log_output_32" style="background:black;">{!! $round4member3result !!}</span>
-                                                    @else
-                                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                        <span class="participant_name"> {!! $round4member3 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:gray;">{!! $round4member3result !!}</span>
-                                                        @endif
-                                                    </div>
-
-                                                    @if ($round4member4status === 'win')
-                                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                                        <span class="participant_name"> {!! $round4member4 !!}
-                                                        </span>
-                                                        <span class="log_output_32" style="background:black;">{!! $round4member4result !!}</span>
-                                                        @else
-                                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                                            <span class="participant_name"> {!! $round4member4 !!}
-                                                            </span>
-                                                            <span class="log_output_32" style="background:gray;">{!! $round4member4result !!}</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="connector">
-                                                <div class="merger"></div>
-                                                <div class="line"></div>
-                                            </div>
-                                        </div>
-            </section>
-            <section class="round finals" style="margin-top: -15px;">
-                <div class="label-group-match">
-                    Final
+                    @if ($round4member2status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round4member2 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round4member2result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round4member2 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round4member2result !!}</span>
+                    @endif
                 </div>
-                <div class="title">
-                    <p>Medali Emas</span>
-                </div>
-                <div class="winners">
-                    <div class="matchups">
-                        <div class="matchup">
-                            <div class="participants">
-                                @if ($round5member1status === 'win')
-                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+            </div>
+        </div>
+        <!-- medal bronze -->
+        <div class="matchup">
+            <div class="participants">
+                @if ($round6member1status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round6member1 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round6member1result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round6member1 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round6member1result !!}</span>
+                @endif
+            </div>
+
+            @if ($round6member2status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round6member2 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round6member2result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round6member2 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round6member2result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        <!-- end medal bronze -->
+        <div class="matchup">
+            <div class="participants">
+                @if ($round4member3status === 'win')
+                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                        <span class="participant_name"> {!! $round4member3 !!}
+                        </span>
+                        <span class="log_output_32" style="background:black;">{!! $round4member3result !!}</span>
+                    @else
+                        <div class="participant32" style="background:white;border:1.8px solid gray">
+                            <span class="participant_name"> {!! $round4member3 !!}
+                            </span>
+                            <span class="log_output_32" style="background:gray;">{!! $round4member3result !!}</span>
+                @endif
+            </div>
+
+            @if ($round4member4status === 'win')
+                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                    <span class="participant_name"> {!! $round4member4 !!}
+                    </span>
+                    <span class="log_output_32" style="background:black;">{!! $round4member4result !!}</span>
+                @else
+                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                        <span class="participant_name"> {!! $round4member4 !!}
+                        </span>
+                        <span class="log_output_32" style="background:gray;">{!! $round4member4result !!}</span>
+            @endif
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+    </section>
+    <section class="round finals" style="margin-top: -15px;">
+        <div class="label-group-match">
+            Final
+        </div>
+        <div class="title">
+            <p>Medali Emas</span>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round5member1status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round5member1 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round5member1result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
                                     <span class="participant_name"> {!! $round5member1 !!}
                                     </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round5member1result !!}</span>
-                                    @else
-                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                        <span class="participant_name"> {!! $round5member1 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round5member1result !!}</span>
-                                        @endif
-                                    </div>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round5member1result !!}</span>
+                        @endif
+                    </div>
 
-                                    @if ($round5member2status === 'win')
-                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                        <span class="participant_name"> {!! $round5member2 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round5member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round5member2 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round5member2result !!}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="connector">
-                                <div class="merger"></div>
-                                <div class="line"></div>
-                            </div>
-                        </div>
-            </section>
-            <section class="round finals" style="margin-top: -15px;">
-                <div class="label-group-match">
-                    3rd Place
+                    @if ($round5member2status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round5member2 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round5member2result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round5member2 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round5member2result !!}</span>
+                    @endif
                 </div>
-                <div class="title">
-                    <p>Medali Perunggu</span>
-                </div>
-                <div class="winners">
-                    <div class="matchups">
-                        <div class="matchup">
-                            <div class="participants">
-                                @if ($round6member1status === 'win')
-                                <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+            </div>
+        </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+    </section>
+    <section class="round finals" style="margin-top: -15px;">
+        <div class="label-group-match">
+            3rd Place
+        </div>
+        <div class="title">
+            <p>Medali Perunggu</span>
+        </div>
+        <div class="winners">
+            <div class="matchups">
+                <div class="matchup">
+                    <div class="participants">
+                        @if ($round6member1status === 'win')
+                            <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                                <span class="participant_name"> {!! $round6member1 !!}
+                                </span>
+                                <span class="log_output_32" style="background:black;">{!! $round6member1result !!}</span>
+                            @else
+                                <div class="participant32" style="background:white;border:1.8px solid gray">
                                     <span class="participant_name"> {!! $round6member1 !!}
                                     </span>
-                                    <span class="log_output_32" style="background:black;">{!! $round6member1result !!}</span>
-                                    @else
-                                    <div class="participant32" style="background:white;border:1.8px solid gray">
-                                        <span class="participant_name"> {!! $round6member1 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:gray;">{!! $round6member1result !!}</span>
-                                        @endif
-                                    </div>
+                                    <span class="log_output_32"
+                                        style="background:gray;">{!! $round6member1result !!}</span>
+                        @endif
+                    </div>
 
-                                    @if ($round6member2status === 'win')
-                                    <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
-                                        <span class="participant_name"> {!! $round6member2 !!}
-                                        </span>
-                                        <span class="log_output_32" style="background:black;">{!! $round6member2result !!}</span>
-                                        @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round6member2 !!}
-                                            </span>
-                                            <span class="log_output_32" style="background:gray;">{!! $round6member2result !!}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="connector">
-                                <div class="merger"></div>
-                                <div class="line"></div>
-                            </div>
-                        </div>
-            </section>
+                    @if ($round6member2status === 'win')
+                        <div class="participant32" style="background:#D4E2FC;border:1.8px solid #0D47A1;">
+                            <span class="participant_name"> {!! $round6member2 !!}
+                            </span>
+                            <span class="log_output_32" style="background:black;">{!! $round6member2result !!}</span>
+                        @else
+                            <div class="participant32" style="background:white;border:1.8px solid gray">
+                                <span class="participant_name"> {!! $round6member2 !!}
+                                </span>
+                                <span class="log_output_32" style="background:gray;">{!! $round6member2result !!}</span>
+                    @endif
+                </div>
+            </div>
         </div>
+        </div>
+        <div class="connector">
+            <div class="merger"></div>
+            <div class="line"></div>
+        </div>
+        </div>
+    </section>
+    </div>
     </div>
 </body>
 
