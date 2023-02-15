@@ -80,7 +80,7 @@ class SetEventEliminationV2 extends Transactional
         }
 
         if (strtolower($team_category->type) == "individual") {
-            return $this->makeTemplateIndividu($event_category_id, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
+            return $this->makeTemplateIndividu($category, $score_type, $session, $elimination_member_count, $match_type, $scoring_type);
         }
 
         throw new BLoCException("gagal membuat template");
@@ -94,12 +94,9 @@ class SetEventEliminationV2 extends Transactional
         ];
     }
 
-    private function makeTemplateIndividu($category_id, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
+    private function makeTemplateIndividu(ArcheryEventCategoryDetail $category, $score_type, $session, $elimination_member_count, $match_type, $type_scoring)
     {
-        $category = ArcheryEventCategoryDetail::find($category_id);
-        if (!$category) {
-            throw new BLoCException("category not found");
-        }
+        $category_id = $category->id;
 
         $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_id, $score_type, $session, false, null, true, 1);
 
@@ -183,8 +180,6 @@ class SetEventEliminationV2 extends Transactional
         }
 
         ArcherySeriesUserPoint::setMemberQualificationPoint($category_id);
-
-        throw new BLoCException("gagal");
 
         return $template;
     }
