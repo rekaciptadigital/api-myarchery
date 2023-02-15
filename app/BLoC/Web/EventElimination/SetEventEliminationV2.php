@@ -137,8 +137,6 @@ class SetEventEliminationV2 extends Transactional
             throw new BLoCException("elimination sudah ditentukan");
         }
 
-        return "ok";
-
         $elimination = new ArcheryEventElimination;
         $elimination->event_category_id = $category_id;
         $elimination->count_participant = $elimination_member_count;
@@ -183,6 +181,9 @@ class SetEventEliminationV2 extends Transactional
                 }
             }
         }
+
+        throw new BLoCException("gagal");
+
         ArcherySeriesUserPoint::setMemberQualificationPoint($category_id);
 
         return $template;
