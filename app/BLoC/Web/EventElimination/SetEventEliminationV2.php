@@ -67,7 +67,8 @@ class SetEventEliminationV2 extends Transactional
         $scoring_type = $competition_category->scooring_accumulation_type; // 1 for point, 2 for acumalition score
         $elimination_member_count = $category->default_elimination_count;
         if ($elimination_member_count === 0) {
-            throw new BLoCException("jumlah peserta elimination belum ditentukan");
+            $category->default_elimination_count = 8;
+            $category->save();
         }
 
 
