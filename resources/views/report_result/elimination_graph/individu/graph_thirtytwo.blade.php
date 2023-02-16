@@ -262,7 +262,7 @@
             padding-left: auto;
             padding-bottom: 5px;
             text-align: center;
-            width: 4rem;
+            width: 10rem;
             border-radius: 10px;
             align-items: left;
             margin-bottom: 0.3rem;

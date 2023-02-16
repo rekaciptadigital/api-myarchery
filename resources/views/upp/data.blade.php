@@ -77,11 +77,6 @@
                             </th>
                             <th style="text-align: center;border: 1px solid black; font-size: 14pt">
                                 <strong>
-                                    {{-- @if ($with_contingent == 1)
-                                        Kontingen
-                                    @else
-                                        Club
-                                    @endif --}}
                                     Club/Kontingen
                                 </strong>
                             </th>
@@ -138,7 +133,7 @@
                                     {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                                    {{ $data['club_or_city'] ? ucwords(strtolower($data['club_or_city'])) : '-' }}
+                                    {{ $with_contingent == 1 ? ucwords(strtolower($data['city'])) : ucwords(strtolower($data['club'])) }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
@@ -258,11 +253,6 @@
                                 </th>
                                 <th style="text-align: center;border: 1px solid black; ">
                                     <strong>
-                                        {{-- @if ($with_contingent == 1)
-                                            Kontingen
-                                        @else
-                                            Club
-                                        @endif --}}
                                         Club/Kontingen
                                     </strong>
                                 </th>
@@ -295,7 +285,7 @@
                                     <td style="text-align: center;border: 1px solid black;">
                                         {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}</td>
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ $data['club_or_city'] ? ucwords(strtolower($data['club_or_city'])) : '-' }}
+                                        {{ $with_contingent == 1 ? ucwords(strtolower($data['city'])) : ucwords(strtolower($data['club'])) }}
                                     </td>
                                 </tr>
                             @endforeach
