@@ -206,7 +206,7 @@
         }
 
         .bracket .round.semifinals32 .winners .matchups .matchup:not(:last-child) {
-            margin-bottom: 14rem;
+            margin-bottom: 35rem;
         }
 
         .bracket .round.semifinals32 .winners .connector .merger {
@@ -796,12 +796,14 @@
                                         </span>
                                         <span class="log_output_32"
                                             style="background:black;">{!! $round1member23result !!}</span>
-                                    @else
-                                        <div class="participant32" style="background:white;border:1.8px solid gray">
-                                            <span class="participant_name"> {!! $round1member23 !!}
-                                            </span>
-                                            <span class="log_output_32"
-                                                style="background:gray;">{!! $round1member23result !!}</span>
+                                    </div>
+                                @else
+                                    <div class="participant32" style="background:white;border:1.8px solid gray">
+                                        <span class="participant_name"> {!! $round1member23 !!}
+                                        </span>
+                                        <span class="log_output_32"
+                                            style="background:gray;">{!! $round1member23result !!}</span>
+                                    </div>
                                 @endif
 
 
@@ -987,10 +989,6 @@
                         <div class="merger"></div>
                         <div class="line"></div>
                     </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
                 </div>
             </section>
             <section class="round best-16-of-32">
@@ -1668,6 +1666,7 @@
                 </div>
             </section>
         </div>
+    </div>
 </body>
 
 </html>
