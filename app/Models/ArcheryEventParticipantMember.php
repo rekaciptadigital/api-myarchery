@@ -55,7 +55,9 @@ class ArcheryEventParticipantMember extends Model
         $participant->category_label = $category_label;
         $participant->member = $member;
         $club = ArcheryClub::find($participant->club_id);
+        $city = City::find($participant->city_id);
         $participant->club = $club ? $club->name: "";
+        $participant->city = $city ? $city->name: "";
         return $participant;
     }
 }
