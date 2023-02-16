@@ -101,7 +101,8 @@ class ArcheryEventParticipantMember extends Model
 
         $elimination_template = $category->default_elimination_count;
         if ($elimination_template == 0) {
-            throw new BLoCException("elimination template have't set");
+            $category->default_elimination_count = 8;
+            $category->save();
         }
 
         $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $category->getArraySessionCategory(), false, null, false, 1);
