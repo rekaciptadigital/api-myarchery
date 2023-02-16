@@ -799,11 +799,20 @@ class ArcheryEventParticipant extends Model
     $category_id = null;
     $elimination_rank = 0;
 
-    $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", "cities.name as city_name", "users.name as member_name", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
+    $members = ArcheryEventEliminationMember::select(
+      "*",
+      "archery_event_category_details.id as category_details_id",
+      "archery_event_participant_members.id as participant_member_id",
+      "cities.name as city_name",
+      "users.name as member_name",
+      "archery_clubs as club_name",
+      DB::RAW('date(archery_event_elimination_members.created_at) as date')
+    )
       ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
       ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
       ->join("users", "users.id", "=", "archery_event_participants.user_id")
       ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
+      ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
       ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
       ->where("archery_event_category_details.id", $category_detail_id)
       ->where("archery_event_participants.event_id", $event_id)
@@ -854,12 +863,8 @@ class ArcheryEventParticipant extends Model
         $athlete = $member->member_name;
         $date = $member->date;
 
-        $club = ArcheryClub::find($member->club_id);
-        if (!$club) {
-          $club = '';
-        } else {
-          $club = $club->name;
-        }
+        $club = $member->club_name;
+        $city = $member->city_name;
 
         $category = ArcheryEventCategoryDetail::find($member->category_details_id);
         $session = [];
@@ -871,13 +876,13 @@ class ArcheryEventParticipant extends Model
         $data_report[] = array(
           "athlete" => $athlete,
           "club" => $club,
+          "city" => $city,
           "category" => $categoryLabel,
           "medal" => $medal,
           "date" => $date,
           "scoring" => $scoring,
           "elimination_rank" => $elimination_rank,
           "participant_id" => $member->archery_event_participant_id,
-          "city_name" => $member->city_name,
         );
 
         $category_id = $member->category_details_id;
@@ -1133,28 +1138,34 @@ class ArcheryEventParticipant extends Model
   {
     $elimination_group = ArcheryEventEliminationGroup::where('category_id', $category_detail_id)->first();
     if ($elimination_group) {
-      $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))->where('elimination_group_id', $elimination_group->id)->get();
+      $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))
+        ->where('elimination_group_id', $elimination_group->id)
+        ->get();
 
       $data = array();
       foreach ($elimination_group_match as $key => $value) {
 
         $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
 
-
         if ($elimination_group_team) {
           if ($elimination_group_team->elimination_ranked <= 3) {
-            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name")
+            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name", "cities.name as city_name")
               ->where("archery_event_participants.id", $elimination_group_team->participant_id)
-              ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+              ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+              ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
               ->first();
             $club_name = "";
+            $city_name = "";
             if ($participant) {
               $club_name = $participant->club_name;
+              $city_name = $participant->city_name;
             }
+
             $data[] = [
               'id' => $elimination_group_team->id,
               'participant_id' => $elimination_group_team->participant_id,
               'club_name' => $club_name,
+              'city_name' => $city_name,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),

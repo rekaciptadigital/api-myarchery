@@ -134,7 +134,7 @@ class GetArcheryReportResultV2 extends Retrieval
                         $category_detail = ArcheryEventCategoryDetail::find($team->category_detail_id);
                         if (!$category_detail) throw new BLoCException("category not found");
 
-                        $data_elimination = ArcheryEventParticipant::getElimination($category_detail);
+                        $data_elimination = ArcheryEventParticipant::getElimination($category_detail);   // dapatkan template eliminasi individu ataupun beregu
                         $data_qualification = ArcheryEventParticipant::getQualification($category_detail);  // dapatkan list peringkat qualifikasi individu dan beregu
 
                         // $id[] = $category_detail->id;
@@ -152,6 +152,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                 $data_report = ArcheryEventParticipant::getData($category_detail->id, $type, $event_id); // dapatkan data qualifikasi atau eliminasi dari 1 - 3 individu
                                 if (count($data_report[0]) > 0) {
                                     $pages[] = view('report_result/elimination', [
+                                        "with_contingent" => $archery_event->with_contingent,
                                         'data_report' => $data_report[0],
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
@@ -167,9 +168,10 @@ class GetArcheryReportResultV2 extends Retrieval
                             }
 
                             if (strtolower($category_of_team->type) == "team") {
-                                $data_elimination_team = $this->getDataEliminationTeam($category_detail->id);
+                                $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);                                
                                 if (!empty($data_elimination_team)) {
                                     $pages[] = view('report_result/elimination_team', [
+                                        "with_contingent" => $archery_event->with_contingent,
                                         'data_report' => $data_elimination_team,
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
@@ -192,9 +194,10 @@ class GetArcheryReportResultV2 extends Retrieval
                             $report = $competition->competition_category . ' - Qualification';
 
                             if (strtolower($category_of_team->type) == "individual") {
-                                $data_report = ArcheryEventParticipant::getData($category_detail->id, $type, $event_id);
+                                $data_report = ArcheryEventParticipant::getData($category_detail->id, $type, $event_id); // dapatkan data qualifikasi atau eliminasi dari 1 - 3 individu
                                 if (!empty($data_report[0])) {
                                     $pages[] = view('report_result/qualification', [
+                                        "with_contingent" => $archery_event->with_contingent,
                                         'data_report' => $data_report[0],
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
@@ -210,11 +213,12 @@ class GetArcheryReportResultV2 extends Retrieval
                             }
 
                             if (strtolower($category_of_team->type) == "team") {
-                                $data_elimination_team = $this->getDataEliminationTeam($category_detail->id);
+                                $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
                                 if (!empty($data_elimination_team)) {
                                     // print qualification team yang ada round eliminasi
                                     if (isset($data_elimination['updated']) && $data_elimination['updated'] != false) {
                                         $pages[] = view('report_result/qualification_team', [
+                                            "with_contingent" => $archery_event->with_contingent,
                                             'data_report' => $data_qualification,
                                             'competition' => $competition->competition_category,
                                             'report' => $report,
@@ -230,6 +234,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                 } else {
                                     // print qualification team yang tidak ada round eliminasi (eliminasi = qualification)
                                     $pages[] = view('report_result/qualification_team_without_elimination', [
+                                        "with_contingent" => $archery_event->with_contingent,
                                         'data_report' => $data_qualification,
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
@@ -510,38 +515,6 @@ class GetArcheryReportResultV2 extends Retrieval
             return $response;
         } else {
             return [];
-        }
-    }
-
-
-    protected function getDataEliminationTeam($category_detail_id)
-    {
-        $elimination_group = ArcheryEventEliminationGroup::where('category_id', $category_detail_id)->first();
-        if ($elimination_group) {
-            $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))->where('elimination_group_id', $elimination_group->id)->get();
-
-            $data = array();
-            foreach ($elimination_group_match as $key => $value) {
-
-                $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
-
-                if ($elimination_group_team) {
-                    if ($elimination_group_team->elimination_ranked <= 3) {
-                        $data[] = [
-                            'id' => $elimination_group_team->id,
-                            'team_name' => $elimination_group_team->team_name,
-                            'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
-                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
-                            'date' => $elimination_group->created_at->format('Y-m-d')
-                        ];
-                    } else {
-                        continue;
-                    }
-                }
-            }
-
-            $sorted_data = collect($data)->sortBy('elimination_ranked')->values()->take(3);
-            return $sorted_data;
         }
     }
 }
