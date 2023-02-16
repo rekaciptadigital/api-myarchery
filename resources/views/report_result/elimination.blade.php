@@ -59,9 +59,6 @@
         <h1 style="text-align: center">{{ $category }}</h1>
         <h2 style="text-align: center">Elimination</h2>
         <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead>
-                <!-- <tr><th>Table Heading</th></tr> -->
-            </thead>
             <tbody style="font-size: 24px;">
                 <tr style="border: 1px solid black;">
                     <th style="text-align: center;border: 1px solid black; " colspan="5">
@@ -82,7 +79,7 @@
                         <strong>Athlete</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club</strong>
+                        <strong>Club/Kontingen</strong>
                     </th>
                 </tr>
                 @php
@@ -100,36 +97,19 @@
                                 $rowspan = count($data_report);
                             @endphp
                             <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
-                                {{ $data['category'] ? $data['category'] : '-' }}</td>
+                                {{ $data['category'] ? $data['category'] : '-' }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
-                                {{ $data['date'] ? $data['date'] : '-' }}</td>
+                                {{ $data['date'] ? $data['date'] : '-' }}
+                            </td>
                         @endif
                         <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-                        <!-- start initiate medals -->
-                        <!-- @if ($key == 0)
-@if ($data['medal'] == 'Gold')
-<td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-@else
-<td style="text-align: left;border: 1px solid black;">Gold</td>
-@endif
-@elseif ($key == 1)
-@if ($data['medal'] == 'Silver')
-<td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-@else
-<td style="text-align: left;border: 1px solid black;">Silver</td>
-@endif
-@else
-@if ($data['medal'] == 'Bronze')
-<td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }}</td>
-@else
-<td style="text-align: left;border: 1px solid black;">Bronze </td>
-@endif
-@endif -->
-                        <!-- end medals -->
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
+                            {{ $data['athlete'] ? $data['athlete'] : '-' }}
+                        </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['club'] ? $data['club'] : '-' }}</td>
+                            {{ $with_contingent == 1 ? $data['city'] : $data['club'] }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
