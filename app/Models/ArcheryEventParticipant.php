@@ -805,7 +805,7 @@ class ArcheryEventParticipant extends Model
       "archery_event_participant_members.id as participant_member_id",
       "cities.name as city_name",
       "users.name as member_name",
-      "archery_clubs as club_name",
+      "archery_clubs.name as club_name",
       DB::RAW('date(archery_event_elimination_members.created_at) as date')
     )
       ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
