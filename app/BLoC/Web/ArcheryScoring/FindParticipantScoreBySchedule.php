@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\ArcheryClub;
+use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
@@ -78,7 +79,8 @@ class FindParticipantScoreBySchedule extends Retrieval
         $participant_members_schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
             ->join("archery_event_qualification_time", "archery_event_qualification_schedule_full_day.qalification_time_id", "=", "archery_event_qualification_time.id")
             ->where("archery_event_qualification_time.category_detail_id", $category_id)
-            ->where("archery_event_qualification_schedule_full_day.bud_rest_number", $budrest)->get();
+            ->where("archery_event_qualification_schedule_full_day.bud_rest_number", $budrest)
+            ->get();
 
         $response = [];
         foreach ($participant_members_schedules as $key => $value) {
@@ -86,9 +88,11 @@ class FindParticipantScoreBySchedule extends Retrieval
             $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id")
                 ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
                 ->where("archery_event_participants.status", 1)
-                ->where("archery_event_participant_members.id", $participant_member_id)->first();
-            if (!$participant_member)
+                ->where("archery_event_participant_members.id", $participant_member_id)
+                ->first();
+            if (!$participant_member) {
                 throw new BLoCException("member tidak ditemukan");
+            }
 
             $score = ArcheryScoring::where("participant_member_id", $participant_member_id)
                 ->where("scoring_session", $session)
@@ -99,6 +103,12 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$category_detail) {
                 throw new BLoCException("kategori tidak ditemukan");
             }
+
+            $event = ArcheryEvent::find($category_detail->event_id);
+            if (!$event) {
+                throw new BLoCException("event not found");
+            }
+
             $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $category_detail->count_stage, $category_detail->count_shot_in_stage) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->count_stage, $category_detail->count_shot_in_stage);
             $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
             $output->score = $s;
@@ -107,6 +117,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
             $output->session = $session;
             $output->schedule_id = $value->id;
+            $output->with_contingent = $event->with_contingent;
             $output->is_updated = 1;
             if (isset($score->is_lock))
                 $output->is_updated = $score->is_lock == 1 ? 0 : 1;
