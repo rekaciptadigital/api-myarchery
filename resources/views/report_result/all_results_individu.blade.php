@@ -73,7 +73,7 @@
 
                     <th style="text-align: center; border: 1px solid black;"><strong>RANK</strong></th>
                     <th style="text-align: center; border: 1px solid black;"><strong>NAME</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>CLUB</strong></th>
+                    <th style="text-align: center;border: 1px solid black; "><strong>CLUB/KONTINGEN</strong></th>
                     <th style="text-align: center;border: 1px solid black; "><strong>SESI 1</strong></th>
                     <th style="text-align: center;border: 1px solid black; "><strong>SESI 2</strong></th>
                     <th style="text-align: center;border: 1px solid black; "><strong>TOTAL</strong></th>
@@ -89,7 +89,7 @@
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['member'] ? $data['member']['name'] : '-' }}</td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['club_name'] ? $data['club_name'] : '-' }}</td>
+                            {{ $with_contingent == 1 ? $data['city_name'] : $data['club_name'] }}</td>
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['sessions']['1'] ? $data['sessions']['1']['total'] : '-' }}</td>
                         <td style="text-align: center;border: 1px solid black;">
