@@ -116,7 +116,8 @@
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['athlete'] ? $data['athlete'] : '-' }}</td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['club'] ? $data['club'] : '-' }}</td>
+                            {{ $with_contingent == 1 ? $data['city'] : $data['club'] }}
+                        </td>
                         <td style="text-align: center;border: 1px solid black;">
                             {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
                         </td>
