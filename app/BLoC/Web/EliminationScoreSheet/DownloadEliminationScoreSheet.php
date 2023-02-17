@@ -8,13 +8,13 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventCertificateTemplates;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventParticipant;
+use App\Models\City;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -53,9 +53,9 @@ class DownloadEliminationScoreSheet extends Retrieval
         $event_name = $archery_event->event_name;
         $location_event = $archery_event->location;
         if (strtolower($category->type) == "team") {
-            return $this->getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event);
+            return $this->getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event, $archery_event->with_contingent);
         } else {
-            return $this->getMember($elimination_id, $round, $match, $category_id, $event_name, $location_event);
+            return $this->getMember($elimination_id, $round, $match, $category_id, $event_name, $location_event, $archery_event->with_contingent);
         }
     }
 
@@ -69,7 +69,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         ];
     }
 
-    private function getMember($elimination_id, $round, $match, $category_id, $event_name, $location_event)
+    private function getMember($elimination_id, $round, $match, $category_id, $event_name, $location_event, $with_contingent)
     {
         $elimination = ArcheryEventElimination::find($elimination_id);
         if (!$elimination) {
@@ -115,6 +115,7 @@ class DownloadEliminationScoreSheet extends Retrieval
                 $detail_member = ArcheryEventParticipantMember::select(
                     'users.name as name',
                     'archery_clubs.name as club_name',
+                    'cities.name as city_name',
                     'archery_event_participants.id as participant_id',
                     'archery_event_participants.user_id as user_id',
                     'archery_event_participants.event_id'
@@ -123,16 +124,19 @@ class DownloadEliminationScoreSheet extends Retrieval
                     ->join('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
                     ->join('users', "users.id", "=", "archery_event_participants.user_id")
                     ->leftJoin('archery_clubs', 'archery_clubs.id', 'archery_event_participants.club_id')
+                    ->leftJoin('cities', 'cities.id', 'archery_event_participants.city_id')
                     ->first();
                 $name = $detail_member['name'];
                 $rank = $elimination_member->elimination_ranked;
                 $club = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
+                $city = $detail_member['city_name'] ? $detail_member['city_name'] : "-";
             }
 
 
             $result['name_athlete'][] = $name;
             $result['rank'][] = $rank;
             $result['club'][] = $club;
+            $result['city'][] = $city;
 
             $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
             if ($category == "") {
@@ -157,10 +161,13 @@ class DownloadEliminationScoreSheet extends Retrieval
         ]);
 
         $html = view('template.score_sheet_elimination', [
+            "with_contingent" => $with_contingent,
             'peserta1_name' => $result['name_athlete'][0],
             'peserta2_name' => $result['name_athlete'][1],
             'peserta1_club' => $result['club'][0],
+            'peserta1_city' => $result['city'][0],
             'peserta2_club' => $result['club'][1],
+            'peserta2_city' => $result['city'][1],
             'peserta1_rank' => $result['rank'][0],
             'peserta2_rank' => $result['rank'][1],
             'peserta1_category' => $result['category'][0],
@@ -178,7 +185,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         return env('APP_HOSTNAME') . $full_path;
     }
 
-    private function getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event)
+    private function getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event, $with_contingent)
     {
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
@@ -189,12 +196,6 @@ class DownloadEliminationScoreSheet extends Retrieval
             ->where('round', $round)
             ->where('match', $match)
             ->get();
-
-
-
-        $match_tim_1 = ArcheryEventEliminationGroupTeams::find($match_tim[0]->group_team_id); // hapus
-        $match_tim_2 = ArcheryEventEliminationGroupTeams::find($match_tim[1]->group_team_id); // hapus
-        // return $match_tim_2; //hapus
 
         if ($match_tim->count() == 0) {
             throw new BLoCException("data not found");
@@ -224,6 +225,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             $team_name = "";
             $rank = "";
             $club_name = "";
+            $city_name = "";
             $array_athlete = [];
             $bud_rest_number = "";
 
@@ -250,19 +252,25 @@ class DownloadEliminationScoreSheet extends Retrieval
                 }
 
                 $club = ArcheryClub::find($participant->club_id);
-                if (!$club) {
-                    throw new BLoCException("club not found");
+                if ($club) {
+                    $club_name = $club->name;
+                }
+
+                $city = City::find($participant->city_id);
+                if ($city) {
+                    $city_name = $city->name;
                 }
 
                 $team_name = $elimination_group_tim->team_name;
                 $rank = $elimination_group_tim->elimination_ranked;
-                $club_name = $club->name;
+
                 $bud_rest_number = $data->bud_rest != 0 ? $data->bud_rest . $data->target_face : "";
             }
 
             $result['name_athlete'][] = $team_name;
             $result['rank'][] = $rank;
             $result['club'][] = $club_name;
+            $result['city'][] = $city_name;
             $result["athlete"][] = $array_athlete;
             $result["budrest"][] = $bud_rest_number;
 
@@ -289,10 +297,13 @@ class DownloadEliminationScoreSheet extends Retrieval
         ]);
 
         $html = view('template.score_sheet_elimination_team', [
+            "with_contingent" => $with_contingent,
             'tim_1_name' => $result['name_athlete'][0],
             'tim_2_name' => $result['name_athlete'][1],
             'club_1' => $result['club'][0],
+            'city_1' => $result['city'][0],
             'club_2' => $result['club'][1],
+            'city_2' => $result['city'][1],
             'tim_1_rank' => $result['rank'][0],
             'tim_2_rank' => $result['rank'][1],
             "athlete_1" => $result["athlete"][0],
