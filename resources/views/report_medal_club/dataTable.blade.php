@@ -58,18 +58,18 @@
         <br>
 
         <h1 style="text-align: center">Rank {{ $rank }}</h1>
-        <h2 style="text-align: center">{{ $club_name }}</h2>
+        <h2 style="text-align: center">{{ $with_contingent == 0 ? $club_name : $contingent_name }}</h2>
 
         <table style="width:100%;border: 1px solid black; border-collapse: collapse;">
             <thead style="font-size: 24px;">
                 <tr style="border: 1px solid black;">
                     <th style="text-align: center;border: 1px solid black; " colspan="5">
-                        <strong>Medalist by Club</strong>
+                        <strong>Medalist by Club/Contingent</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
                     <th style="text-align: center;border: 1px solid black;">
-                        <strong>Club</strong>
+                        <strong>Club/Contingent</strong>
                     </th>
                     <th style="text-align: center; border: 1px solid black;">
                         <strong>Gold</strong>
@@ -84,7 +84,8 @@
             </thead>
             <tbody>
                 <tr style="border: 1px solid black;">
-                    <td style="text-align: center;border: 1px solid black;">{{ $club_name }}</td>
+                    <td style="text-align: center;border: 1px solid black;">
+                        {{ $with_contingent == 0 ? $club_name : $contingent_name }}</td>
                     <td style="text-align: center;border: 1px solid black;">{{ $total_gold }}</td>
                     <td style="text-align: center;border: 1px solid black;">{{ $total_silver }}</td>
                     <td style="text-align: center;border: 1px solid black;">{{ $total_bronze }}</td>
@@ -98,7 +99,7 @@
             <thead style="font-size: 24px;">
                 <tr style="border: 1px solid black;">
                     <th style="text-align: center;border: 1px solid black; " colspan="5">
-                        <strong>Medalist by Club</strong>
+                        <strong>Medalist by Club/Contingent</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
@@ -130,7 +131,8 @@
                                 @if ($c['1']['count_rowspan'] > 1)
                                     <th rowspan="{{ $c['1']['count_rowspan'] }}"
                                         style="text-align: center;border: 1px solid black; ">
-                                        {{ $key }}</th>
+                                        {{ $key }}
+                                    </th>
                                     <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                     <td style="text-align: center;border: 1px solid black; ">
                                         {{ $dms['category'][$key]['age_category'][$key2]['gold'] }}
