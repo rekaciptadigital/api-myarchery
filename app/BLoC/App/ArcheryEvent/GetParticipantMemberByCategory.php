@@ -6,6 +6,7 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\City;
 use App\Models\TeamMemberSpecial;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
@@ -20,9 +21,15 @@ class GetParticipantMemberByCategory extends Retrieval
 
     protected function process($parameters)
     {
-        $participant = ArcheryEventParticipant::find($parameters->get('participant_id'));
+        $participant_id = $parameters->get('participant_id');
+        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "archery_events.with_contingent", "cities.name as city_name")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
+            ->where("archery_event_participants.id", $participant_id)
+            ->first();
 
         $club = ArcheryClub::find($participant->club_id);
+        $city = City::find($participant->city_id);
 
         $output = [];
 
@@ -108,6 +115,8 @@ class GetParticipantMemberByCategory extends Retrieval
         $output['event_category_detail'] = $event_category ? $event_category->getCategoryDetailById($event_category->id) : null;
         $output['member'] = $user_member;
         $output['club'] = $club != null ? $club : [];
+        $output['city_name'] = $participant->city_name;
+        $output['with_contingent'] = $participant->with_contingent;
 
         return $output;
     }
