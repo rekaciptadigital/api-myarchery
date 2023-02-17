@@ -29,7 +29,6 @@ class GetParticipantMemberByCategory extends Retrieval
             ->first();
 
         $club = ArcheryClub::find($participant->club_id);
-        $city = City::find($participant->city_id);
 
         $output = [];
 
