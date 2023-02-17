@@ -93,14 +93,16 @@
                                 <tr style="height: 60px;text-align: left;float: left;">
                                     <td
                                         style="border-bottom: 1pt solid black;width: 100px; height: 30px;text-align: left;float: left;">
-                                        Klub
+                                        Klub/Kontingen
                                     </td>
                                     <td
                                         style="border-bottom: 1pt solid black;width: 9px; text-align: center; height: 30px;">
                                         :
                                     </td>
                                     <td style="border-bottom: 1pt solid black;width: 340px; height: 30px;text-align: left;float: left;"
-                                        colspan="3">{{ $m['detail_member']['club_name'] }}</td>
+                                        colspan="3">
+                                        {{ $with_contingent == 0 ? $m['detail_member']['club_name'] : $m['detail_member']['city_name'] }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

@@ -57,14 +57,16 @@ class BudRest extends Model
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
             'users.name',
-            'archery_clubs.name as club_name'
+            'archery_clubs.name as club_name',
+            'cities.name as city_name'
         )
             ->where('participant_member_teams.event_category_id', $category->id)
             ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
-            ->leftJoin('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-            ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->leftJoin('users', 'users.id', '=', 'archery_event_participants.user_id')
+            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+            ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+            ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
@@ -105,9 +107,6 @@ class BudRest extends Model
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
         }
 
-        // return $member_in_budrest;
-
-
         foreach ($member_in_budrest as $key => $data) {
             if (isset($data["members"]) && count($data["members"]) == 1) {
                 foreach ($data["members"] as $dm_key => $dm) {
@@ -121,6 +120,7 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification', [
+                            "with_contingent" => $event->with_contingent,
                             "data" => $dm[0],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -132,7 +132,6 @@ class BudRest extends Model
                         ]);
                         $mpdf->AddPage("P");
                         $mpdf->WriteHTML($html);
-                        // $mpdf->AddPage();
                     } else {
                         $qrCode = new QrCode($data['code']);
                         $output_qrcode = new Output\Png();
@@ -143,6 +142,7 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                            "with_contingent" => $event->with_contingent,
                             "data" => $data["members"],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -154,7 +154,6 @@ class BudRest extends Model
                         ]);
                         $mpdf->AddPage("L");
                         $mpdf->WriteHTML($html);
-                        // $mpdf->AddPage();
                     }
                 }
             } else {
@@ -167,6 +166,7 @@ class BudRest extends Model
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                 $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                    "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
