@@ -76,7 +76,7 @@ class ReportMedalClub extends Retrieval
 
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
-        $data_medal_standing = $this->getMedalStanding($event_id);
+        $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id);
         // return $data_medal_standing;
 
         if (count($data_medal_standing["datatable"]) > 0) {
