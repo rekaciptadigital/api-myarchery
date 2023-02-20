@@ -60,9 +60,9 @@ class GetParticipantScoreQualification extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail);
+                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail, 1);
             } else {
-                $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
+                $data = ArcheryEventParticipant::teamBestOfThree($category_detail, 1);
             }
         }
 
