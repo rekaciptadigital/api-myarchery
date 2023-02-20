@@ -50,6 +50,7 @@ class GetScheduleFullDay extends Retrieval
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
             ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where("archery_event_participants.event_id", $event_id)
+            ->where("archery_event_participants.status", 1)
             ->whereDate("event_start_datetime", $date);
 
         $schedule_member_query->when($name, function ($query) use ($name) {
