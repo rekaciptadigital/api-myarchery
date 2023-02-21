@@ -49,6 +49,7 @@ class GetParticipantMemberByCategory extends Retrieval
             $category_team = ArcheryEventParticipant::select("archery_event_participants.*")
                 ->where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.club_id", $participant->club_id)
+                ->where("archery_event_participants.city_id", $participant->club_id)
                 ->where("archery_event_participants.status", 1)
                 ->where("archery_event_participants.event_id", $participant->event_id)
                 ->where("archery_event_participants.competition_category_id", $participant->competition_category_id)
