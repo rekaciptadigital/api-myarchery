@@ -452,7 +452,8 @@ class ArcheryEventParticipant extends Model
     }
 
     if ($category->category_team == "Individual") {
-      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name);
+      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name, false, 1);
+
       return $qualification_member;
     }
 
