@@ -36,6 +36,9 @@ class DownloadMemberBudrest extends Retrieval
 
 
         $data = $this->getScheduleFullday($event_id, $date);
+        if ($data["category_budrest"] == null) {
+            throw new BLoCException("jadwal tidak tersedia");
+        }
         $file_excel = new ArcheryEventBudrestExport($data);
         Excel::store($file_excel, $filename, 'public');
 
@@ -73,7 +76,7 @@ class DownloadMemberBudrest extends Retrieval
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
             ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where("archery_event_participants.event_id", $event_id)
-            ->whereDate("archery_event_qualification_schedule_full_day.event_start_datetime", $date);
+            ->whereDate("archery_event_qualification_time.event_start_datetime", $date);
 
         $schedule_member_collection = $schedule_member_query->orDerBy("archery_event_qualification_schedule_full_day.bud_rest_number")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face")
