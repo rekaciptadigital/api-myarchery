@@ -622,6 +622,7 @@ class ArcheryEventParticipant extends Model
 
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
+        "is_special_team_member" => $value->is_special_team_member,
         "club_id" => $value->club_id,
         "club_name" => $club_name,
         "city_id" => $value->city_id,
