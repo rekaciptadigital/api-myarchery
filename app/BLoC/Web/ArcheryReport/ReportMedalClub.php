@@ -76,7 +76,7 @@ class ReportMedalClub extends Retrieval
 
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
-        $data_medal_standing = $this->getMedalStanding($event_id);
+        $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id);
         // return $data_medal_standing;
 
         if (count($data_medal_standing["datatable"]) > 0) {
@@ -416,7 +416,7 @@ class ReportMedalClub extends Retrieval
 
         if ($category_detail->category_team == "Individual") {
             // $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
-            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name);
+            $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, $score_type, $session, false, $name, false, 1);
 
             return $qualification_member;
         }

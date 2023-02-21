@@ -49,11 +49,12 @@
 <?php
 $colSpanHeader = 3;
 $colspanTotal = 5;
-if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
+if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
     $colspanTotal = 8;
     $colSpanHeader = 7;
 }
 ?>
+
 <body>
     <div class="header">
         <table>
@@ -89,9 +90,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         Rank</td>
                 </tr>
                 <tr>
-                    <td>Country</td>
+                    <td>Club/Contingent</td>
                     <td>:</td>
-                    <td>{{ $peserta1_club }}</td>
+                    <td>{{ $with_contingent == 0 ? $peserta1_club : $peserta1_city }}</td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
                         rowspan="3">{{ $peserta1_rank }}</td>
@@ -121,9 +122,9 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         Rank</td>
                 </tr>
                 <tr>
-                    <td>Country</td>
+                    <td>Club/Contingent</td>
                     <td>:</td>
-                    <td>{{ $peserta2_club }}</td>
+                    <td>{{ $with_contingent == 0 ? $peserta2_club : $peserta2_city }}</td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
                         rowspan="3">{{ $peserta2_rank }}</td>
@@ -154,7 +155,8 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                             <span
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
-                        <th style="width: 10%;background-color: #808080;border-left: none" colspan="{{$colSpanHeader}}">1/5</th>
+                        <th style="width: 10%;background-color: #808080;border-left: none"
+                            colspan="{{ $colSpanHeader }}">1/5</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -228,8 +230,8 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td>0</td>
                         <?php } ?>
                         <td></td>
-                    
-                    {{-- baris 5 --}}
+
+                        {{-- baris 5 --}}
                     <tr style="border: 1px solid black;">
                         <th>5</th>
                         <td></td>
@@ -242,9 +244,11 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td>0</td>
                         <?php } ?>
                         <td></td>
-                    </tr></tr>
+                    </tr>
+                    </tr>
                     <tr>
-                        <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="{{ $colspanTotal }}" align="right" style="padding-right:5px;border:none;">Total
+                        </td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -260,7 +264,8 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                             <span
                                 style="border: 1px solid black; padding: 5px;margin-right:5px;">&nbsp;&nbsp;&nbsp;&nbsp;</span>Winner
                         </th>
-                        <th style="width: 10%;background-color: #808080;border-left: none" colspan="{{$colSpanHeader}}">1/5</th>
+                        <th style="width: 10%;background-color: #808080;border-left: none"
+                            colspan="{{ $colSpanHeader }}">1/5</th>
                     </tr>
                     <tr style="width: 10%;background-color: #808080;border:1px solid black;">
                         <th style="width: 5%;background-color: white;border:none;"></th>
@@ -352,7 +357,8 @@ if($elimination_scoring_type == 1 || $elimination_scoring_type == 0 ){
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="{{$colspanTotal}}" align="right" style="padding-right:5px;border:none;">Total</td>
+                        <td colspan="{{ $colspanTotal }}" align="right" style="padding-right:5px;border:none;">
+                            Total</td>
                         <td></td>
                     </tr>
                 </tbody>

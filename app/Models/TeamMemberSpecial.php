@@ -13,7 +13,7 @@ class TeamMemberSpecial extends Model
     {
         $team_member_special_list = TeamMemberSpecial::where("participant_team_id", $participant_team_id)
             ->get();
-        foreach ($team_member_special_list as $tmsl_key => $tmsl) {
+        foreach ($team_member_special_list as $tmsl) {
             $tmsl->delete();
         }
     }

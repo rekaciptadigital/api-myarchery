@@ -183,6 +183,7 @@ use App\BLoC\Web\ConfigRambahanArrow\GetConfig;
 use App\BLoC\Web\ConfigRambahanArrow\SetConfig;
 use App\BLoC\Web\ArcheryReport\GetDownloadBaganElimination;
 use App\BLoC\Web\ArcheryReport\ReportRankQualification;
+use App\BLoC\Web\ArcheryScoring\ChangeRankMemberQualification;
 use App\BLoC\Web\ConfigTargetFace\GetConfigTargetFace;
 use App\BLoC\Web\ConfigTargetFace\SetConfigTargetFace;
 use App\BLoC\Web\EndpointSupport\ResetBudrestQualification;
@@ -233,6 +234,7 @@ class WebServiceProvider extends ServiceProvider
     {
         $this->registerService("forgotPassword", ForgotPassword::class);
         $this->registerService("login", Login::class);
+        $this->registerService("changeRankMemberQualification", ChangeRankMemberQualification::class);
         $this->registerService("register", Register::class);
         $this->registerService("checkAdminRegister", CheckAdminRegister::class);
         $this->registerService("resetPassword", ResetPassword::class);

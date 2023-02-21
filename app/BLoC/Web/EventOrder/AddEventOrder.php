@@ -89,6 +89,10 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
+        // if ($event->with_contingent == 1) {
+        //     throw new BLoCException("cannot order event with contingent");
+        // }
+
         if ($event->my_archery_fee_percentage > 0)
             $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage / 100));
 
@@ -576,8 +580,8 @@ class AddEventOrder extends Transactional
 
             $check_success_category_mix = $check_success_category_mix->get()->count();
 
-            if ($check_success_category_mix > 3) {
-                throw new BLoCException($club_or_city . " anda sudah terdaftar 3 kali pada kategori ini");
+            if ($check_success_category_mix >= 10) {
+                throw new BLoCException($club_or_city . " anda sudah terdaftar 10 kali pada kategori ini");
             }
 
             $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $event_category_detail->id)
@@ -647,7 +651,7 @@ class AddEventOrder extends Transactional
                 throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
             }
         } else {
-            if ($check_register_same_category >= 3) {
+            if ($check_register_same_category >= 10) {
                 $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $event_category_detail->id)
                     ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
                     ->where("archery_event_participants.status", 4)
@@ -664,7 +668,7 @@ class AddEventOrder extends Transactional
                 if ($check_panding > 0) {
                     throw new BLoCException("ada transaksi yang belum diselesaikan oleh " . $club_or_city . " pada category ini");
                 } else {
-                    throw new BLoCException($club_or_city . " anda sudah terdaftar 2 kali di kategory ini");
+                    throw new BLoCException($club_or_city . " anda sudah terdaftar 10 kali di kategory ini");
                 }
             }
             $team_category_id = $event_category_detail->team_category_id == "female_team" ? "individu female" : "individu male";
@@ -701,7 +705,7 @@ class AddEventOrder extends Transactional
 
 
         // insert data participant
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0, $with_early_bird, $city_id);
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $with_contingent == 0 ? $club_member->club_id : 0, null, 0, $with_early_bird, $with_contingent == 1 ? $city_id : 0);
 
 
 

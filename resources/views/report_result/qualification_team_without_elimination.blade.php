@@ -72,7 +72,7 @@
                         <strong>Athlete</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club</strong>
+                        <strong>Club/Kontingen</strong>
                     </th>
                     <th style="text-align: center; border: 1px solid black;">
                         <strong>Total</strong>
@@ -107,10 +107,15 @@
                                     @endif
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;">
-                                    {{ $data['club_name'] ? $data['club_name'] : '-' }}</td>
-                                <td style="text-align: center;border: 1px solid black;">{{ $data['total'] }}</td>
-                                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x'] }}</td>
-                                <td style="text-align: center;border: 1px solid black;">{{ $data['total_x_plus_ten'] }}
+                                    {{ $with_contingent == 1 ? $data['city_name'] : $data['club_name'] }}
+                                </td>
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ $data['total'] }}</td>
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ $data['total_x'] }}
+                                </td>
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ $data['total_x_plus_ten'] }}
                                 </td>
                             </tr>
                         @endisset

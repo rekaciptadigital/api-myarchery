@@ -49,7 +49,7 @@ class ReportRankQualification extends Retrieval
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $archery_event->location;
 
-        $list_scoring_qualification = ArcheryScoring::getScoringRankByCategoryId($category_id, 1,  $sessions, false, null, false);
+        $list_scoring_qualification = ArcheryScoring::getScoringRankByCategoryId($category_id, 1,  $sessions, false, null, false, 1);
         if (count($list_scoring_qualification) == 0) {
             throw new BLoCException("data skoring kosong");
         }
