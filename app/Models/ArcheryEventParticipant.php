@@ -410,7 +410,8 @@ class ArcheryEventParticipant extends Model
     }
 
     if ($category->category_team == "Individual") {
-      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name);
+      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name, false, 1);
+
       return $qualification_member;
     }
 
@@ -449,7 +450,7 @@ class ArcheryEventParticipant extends Model
     for ($i = 1; $i <= $category_detail_male->session_in_qualification; $i++) {
       $session_category_detail_male[] = $i;
     }
-    $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id, 1, $session_category_detail_male);
+    $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id, 1, $session_category_detail_male, false, null, false, 1);
 
     $category_detail_female = ArcheryEventCategoryDetail::where("event_id", $category_detail_team->event_id)
       ->where("age_category_id", $category_detail_team->age_category_id)
@@ -468,7 +469,7 @@ class ArcheryEventParticipant extends Model
       $session_category_detail_female[] = $i;
     }
 
-    $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id, 1, $session_category_detail_female);
+    $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id, 1, $session_category_detail_female, false, null, false, 1);
 
     $participant_club_or_city = [];
     $sequence = [];
@@ -666,7 +667,7 @@ class ArcheryEventParticipant extends Model
     for ($i = 0; $i < $category_detail_individu->session_in_qualification; $i++) {
       $session[] = $i + 1;
     }
-    $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_individu->id, 1, $session);
+    $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_individu->id, 1, $session, false, null, false, 1);
 
     $participant_club_or_city = [];
     $sequence = [];
@@ -1010,7 +1011,7 @@ class ArcheryEventParticipant extends Model
       $updated = false;
       $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
     } else {
-      $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true);
+      $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true, 1);
       $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
     }
     $template["updated"] = $updated;
