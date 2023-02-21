@@ -558,9 +558,13 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($female_rank["total"]  < 1 && $female_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($female_rank["total"]  < 1 && $female_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
+
+
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
           $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
