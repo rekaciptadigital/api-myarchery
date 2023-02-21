@@ -52,12 +52,14 @@ class GetParticipantMemberByCategory extends Retrieval
                 ->where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.competition_category_id", $participant->competition_category_id)
                 ->where("archery_event_participants.distance_id", $participant->distance_id);
+
             if ($participant->with_contingent == 1) {
                 $participant_individu->where("archery_event_participants.city_id", $participant->city_id);
             } else {
                 $participant_individu->where("archery_event_participants.club_id", $participant->club_id);
             }
-            $participant_individu->where("archery_event_participants.status", 1)
+
+            $participant_individu = $participant_individu->where("archery_event_participants.status", 1)
                 ->where(function ($query) use ($gender_category) {
                     if ($gender_category == "male_team") {
                         $query->where("archery_event_participants.team_category_id", "individu male");
