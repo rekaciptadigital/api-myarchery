@@ -37,11 +37,11 @@ class EntryByNameParticipantTeam extends Retrieval
         $category_team = ArcheryEventCategoryDetail::find($participant_team->event_category_id);
 
         if ($is_entry_by_name == 0) {
-            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
-            $participant_team->is_special_team_member = 0;
-            $participant_team->save();
+            if ($participant_team->is_special_team_member == 1) {
+                TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
+            }
         } else {
-            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
+            TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
             if ($participant_team->team_category_id != "mix_team") {
                 if (count($member_list) != 3) {
                     throw new BLoCException("member harus terdiri dari 3 anggota");
@@ -77,7 +77,13 @@ class EntryByNameParticipantTeam extends Retrieval
                         throw new BLoCException("participant individu not found");
                     }
 
-                    $team_member_special = new TeamMemberSpecial();
+                    $team_member_special = TeamMemberSpecial::where("participant_individual_id", $participant_individu_id)
+                        ->where("participant_team_id", $participant_team_id)
+                        ->first();
+                        
+                    if (!$team_member_special) {
+                        $team_member_special = new TeamMemberSpecial();
+                    }
                     $team_member_special->participant_individual_id = $participant_individu_id;
                     $team_member_special->participant_team_id = $participant_team_id;
                     $team_member_special->save();
