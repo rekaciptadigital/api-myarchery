@@ -171,7 +171,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination', [
-                "with_continegnt" => $with_contingent,
+                "with_contingent" => $with_contingent,
                 'peserta1_name' => $result['name_athlete'][0],
                 'peserta2_name' => $result['name_athlete'][1],
                 'peserta1_club' => $result['club'][0],
@@ -296,7 +296,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination_team', [
-                "with_continegnt" => $with_contingent,
+                "with_contingent" => $with_contingent,
                 'tim_1_name' => $result['name_athlete'][0],
                 'tim_2_name' => $result['name_athlete'][1],
                 'club_1' => $result['club'][0],
