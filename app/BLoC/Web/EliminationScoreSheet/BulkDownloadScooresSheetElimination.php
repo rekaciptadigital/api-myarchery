@@ -74,9 +74,9 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         $file_name = $path . "scoore_sheet_elimination_" . $elimination_id . "_" . $round . ".pdf";
 
         if (strtolower($category->type) == "team") {
-            return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name);
+            return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event->with_contingent);
         } else {
-            return $this->getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name);
+            return $this->getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event->with_contingent);
         }
     }
 
@@ -89,7 +89,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         ];
     }
 
-    private function getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name)
+    private function getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $with_contingent)
     {
         $elimination = ArcheryEventElimination::find($elimination_id);
         if (!$elimination) {
@@ -139,6 +139,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                     $detail_member = ArcheryEventParticipantMember::select(
                         'archery_event_participant_members.name as name',
                         'archery_clubs.name as club_name',
+                        'cities.name as city_name',
                         'archery_event_participants.id as participant_id',
                         'archery_event_participants.user_id as user_id',
                         'archery_event_participants.event_id'
@@ -146,16 +147,19 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                         ->where('archery_event_participant_members.id', $participant_member_id)
                         ->leftJoin('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
                         ->leftJoin('archery_clubs', 'archery_clubs.id', 'archery_event_participants.club_id')
+                        ->leftJoin('cities', 'cities.id', 'archery_event_participants.city_id')
                         ->first();
                     $name = $detail_member['name'];
                     $rank = $elimination_member->elimination_ranked;
                     $club = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
+                    $city = $detail_member['city_name'] ? $detail_member['city_name'] : "-";
                 }
 
 
                 $result['name_athlete'][] = $name;
                 $result['rank'][] = $rank;
                 $result['club'][] = $club;
+                $result['city'][] = $city;
 
                 $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
                 if ($category == "") {
@@ -166,10 +170,13 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination', [
+                "with_continegnt" => $with_contingent,
                 'peserta1_name' => $result['name_athlete'][0],
                 'peserta2_name' => $result['name_athlete'][1],
                 'peserta1_club' => $result['club'][0],
                 'peserta2_club' => $result['club'][1],
+                'peserta1_city' => $result['city'][0],
+                'peserta2_city' => $result['city'][1],
                 'peserta1_rank' => $result['rank'][0],
                 'peserta2_rank' => $result['rank'][1],
                 'peserta1_category' => $result['category'][0],
@@ -189,7 +196,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         ];
     }
 
-    private function getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name)
+    private function getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $with_contingent)
     {
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
@@ -287,6 +294,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination_team', [
+                "with_continegnt" => $with_contingent,
                 'tim_1_name' => $result['name_athlete'][0],
                 'tim_2_name' => $result['name_athlete'][1],
                 'club_1' => $result['club'][0],
