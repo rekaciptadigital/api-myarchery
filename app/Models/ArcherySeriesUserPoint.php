@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
+use DAI\Utils\Exceptions\BLoCException;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -75,12 +76,11 @@ class ArcherySeriesUserPoint extends Model
     protected function setMemberQualificationPoint($event_category_id)
     {
         $category = ArcheryEventCategoryDetail::find($event_category_id);
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+
+        $session = $category->getArraySessionCategory();
         $pos = 0;
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session);
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session, false, null, false, 1);
+
         foreach ($qualification_rank as $key => $value) {
             $pos = $pos + 1;
             $this->setPoint($value["member"]->id, "qualification", $pos);
@@ -213,7 +213,7 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id","date_of_birth")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")->where("id", $u)->first();
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;

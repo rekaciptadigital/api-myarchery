@@ -459,7 +459,6 @@ class ClubRanked
                 ]
             ];
         }
-
         usort($output, function ($a, $b) {
             if ($a["gold"] == $b["gold"]) {
                 if ($a["silver"] == $b["silver"]) {
@@ -479,6 +478,7 @@ class ClubRanked
             }
             return -1;
         });
+
 
         return $output;
     }

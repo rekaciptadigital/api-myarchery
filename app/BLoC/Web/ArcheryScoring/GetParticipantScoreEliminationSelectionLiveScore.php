@@ -74,7 +74,7 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
 
     public function getListMemberScoringIndividual($category_id, $score_type, $session, $name, $event_id)
     {
-        $qualification_member = ArcheryScoring::getScoringRankByCategoryIdForEliminationSelection($category_id, $score_type, $session, false, $name);
+        $qualification_member = ArcheryScoring::getScoringRankByCategoryIdForEliminationSelection($category_id, $score_type, $session, false, $name, false, 1);
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $qualification_rank = ArcheryScoring::getScoringRankForEliminationSelection($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, null, $score_type, $event_id);
@@ -103,5 +103,4 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         // }
         // return $output;
     }
-
 }
