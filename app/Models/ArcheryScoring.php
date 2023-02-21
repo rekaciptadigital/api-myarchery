@@ -781,14 +781,10 @@ class ArcheryScoring extends Model
         // urut berdasarkan target face dan budrest number
         if ($orderByBudrestNumber == true) {
             usort($archery_event_score, function ($a, $b) {
-                return $b["member"]["bud_rest_number"] < $a["member"]["bud_rest_number"] ? 1 : -1;
-            });
-
-
-            usort($archery_event_score, function ($a, $b) {
                 if ($a["member"]["bud_rest_number"] == $b["member"]["bud_rest_number"]) {
                     return $b["member"]["target_face"] < $a["member"]["target_face"] ? 1 : -1;
                 }
+                return $b["member"]["bud_rest_number"] < $a["member"]["bud_rest_number"] ? 1 : -1;
             });
         }
 
