@@ -39,14 +39,18 @@ class GetScheduleFullDay extends Retrieval
             "archery_event_qualification_time.category_detail_id as category_id",
             "users.name as name",
             "archery_clubs.name as club_name",
-            "archery_clubs.id as club_id"
+            "archery_clubs.id as club_id",
+            "cities.id as city_id",
+            "cities.name as city_name"
         )
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
             ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where("archery_event_participants.event_id", $event_id)
+            ->where("archery_event_participants.status", 1)
             ->whereDate("event_start_datetime", $date);
 
         $schedule_member_query->when($name, function ($query) use ($name) {
@@ -63,7 +67,10 @@ class GetScheduleFullDay extends Retrieval
 
         if ($schedule_member_collection->count() > 0) {
             foreach ($schedule_member_collection as $schedule) {
-                $category = ArcheryEventCategoryDetail::find($schedule->category_id);
+                $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_events.with_contingent")
+                    ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+                    ->where("archery_event_category_details.id", $schedule->category_id)
+                    ->first();
                 if (!$category) {
                     throw new BLoCException("category tidak tersedia");
                 }
@@ -75,7 +82,10 @@ class GetScheduleFullDay extends Retrieval
                     "bud_rest_number" => $schedule->bud_rest_number === 0 ? "" : $schedule->bud_rest_number . "" . $schedule->target_face,
                     "name" => $schedule->name,
                     "club_id" => $schedule->club_id,
-                    "club_name" => $schedule->club_name
+                    "club_name" => $schedule->club_name,
+                    "city_name" => $schedule->city_name,
+                    "city_id" => $schedule->city_id,
+                    "with_contingent" => $category->with_contingent
                 ];
             }
         }
