@@ -68,7 +68,6 @@ class GetParticipantMemberByCategory extends Retrieval
                 })
                 ->get();
 
-            return $participant_individu;
 
             if ($participant_individu->count() > 0) {
                 foreach ($participant_individu as $ct) {
