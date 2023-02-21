@@ -89,9 +89,9 @@ class AddEventOrder extends Transactional
             throw new BLoCException("event tidak tersedia");
         }
 
-        if ($event->with_contingent == 1) {
-            throw new BLoCException("cannot order event with contingent");
-        }
+        // if ($event->with_contingent == 1) {
+        //     throw new BLoCException("cannot order event with contingent");
+        // }
 
         if ($event->my_archery_fee_percentage > 0)
             $this->myarchery_fee = round($price * ($event->my_archery_fee_percentage / 100));
@@ -705,7 +705,7 @@ class AddEventOrder extends Transactional
 
 
         // insert data participant
-        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $club_member->club_id, null, 0, $with_early_bird, $city_id);
+        $participant = ArcheryEventParticipant::insertParticipant($user, Str::uuid(), $event_category_detail, 4, $with_contingent == 0 ? $club_member->club_id : 0, null, 0, $with_early_bird, $with_contingent == 1 ? $city_id : 0);
 
 
 

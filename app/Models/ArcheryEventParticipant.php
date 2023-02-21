@@ -427,7 +427,7 @@ class ArcheryEventParticipant extends Model
     throw new BLoCException("invalid");
   }
 
-  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
+  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team, int $is_live_score = 0)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -503,8 +503,10 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($male_rank["total"]  < 1 && $male_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($male_rank["total"]  < 1 && $male_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
 
         $is_insert = 0;
@@ -641,7 +643,7 @@ class ArcheryEventParticipant extends Model
     return $new_array;
   }
 
-  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
+  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team, int $is_live_score = 0)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -702,8 +704,10 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
 
         $is_insert = 0;
