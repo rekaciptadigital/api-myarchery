@@ -2,10 +2,10 @@
 
 namespace App\BLoC\General;
 
-use App\Models\CityCountry;
+use App\Models\ProvinceCountry;
 use DAI\Utils\Abstracts\Retrieval;
 
-class GetCityCountry extends Retrieval
+class GetProvinceCountry extends Retrieval
 {
     public function getDescription()
     {
@@ -17,29 +17,27 @@ class GetCityCountry extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 1;
         $page = $parameters->get('page');
         $offset = ($page - 1) * $limit;
-        $country_id = $parameters->get('country_id');
-        $province_id = $parameters->get("province_id");
         $name = $parameters->get("name");
+        $country_id = $parameters->get("country_id");
 
-        $city_country = CityCountry::query();
+        $provinceCountry = ProvinceCountry::query();
 
-        $city_country->when($country_id, function ($query) use ($country_id) {
+        $provinceCountry->when($country_id, function ($query) use ($country_id) {
             return $query->where("country_id", $country_id);
         });
-
-        $city_country->when($province_id, function ($query) use ($province_id) {
-            return $query->where("state_id", $province_id);
-        });
-
-        $city_country->when($name, function ($query) use ($name) {
+        
+        $provinceCountry->when($name, function ($query) use ($name) {
             return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
         });
 
-        return $city_country->orderBy('name')->limit($limit)->offset($offset)->get();
+        return $provinceCountry->orderBy("name")->limit($limit)->offset($offset)->get();
     }
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            'page' => 'min:1',
+            'limit' => 'min:1'
+        ];
     }
 }

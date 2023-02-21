@@ -61,6 +61,9 @@ use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
 use App\BLoC\App\Enterprise\GetInfoOrderProduct;
 use App\BLoC\App\Enterprise\AddOrderVenueProduct;
 use App\BLoC\App\Enterprise\GetTransactionVenueUser;
+use App\BLoC\Web\EventOrder\AddEventOrderTeam;
+use App\BLoC\Web\EventOrder\AddEventOrderV2;
+use App\BLoC\Web\EventOrder\CheckEmailIsRegister;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -100,11 +103,12 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService('getCity', GetCity::class);
         $this->registerService('getAllMemberByClubId', GetAllMemberByClubId::class);
         $this->registerService('entryByNameParticipantTeam', EntryByNameParticipantTeam::class);
-
+        $this->registerService("addEventOrderV2", AddEventOrderV2::class);
         $this->registerService('userUpdateProfile', UpdateUserProfile::class);
         $this->registerService('userUpdateAvatar', UpdateUserAvatar::class);
         $this->registerService("getDownloadCard", GetDownloadCard::class);
-
+        $this->registerService("checkEmailIsRegister", CheckEmailIsRegister::class);
+        $this->registerService("addEventOrderTeam", AddEventOrderTeam::class);
         $this->registerService("getListEventByUserLogin", GetListEventByUserLogin::class);
         $this->registerService("getListCategoryByUserLogin", GetListCategoryByUserLogin::class);
         $this->registerService("getEventCategoryDetail", GetEventCategoryDetail::class);

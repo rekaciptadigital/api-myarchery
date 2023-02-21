@@ -11,6 +11,29 @@ class ArcheryEventParticipantMember extends Model
 {
     protected $guarded = ['id'];
 
+
+    public static function saveArcheryEventParticipantMember(ArcheryEventParticipant $participant, User $user, ArcheryEventCategoryDetail $category, $is_series = 0)
+    {
+        $member = new ArcheryEventParticipantMember();
+        $member->archery_event_participant_id = $participant->id;
+        $member->name = $user->name;
+        $member->team_category_id = $category->team_category_id;
+        $member->email = $user->email;
+        $member->phone_number = $user->phone_number;
+        $member->club = null;
+        $member->age = $user->age;
+        $member->gender = $user->gender;
+        $member->qualification_date = null;
+        $member->birthdate = $user->date_of_birth;
+        $member->user_id = $user->id;
+        $member->is_series = $is_series;
+        $member->have_shoot_off = 0;
+        $member->city_id = 0;
+        $member->save();
+
+        return $member;
+    }
+    
     public static function resetHaveShootOffMember(ArcheryEventCategoryDetail $category)
     {
         $archery_event_participant_members = ArcheryEventParticipantMember::select("archery_event_participant_members.*")
@@ -178,7 +201,9 @@ class ArcheryEventParticipantMember extends Model
         $participant->category_label = $category_label;
         $participant->member = $member;
         $club = ArcheryClub::find($participant->club_id);
-        $participant->club = $club ? $club->name : "";
+        $city = City::find($participant->city_id);
+        $participant->club = $club ? $club->name: "";
+        $participant->city = $city ? $city->name: "";
         return $participant;
     }
 }

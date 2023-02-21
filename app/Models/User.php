@@ -41,7 +41,8 @@ class User extends Model implements JWTSubject, AuthenticatableContract
     public static function getAge(string $date_of_birth, string $event_start_datetime)
     {
         $date_of_birth = date("Y-m-d", strtotime($date_of_birth));
-        $event_start_datetime = date("Y-m-d H-i-s", strtotime($event_start_datetime));
+        $event_start_datetime = date("Y-m-d H:i:s", strtotime($event_start_datetime));
+
 
         if ($date_of_birth == false) {
             throw new BLoCException("invalid date of birth format");

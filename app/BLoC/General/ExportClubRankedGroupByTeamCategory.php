@@ -4,8 +4,6 @@ namespace App\BLoC\General;
 
 use App\Exports\ClubRankExportByTeamCategory;
 use App\Libraries\ClubRanked;
-use App\Models\ArcheryEvent;
-use App\Models\City;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Storage;

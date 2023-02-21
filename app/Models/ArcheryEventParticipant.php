@@ -32,6 +32,46 @@ class ArcheryEventParticipant extends Model
     "m" => 0,
   ];
 
+  // dapatkan participant team yang status 1 dengan kategori yang sama dan club atau city yang sama
+  public static function getCountParticipantTeamWithSameClubOrCity(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id)
+  {
+    $count_participant_team_with_same_club_or_city = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $category_team->team_category_id)
+      ->where("status", 1);
+    if ($event->with_contingent == 1) {
+      $count_participant_team_with_same_club_or_city->where("city_id", $club_or_city_id);
+    } else {
+      $count_participant_team_with_same_club_or_city->where("club_id", $club_or_city_id);
+    }
+
+    $count_participant_team_with_same_club_or_city = $count_participant_team_with_same_club_or_city->get()->count();
+
+    return (int)$count_participant_team_with_same_club_or_city;
+  }
+
+  public static function getCountParticipantIndividuByCategoryTeam(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id, string $team_category_id)
+  {
+    $count_participant_individu = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $team_category_id)
+      ->where("status", 1);
+
+    if ($event->with_contingent == 1) {
+      $count_participant_individu->where("city_id", $club_or_city_id);
+    } else {
+      $count_participant_individu->where("club_id", $club_or_city_id);
+    }
+
+    $count_participant_individu = $count_participant_individu->get()->count();
+
+    return (int)$count_participant_individu;
+  }
+  
   public static function getElimination(ArcheryEventCategoryDetail $category_detail)
   {
 
@@ -198,7 +238,8 @@ class ArcheryEventParticipant extends Model
     int $expired_booking_time = 0,
     int $is_early_bird_payment = 0,
     int $is_special_team_member = 0,
-    int $city_id = 0
+    int $city_id = 0,
+    int $order_event_id
   ) {
     $participant = new ArcheryEventParticipant();
     $participant->event_id = $category->event_id;
@@ -229,6 +270,7 @@ class ArcheryEventParticipant extends Model
     $participant->is_early_bird_payment = $is_early_bird_payment;
     $participant->is_special_team_member = $is_special_team_member;
     $participant->city_id = $city_id;
+    $participant->order_event_id = $order_event_id;
     $participant->save();
 
     return $participant;

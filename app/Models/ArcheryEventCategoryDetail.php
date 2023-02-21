@@ -22,6 +22,25 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
+    public static function getPriceCategory(ArcheryEventCategoryDetail $category)
+    {
+        $with_early_bird = 0;
+        $price = 0;
+        if ($category->fee) {
+            $price = $category->fee;
+            // cek harga apakah normal atau early bird
+            if ($category->is_early_bird == 1) {
+                $price = $category->early_bird;
+                $with_early_bird = 1;
+            }
+        }
+
+        return (object)[
+            "price" => $price,
+            "with_early_bird" => $with_early_bird
+        ];
+    }
+
     /*
         digunakan untuk menangkap type category tersebut
 

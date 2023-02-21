@@ -42,6 +42,12 @@ class ArcherySeriesUserPoint extends Model
             ->where("team_category_id", $category->team_category_id)
             ->where("serie_id", $event_serie->serie_id)
             ->first();
+
+        $series = ArcherySerie::find($event_serie->serie_id);
+        if (!$series) {
+            return false;
+        }
+
         if (!$archerySeriesCategory) return false;
         $t = 1;
         if ($type == "elimination") {
@@ -51,26 +57,24 @@ class ArcherySeriesUserPoint extends Model
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
         if (!$point) return false;
 
-        $member_point = $this->where("member_id", $member_id)->where("type", $type)->first();
-        // get detail event
-        if ($member_point) {
-            $member_point->update([
-                "point" => $point->point,
-                "status" => $member->is_series,
-                "position" => $pos,
-            ]);
-        } else {
-            $this->create([
-                "event_serie_id" => $event_serie->id,
-                "user_id" => $user_id,
-                "event_category_id" => $archerySeriesCategory->id,
-                "point" => $point->point,
-                "status" => $member->is_series,
-                "type" => $type,
-                "position" => $pos,
-                "member_id" => $member_id,
-            ]);
+        $is_series = 1;
+        if ($series->type == 1) {
+            $is_series = $member->is_series;
         }
+
+        $member_point = $this->where("member_id", $member_id)->where("type", $type)->first();
+        if (!$member_point) {
+            $member_point =  new ArcherySeriesUserPoint();
+        }
+        $member_point->point = $point->point;
+        $member_point->status = $is_series;
+        $member_point->position = $pos;
+        $member_point->event_serie_id = $event_serie->id;
+        $member_point->user_id = $user_id;
+        $member_point->event_category_id = $archerySeriesCategory->id;
+        $member_point->type = $type;
+        $member_point->member_id = $member_id;
+        $member_point->save();
     }
 
     protected function setMemberQualificationPoint($event_category_id)
