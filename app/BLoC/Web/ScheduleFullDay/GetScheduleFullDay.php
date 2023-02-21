@@ -21,7 +21,7 @@ class GetScheduleFullDay extends Retrieval
     {
         // param
         $date = $parameters->get("date");
-        $name = $parameters->get("name");
+        $search = "%" . $parameters->get("search") . "%";
         $event_id = $parameters->get("event_id");
         $admin = Auth::user();
 
@@ -39,9 +39,10 @@ class GetScheduleFullDay extends Retrieval
             "archery_event_qualification_time.category_detail_id as category_id",
             "users.name as name",
             "archery_clubs.name as club_name",
-            "archery_clubs.id as club_id",
+            "archery_event_participants.club_id as club_id",
             "cities.id as city_id",
-            "cities.name as city_name"
+            "cities.name as city_name",
+            "archery_event_participants.id as participant_id"
         )
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
@@ -53,8 +54,15 @@ class GetScheduleFullDay extends Retrieval
             ->where("archery_event_participants.status", 1)
             ->whereDate("event_start_datetime", $date);
 
-        $schedule_member_query->when($name, function ($query) use ($name) {
-            return $query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
+        $schedule_member_query->when($search, function ($query) use ($search, $event) {
+            return $query->where(function ($q) use ($search, $event) {
+                $q = $q->whereRaw("users.name LIKE ?", [$search]);
+                if ($event->with_contingent == 1) {
+                    $q = $q->orWhereRaw("cities.name Like ?", [$search]);
+                } else {
+                    $q = $q->orWhereRaw("archery_clubs.name Like ?", [$search]);
+                }
+            });
         });
 
         $schedule_member_collection = $schedule_member_query->orDerBy("archery_event_qualification_schedule_full_day.bud_rest_number")
@@ -78,6 +86,7 @@ class GetScheduleFullDay extends Retrieval
                 $output["category_budrest"][$category->id][] = [
                     "schedule_full_day_id" => $schedule->id,
                     "category_id" => $category->id,
+                    "event_id" => $category->event_id,
                     "label_category" => $category->label_category,
                     "bud_rest_number" => $schedule->bud_rest_number === 0 ? "" : $schedule->bud_rest_number . "" . $schedule->target_face,
                     "name" => $schedule->name,
@@ -85,7 +94,8 @@ class GetScheduleFullDay extends Retrieval
                     "club_name" => $schedule->club_name,
                     "city_name" => $schedule->city_name,
                     "city_id" => $schedule->city_id,
-                    "with_contingent" => $category->with_contingent
+                    "with_contingent" => $category->with_contingent,
+                    "participant_id" => $schedule->participant_id,
                 ];
             }
         }

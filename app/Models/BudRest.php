@@ -51,8 +51,8 @@ class BudRest extends Model
             'category' => $category
         ];
 
-        $participant_member_team = ParticipantMemberTeam::select(
-            'participant_member_teams.participant_member_id as member_id',
+        $participant_member_team = ArcheryEventParticipantMember::select(
+            'archery_event_participant_members.id as member_id',
             'archery_event_qualification_schedule_full_day.bud_rest_number',
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
@@ -60,13 +60,13 @@ class BudRest extends Model
             'archery_clubs.name as club_name',
             'cities.name as city_name'
         )
-            ->where('participant_member_teams.event_category_id', $category->id)
-            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
-            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'archery_event_participant_members.id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
             ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
             ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
+            ->where('archery_event_participants.event_category_id', $category->id)
+            ->where('archery_event_participants.status', 1)
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
@@ -77,6 +77,7 @@ class BudRest extends Model
             substr($category->distance_id, 2, 2),
             substr($category->distance_id, 4, 2)
         ];
+
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
@@ -97,8 +98,9 @@ class BudRest extends Model
         $i = 1;
         foreach ($output['data_member'] as $m) {
             if ($m["detail_member"]["bud_rest_number"] == 0) {
-                $member_not_have_budrest[] = $m["detail_member"]["member_id"];
-                continue;
+                throw new BLoCException("masih ada peserta yang belum memiliki bantalan");
+                // $member_not_have_budrest[] = $m["detail_member"]["member_id"];
+                // continue;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
