@@ -202,7 +202,7 @@ class BudRest extends Model
         }
     }
 
-    public static function setMemberBudrest($category_id)
+    public static function setMemberBudrest($category_id, $with_contingent)
     {
         $tp = ["A", "C", "B", "D", "E", "F"];
         // ArcheryEventQualificationScheduleFullDay
@@ -239,10 +239,12 @@ class BudRest extends Model
         $target_face = 1;
         $count = 0;
         foreach ($qualification_time as $time) {
-            $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", "archery_event_participants.club_id")
+            $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
                 ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
                 ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-                ->where("qalification_time_id", $time->id)->get()->groupBy("club_id");
+                ->where("qalification_time_id", $time->id)
+                ->get()
+                ->groupBy($with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id");
 
             foreach ($schedules as $key => $value) {
                 $value["total"] = $value->count();

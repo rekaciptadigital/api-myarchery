@@ -103,7 +103,7 @@ class CreateOrUpdateBudRestV2 extends Transactional
 
 
                 if ($is_generate_member) {
-                    BudRest::setMemberBudrest($category_id);
+                    BudRest::setMemberBudrest($category_id, $event->with_contingent);
                 }
             }
 

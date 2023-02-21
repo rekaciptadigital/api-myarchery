@@ -6,6 +6,7 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\City;
 use App\Models\TeamMemberSpecial;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
@@ -20,7 +21,13 @@ class GetParticipantMemberByCategory extends Retrieval
 
     protected function process($parameters)
     {
-        $participant = ArcheryEventParticipant::find($parameters->get('participant_id'));
+        $participant_id = $parameters->get('participant_id');
+        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "archery_events.with_contingent", "cities.name as city_name")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
+            ->where("archery_event_participants.id", $participant_id)
+            ->where("archery_event_participants.status", 1)
+            ->first();
 
         $club = ArcheryClub::find($participant->club_id);
 
@@ -40,13 +47,14 @@ class GetParticipantMemberByCategory extends Retrieval
             $user_member['member_id'] = $archery_member->id;
         } else {
             $gender_category = $participant->team_category_id;
-            $category_team = ArcheryEventParticipant::select("archery_event_participants.*")
-                ->where("archery_event_participants.age_category_id", $participant->age_category_id)
-                ->where("archery_event_participants.club_id", $participant->club_id)
-                ->where("archery_event_participants.status", 1)
+            $participant_individu = ArcheryEventParticipant::select("archery_event_participants.*")
                 ->where("archery_event_participants.event_id", $participant->event_id)
+                ->where("archery_event_participants.age_category_id", $participant->age_category_id)
                 ->where("archery_event_participants.competition_category_id", $participant->competition_category_id)
                 ->where("archery_event_participants.distance_id", $participant->distance_id)
+                ->where("archery_event_participants.club_id", $participant->club_id)
+                ->where("archery_event_participants.city_id", $participant->city_id)
+                ->where("archery_event_participants.status", 1)
                 ->where(function ($query) use ($gender_category) {
                     if ($gender_category == "male_team") {
                         $query->where("archery_event_participants.team_category_id", "individu male");
@@ -60,8 +68,9 @@ class GetParticipantMemberByCategory extends Retrieval
                 })
                 ->get();
 
-            if ($category_team->count() > 0) {
-                foreach ($category_team as $ct) {
+
+            if ($participant_individu->count() > 0) {
+                foreach ($participant_individu as $ct) {
                     $user = User::find($ct->user_id);
                     if (!$user) {
                         throw new BLoCException("user tidak ada");
@@ -104,10 +113,14 @@ class GetParticipantMemberByCategory extends Retrieval
             "gender" => $detail_participant_user->gender,
             "transaction_log_id" => $participant->transaction_log_id,
             "team_name" => $participant->team_name,
+            "city_id" => $participant->city_id,
+            "club_id" => $participant->club_id
         ];
         $output['event_category_detail'] = $event_category ? $event_category->getCategoryDetailById($event_category->id) : null;
         $output['member'] = $user_member;
         $output['club'] = $club != null ? $club : [];
+        $output['city_name'] = $participant->city_name;
+        $output['with_contingent'] = $participant->with_contingent;
 
         return $output;
     }
