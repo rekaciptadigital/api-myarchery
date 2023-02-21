@@ -24,7 +24,7 @@ class TeamMemberSpecial extends Model
         $list_participant_team = $list_participant_team->get();
 
         foreach ($list_participant_team as $lpt) {
-            $lpt->is_special_team_member = 1;
+            $lpt->is_special_team_member = 0;
             $lpt->save();
 
             $team_member_special_list = TeamMemberSpecial::where("participant_team_id", $lpt->id)
