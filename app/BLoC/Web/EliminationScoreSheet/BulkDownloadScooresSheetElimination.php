@@ -132,6 +132,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                 $name = "";
                 $rank = "";
                 $club = "";
+                $city = "";
                 $elimination_member = ArcheryEventEliminationMember::find($v->elimination_member_id);
                 if ($elimination_member) {
                     $participant_member_id = $elimination_member->member_id;
@@ -243,6 +244,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                 $team_name = "";
                 $rank = "";
                 $club_name = "";
+                $city_name = "";
                 $array_athlete = [];
                 $bud_rest_number = "";
 
