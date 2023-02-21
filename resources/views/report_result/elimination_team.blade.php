@@ -79,7 +79,7 @@
                         <strong>Medal</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club</strong>
+                        <strong>Club/Kontingen</strong>
                     </th>
                 </tr>
                 @php
@@ -97,23 +97,34 @@
                                 $rowspan = count($data_report);
                             @endphp
                             <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
-                                {{ $data['category'] ? $data['category'] : '-' }}</td>
+                                {{ $data['category'] ? $data['category'] : '-' }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
-                                {{ $data['date'] ? $data['date'] : '-' }}</td>
+                                {{ $data['date'] ? $data['date'] : '-' }}
+                            </td>
                         @endif
                         <!-- start initiate medals -->
                         @if ($data['elimination_ranked'] == '1')
-                            <td style="text-align: left;border: 1px solid black;">Gold</td>
+                            <td style="text-align: left;border: 1px solid black;">
+                                Gold
+                            </td>
                         @elseif ($data['elimination_ranked'] == '2')
-                            <td style="text-align: left;border: 1px solid black;">Silver</td>
+                            <td style="text-align: left;border: 1px solid black;">
+                                Silver
+                            </td>
                         @elseif ($data['elimination_ranked'] == '3')
-                            <td style="text-align: left;border: 1px solid black;">Bronze </td>
+                            <td style="text-align: left;border: 1px solid black;">
+                                Bronze
+                            </td>
                         @else
-                            <td style="text-align: left;border: 1px solid black;">Bronze</td>
+                            <td style="text-align: left;border: 1px solid black;">
+                                Bronze
+                            </td>
                         @endif
                         <!-- end medals -->
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['team_name'] ? $data['team_name'] : '-' }}</td>
+                            {{ $data['team_name'] ? $data['team_name'] : '-' }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

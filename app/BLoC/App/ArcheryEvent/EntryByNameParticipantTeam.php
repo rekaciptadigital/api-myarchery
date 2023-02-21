@@ -21,15 +21,18 @@ class EntryByNameParticipantTeam extends Retrieval
         $is_entry_by_name = $parameters->get("is_entry_by_name");
         $member_list = $parameters->get("members");
 
-        $participant_team = ArcheryEventParticipant::where("id", $participant_team_id)
-            ->where("status", 1)
-            ->where("club_id", ">", 0)
-            ->where("type", "team")
+        $participant_team = ArcheryEventParticipant::select("archery_event_participants.*", "archery_events.with_contingent")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+            ->where("archery_event_participants.id", $participant_team_id)
+            ->where("archery_event_participants.status", 1)
+            ->where("archery_event_participants.type", "team")
             ->first();
 
         if (!$participant_team) {
             throw new BLoCException("participant team not found");
         }
+
+        $with_contingent = $participant_team->with_contingent;
 
         $category_team = ArcheryEventCategoryDetail::find($participant_team->event_category_id);
 
@@ -56,13 +59,19 @@ class EntryByNameParticipantTeam extends Retrieval
                     throw new BLoCException("category individu not found");
                 }
 
-                foreach ($member_list as $ml_key => $ml) {
+                foreach ($member_list as $ml) {
                     $participant_individu_id = $ml["participant_id"];
                     $participant_individu = ArcheryEventParticipant::where("id", $participant_individu_id)
                         ->where("status", 1)
-                        ->where("event_category_id", $category_individu->id)
-                        ->where("club_id", $participant_team->club_id)
-                        ->first();
+                        ->where("event_category_id", $category_individu->id);
+
+                    if ($with_contingent == 0) {
+                        $participant_individu->where("club_id", $participant_team->club_id);
+                    } else {
+                        $participant_individu->where("city_id", $participant_team->city_id);
+                    }
+
+                    $participant_individu =  $participant_individu->first();
 
                     if (!$participant_individu) {
                         throw new BLoCException("participant individu not found");
@@ -109,17 +118,27 @@ class EntryByNameParticipantTeam extends Retrieval
                     $query->where("id", $participant_individu_id_0)
                         ->orWhere("id", $participant_individu_id_1);
                 })->where("status", 1)
-                    ->where("event_category_id", $category_individu_male->id)
-                    ->where("club_id", $participant_team->club_id)
-                    ->get();
+                    ->where("event_category_id", $category_individu_male->id);
+
+                if ($with_contingent == 0) {
+                    $participant_individu_male->where("club_id", $participant_team->club_id);
+                } else {
+                    $participant_individu_male->where("city_id", $participant_team->city_id);
+                }
+                $participant_individu_male = $participant_individu_male->get();
 
                 $participant_individu_female = ArcheryEventParticipant::where(function ($query) use ($participant_individu_id_0, $participant_individu_id_1) {
                     $query->where("id", $participant_individu_id_0)
                         ->orWhere("id", $participant_individu_id_1);
                 })->where("status", 1)
-                    ->where("event_category_id", $category_individu_female->id)
-                    ->where("club_id", $participant_team->club_id)
-                    ->get();
+                    ->where("event_category_id", $category_individu_female->id);
+
+                if ($with_contingent == 0) {
+                    $participant_individu_female->where("club_id", $participant_team->club_id);
+                } else {
+                    $participant_individu_female->where("city_id", $participant_team->city_id);
+                }
+                $participant_individu_female = $participant_individu_female->get();
 
                 if ($participant_individu_male->count() != 1) {
                     throw new BLoCException("invalid participant male count");
@@ -129,7 +148,7 @@ class EntryByNameParticipantTeam extends Retrieval
                     throw new BLoCException("invalid participant female count");
                 }
 
-                foreach ($member_list as $ml_key => $ml) {
+                foreach ($member_list as $ml) {
                     $team_member_special = new TeamMemberSpecial();
                     $team_member_special->participant_individual_id = $ml["participant_id"];
                     $team_member_special->participant_team_id = $participant_team_id;

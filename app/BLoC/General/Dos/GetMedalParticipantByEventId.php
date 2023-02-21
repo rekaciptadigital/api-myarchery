@@ -56,7 +56,7 @@ class GetMedalParticipantByEventId extends Retrieval
 
                 $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
                 if (strtolower($category_team_type) == "team") {
-                    $data_qualification = ArcheryEventParticipant::getQualification($category_detail->id);
+                    $data_qualification = ArcheryEventParticipant::getQualification($category_detail);
                     if ($data_elimination_team == null && $data_qualification != []) {
                         $new_data_qualification_best_of_three = [];
 

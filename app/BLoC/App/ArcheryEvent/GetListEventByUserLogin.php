@@ -5,6 +5,7 @@ namespace App\BLoC\App\ArcheryEvent;
 use App\Models\Admin;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventMoreInformation;
+use App\Models\ArcheryEventParticipant;
 use App\Models\City;
 use App\Models\Provinces;
 use Illuminate\Support\Str;
@@ -26,14 +27,23 @@ class GetListEventByUserLogin extends Retrieval
 
         $user =  $user = Auth::guard('app-api')->user();
 
-        $datas = ArcheryEvent::join('archery_event_category_details', 'archery_event_category_details.event_id', '=', 'archery_events.id')
-            ->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
-            ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-            ->where('archery_event_participant_members.user_id', $user->id)
+        // $datas = ArcheryEvent::join('archery_event_category_details', 'archery_event_category_details.event_id', '=', 'archery_events.id')
+        //     ->join('participant_member_teams', 'participant_member_teams.event_category_id', '=', 'archery_event_category_details.id')
+        //     ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
+        //     ->where('archery_event_participant_members.user_id', $user->id)
+        //     ->distinct()
+        //     ->limit($limit)
+        //     ->offset($offset)
+        //     ->get(['archery_events.*']);
+
+        $datas = ArcheryEventParticipant::select("archery_events.*")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
+            ->where("archery_event_participants.user_id", $user->id)
+            ->where("archery_event_participants.status", 1)
             ->distinct()
             ->limit($limit)
             ->offset($offset)
-            ->get(['archery_events.*']);
+            ->get();
 
 
         $output = [];
