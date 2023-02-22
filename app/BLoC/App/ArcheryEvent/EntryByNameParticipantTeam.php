@@ -77,13 +77,17 @@ class EntryByNameParticipantTeam extends Retrieval
                         throw new BLoCException("participant individu not found");
                     }
 
-                    $team_member_special = TeamMemberSpecial::where("participant_individual_id", $participant_individu_id)
-                        ->where("participant_team_id", $participant_team_id)
+                    $team_member_special = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+                        ->where("team_member_special.participant_individual_id", $participant_individu_id)
+                        // ->where("team_member_special.participant_team_id", $participant_team_id)
+                        ->where("archery_event_participants.event_category_id", $participant_team->event_category_id)
                         ->first();
-                        
-                    if (!$team_member_special) {
-                        $team_member_special = new TeamMemberSpecial();
+
+                    if ($team_member_special) {
+                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lai");
                     }
+
+                    $team_member_special = new TeamMemberSpecial();
                     $team_member_special->participant_individual_id = $participant_individu_id;
                     $team_member_special->participant_team_id = $participant_team_id;
                     $team_member_special->save();
@@ -155,6 +159,16 @@ class EntryByNameParticipantTeam extends Retrieval
                 }
 
                 foreach ($member_list as $ml) {
+                    $team_member_special = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+                        ->where("team_member_special.participant_individual_id", $ml["participant_id"])
+                        // ->where("team_member_special.participant_team_id", $participant_team_id)
+                        ->where("archery_event_participants.event_category_id", $participant_team->event_category_id)
+                        ->first();
+
+                    if ($team_member_special) {
+                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lai");
+                    }
+
                     $team_member_special = new TeamMemberSpecial();
                     $team_member_special->participant_individual_id = $ml["participant_id"];
                     $team_member_special->participant_team_id = $participant_team_id;
