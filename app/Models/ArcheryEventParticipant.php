@@ -564,14 +564,16 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
             if ($check_participant_category_same->event_category_id == $value->event_category_id) {
               continue;
             }
           }
+
+
 
           $is_insert = 1;
         }
@@ -583,8 +585,8 @@ class ArcheryEventParticipant extends Model
           $male_rank["member"]["total"] = $male_rank["total"];
           $total = $total + $male_rank["total"];
           $list_data_members[] = $male_rank["member"];
+          unset($qualification_male[$k]);
         }
-        unset($qualification_male[$k]);
 
         if (count($list_data_members) == 1) {
           break;
@@ -621,10 +623,10 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
             if ($check_participant_category_same->event_category_id == $value->event_category_id) {
               continue;
             }
@@ -640,8 +642,8 @@ class ArcheryEventParticipant extends Model
           $female_rank["member"]["total"] = $female_rank["total"];
           $total = $total + $female_rank["total"];
           $list_data_members[] = $female_rank["member"];
+          unset($qualification_female[$ky]);
         }
-        unset($qualification_female[$ky]);
 
         if (count($list_data_members) == 2) {
           break;
@@ -774,10 +776,10 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
             if ($check_participant_category_same->event_category_id == $value->event_category_id) {
               continue;
             }
@@ -793,9 +795,9 @@ class ArcheryEventParticipant extends Model
           $member_rank["member"]["total"] = $member_rank["total"];
           $total = $total + $member_rank["total"];
           $list_data_members[] = $member_rank["member"];
+          unset($qualification_rank[$k]);
         }
 
-        unset($qualification_rank[$k]);
 
         if (count($list_data_members) == 3) {
           break;
