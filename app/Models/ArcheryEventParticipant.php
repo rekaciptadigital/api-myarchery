@@ -513,7 +513,7 @@ class ArcheryEventParticipant extends Model
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
           $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
+          foreach ($tem_member_special as $tms) {
             if ($tms->participant_individual_id != $male_rank["member"]["participant_id"]) {
               continue;
             } else {
