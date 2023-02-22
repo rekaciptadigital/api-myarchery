@@ -29,7 +29,8 @@ class ArcheryEventParticipantMember extends Model
 
     public static function updateHaveShootOffMember(ArcheryEventCategoryDetail $category)
     {
-        $archery_event_score = ArcheryScoring::getScoringRank($category->distance_id, $category->team_category_id, $category->competition_category_id, $category->age_category_id, $category->gender_category, 1, $category->event_id);
+        $session = $category->getArraySessionCategory();
+        $archery_event_score = ArcheryScoring::getScoringRankByCategoryId($category->id, 1, $session, false, null, false, 1);
 
         $max_arrow = ($category->count_stage * $category->count_shot_in_stage) * $category->session_in_qualification;
 
