@@ -512,27 +512,24 @@ class ArcheryEventParticipant extends Model
 
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms) {
-            if ($tms->participant_individual_id != $male_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $male_rank["member"]["participant_id"])
+            ->first();
+
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $male_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -543,6 +540,8 @@ class ArcheryEventParticipant extends Model
           $total = $total + $male_rank["total"];
           $list_data_members[] = $male_rank["member"];
           unset($qualification_male[$k]);
+        } else {
+          continue;
         }
 
         if (count($list_data_members) == 1) {
@@ -570,27 +569,23 @@ class ArcheryEventParticipant extends Model
 
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
-            if ($tms->participant_individual_id != $female_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $female_rank["member"]["participant_id"])
+            ->first();
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $female_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -601,6 +596,8 @@ class ArcheryEventParticipant extends Model
           $total = $total + $female_rank["total"];
           $list_data_members[] = $female_rank["member"];
           unset($qualification_female[$ky]);
+        } else {
+          continue;
         }
 
         if (count($list_data_members) == 2) {
@@ -724,27 +721,23 @@ class ArcheryEventParticipant extends Model
 
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
-            if ($tms->participant_individual_id != $member_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $member_rank["member"]["participant_id"])
+            ->first();
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $member_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -755,6 +748,8 @@ class ArcheryEventParticipant extends Model
           $total = $total + $member_rank["total"];
           $list_data_members[] = $member_rank["member"];
           unset($qualification_rank[$k]);
+        } else {
+          continue;
         }
 
 
