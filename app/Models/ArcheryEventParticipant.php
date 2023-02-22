@@ -555,7 +555,7 @@ class ArcheryEventParticipant extends Model
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
           $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
+          foreach ($tem_member_special as $tms) {
             if ($tms->participant_individual_id != $male_rank["member"]["participant_id"]) {
               continue;
             } else {
@@ -564,11 +564,13 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
 
           $is_insert = 1;
@@ -619,11 +621,13 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
 
           $is_insert = 1;
@@ -664,6 +668,7 @@ class ArcheryEventParticipant extends Model
 
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
+        "is_special_team_member" => $value->is_special_team_member,
         "club_id" => $value->club_id,
         "club_name" => $club_name,
         "city_id" => $value->city_id,
@@ -769,11 +774,13 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
 
           $is_insert = 1;
