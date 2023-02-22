@@ -522,15 +522,16 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
+
+
 
           $is_insert = 1;
         }
@@ -580,14 +581,13 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
 
           $is_insert = 1;
@@ -734,14 +734,13 @@ class ArcheryEventParticipant extends Model
           }
         } else {
           $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])
-            ->first();
+            ->get();
 
-          if ($check_is_exists) {
-            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
-            // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
-            //   continue;
-            // }
-            continue;
+          foreach ($check_is_exists as $cie_key => $cie) {
+            $check_participant_category_same = ArcheryEventParticipant::find($cie->participant_team_id);
+            if ($check_participant_category_same->event_category_id == $value->event_category_id) {
+              continue;
+            }
           }
 
           $is_insert = 1;
