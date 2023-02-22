@@ -541,8 +541,8 @@ class ArcheryEventParticipant extends Model
           $male_rank["member"]["total"] = $male_rank["total"];
           $total = $total + $male_rank["total"];
           $list_data_members[] = $male_rank["member"];
+          unset($qualification_male[$k]);
         }
-        unset($qualification_male[$k]);
 
         if (count($list_data_members) == 1) {
           break;
@@ -598,8 +598,8 @@ class ArcheryEventParticipant extends Model
           $female_rank["member"]["total"] = $female_rank["total"];
           $total = $total + $female_rank["total"];
           $list_data_members[] = $female_rank["member"];
+          unset($qualification_female[$ky]);
         }
-        unset($qualification_female[$ky]);
 
         if (count($list_data_members) == 2) {
           break;
@@ -751,9 +751,9 @@ class ArcheryEventParticipant extends Model
           $member_rank["member"]["total"] = $member_rank["total"];
           $total = $total + $member_rank["total"];
           $list_data_members[] = $member_rank["member"];
+          unset($qualification_rank[$k]);
         }
 
-        unset($qualification_rank[$k]);
 
         if (count($list_data_members) == 3) {
           break;
