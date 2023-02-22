@@ -5,10 +5,10 @@ namespace App\BLoC\App\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\TeamMemberSpecial;
-use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 
-class EntryByNameParticipantTeam extends Retrieval
+class EntryByNameParticipantTeam extends Transactional
 {
     public function getDescription()
     {
@@ -84,7 +84,7 @@ class EntryByNameParticipantTeam extends Retrieval
                         ->first();
 
                     if ($team_member_special) {
-                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lai");
+                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lain");
                     }
 
                     $team_member_special = new TeamMemberSpecial();
