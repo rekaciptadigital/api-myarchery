@@ -525,10 +525,11 @@ class ArcheryEventParticipant extends Model
             ->first();
 
           if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
             // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
             //   continue;
             // }
+            continue;
           }
 
           $is_insert = 1;
@@ -582,10 +583,11 @@ class ArcheryEventParticipant extends Model
             ->first();
 
           if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
             // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
             //   continue;
             // }
+            continue;
           }
 
           $is_insert = 1;
@@ -735,10 +737,11 @@ class ArcheryEventParticipant extends Model
             ->first();
 
           if ($check_is_exists) {
-            $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
+            // $check_participant_category_same = ArcheryEventParticipant::find($check_is_exists->participant_team_id);
             // if ($check_participant_category_same->event_category_id == $value->event_category_id) {
             //   continue;
             // }
+            continue;
           }
 
           $is_insert = 1;
