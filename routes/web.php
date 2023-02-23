@@ -421,6 +421,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'series', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download/user-points', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadUserSeriePoint']);
+            $router->post('/update-point-users', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateuserPoint']);
         });
 
         $router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {

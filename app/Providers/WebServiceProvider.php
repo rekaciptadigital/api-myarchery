@@ -47,6 +47,7 @@ use App\BLoC\Web\EventQualificationScheduleByEo\GetEventMemberQualificationSched
 use App\BLoC\App\EventQualificationSchedule\GetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\SetEventQualificationSchedule;
 use App\BLoC\App\EventQualificationSchedule\UnsetEventQualificationSchedule;
+use App\BLoC\App\Series\UpdateuserPoint;
 use App\BloC\General\AddAllCategoryEventToSeries;
 use App\BLoC\General\CategoryDetail\GetListCategoryByEventId;
 use App\BLoC\General\Event\GetDetailEventByIdGeneral;
@@ -257,6 +258,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getDownloadBaganElimination", GetDownloadBaganElimination::class);
         $this->registerService("setConfigTargetFace", SetConfigTargetFace::class);
         $this->registerService("getConfigTargetFace", GetConfigTargetFace::class);
+        $this->registerService("updateuserPoint", UpdateuserPoint::class);
         // =================================== end series 4==========================================
 
         // ============================= Event ==============================
