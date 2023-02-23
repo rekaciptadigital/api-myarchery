@@ -98,7 +98,7 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round2[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['team_name'] ?? 'bye';
-                    $round2result[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['result'];
+                    $round2result[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['result'] ?? "-";
                     $round2status[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'];
                 } else {
                     $round2result[] = '-';
