@@ -138,7 +138,8 @@ class ArcheryEventParticipant extends Model
         $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
 
         foreach ($competition_category as $competition) {
-          $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))
+          $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label as age_category")
+            ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
             ->where("event_id", $event_id)
             ->where("competition_category_id", $competition->competition_category)
             ->orderBy('competition_category_id', 'DESC')
