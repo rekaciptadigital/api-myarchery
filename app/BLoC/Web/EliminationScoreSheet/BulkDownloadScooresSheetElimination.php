@@ -270,14 +270,16 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                         }
                     }
 
-                    $club = ArcheryClub::find($participant->club_id);
-                    if (!$club) {
-                        throw new BLoCException("club not found");
+                    if ($with_contingent != 1) {
+                        $club = ArcheryClub::find($participant->club_id);
+                        if (!$club) {
+                            throw new BLoCException("club not found");
+                        }
+                        $club_name = $club->name;
                     }
 
                     $team_name = $elimination_group_tim->team_name;
                     $rank = $elimination_group_tim->elimination_ranked;
-                    $club_name = $club->name;
                     $bud_rest_number = $data->bud_rest != 0 ? $data->bud_rest . $data->target_face : "";
                 }
 
