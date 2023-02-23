@@ -10,7 +10,8 @@ class Provinces extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = "char";
-
+    public $timestamps = false;
+    
     public static function getDetailProvince($id)
     {
         $detail_province = null;
