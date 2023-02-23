@@ -10,8 +10,8 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupTeams;
-use App\Models\ArcheryMasterAgeCategory;
 use App\Models\City;
+use App\Models\Provinces;
 use DAI\Utils\Exceptions\BLoCException;
 
 class ClubRanked
@@ -395,6 +395,41 @@ class ClubRanked
                     = $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
             }
         }
+
+        if ($event->with_contingent == 1) {
+            $list_city = City::where("province_id", $event->province_id)->get();
+            foreach ($list_city as $lcity_key => $lcity_value) {
+                if (!isset($club_or_city_ids[$lcity_value->id])) {
+                    $club_or_city_ids[$lcity_value->id] = [];
+                    $club_or_city_ids[$lcity_value->id]["city_id"] = $lcity_value->id;
+                    $club_or_city_ids[$lcity_value->id]["club_id"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["total"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["gold"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["silver"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["bronze"] = 0;
+
+                    $club_or_city_ids[$lcity_value->id]["individu"]["total"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["individu"]["gold"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["individu"]["silver"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["individu"]["bronze"] = 0;
+
+                    $club_or_city_ids[$lcity_value->id]["team"]["total"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["team"]["gold"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["team"]["silver"] = 0;
+                    $club_or_city_ids[$lcity_value->id]["team"]["bronze"] = 0;
+
+                    foreach ($list_category as $lc_key => $lc_value) {
+                        if (!isset($cat_detail[$lc_value->id])) {
+                            $cat_detail[$lc_value->id] = $lc_value;
+                        }
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["gold"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["silver"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["bronze"] = 0;
+                    }
+                }
+            }
+        }
+
         // end blok dapatkan medali kualifikasi dan eliminasi beregu
         foreach ($club_or_city_ids as $k => $v) {
             // club
@@ -414,8 +449,13 @@ class ClubRanked
             // city
             $contingent = City::find($v["city_id"]);
             $contingent_name = "";
+            $contingent_logo = "";
             if ($contingent) {
                 $contingent_name = $contingent->name;
+                $province = Provinces::find($contingent->province_id);
+                if ($province) {
+                    $contingent_logo = $province->logo;
+                }
             }
 
             $total_gold = $v["gold"];
@@ -427,6 +467,7 @@ class ClubRanked
                 "club_logo" => $club_logo,
                 "club_city" => $club_city_name,
                 "contingent_name" => $contingent_name,
+                "contingent_logo" => $contingent_logo,
                 "detail_medal" => $v["detail_medal"],
                 "gold" => $total_gold,
                 "silver" => $total_silver,
