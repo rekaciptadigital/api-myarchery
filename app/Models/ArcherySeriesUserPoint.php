@@ -23,18 +23,26 @@ class ArcherySeriesUserPoint extends Model
     protected function setPoint($member_id, $type, $pos)
     {
         $member = ArcheryEventParticipantMember::find($member_id);
-        if (!$member) return false;
+        if (!$member) {
+            throw new BLoCException("member not found");
+        }
 
         $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
-        if (!$participant) return false;
+        if (!$participant) {
+            throw new BLoCException("participant not found");
+        }
 
         $user_id = $participant->user_id;
         $category_id = $participant->event_category_id;
         $category = ArcheryEventCategoryDetail::find($category_id);
-        if (!$category) return false;
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
 
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
-        if (!$event_serie) return false;
+        if (!$event_serie) {
+            throw new BLoCException("event series not found");
+        }
 
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
             ->where("competition_category_id", $category->competition_category_id)
@@ -43,19 +51,26 @@ class ArcherySeriesUserPoint extends Model
             ->where("serie_id", $event_serie->serie_id)
             ->first();
 
+        if (!$archerySeriesCategory) {
+            throw new BLoCException("archerySeriesCategory not found");
+        }
         $series = ArcherySerie::find($event_serie->serie_id);
         if (!$series) {
-            return false;
+            throw new BLoCException("series not found");
         }
 
-        if (!$archerySeriesCategory) return false;
+        if (!$archerySeriesCategory) {
+            throw new BLoCException("archerySeriesCategory not found");
+        }
         $t = 1;
         if ($type == "elimination") {
             $t = 2;
         }
 
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
-        if (!$point) return false;
+        if (!$point) {
+            throw new BLoCException("point not found");
+        }
 
         $is_series = 1;
         if ($series->type == 1) {
