@@ -32,8 +32,11 @@ class GetListCategorySeries extends Retrieval
 
 
         $series_category = ArcherySeriesCategory::select("archery_serie_categories.*", "archery_event_series.event_id as event_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_serie_categories.team_category_id")
             ->leftJoin("archery_event_series", "archery_event_series.id", '=', 'archery_serie_categories.serie_id')
             ->where("archery_serie_categories.serie_id", $series->id)
+            ->whereIn("archery_serie_categories.team_category_id", ["individu male", "individu female"])
+            ->orderBy("archery_master_team_categories.short")
             ->get();
 
         foreach ($series_category as $sc) {
