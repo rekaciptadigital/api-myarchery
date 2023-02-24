@@ -13,7 +13,6 @@ use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
 use App\BLoC\General\Support\UpdateLogoCity;
-use App\BLoC\General\Support\UpdateLogoProvince;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
 use Illuminate\Support\ServiceProvider;
