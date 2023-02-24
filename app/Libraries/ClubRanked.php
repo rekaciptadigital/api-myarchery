@@ -10,6 +10,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupTeams;
+use App\Models\ArcheryScoring;
 use App\Models\City;
 use App\Models\Provinces;
 use DAI\Utils\Exceptions\BLoCException;
@@ -37,6 +38,7 @@ class ClubRanked
         // start blok dapatkan medali kualifikasi dan eliminasi individu
         $members = ArcheryEventParticipantMember::select(
             "archery_event_elimination_members.*",
+            "archery_event_participant_members.id as participant_member_id",
             "archery_event_participants.club_id",
             "archery_event_participants.city_id",
             "archery_event_participants.event_category_id",
@@ -56,7 +58,7 @@ class ClubRanked
             "archery_master_age_categories.id",
             "=",
             "archery_event_category_details.age_category_id"
-        )->join(
+        )->leftJoin(
             "archery_event_elimination_members",
             "archery_event_participant_members.id",
             "=",
@@ -156,26 +158,45 @@ class ClubRanked
         foreach ($members as $key => $value) {
             $category_detail = $cat_detail[$value->event_category_id];
 
-            if ($event->with_contingent != 1) {
-                $medal_qualification = self::getMedalByPos($value->position_qualification);
-                if (!empty($medal_qualification)) {
+            if ($value->member_id != null) {
+                $medal_elimination = self::getMedalByPos($value->elimination_ranked);
+                if (!empty($medal_elimination)) {
                     $club_or_city_ids[$value[$tag_ranked]]["total"] = $club_or_city_ids[$value[$tag_ranked]]["total"] + 1;
-                    $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] + 1;
-                    $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] = $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
-                    $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] + 1;
-                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] =
-                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] + 1;
+                    $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] =  $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] + 1;
+                    $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] =  $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
+                    $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] + 1;
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] =
+                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
                 }
-            }
 
-            $medal_elimination = self::getMedalByPos($value->elimination_ranked);
-            if (!empty($medal_elimination)) {
-                $club_or_city_ids[$value[$tag_ranked]]["total"] = $club_or_city_ids[$value[$tag_ranked]]["total"] + 1;
-                $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] =  $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] =  $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] =
-                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
+                if ($event->with_contingent == 1) {
+                    $medal_qualification = self::getMedalByPos($value->position_qualification);
+                    if (!empty($medal_qualification)) {
+                        $club_or_city_ids[$value[$tag_ranked]]["total"] = $club_or_city_ids[$value[$tag_ranked]]["total"] + 1;
+                        $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] + 1;
+                        $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] = $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
+                        $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] + 1;
+                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] =
+                            $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] + 1;
+                    }
+                }
+            } else {
+                $session = $category_detail->getArraySessionCategory();
+                $scoring_qualification_individu = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 1, $session, false, null, true, 1);
+                foreach ($scoring_qualification_individu as $key_scoring_qualification => $value_scoring_qualification) {
+                    $pos = $key_scoring_qualification + 1;
+                    if ($value_scoring_qualification["member"]->id == $value->member_id) {
+                        $medal_qualification = self::getMedalByPos($pos);
+                        if (!empty($medal_qualification)) {
+                            $club_or_city_ids[$value[$tag_ranked]]["total"] = $club_or_city_ids[$value[$tag_ranked]]["total"] + 1;
+                            $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] + 1;
+                            $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] = $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
+                            $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] + 1;
+                            $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] =
+                                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] + 1;
+                        }
+                    }
+                }
             }
         }
         // end blok dapatkan medali kualifikasi dan eliminasi individu
@@ -230,85 +251,88 @@ class ClubRanked
                 ->where("team_category_id", "individu female")
                 ->first();
 
+            $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
+            $elimination_individu_female = ArcheryEventElimination::where("event_category_id", $category_detail_femaie->id)->first();
+
             // start dapatin rank kualifikasi beregu
-            if ($event->with_contingent != 1) {
-                if ($team->team_category_id == "mix_team") {
-                    if ($category_detail_male && $category_detail_femaie) {
-                        $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
-                        $elimination_individu_female = ArcheryEventElimination::where("event_category_id", $category_detail_femaie->id)->first();
+            if ($team->team_category_id == "mix_team") {
+                if ($category_detail_male && $category_detail_femaie) {
+                    if ($event->with_contingent != 1) {
                         if (!$elimination_individu_male || !$elimination_individu_female) {
                             continue;
+                        }
+                    }
+                } else {
+                    continue;
+                }
+
+                $mix_ranked = ArcheryEventParticipant::mixTeamBestOfThree($team);
+                $mix_pos = 0;
+                foreach ($mix_ranked as $mr => $mrank) {
+                    $mix_pos = $mix_pos + 1;
+                    if ($mrank["total"] < 1) {
+                        continue;
+                    }
+
+                    $medal_mix_team = self::getMedalByPos($mix_pos);
+                    if (!empty($medal_mix_team)) {
+                        $club_or_city_ids[$mrank[$tag_ranked]]["total"] = $club_or_city_ids[$mrank[$tag_ranked]]["total"] + 1;
+                        $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] + 1;
+                        $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] + 1;
+                        $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] + 1;
+                        $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] =
+                            $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] + 1;
+                    }
+
+                    if ($mix_pos >= 3) {
+                        break;
+                    }
+                }
+            } else {
+                if ($team->team_category_id == "male_team") {
+                    if ($category_detail_male) {
+                        if ($event->with_contingent != 1) {
+                            if (!$elimination_individu_male) {
+                                continue;
+                            }
                         }
                     } else {
                         continue;
                     }
+                }
 
-                    $mix_ranked = ArcheryEventParticipant::mixTeamBestOfThree($team);
-                    $mix_pos = 0;
-                    foreach ($mix_ranked as $mr => $mrank) {
-                        $mix_pos = $mix_pos + 1;
-                        if ($mrank["total"] < 1) {
-                            continue;
-                        }
-
-                        $medal_mix_team = self::getMedalByPos($mix_pos);
-                        if (!empty($medal_mix_team)) {
-                            $club_or_city_ids[$mrank[$tag_ranked]]["total"] = $club_or_city_ids[$mrank[$tag_ranked]]["total"] + 1;
-                            $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] + 1;
-                            $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] + 1;
-                            $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] + 1;
-                            $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] =
-                                $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] + 1;
-                        }
-
-                        if ($mix_pos >= 3) {
-                            break;
-                        }
-                    }
-                } else {
-                    if ($team->team_category_id == "male_team") {
-                        if ($category_detail_male) {
-                            $elimination_individu_male = ArcheryEventElimination::where("event_category_id", $category_detail_male->id)->first();
-                            if (!$elimination_individu_male) {
-                                continue;
-                            }
-                        } else {
-                            continue;
-                        }
-                    }
-
-                    if ($team->team_category_id == "female_team") {
-                        if ($category_detail_femaie) {
-                            $elimination_individu_female = ArcheryEventElimination::where("event_category_id", $category_detail_femaie->id)->first();
+                if ($team->team_category_id == "female_team") {
+                    if ($category_detail_femaie) {
+                        if ($event->with_contingent != 1) {
                             if (!$elimination_individu_female) {
                                 continue;
                             }
-                        } else {
-                            continue;
                         }
+                    } else {
+                        continue;
+                    }
+                }
+
+                $ranked = ArcheryEventParticipant::teamBestOfThree($team);;
+                $pos = 0;
+                foreach ($ranked as $r => $rank) {
+                    $pos = $pos + 1;
+                    if ($rank["total"] < 1) {
+                        continue;
                     }
 
-                    $ranked = ArcheryEventParticipant::teamBestOfThree($team);;
-                    $pos = 0;
-                    foreach ($ranked as $r => $rank) {
-                        $pos = $pos + 1;
-                        if ($rank["total"] < 1) {
-                            continue;
-                        }
+                    $medal_team = self::getMedalByPos($pos);
+                    if (!empty($medal_team)) {
+                        $club_or_city_ids[$rank[$tag_ranked]]["total"] = $club_or_city_ids[$rank[$tag_ranked]]["total"] + 1;
+                        $club_or_city_ids[$rank[$tag_ranked]][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]][$medal_team] + 1;
+                        $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] + 1;
+                        $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] + 1;
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team]
+                            = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] + 1;
+                    }
 
-                        $medal_team = self::getMedalByPos($pos);
-                        if (!empty($medal_team)) {
-                            $club_or_city_ids[$rank[$tag_ranked]]["total"] = $club_or_city_ids[$rank[$tag_ranked]]["total"] + 1;
-                            $club_or_city_ids[$rank[$tag_ranked]][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]][$medal_team] + 1;
-                            $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] + 1;
-                            $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] + 1;
-                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team]
-                                = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] + 1;
-                        }
-
-                        if ($pos >= 3) {
-                            break;
-                        }
+                    if ($pos >= 3) {
+                        break;
                     }
                 }
             }
