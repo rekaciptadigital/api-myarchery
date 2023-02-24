@@ -290,8 +290,8 @@ class ClubRanked
                         $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] + 1;
                         $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] =
                             $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] + 1;
-                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] =
-                            $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] + 1;
+                        $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] =
+                            $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] + 1;
                     }
 
                     if ($mix_pos >= 3) {
@@ -339,8 +339,8 @@ class ClubRanked
                         $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] + 1;
                         $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team]
                             = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] + 1;
-                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] =
-                            $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] + 1;
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] + 1;
                     }
 
                     if ($pos >= 3) {
