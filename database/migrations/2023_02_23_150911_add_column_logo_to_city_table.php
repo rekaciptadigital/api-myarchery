@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnLogoToProvinceTable extends Migration
+class AddColumnLogoToCityTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddColumnLogoToProvinceTable extends Migration
      */
     public function up()
     {
-        Schema::table('provinces', function (Blueprint $table) {
+        Schema::table('cities', function (Blueprint $table) {
             $table->string("logo")->nullable();
         });
     }
@@ -25,7 +25,7 @@ class AddColumnLogoToProvinceTable extends Migration
      */
     public function down()
     {
-        Schema::table('provinces', function (Blueprint $table) {
+        Schema::table('cities', function (Blueprint $table) {
             $table->dropColumn("logo");
         });
     }

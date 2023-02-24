@@ -466,10 +466,7 @@ class ClubRanked
             $contingent_logo = "";
             if ($contingent) {
                 $contingent_name = $contingent->name;
-                $province = Provinces::find($contingent->province_id);
-                if ($province) {
-                    $contingent_logo = $province->logo;
-                }
+                $contingent_logo = $contingent->logo;
             }
 
             $total_gold = $v["gold"];

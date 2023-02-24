@@ -12,6 +12,7 @@ use App\BLoC\General\GetListTabCategoryByEventId;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\General\Support\UpdateLogoCity;
 use App\BLoC\General\Support\UpdateLogoProvince;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
@@ -33,7 +34,7 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("getListTabCategoryByEventId", GetListTabCategoryByEventId::class);
         $this->registerService("getParticipantScoreEliminationSelectionLiveScore", GetParticipantScoreEliminationSelectionLiveScore::class);
         $this->registerService("getParticipantScoreEventSelectionLiveScore", GetParticipantScoreEventSelectionLiveScore::class);
-        $this->registerService("updateLogoProvince", UpdateLogoProvince::class);
+        $this->registerService("updateLogoCity", UpdateLogoCity::class);
 
         // ==================================== Fast Open 3 ========================================
         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
