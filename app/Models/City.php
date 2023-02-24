@@ -10,6 +10,7 @@ class City extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = "char";
+    public $timestamps = false;
 
 
     public static function getDetailCity($id)
