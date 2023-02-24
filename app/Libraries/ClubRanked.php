@@ -451,10 +451,12 @@ class ClubRanked
             $club_name = "";
             $club_logo = "";
             $club_city_name = "";
+            $club_id = "";
             if ($club) {
                 $club_name = $club->name;
                 $club_logo = $club->logo;
                 $city_club = City::find($club->city);
+                $club_id = $club->id;
                 if ($city_club) {
                     $club_city_name = $city_club->name;
                 }
@@ -464,9 +466,11 @@ class ClubRanked
             $contingent = City::find($v["city_id"]);
             $contingent_name = "";
             $contingent_logo = "";
+            $contingent_id = "";
             if ($contingent) {
                 $contingent_name = $contingent->name;
                 $contingent_logo = $contingent->logo;
+                $contingent_id = $contingent->id;
             }
 
             $total_gold = $v["gold"];
@@ -475,6 +479,8 @@ class ClubRanked
             $output[] = [
                 "with_contingent" => $event->with_contingent,
                 "club_name" => $club_name,
+                "club_id" => $club_id,
+                "contingent_id" => $contingent_id,
                 "club_logo" => $club_logo,
                 "club_city" => $club_city_name,
                 "contingent_name" => $contingent_name,
