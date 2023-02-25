@@ -216,7 +216,7 @@ class ArcherySeriesUserPoint extends Model
                 ->where("distance_id", $category_series->distance_id)
                 ->where("team_category_id", $category_series->team_category_id)
                 ->where("status", 1)
-                ->where("is_present", 1)
+                // ->where("is_present", 1)
                 ->where("user_id", $value->user_id)
                 ->first();
 
