@@ -221,6 +221,14 @@ use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
+use App\BLoC\Web\ClassificationMembers\GetParentClassification;
+use App\BLoC\Web\ClassificationMembers\GetChildrenClassification;
+use App\BLoC\Web\ClassificationMembers\AddClassificationFromAdmin;
+use App\BLoC\Web\ClassificationMembers\AddClassificationChildren;
+use App\BLoC\Web\ClassificationMembers\DeleteClassificationChildren;
+use App\BLoC\Web\ClassificationMembers\DeleteClassificationParent;
+use App\BLoC\Web\ClassificationMembers\UpdateClassificationChildren;
+use App\BLoC\Web\ClassificationMembers\UpdateClassificationParent;
 
 // End of Archery Enterprise Section //
 
@@ -427,6 +435,16 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getIdCardByCategory", GetIdCardByCategory::class);
         $this->registerService("getIdCardByBudrest", GetIdCardByBudrest::class);
         $this->registerService("getIdCardByClub", GetIdCardByClub::class);
+
+        // ========================== Classification Members ==============================
+        $this->registerService("getParentClassification", GetParentClassification::class);
+        $this->registerService("getChildrenClassification", GetChildrenClassification::class);
+        $this->registerService("addClassificationFromAdmin", AddClassificationFromAdmin::class);
+        $this->registerService("addClassificationChildren", AddClassificationChildren::class);
+        $this->registerService("deleteClassificationParent", DeleteClassificationParent::class);
+        $this->registerService("deleteClassificationChildren", DeleteClassificationChildren::class);
+        $this->registerService("updateClassificationParent", UpdateClassificationParent::class);
+        $this->registerService("updateClassificationChildren", UpdateClassificationChildren::class);
 
         // ================================== Schedule full day ================================
         $this->registerService("getScheduleFullDay", GetScheduleFullDay::class);

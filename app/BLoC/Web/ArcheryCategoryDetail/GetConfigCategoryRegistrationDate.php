@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ClassificationEventRegisters;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -32,7 +33,7 @@ class GetConfigCategoryRegistrationDate extends Transactional
             "start" => $event->event_start_datetime,
             "end" => $event->event_end_datetime,
         ];
-        
+
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {
@@ -60,6 +61,17 @@ class GetConfigCategoryRegistrationDate extends Transactional
             }
             $response["list_config"][] = $c;
         }
+
+
+        $classification_list = ClassificationEventRegisters::where('event_id', '=', $event_id)->get();
+
+        $enable_classification = 0;
+        if ($classification_list->count() > 0) {
+            $enable_classification = 1;
+        }
+
+        $response['is_active_classification'] = $enable_classification;
+        $response['classification_list'] = $classification_list;
 
         return $response;
     }
