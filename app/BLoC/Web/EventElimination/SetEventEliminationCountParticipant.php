@@ -6,6 +6,7 @@ use DAI\Utils\Abstracts\Transactional;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\MemberRank;
 use DAI\Utils\Exceptions\BLoCException;
 
 class SetEventEliminationCountParticipant extends Transactional
@@ -58,6 +59,21 @@ class SetEventEliminationCountParticipant extends Transactional
         $category->update([
             "default_elimination_count" => $parameters->get("count_elimination_participant")
         ]);
+
+        // update rank member
+        MemberRank::updateMemberRank($category);
+
+        // reset have_coint_tost_member
+        ArcheryEventParticipantMember::resetHaveCoinTostMember($category);
+
+        // update have coint tost member
+        ArcheryEventParticipantMember::updateHaveCoinTostMember($category);
+
+        // reset have_shoot_off member
+        ArcheryEventParticipantMember::resetHaveShootOffMember($category);
+
+        // update have_shoot_off member
+        ArcheryEventParticipantMember::updateHaveShootOffMember($category);
 
         return "success";
     }

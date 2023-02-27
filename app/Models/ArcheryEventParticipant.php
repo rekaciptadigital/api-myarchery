@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\ClubRanked;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -69,6 +70,154 @@ class ArcheryEventParticipant extends Model
     $count_participant_individu = $count_participant_individu->get()->count();
 
     return (int)$count_participant_individu;
+  }
+  
+  public static function getElimination(ArcheryEventCategoryDetail $category_detail)
+  {
+
+    $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
+    if (!$team_category) {
+      throw new BLoCException("team category not found");
+    }
+
+    if (strtolower($team_category->type) == "team") {
+      $data = ArcheryEventParticipant::getTemplateTeam($category_detail);
+    }
+
+    if (strtolower($team_category->type) == "individual") {
+      $data = ArcheryEventParticipant::getTemplateIndividu($category_detail);
+    }
+
+    return $data;
+  }
+
+  public static function getMedalStanding($event_id)
+  {
+    $data = ClubRanked::getEventRanked($event_id, 1, null);
+
+    if (count($data) > 0) {
+      $title_header = array();
+      $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))
+        ->where("event_id", $event_id)
+        ->orderBy('competition_category_id', 'DESC')
+        ->get();
+
+      foreach ($competition_category as $competition) {
+        $age_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct age_category_id as age_category'))->where("event_id", $event_id)
+          ->where("competition_category_id", $competition->competition_category)
+          ->orderBy('competition_category_id', 'DESC')
+          ->get();
+
+        foreach ($age_category as $age) {
+          $master_age_category = ArcheryMasterAgeCategory::find($age->age_category);
+          $title_header['category'][$competition->competition_category]['age_category'][$master_age_category->label] = [
+            'gold' => null,
+            'silver' => null,
+            'bronze' => null,
+          ];
+        }
+
+        // colspan header title
+        $count_colspan = [
+          'count_colspan' => count($age_category) * 3
+        ];
+        $count_rowspan = [
+          "count_rowspan" => count($age_category)
+        ];
+        array_push($title_header['category'][$competition->competition_category], $count_colspan, $count_rowspan);
+      }
+
+      $result = [];
+      $detail_club_with_medal_response = [];
+      foreach ($data as $key => $d) {
+        $detail_club_with_medal_response["club_name"] = $d["club_name"];
+        $detail_club_with_medal_response["contingent_name"] = $d["contingent_name"];
+        $detail_club_with_medal_response["total_gold"] = $d["gold"];
+        $detail_club_with_medal_response["total_silver"] = $d["silver"];
+        $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
+        $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
+
+        foreach ($competition_category as $competition) {
+          $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label as age_category")
+            ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
+            ->where("event_id", $event_id)
+            ->where("competition_category_id", $competition->competition_category)
+            ->orderBy('competition_category_id', 'DESC')
+            ->get();
+
+          foreach ($age_category as $age) {
+            $gold = 0;
+            $silver = 0;
+            $bronze = 0;
+
+            if (isset($d["detail_medal"]) && isset($d["detail_medal"]["category"]) && isset($d["detail_medal"]["category"][$competition->competition_category][$age->age_category])) {
+              $gold += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["gold"] ?? 0;
+              $silver += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["silver"] ?? 0;
+              $bronze += $d["detail_medal"]["category"][$competition->competition_category][$age->age_category]["bronze"] ?? 0;
+            };
+
+            $detail_club_with_medal_response['category'][$competition->competition_category]['age_category'][$age->age_category] = [
+              "gold" => $gold,
+              "silver" => $silver,
+              "bronze" => $bronze
+            ];
+          }
+        }
+        $medal_array = [];
+        foreach ($detail_club_with_medal_response["category"] as $c) {
+          foreach ($c as $a) {
+            foreach ($a as $s) {
+              foreach ($s as $b) {
+                array_push($medal_array, $b);
+              }
+            }
+          }
+        }
+        $detail_club_with_medal_response["medal_array"] = $medal_array;
+        array_push($result, $detail_club_with_medal_response);
+      }
+
+
+      // start: total medal emas, perak, perunggu dari setiap kategori semua klub
+      $array_of_total_medal_by_category = [];
+      $total_array_category = count($result[0]['medal_array']);
+      for ($i = 0; $i < $total_array_category; $i++) {
+        $total_medal_by_category = 0;
+        for ($j = 0; $j < count($result); $j++) {
+          $total_medal_by_category += $result[$j]['medal_array'][$i];
+        }
+        array_push($array_of_total_medal_by_category, $total_medal_by_category);
+      }
+      // end: total medal emas, perak, perunggu dari setiap kategori semua klub
+
+      // start: total medal emas, perak, perunggu secara keseluruhan dari semua klub
+      $array_of_total_medal_by_category_all_club = [];
+      $total_medal_by_category_gold = 0;
+      $total_medal_by_category_silver = 0;
+      $total_medal_by_category_bronze = 0;
+      for ($k = 0; $k < count($result); $k++) {
+        $total_medal_by_category_gold += $result[$k]['total_gold'];
+        $total_medal_by_category_silver += $result[$k]['total_silver'];
+        $total_medal_by_category_bronze += $result[$k]['total_bronze'];
+      }
+      $array_of_total_medal_by_category_all_club = [
+        'gold' => $total_medal_by_category_gold,
+        'silver' => $total_medal_by_category_silver,
+        'bronze' => $total_medal_by_category_bronze
+      ];
+      // end: total medal emas, perak, perunggu secara keseluruhan dari semua klub 
+
+      $response = [
+        'title_header' => $title_header,
+        'datatable' => $result,
+        'total_medal_by_category' => $array_of_total_medal_by_category,
+        'total_medal_by_category_all_club' => $array_of_total_medal_by_category_all_club
+      ];
+
+      return $response;
+    } else {
+      return [];
+    }
   }
 
   // save participant
@@ -285,14 +434,10 @@ class ArcheryEventParticipant extends Model
     ]);
   }
 
-  public static function getQualification($category_id)
+  public static function getQualification(ArcheryEventCategoryDetail $category)
   {
     $score_type = 1;
     $name = null;
-    $category = ArcheryEventCategoryDetail::find($category_id);
-    if (!$category) {
-      throw new BLoCException("category not found");
-    }
 
     $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
     if (!$team_category) {
@@ -308,8 +453,7 @@ class ArcheryEventParticipant extends Model
     }
 
     if ($category->category_team == "Individual") {
-      // $data = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreQualificationV2')->getListMemberScoringIndividual($category_detail->id, $score_type, $session, $name, $event->id);
-      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name);
+      $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name, false, 1);
 
       return $qualification_member;
     }
@@ -320,12 +464,14 @@ class ArcheryEventParticipant extends Model
       } else {
         $data = self::teamBestOfThree($category);
       }
+
+      return $data;
     }
 
-    return $data;
+    throw new BLoCException("invalid");
   }
 
-  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
+  public static function mixTeamBestOfThree(ArcheryEventCategoryDetail $category_detail_team, int $is_live_score = 0)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -347,7 +493,7 @@ class ArcheryEventParticipant extends Model
     for ($i = 1; $i <= $category_detail_male->session_in_qualification; $i++) {
       $session_category_detail_male[] = $i;
     }
-    $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id, 1, $session_category_detail_male);
+    $qualification_male = ArcheryScoring::getScoringRankByCategoryId($category_detail_male->id, 1, $session_category_detail_male, false, null, false, 1);
 
     $category_detail_female = ArcheryEventCategoryDetail::where("event_id", $category_detail_team->event_id)
       ->where("age_category_id", $category_detail_team->age_category_id)
@@ -366,7 +512,7 @@ class ArcheryEventParticipant extends Model
       $session_category_detail_female[] = $i;
     }
 
-    $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id, 1, $session_category_detail_female);
+    $qualification_female = ArcheryScoring::getScoringRankByCategoryId($category_detail_female->id, 1, $session_category_detail_female, false, null, false, 1);
 
     $participant_club_or_city = [];
     $sequence = [];
@@ -401,30 +547,32 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($male_rank["total"]  < 1 && $male_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($male_rank["total"]  < 1 && $male_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
 
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
-            if ($tms->participant_individual_id != $male_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $male_rank["member"]["participant_id"])
+            ->first();
+
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $male_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $male_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -434,8 +582,10 @@ class ArcheryEventParticipant extends Model
           $male_rank["member"]["total"] = $male_rank["total"];
           $total = $total + $male_rank["total"];
           $list_data_members[] = $male_rank["member"];
+          unset($qualification_male[$k]);
+        } else {
+          continue;
         }
-        unset($qualification_male[$k]);
 
         if (count($list_data_members) == 1) {
           break;
@@ -453,29 +603,32 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($female_rank["total"]  < 1 && $female_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($female_rank["total"]  < 1 && $female_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
+
+
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
-            if ($tms->participant_individual_id != $female_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $female_rank["member"]["participant_id"])
+            ->first();
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $female_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $female_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -485,8 +638,10 @@ class ArcheryEventParticipant extends Model
           $female_rank["member"]["total"] = $female_rank["total"];
           $total = $total + $female_rank["total"];
           $list_data_members[] = $female_rank["member"];
+          unset($qualification_female[$ky]);
+        } else {
+          continue;
         }
-        unset($qualification_female[$ky]);
 
         if (count($list_data_members) == 2) {
           break;
@@ -513,6 +668,7 @@ class ArcheryEventParticipant extends Model
 
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
+        "is_special_team_member" => $value->is_special_team_member,
         "club_id" => $value->club_id,
         "club_name" => $club_name,
         "city_id" => $value->city_id,
@@ -539,7 +695,7 @@ class ArcheryEventParticipant extends Model
     return $new_array;
   }
 
-  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team)
+  public static function teamBestOfThree(ArcheryEventCategoryDetail $category_detail_team, int $is_live_score = 0)
   {
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
@@ -562,7 +718,7 @@ class ArcheryEventParticipant extends Model
     for ($i = 0; $i < $category_detail_individu->session_in_qualification; $i++) {
       $session[] = $i + 1;
     }
-    $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_individu->id, 1, $session);
+    $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category_detail_individu->id, 1, $session, false, null, false, 1);
 
     $participant_club_or_city = [];
     $sequence = [];
@@ -600,30 +756,31 @@ class ArcheryEventParticipant extends Model
           }
         }
 
-        if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
-          continue;
+        if ($is_live_score != 1) {
+          if ($member_rank["total"]  < 1 && $member_rank["total_arrow"] == 0) {
+            continue;
+          }
         }
 
         $is_insert = 0;
         if ($value->is_special_team_member == 1) {
-          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)->get();
-          foreach ($tem_member_special as $tms_key => $tms) {
-            if ($tms->participant_individual_id != $member_rank["member"]["participant_id"]) {
-              continue;
-            } else {
-              $is_insert = 1;
-            }
+          $tem_member_special = TeamMemberSpecial::where("participant_team_id", $value->id)
+            ->where("participant_individual_id", $member_rank["member"]["participant_id"])
+            ->first();
+          if ($tem_member_special) {
+            $is_insert = 1;
           }
         } else {
-          $check_is_exists = TeamMemberSpecial::where("participant_individual_id", $member_rank["member"]["participant_id"])
-            ->where("participant_team_id", $value->id)
+          $check_is_exists = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+            ->where("team_member_special.participant_individual_id", $member_rank["member"]["participant_id"])
+            ->where("archery_event_participants.event_category_id", $value->event_category_id)
             ->first();
 
           if ($check_is_exists) {
-            continue;
+            $is_insert = 0;
+          } else {
+            $is_insert = 1;
           }
-
-          $is_insert = 1;
         }
 
         if ($is_insert == 1) {
@@ -633,9 +790,11 @@ class ArcheryEventParticipant extends Model
           $member_rank["member"]["total"] = $member_rank["total"];
           $total = $total + $member_rank["total"];
           $list_data_members[] = $member_rank["member"];
+          unset($qualification_rank[$k]);
+        } else {
+          continue;
         }
 
-        unset($qualification_rank[$k]);
 
         if (count($list_data_members) == 3) {
           break;
@@ -697,10 +856,20 @@ class ArcheryEventParticipant extends Model
     $category_id = null;
     $elimination_rank = 0;
 
-    $members = ArcheryEventEliminationMember::select("*", "archery_event_category_details.id as category_details_id", "archery_event_participant_members.id as participant_member_id", "cities.name as city_name", "archery_event_participant_members.name as member_name", DB::RAW('date(archery_event_elimination_members.created_at) as date'))
+    $members = ArcheryEventEliminationMember::select(
+      "*",
+      "archery_event_category_details.id as category_details_id",
+      "archery_event_participant_members.id as participant_member_id",
+      "cities.name as city_name",
+      "users.name as member_name",
+      "archery_clubs.name as club_name",
+      DB::RAW('date(archery_event_elimination_members.created_at) as date')
+    )
       ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
       ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+      ->join("users", "users.id", "=", "archery_event_participants.user_id")
       ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
+      ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
       ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
       ->where("archery_event_category_details.id", $category_detail_id)
       ->where("archery_event_participants.event_id", $event_id)
@@ -751,12 +920,8 @@ class ArcheryEventParticipant extends Model
         $athlete = $member->member_name;
         $date = $member->date;
 
-        $club = ArcheryClub::find($member->club_id);
-        if (!$club) {
-          $club = '';
-        } else {
-          $club = $club->name;
-        }
+        $club = $member->club_name;
+        $city = $member->city_name;
 
         $category = ArcheryEventCategoryDetail::find($member->category_details_id);
         $session = [];
@@ -768,13 +933,13 @@ class ArcheryEventParticipant extends Model
         $data_report[] = array(
           "athlete" => $athlete,
           "club" => $club,
+          "city" => $city,
           "category" => $categoryLabel,
           "medal" => $medal,
           "date" => $date,
           "scoring" => $scoring,
           "elimination_rank" => $elimination_rank,
           "participant_id" => $member->archery_event_participant_id,
-          "city_name" => $member->city_name,
         );
 
         $category_id = $member->category_details_id;
@@ -898,7 +1063,7 @@ class ArcheryEventParticipant extends Model
       $updated = false;
       $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
     } else {
-      $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true);
+      $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true, 1);
       $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
     }
     $template["updated"] = $updated;
@@ -1030,28 +1195,34 @@ class ArcheryEventParticipant extends Model
   {
     $elimination_group = ArcheryEventEliminationGroup::where('category_id', $category_detail_id)->first();
     if ($elimination_group) {
-      $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))->where('elimination_group_id', $elimination_group->id)->get();
+      $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))
+        ->where('elimination_group_id', $elimination_group->id)
+        ->get();
 
       $data = array();
       foreach ($elimination_group_match as $key => $value) {
 
         $elimination_group_team = ArcheryEventEliminationGroupTeams::where('id', $value->teamid)->first();
 
-
         if ($elimination_group_team) {
           if ($elimination_group_team->elimination_ranked <= 3) {
-            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name")
+            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name", "cities.name as city_name")
               ->where("archery_event_participants.id", $elimination_group_team->participant_id)
-              ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+              ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+              ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
               ->first();
             $club_name = "";
+            $city_name = "";
             if ($participant) {
               $club_name = $participant->club_name;
+              $city_name = $participant->city_name;
             }
+
             $data[] = [
               'id' => $elimination_group_team->id,
               'participant_id' => $elimination_group_team->participant_id,
               'club_name' => $club_name,
+              'city_name' => $city_name,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),

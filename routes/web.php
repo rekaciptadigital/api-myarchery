@@ -366,6 +366,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             });
 
             $router->group(['prefix' => 'scorer'], function () use ($router) {
+                $router->post('/change-rank-member-qualification', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:changeRankMemberQualification']);
                 $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addParticipantMemberScore']);
                 $router->get('/participant/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:findParticipantScoreBySchedule']);
                 $router->post('/cancel-scoring-eliminasi', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:resetScoringEliminasi']);
@@ -420,6 +421,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         $router->group(['prefix' => 'series', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/download/user-points', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadUserSeriePoint']);
+            $router->post('/update-point-users', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateuserPoint']);
         });
 
         $router->group(['prefix' => 'event-certificate-templates', 'middleware' => 'auth.admin'], function () use ($router) {

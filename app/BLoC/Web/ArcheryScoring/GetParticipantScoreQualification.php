@@ -60,14 +60,14 @@ class GetParticipantScoreQualification extends Retrieval
 
         if (strtolower($team_category->type) == "team") {
             if ($team_category->id == "mix_team") {
-                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail);
+                $data = ArcheryEventParticipant::mixTeamBestOfThree($category_detail, 1);
             } else {
-                $data = ArcheryEventParticipant::teamBestOfThree($category_detail);
+                $data = ArcheryEventParticipant::teamBestOfThree($category_detail, 1);
             }
         }
 
         if (strtolower($team_category->type) == "individual") {
-            $data = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session);
+            $data = ArcheryScoring::getScoringRankByCategoryId($event_category_id, $score_type, $session, false, null, false, 1);
         }
 
         $redis = Redis::connection();

@@ -3,17 +3,10 @@
 namespace App\BLoC\App\Series;
 
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryMasterAgeCategory;
-use App\Models\ArcheryMasterCompetitionCategory;
-use App\Models\ArcheryMasterDistanceCategory;
-use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcherySerie;
 use App\Models\ArcherySeriesCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class GetListCategorySeries extends Retrieval
 {
@@ -32,8 +25,11 @@ class GetListCategorySeries extends Retrieval
 
 
         $series_category = ArcherySeriesCategory::select("archery_serie_categories.*", "archery_event_series.event_id as event_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_serie_categories.team_category_id")
             ->leftJoin("archery_event_series", "archery_event_series.id", '=', 'archery_serie_categories.serie_id')
             ->where("archery_serie_categories.serie_id", $series->id)
+            ->whereIn("archery_serie_categories.team_category_id", ["individu male", "individu female"])
+            ->orderBy("archery_master_team_categories.short")
             ->get();
 
         foreach ($series_category as $sc) {
@@ -54,7 +50,6 @@ class GetListCategorySeries extends Retrieval
     {
         return [
             "serie_id" => "required|integer",
-            // "event_id" => "required|integer"
         ];
     }
 }

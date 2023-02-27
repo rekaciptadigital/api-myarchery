@@ -66,10 +66,13 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
 
         if (strtolower($category->type) == "team") {
             $html = view('template.score_sheet_elimination_team', [
+                "with_contingent" => $archery_event->with_contingent,
                 'tim_1_name' => "",
                 'tim_2_name' => "",
                 'club_1' => "",
+                'city_1' => "",
                 'club_2' => "",
+                'city_2' => "",
                 'tim_1_rank' => "",
                 'tim_2_rank' => "",
                 "athlete_1" => "",
@@ -85,10 +88,13 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
             ]);
         } else {
             $html = view('template.score_sheet_elimination', [
+                "with_contingent" => $archery_event->with_contingent,
                 'peserta1_name' => "",
                 'peserta2_name' => "",
                 'peserta1_club' => "",
+                'peserta1_city' => "",
                 'peserta2_club' => "",
+                'peserta2_city' => "",
                 'peserta1_rank' => "",
                 'peserta2_rank' => "",
                 'peserta1_category' => $label,

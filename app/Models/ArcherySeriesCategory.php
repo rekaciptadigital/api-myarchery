@@ -10,6 +10,19 @@ class ArcherySeriesCategory extends Model
     protected $guarded = ['id'];
     protected $appends = ['age_detail', 'competition_detail', 'distance_detail', 'team_detail', 'category_label'];
 
+    public static function saveArcherySeriesCategory(ArcherySerie $series, ArcheryEventCategoryDetail $category)
+    {
+        $serie_category = new ArcherySeriesCategory();
+        $serie_category->serie_id = $series->id;
+        $serie_category->age_category_id = $category->age_category_id;
+        $serie_category->competition_category_id  = $category->competition_category_id;
+        $serie_category->distance_id  = $category->distance_id;
+        $serie_category->team_category_id  = $category->team_category_id;
+        $serie_category->save();
+
+        return $serie_category;
+    }
+
     public function getAgeDetailAttribute()
     {
         $age_category_detail = ArcheryMasterAgeCategory::find($this->age_category_id);

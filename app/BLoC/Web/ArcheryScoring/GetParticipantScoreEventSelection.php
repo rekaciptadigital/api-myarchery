@@ -77,7 +77,7 @@ class GetParticipantScoreEventSelection extends Retrieval
         if ($category_detail->category_team == "Individual") {
             //filter klasemen
             if ($standings_type == 3) {
-                return ArcheryScoring::getScoringRankByCategoryId($event_category_id, 3, $session_qualification);
+                return ArcheryScoring::getScoringRankByCategoryId($event_category_id, 3, $session_qualification, false, null, false, 1);
             } else if ($standings_type == 4) {
                 return app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($event_category_id, 4, $session_elimination, $name, $event->id);
             } else {

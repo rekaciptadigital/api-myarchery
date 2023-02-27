@@ -13,6 +13,7 @@ use App\Models\City;
 use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
+use DAI\Utils\Exceptions\BLoCException;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -22,18 +23,26 @@ class ArcherySeriesUserPoint extends Model
     protected function setPoint($member_id, $type, $pos)
     {
         $member = ArcheryEventParticipantMember::find($member_id);
-        if (!$member) return false;
+        if (!$member) {
+            throw new BLoCException("member not found");
+        }
 
         $participant = ArcheryEventParticipant::find($member->archery_event_participant_id);
-        if (!$participant) return false;
+        if (!$participant) {
+            throw new BLoCException("participant not found");
+        }
 
         $user_id = $participant->user_id;
         $category_id = $participant->event_category_id;
         $category = ArcheryEventCategoryDetail::find($category_id);
-        if (!$category) return false;
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
 
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
-        if (!$event_serie) return false;
+        if (!$event_serie) {
+            throw new BLoCException("event series not found");
+        }
 
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
             ->where("competition_category_id", $category->competition_category_id)
@@ -41,46 +50,56 @@ class ArcherySeriesUserPoint extends Model
             ->where("team_category_id", $category->team_category_id)
             ->where("serie_id", $event_serie->serie_id)
             ->first();
-        if (!$archerySeriesCategory) return false;
+
+        if (!$archerySeriesCategory) {
+            throw new BLoCException("archerySeriesCategory not found");
+        }
+        $series = ArcherySerie::find($event_serie->serie_id);
+        if (!$series) {
+            throw new BLoCException("series not found");
+        }
+
+        if (!$archerySeriesCategory) {
+            throw new BLoCException("archerySeriesCategory not found");
+        }
         $t = 1;
         if ($type == "elimination") {
             $t = 2;
         }
 
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
-        if (!$point) return false;
+        if (!$point) {
+            throw new BLoCException("point not found");
+        }
+
+        $is_series = 1;
+        if ($series->type == 1) {
+            $is_series = $member->is_series;
+        }
 
         $member_point = $this->where("member_id", $member_id)->where("type", $type)->first();
-        // get detail event
-        if ($member_point) {
-            $member_point->update([
-                "point" => $point->point,
-                "status" => $member->is_series,
-                "position" => $pos,
-            ]);
-        } else {
-            $this->create([
-                "event_serie_id" => $event_serie->id,
-                "user_id" => $user_id,
-                "event_category_id" => $archerySeriesCategory->id,
-                "point" => $point->point,
-                "status" => $member->is_series,
-                "type" => $type,
-                "position" => $pos,
-                "member_id" => $member_id,
-            ]);
+        if (!$member_point) {
+            $member_point =  new ArcherySeriesUserPoint();
         }
+        $member_point->point = $point->point;
+        $member_point->status = $is_series;
+        $member_point->position = $pos;
+        $member_point->event_serie_id = $event_serie->id;
+        $member_point->user_id = $user_id;
+        $member_point->event_category_id = $archerySeriesCategory->id;
+        $member_point->type = $type;
+        $member_point->member_id = $member_id;
+        $member_point->save();
     }
 
     protected function setMemberQualificationPoint($event_category_id)
     {
         $category = ArcheryEventCategoryDetail::find($event_category_id);
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+
+        $session = $category->getArraySessionCategory();
         $pos = 0;
-        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session);
+        $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($event_category_id, 1, $session, false, null, false, 1);
+
         foreach ($qualification_rank as $key => $value) {
             $pos = $pos + 1;
             $this->setPoint($value["member"]->id, "qualification", $pos);
@@ -177,10 +196,37 @@ class ArcherySeriesUserPoint extends Model
     protected function getUserSeriePointByCategory($category_serie_id)
     {
         $category_series = ArcherySeriesCategory::find($category_serie_id);
-        $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)->where("status", 1)->get();
+        $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)
+            ->where("status", 1)
+            ->get();
+
         $users = [];
         $output = [];
         foreach ($archery_user_point as $key => $value) {
+            $event_series = ArcheryEventSerie::find($value->event_serie_id);
+            if (!$event_series) {
+            }
+            $event = ArcheryEvent::find($event_series->event_id);
+            if (!$event) {
+                throw new BLoCException("event not found");
+            }
+            $participant =  ArcheryEventParticipant::where("event_id", $event->id)
+                ->where("competition_category_id", $category_series->competition_category_id)
+                ->where("age_category_id", $category_series->age_category_id)
+                ->where("distance_id", $category_series->distance_id)
+                ->where("team_category_id", $category_series->team_category_id)
+                ->where("status", 1)
+                // ->where("is_present", 1)
+                ->where("user_id", $value->user_id)
+                ->first();
+
+            if (!$participant) {
+                throw new BLoCException("participant not found");
+            }
+
+            $users[$value->user_id]["contingent_id"] = $participant->city_id;
+            $users[$value->user_id]["event"] = $event;
+
             $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
             $member_score_detail_qualification = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail_qualification"]) ? $users[$value->user_id]["score_detail_qualification"] : ArcheryScoring::ArcheryScoringDetailPoint();
             if ($value->type == "qualification") {
@@ -213,19 +259,27 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id","date_of_birth")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")
+                ->where("id", $u)
+                ->first();
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
             foreach ($user["score_detail_qualification"] as $x => $v) {
-                if (in_array($x, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "x"])) {
+                if (in_array($x, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "x"])) {
                     $score_value = $x == "x" ? 10 : $x;
                     $total_score = $total_score + ($score_value * $v);
                     if ($x == "x" || $x == 10)
                         $x_y_qualification = $x_y_qualification + $v;
                 }
             }
-            if (!empty($user_detail->address_city_id)) {
+
+            if (isset($user["event"]) && $user["event"]["with_contingent"] == 1) {
+                if (isset($user["contingent_id"])) {
+                    $c = City::find($user["contingent_id"]);
+                    $city = $c->name;
+                }
+            } else {
                 $c = City::find($user_detail->address_city_id);
                 $city = $c->name;
             }
