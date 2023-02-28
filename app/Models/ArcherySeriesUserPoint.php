@@ -196,10 +196,37 @@ class ArcherySeriesUserPoint extends Model
     protected function getUserSeriePointByCategory($category_serie_id)
     {
         $category_series = ArcherySeriesCategory::find($category_serie_id);
-        $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)->where("status", 1)->get();
+        $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)
+            ->where("status", 1)
+            ->get();
+
         $users = [];
         $output = [];
         foreach ($archery_user_point as $key => $value) {
+            $event_series = ArcheryEventSerie::find($value->event_serie_id);
+            if (!$event_series) {
+            }
+            $event = ArcheryEvent::find($event_series->event_id);
+            if (!$event) {
+                throw new BLoCException("event not found");
+            }
+            $participant =  ArcheryEventParticipant::where("event_id", $event->id)
+                ->where("competition_category_id", $category_series->competition_category_id)
+                ->where("age_category_id", $category_series->age_category_id)
+                ->where("distance_id", $category_series->distance_id)
+                ->where("team_category_id", $category_series->team_category_id)
+                ->where("status", 1)
+                // ->where("is_present", 1)
+                ->where("user_id", $value->user_id)
+                ->first();
+
+            if (!$participant) {
+                throw new BLoCException("participant not found");
+            }
+
+            $users[$value->user_id]["contingent_id"] = $participant->city_id;
+            $users[$value->user_id]["event"] = $event;
+
             $member_score_details = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail"]) ? $users[$value->user_id]["score_detail"] : ArcheryScoring::ArcheryScoringDetailPoint();
             $member_score_detail_qualification = isset($users[$value->user_id]) && isset($users[$value->user_id]["score_detail_qualification"]) ? $users[$value->user_id]["score_detail_qualification"] : ArcheryScoring::ArcheryScoringDetailPoint();
             if ($value->type == "qualification") {
@@ -232,19 +259,27 @@ class ArcherySeriesUserPoint extends Model
         }
 
         foreach ($users as $u => $user) {
-            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")->where("id", $u)->first();
+            $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")
+                ->where("id", $u)
+                ->first();
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
             foreach ($user["score_detail_qualification"] as $x => $v) {
-                if (in_array($x, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "x"])) {
+                if (in_array($x, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "x"])) {
                     $score_value = $x == "x" ? 10 : $x;
                     $total_score = $total_score + ($score_value * $v);
                     if ($x == "x" || $x == 10)
                         $x_y_qualification = $x_y_qualification + $v;
                 }
             }
-            if (!empty($user_detail->address_city_id)) {
+
+            if (isset($user["event"]) && $user["event"]["with_contingent"] == 1) {
+                if (isset($user["contingent_id"])) {
+                    $c = City::find($user["contingent_id"]);
+                    $city = $c->name;
+                }
+            } else {
                 $c = City::find($user_detail->address_city_id);
                 $city = $c->name;
             }

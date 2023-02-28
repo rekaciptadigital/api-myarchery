@@ -113,7 +113,7 @@ class ClubRanked
         if ($event->with_contingent == 1) {
             $data = $data->join("cities", "cities.id", "=", "archery_event_participants.city_id");
         } else {
-            $data = $data->where("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+            $data = $data->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
         }
 
         $data = $data->where("archery_event_participants.status", 1)
