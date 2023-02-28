@@ -301,7 +301,7 @@ class BudRest extends Model
             }
         }
 
-        for ($i = 0; $i < $bud_rest->target_face - 1; $i++) {
+        for ($i = 0; $i < $bud_rest->target_face; $i++) {
             for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
                 foreach ($list_member as $key_lm => $value_lm) {
                     $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
