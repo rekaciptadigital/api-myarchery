@@ -292,6 +292,85 @@ class BudRest extends Model
             return $b["total"] > $a["total"] ? 1 : -1;
         });
 
+        $total_budrest = $bud_rest_end - $bud_rest_start + 1;
+
+        foreach ($club_or_city_ids as $key1 => $value1) {
+            if ($value1["total"] <= $total_budrest) {
+                for ($i = 0; $i < $bud_rest->target_face; $i++) {
+                    for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+                        foreach ($schedules as $key2 => $value2) {
+                            $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+                                ->where("target_face", $tf[$i])
+                                ->where("qalification_time_id", $qualification_time->id)
+                                ->first();
+                            if ($check) {
+                                break;
+                            }
+                            if ($value1[$tag] == $value2[$tag]) {
+                                $value2->bud_rest_number = $j;
+                                $value2->target_face = $tf[$i];
+                                $value2->save();
+                                unset($schedules[$key2]);
+                                $total_budrest = $total_budrest - 1;
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+
+        // if ($club_or_city_ids[0]["total"] < $total_budrest) {
+        //     for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+        //         foreach ($schedules as $key => $value) {
+        //             $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+        //                 ->where("target_face", "A")
+        //                 ->where("qalification_time_id", $qualification_time->id)
+        //                 ->first();
+        //             if ($check) {
+        //                 break;
+        //             }
+        //             if ($value[$tag] == $club_or_city_ids[0][$tag]) {
+        //                 $value->bud_rest_number = $j;
+        //                 $value->target_face = "A";
+        //                 $value->save();
+        //                 unset($schedules[$key]);
+        //                 break;
+        //             }
+        //         }
+        //         continue;
+        //     }
+        //     unset($club_or_city_ids[0]);
+        //     if ($sisa > 0) {
+        //         foreach ($club_or_city_ids as $key_coc_ids => $coc_ids_value) {
+        //             if ($coc_ids_value["total"] <= $sisa) {
+        //                 $sisa = $sisa - $coc_ids_value["total"];
+        //                 // return $coc_ids_value;
+        //                 for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+        //                     foreach ($schedules as $key => $value) {
+        //                         $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+        //                             ->where("target_face", "A")
+        //                             ->where("qalification_time_id", $qualification_time->id)
+        //                             ->first();
+        //                         if ($check) {
+        //                             break;
+        //                         }
+        //                         if ($value[$tag] == $coc_ids_value[$tag]) {
+        //                             $value->bud_rest_number = $j;
+        //                             $value->target_face = "A";
+        //                             $value->save();
+        //                             unset($schedules[$key]);
+        //                             break;
+        //                         }
+        //                     }
+        //                     continue;
+        //                 }
+        //             }
+        //         }
+        //         return $sisa;
+        //     }
+        // }
         $list_member = [];
         foreach ($club_or_city_ids as $coc_key => $coc_ids) {
             foreach ($schedules as $key => $s) {
