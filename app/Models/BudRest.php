@@ -289,7 +289,7 @@ class BudRest extends Model
         }
 
         usort($club_or_city_ids, function ($a, $b) {
-            return $b["total"] > $a["total"] ? 1 : -1;
+            return $b["total"] < $a["total"] ? 1 : -1;
         });
 
         $total_budrest = $bud_rest_end - $bud_rest_start + 1;
