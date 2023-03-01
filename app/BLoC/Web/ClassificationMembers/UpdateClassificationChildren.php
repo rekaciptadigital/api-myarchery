@@ -19,7 +19,7 @@ class UpdateClassificationChildren extends Retrieval
     {
         $data = [
             'title' => $parameters->get('title'),
-            'status' => (int)$parameters->get('status') == 1 || $parameters->get('status') == true || $parameters->get('status') == 'true' ? 1 : 0
+            'status' => (int)$parameters->get('status') != 1 || $parameters->get('status') != true || $parameters->get('status') != 'true' ? 0 : 1
         ];
 
         $children = ChildrenClassificationMembers::where('id', '=', $parameters->get("id"));

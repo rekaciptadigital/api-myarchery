@@ -20,10 +20,11 @@ class GetChildrenClassification extends Retrieval
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 10;
         $id_parent = $parameters->get("parent_id");
         $type = $parameters->get("type");
+        $keyword = '%' . $parameters->get('keyword') . '%';
 
         $result = ChildrenClassificationMembers::where('deleted_at', '=', null)
-            ->where('status', '=', 1);
-
+            ->where('status', '=', 1)
+            ->where('title', 'like', $keyword);
         if ($type == 'with-parent') {
             if (empty($id_parent)) {
                 throw new BLoCException("id parent wajib di isi!");

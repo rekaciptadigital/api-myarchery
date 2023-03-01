@@ -21,7 +21,7 @@ class AddClassificationChildren extends Retrieval
 
         $title = $parameters->get('title');
 
-        $status = (int)$parameters->get('status') == 1 || $parameters->get('status') == true || $parameters->get('status') == 'true' ? 1 : 0;
+        $status = $parameters->get('status') == true || $parameters->get('status') == 1 || $parameters->get('status') == null  ? 1 : 0;
 
         $type = $parameters->get('type');
 
@@ -39,6 +39,12 @@ class AddClassificationChildren extends Retrieval
             $checkParent = ParentClassificationMembers::find($parameters->get('parent_id'));
             if (empty($checkParent)) {
                 throw new BLoCException("parent classification tidak ditemukan!");
+            }
+
+            $checkChildren = ChildrenClassificationMembers::where('title', '=', $title)->where('status', '=', true)->where('parent_id', '=', $parameters->get('parent_id'))->get();
+
+            if ($checkChildren->count() > 0) {
+                throw new BLoCException("data children sudah ada!");
             }
 
             $data['admin_id'] = $admin->id;

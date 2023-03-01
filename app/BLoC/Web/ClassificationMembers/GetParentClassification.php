@@ -17,9 +17,11 @@ class GetParentClassification extends Retrieval
     {
         $admin = Auth::user();
         $limit = !empty($parameters->get('limit')) ? $parameters->get('limit') : 10;
+        $keyword = '%' . $parameters->get('keyword') . '%';
 
         $result = ParentClassificationMembers::where('deleted_at', '=', null)
             ->where('status', '=', 1)
+            ->where('title', 'like', $keyword)
             ->whereNotIn('title', ['Dari Peserta'])
             ->where(function ($query) use ($admin) {
                 $query->where('admin_id', '=', null)
