@@ -36,9 +36,10 @@ class AddClassificationFromAdmin extends Retrieval
 
         $data_add_parent = [
             'title' =>  $parameters->get('parent_title'),
-            'status' => (int)$parameters->get('status') == 1 || $parameters->get('status') == true || $parameters->get('status') == 'true' ? 1 : 0,
+            'status' => $parameters->get('status') == true || $parameters->get('status') == 1 || $parameters->get('status') == null  ? 1 : 0,
             'admin_id' => $admin->id
         ];
+
         $parent_classification = ParentClassificationMembers::create($data_add_parent);
 
 
@@ -64,10 +65,9 @@ class AddClassificationFromAdmin extends Retrieval
             }
 
 
-            $status = 1;
-
-            if ((int)$value_origin['status'] != 1 || $value_origin['status'] != '1' || $value_origin['status'] != true || $value_origin['status'] != 'true') {
-                $status = 0;
+            $status = 0;
+            if ($value_origin['status'] == true || $value_origin['status'] == 1 || $value_origin['status'] == null) {
+                $status = 1;
             }
 
             array_push($data_childrens, [

@@ -19,7 +19,7 @@ class UpdateClassificationParent extends Retrieval
     {
         $data = [
             'title' => $parameters->get('title'),
-            'status' => (int)$parameters->get('status') == 1 || $parameters->get('status') == true || $parameters->get('status') == 'true' ? 1 : 0
+            'status' => $parameters->get('status') == true || $parameters->get('status') == 1 || $parameters->get('status') == null  ? 1 : 0
         ];
 
 
