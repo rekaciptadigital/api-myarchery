@@ -206,7 +206,7 @@ class BudRest extends Model
 
     public static function setMemberBudrest($category_id, $with_contingent)
     {
-        // return $category_id;
+        
         $tf = ["A", "C", "B", "D", "E", "F"];
         $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
         if (!$bud_rest) {
@@ -241,7 +241,7 @@ class BudRest extends Model
             throw new BLoCException("jadwal belum dibuat");
         }
         $list_schedule_full_day = ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $qualification_time->id)->get();
-        // return $list_schedule_full_day;
+        
         foreach ($list_schedule_full_day as $key => $l_s_f_d) {
             $l_s_f_d->bud_rest_number = 0;
             $l_s_f_d->target_face = "";
@@ -303,9 +303,6 @@ class BudRest extends Model
 
         foreach ($club_or_city_ids as $key1 => $value1) { // 3275
             for ($i = 0; $i < $bud_rest->target_face; $i++) { // A
-                // if ($tf[$i] == "C") {
-                //     return "ok";
-                // }
                 $total_target_face = ArcheryEventQualificationScheduleFullDay::where("target_face", $tf[$i])
                     ->where("qalification_time_id", $qualification_time->id)
                     ->get()
@@ -333,10 +330,8 @@ class BudRest extends Model
                     }
                     break;
                 }
-                // return $total_budrest;
                 continue;
             }
-            // return "ok";
         }
 
         $list_member = [];
