@@ -275,88 +275,97 @@ class BudRest extends Model
             $club_or_city_ids[$d[$tag]] = [];
             $club_or_city_ids[$d[$tag]][$tag] = $d[$tag];
             $club_or_city_ids[$d[$tag]]["total"] = 0;
+            // $club_or_city_ids[$d[$tag]]["city_name"] = "";
         }
 
-        $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
+        $schedules = ArcheryEventQualificationScheduleFullDay::select(
+            "archery_event_qualification_schedule_full_day.*",
+            // "cities.name as city_name",
+            $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id"
+        )
             ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            // ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where("qalification_time_id", $qualification_time->id)
             ->get();
 
 
+
         foreach ($schedules as $key => $value) {
             $club_or_city_ids[$value[$tag]]["total"] += 1;
+            // $club_or_city_ids[$value[$tag]]["city_name"] = $value->city_name;
         }
 
         usort($club_or_city_ids, function ($a, $b) {
             return $b["total"] > $a["total"] ? 1 : -1;
         });
 
-        $total_budrest = $bud_rest_end - $bud_rest_start + 1;
 
-        foreach ($club_or_city_ids as $key1 => $value1) {
-            for ($i = 0; $i < $bud_rest->target_face; $i++) {
-                $total_budrest = $bud_rest_end - $bud_rest_start + 1;
-                if ($value1["total"] <= $total_budrest) {
-                    for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+        foreach ($club_or_city_ids as $key1 => $value1) { // 3275
+            for ($i = 0; $i < $bud_rest->target_face; $i++) { // A
+                // if ($tf[$i] == "C") {
+                //     return "ok";
+                // }
+                $total_target_face = ArcheryEventQualificationScheduleFullDay::where("target_face", $tf[$i])
+                    ->where("qalification_time_id", $qualification_time->id)
+                    ->get()
+                    ->count();
+                $total_budrest = $bud_rest_end - $bud_rest_start + 1; // 18
+                if ($value1["total"] <= $total_budrest - $total_target_face) {
+                    for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) { // 1
+                        $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+                            ->where("target_face", $tf[$i])
+                            ->where("qalification_time_id", $qualification_time->id)
+                            ->first();
+                        if ($check) {
+                            continue;
+                        }
+
                         foreach ($schedules as $key2 => $value2) {
-                            $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
-                                ->where("target_face", $tf[$i])
-                                ->where("qalification_time_id", $qualification_time->id)
-                                ->first();
-                            if ($check) {
-                                break;
-                            }
                             if ($value1[$tag] == $value2[$tag]) {
                                 $value2->bud_rest_number = $j;
                                 $value2->target_face = $tf[$i];
                                 $value2->save();
                                 unset($schedules[$key2]);
-                                $total_budrest = $total_budrest - 1;
                                 break;
                             }
                         }
                     }
+                    break;
                 }
+                // return $total_budrest;
+                continue;
             }
+            // return "ok";
         }
 
-        // return count($schedules);
+        // $list_member = [];
+        // foreach ($club_or_city_ids as $coc_key => $coc_ids) {
+        //     foreach ($schedules as $key => $s) {
+        //         if ($coc_ids[$tag] == $s[$tag]) {
+        //             $list_member[] = $s;
+        //         }
+        //     }
+        // }
 
-        // return ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
-        //     ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
-        //     ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-        //     ->where("qalification_time_id", $qualification_time->id)
-        //     ->get();
-
-
-        $list_member = [];
-        foreach ($club_or_city_ids as $coc_key => $coc_ids) {
-            foreach ($schedules as $key => $s) {
-                if ($coc_ids[$tag] == $s[$tag]) {
-                    $list_member[] = $s;
-                }
-            }
-        }
-
-        for ($i = 0; $i < $bud_rest->target_face; $i++) {
-            for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
-                foreach ($list_member as $key_lm => $value_lm) {
-                    $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
-                        ->where("target_face", $tf[$i])
-                        ->where("qalification_time_id", $qualification_time->id)
-                        ->first();
-                    if ($check) {
-                        break;
-                    }
-                    $jadwal_member = ArcheryEventQualificationScheduleFullDay::find($value_lm["id"]);
-                    $jadwal_member->bud_rest_number = $j;
-                    $jadwal_member->target_face = $tf[$i];
-                    $jadwal_member->save();
-                    unset($list_member[$key_lm]);
-                }
-            }
-        }
+        // for ($i = 0; $i < $bud_rest->target_face; $i++) {
+        //     for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+        //         foreach ($list_member as $key_lm => $value_lm) {
+        //             $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+        //                 ->where("target_face", $tf[$i])
+        //                 ->where("qalification_time_id", $qualification_time->id)
+        //                 ->first();
+        //             if ($check) {
+        //                 break;
+        //             }
+        //             $jadwal_member = ArcheryEventQualificationScheduleFullDay::find($value_lm["id"]);
+        //             $jadwal_member->bud_rest_number = $j;
+        //             $jadwal_member->target_face = $tf[$i];
+        //             $jadwal_member->save();
+        //             unset($list_member[$key_lm]);
+        //         }
+        //     }
+        // }
 
 
         return true;
