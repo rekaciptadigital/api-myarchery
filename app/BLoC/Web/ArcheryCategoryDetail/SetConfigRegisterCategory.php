@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ClassificationEventRegisters;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -27,6 +28,8 @@ class SetConfigRegisterCategory extends Transactional
         $schedule_end_event = $parameters->get("schedule_end_event");
         $is_active_config = $parameters->get("is_active_config");
         $list_config = $parameters->get("list_config");
+        $is_active_classification = $parameters->get('is_active_classification');
+        $list_classification = $parameters->get("list_classification");
 
         // reset config
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
@@ -50,7 +53,8 @@ class SetConfigRegisterCategory extends Transactional
         }
         // akhir reset config
 
-
+        // reset classification
+        ClassificationEventRegisters::where("event_id", '=', $event_id)->delete();
 
 
         // set ulang tanggal pendaftaran event
@@ -185,6 +189,69 @@ class SetConfigRegisterCategory extends Transactional
             }
         }
 
+        if ($is_active_classification == 1) {
+            $data_map_classification = [];
+            foreach ($list_classification as $key => $value) {
+                $set_data_classification = [
+                    'parent_classification_id' => $value['parent_classification_id'],
+                    'event_id' => $event_id,
+                    'children_classification_id' => null,
+                    'country_id' => null,
+                    'states_id' => null,
+                    'city_of_contry_id' => null,
+                    'archery_club_id' => null
+                ];
+
+                if (empty($value['parent_classification_id'])) throw new BLoCException("parent klasifikasi wajib di isi!");
+
+
+                switch ($value['parent_classification_id']) {
+                    case 1:
+                        if (empty($value['archery_club_id'])) {
+                            throw new BLoCException("jika memilih parent klasifikasi klub maka klub wajib di pilih!");
+                        } else {
+                            $set_data_classification['archery_club_id'] = $value['archery_club_id'];
+                        }
+                        break;
+                    case 2:
+                        if (empty($value['country_id'])) {
+                            throw new BLoCException("jika memilih parent klasifikasi negara maka negara wajib di pilih!");
+                        } else {
+                            $set_data_classification['country_id'] = $value['country_id'];
+                        }
+                        break;
+                    case 3:
+                        if (empty($value['country_id']) || empty($value['states_id'])) {
+                            throw new BLoCException("jika memilih parent klasifikasi provinsi maka negara, provinsi wajib di pilih!");
+                        } else {
+                            $set_data_classification['country_id'] = $value['country_id'];
+                            $set_data_classification['states_id'] = $value['states_id'];
+                        }
+                        break;
+                    case 4:
+                        if (empty($value['country_id']) || empty($value['states_id']) || empty($value['city_of_contry_id'])) {
+                            throw new BLoCException("jika memilih parent klasifikasi kota maka negara, provinsi, kota wajib di pilih!");
+                        } else {
+                            $set_data_classification['country_id'] = $value['country_id'];
+                            $set_data_classification['states_id'] = $value['states_id'];
+                            $set_data_classification['city_of_contry_id'] = $value['city_of_contry_id'];
+                        }
+                        break;
+                    default:
+                        if (empty($value['children_classification_id'])) {
+                            throw new BLoCException("jika memilih parent klasifikasi custom maka wajib di isi!");
+                        } else {
+                            $set_data_classification['children_classification_id'] = $value['children_classification_id'];
+                        }
+                        break;
+                }
+
+                array_push($data_map_classification, $set_data_classification);
+            }
+
+            ClassificationEventRegisters::insert($data_map_classification);
+        }
+
         // susun response
         $response = [];
         $response["event_id"] = $event->id;
@@ -197,6 +264,7 @@ class SetConfigRegisterCategory extends Transactional
             "start" => $event->event_start_datetime,
             "end" => $event->event_end_datetime,
         ];
+
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {
@@ -225,6 +293,18 @@ class SetConfigRegisterCategory extends Transactional
             $response["list_config"][] = $c;
         }
 
+        $get_classification = ClassificationEventRegisters::where('event_id', '=', $event_id)
+            ->where('deleted_at', '=', null)
+            ->get();
+
+        $enable_classification = 0;
+        if ($get_classification->count() > 0) {
+            $enable_classification = 1;
+        }
+
+        $response['is_active_classification'] = $enable_classification;
+        $response['list_classification'] = $get_classification;
+
         return $response;
     }
 
@@ -236,7 +316,7 @@ class SetConfigRegisterCategory extends Transactional
             "default_datetime_end_register" => "required|string",
             "is_active_config" => "required|integer|in:1,0",
             "schedule_start_event" => "required|string",
-            "schedule_end_event" => "required|string"
+            "schedule_end_event" => "required|string",
         ];
 
         if ($parameters->get("is_active_config") == 1) {
@@ -244,6 +324,7 @@ class SetConfigRegisterCategory extends Transactional
             $rules["list_config.*.config_type"] = "required|integer|in:1,2,3,4";
             $rules["list_config.*.is_have_special_category"] = "in:0,1";
         }
+
 
         return $rules;
     }

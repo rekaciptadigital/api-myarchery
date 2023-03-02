@@ -206,14 +206,16 @@ class BudRest extends Model
 
     public static function setMemberBudrest($category_id, $with_contingent)
     {
-        $tp = ["A", "C", "B", "D", "E", "F"];
-        // ArcheryEventQualificationScheduleFullDay
+        // return $category_id;
+        $tf = ["A", "C", "B", "D", "E", "F"];
         $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
         if (!$bud_rest) {
             throw new BLoCException("Bud rest belum di set");
         }
 
-        $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
+        $participants = ArcheryEventParticipant::where("event_category_id", $category_id)
+            ->where("status", 1)
+            ->get();
         foreach ($participants as $key => $value) {
             $participant_member =  ArcheryEventParticipantMember::where("archery_event_participant_id", $value->id)->first();
             if (!$participant_member) {
@@ -234,77 +236,130 @@ class BudRest extends Model
             }
         }
 
-        $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->get();
+        $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->first();
+        if (!$qualification_time) {
+            throw new BLoCException("jadwal belum dibuat");
+        }
+        $list_schedule_full_day = ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $qualification_time->id)->get();
+        // return $list_schedule_full_day;
+        foreach ($list_schedule_full_day as $key => $l_s_f_d) {
+            $l_s_f_d->bud_rest_number = 0;
+            $l_s_f_d->target_face = "";
+            $l_s_f_d->save();
+        }
+
         $bud_rest_start = $bud_rest->bud_rest_start;
         $bud_rest_end = $bud_rest->bud_rest_end;
 
-        $target_face = 1;
-        $count = 0;
-        foreach ($qualification_time as $time) {
-            $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
-                ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
-                ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-                ->where("qalification_time_id", $time->id)
-                ->get()
-                ->groupBy($with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id");
+        if ($with_contingent == 1) {
+            $tag = "city_id";
+        } else {
+            $tag = "club_id";
+        }
 
-            foreach ($schedules as $key => $value) {
-                $value["total"] = $value->count();
-            }
+        $data = ArcheryEventParticipant::select($with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id");
 
-            $after_sort = $schedules->sortByDesc("total")->values()->all();
-            $member = [];
+        if ($with_contingent == 1) {
+            $data = $data->join("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $data = $data->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        }
 
-            foreach ($after_sort as $key => $value) {
-                foreach ($value as $key2 => $value2) {
-                    if ($key2 === "total") {
-                        continue;
+        $data = $data->where("archery_event_participants.status", 1)
+            ->where("archery_event_participants.event_category_id", $category_id)
+            ->distinct()
+            ->get();
+
+        $club_or_city_ids = [];
+        foreach ($data as $key => $d) {
+            $club_or_city_ids[$d[$tag]] = [];
+            $club_or_city_ids[$d[$tag]][$tag] = $d[$tag];
+            $club_or_city_ids[$d[$tag]]["total"] = 0;
+        }
+
+        $schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
+            ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
+            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+            ->where("qalification_time_id", $qualification_time->id)
+            ->get();
+
+
+        foreach ($schedules as $key => $value) {
+            $club_or_city_ids[$value[$tag]]["total"] += 1;
+        }
+
+        usort($club_or_city_ids, function ($a, $b) {
+            return $b["total"] > $a["total"] ? 1 : -1;
+        });
+
+        $total_budrest = $bud_rest_end - $bud_rest_start + 1;
+
+        foreach ($club_or_city_ids as $key1 => $value1) {
+            for ($i = 0; $i < $bud_rest->target_face; $i++) {
+                $total_budrest = $bud_rest_end - $bud_rest_start + 1;
+                if ($value1["total"] <= $total_budrest) {
+                    for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+                        foreach ($schedules as $key2 => $value2) {
+                            $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+                                ->where("target_face", $tf[$i])
+                                ->where("qalification_time_id", $qualification_time->id)
+                                ->first();
+                            if ($check) {
+                                break;
+                            }
+                            if ($value1[$tag] == $value2[$tag]) {
+                                $value2->bud_rest_number = $j;
+                                $value2->target_face = $tf[$i];
+                                $value2->save();
+                                unset($schedules[$key2]);
+                                $total_budrest = $total_budrest - 1;
+                                break;
+                            }
+                        }
                     }
-                    $member[] = $value2;
-                }
-            }
-
-            $list_member = [];
-            foreach ($member as $a => $value) {
-                if ($a === "total") {
-                    continue;
-                }
-                $list_member[] = $value;
-            }
-
-            $data_count = count($schedules);
-            // $check_budrest = ceil($data_count / $bud_rest->target_face);
-            // $check_budrest = $bud_rest_end;
-            $data_budrest = [];
-            $m_target_face = array_slice($tp, 0, $bud_rest->target_face);
-            for ($i = $bud_rest_start; $i <= $bud_rest_end; $i++) {
-                $tf = [];
-                $tmp_tp = $m_target_face;
-                for ($x = 0; $x < $bud_rest->target_face; $x++) {
-                    // $tmp_i = rand(0,count($tmp_tp)-1);
-                    $tf[] = $tmp_tp[$x];
-                    // unset($tmp_tp[$tmp_i]); 
-                    // $tmp_tp = array_values($tmp_tp);
-                }
-                $data_budrest[] = $tf;
-            }
-            $index = 0;
-            for ($z = 0; $z < $bud_rest->target_face; $z++) {
-                $brs = $bud_rest_start;
-                for ($y = 0; $y < count($data_budrest); $y++) {
-                    if (!isset($list_member[$index]))
-                        break;
-                    ArcheryEventQualificationScheduleFullDay::where("id", $list_member[$index]->id)->update([
-                        "bud_rest_number" => $brs,
-                        "target_face" => $data_budrest[$y][$z]
-                    ]);
-                    $count = $count + 1;
-                    $brs = $brs + 1;
-                    $index++;
                 }
             }
         }
-        return;
+
+        // return count($schedules);
+
+        // return ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*", $with_contingent == 0 ? "archery_event_participants.club_id" : "archery_event_participants.city_id")
+        //     ->join("archery_event_participant_members", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
+        //     ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
+        //     ->where("qalification_time_id", $qualification_time->id)
+        //     ->get();
+
+
+        $list_member = [];
+        foreach ($club_or_city_ids as $coc_key => $coc_ids) {
+            foreach ($schedules as $key => $s) {
+                if ($coc_ids[$tag] == $s[$tag]) {
+                    $list_member[] = $s;
+                }
+            }
+        }
+
+        for ($i = 0; $i < $bud_rest->target_face; $i++) {
+            for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+                foreach ($list_member as $key_lm => $value_lm) {
+                    $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+                        ->where("target_face", $tf[$i])
+                        ->where("qalification_time_id", $qualification_time->id)
+                        ->first();
+                    if ($check) {
+                        break;
+                    }
+                    $jadwal_member = ArcheryEventQualificationScheduleFullDay::find($value_lm["id"]);
+                    $jadwal_member->bud_rest_number = $j;
+                    $jadwal_member->target_face = $tf[$i];
+                    $jadwal_member->save();
+                    unset($list_member[$key_lm]);
+                }
+            }
+        }
+
+
+        return true;
     }
 
     protected function downloadQualificationSelectionScoreSheet($category_id, $update_file = false, $session = 1)

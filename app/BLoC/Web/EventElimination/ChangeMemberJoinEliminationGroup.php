@@ -39,7 +39,8 @@ class ChangeMemberJoinEliminationGroup extends Transactional
             throw new BLoCException("participant not found");
         }
 
-        $elimination_group_member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $participant_id)->where("member_id", $member_id_old)->first();
+        $elimination_group_member_team = ArcheryEventEliminationGroupMemberTeam::where("participant_id", $participant_id)
+            ->where("member_id", $member_id_old)->first();
         if (!$elimination_group_member_team) {
             throw new BLoCException("eelimination_group_member_team not found");
         }

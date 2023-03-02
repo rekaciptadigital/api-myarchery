@@ -13,8 +13,8 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryClub;
 use App\Models\ArcheryEventOfficial;
 use App\Models\User;
-use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\City;
 use Illuminate\Support\Facades\Auth;
 
 class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
@@ -51,10 +51,11 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $background = $idcard_event->background;
         $logo = !empty($idcard_event->logo_event) ? $idcard_event->logo_event : "https://i.ibb.co/pXx14Zr/logo-email-archery.png";
         $location_and_date_event = $archery_event->location_date_event;
+        $with_contingent = $archery_event->with_contingent;
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id);
+            $final_doc = $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $with_contingent);
         } elseif ($type == 2) {
             $status = "Official";
             $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
@@ -85,7 +86,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id)
+    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $with_contingent)
     {
         $category = ArcheryEventCategoryDetail::find($category_id);
 
@@ -133,18 +134,25 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 $budrest_number = $schedule->bud_rest_number . $schedule->target_face;
             }
 
-            $club = ArcheryClub::find($participant->club_id);
-            if (!$club) {
-                $club = '';
+            $club_name = "";
+            $city_name = "";
+            if ($with_contingent == 1) {
+                $city = City::find($participant->city_id);
+                if ($city) {
+                    $city_name = $city->name;
+                }
             } else {
-                $club = $club->name;
+                $club = ArcheryClub::find($participant->club_id);
+                if ($club) {
+                    $club_name = $club->name;
+                }
             }
 
             $avatar = !empty($user->avatar) ? $user->avatar : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
 
             $final_doc['doc'][] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}', '{%gender%}'],
-                [$user->name, $avatar, $categoryLabel, $club, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
+                [$user->name, $avatar, $categoryLabel, $with_contingent == 0 ? $club_name : $city_name, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
                 $html_template
             );
         }

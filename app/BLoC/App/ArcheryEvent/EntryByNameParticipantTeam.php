@@ -5,10 +5,10 @@ namespace App\BLoC\App\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\TeamMemberSpecial;
-use DAI\Utils\Abstracts\Retrieval;
+use DAI\Utils\Abstracts\Transactional;
 use DAI\Utils\Exceptions\BLoCException;
 
-class EntryByNameParticipantTeam extends Retrieval
+class EntryByNameParticipantTeam extends Transactional
 {
     public function getDescription()
     {
@@ -37,11 +37,11 @@ class EntryByNameParticipantTeam extends Retrieval
         $category_team = ArcheryEventCategoryDetail::find($participant_team->event_category_id);
 
         if ($is_entry_by_name == 0) {
-            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
-            $participant_team->is_special_team_member = 0;
-            $participant_team->save();
+            if ($participant_team->is_special_team_member == 1) {
+                TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
+            }
         } else {
-            TeamMemberSpecial::deleteMemberSpecial($participant_team_id);
+            TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
             if ($participant_team->team_category_id != "mix_team") {
                 if (count($member_list) != 3) {
                     throw new BLoCException("member harus terdiri dari 3 anggota");
@@ -75,6 +75,16 @@ class EntryByNameParticipantTeam extends Retrieval
 
                     if (!$participant_individu) {
                         throw new BLoCException("participant individu not found");
+                    }
+
+                    $team_member_special = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+                        ->where("team_member_special.participant_individual_id", $participant_individu_id)
+                        // ->where("team_member_special.participant_team_id", $participant_team_id)
+                        ->where("archery_event_participants.event_category_id", $participant_team->event_category_id)
+                        ->first();
+
+                    if ($team_member_special) {
+                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lain");
                     }
 
                     $team_member_special = new TeamMemberSpecial();
@@ -149,6 +159,16 @@ class EntryByNameParticipantTeam extends Retrieval
                 }
 
                 foreach ($member_list as $ml) {
+                    $team_member_special = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
+                        ->where("team_member_special.participant_individual_id", $ml["participant_id"])
+                        // ->where("team_member_special.participant_team_id", $participant_team_id)
+                        ->where("archery_event_participants.event_category_id", $participant_team->event_category_id)
+                        ->first();
+
+                    if ($team_member_special) {
+                        throw new BLoCException("peserta ini sudah di pilih sebagai member team di tim lai");
+                    }
+
                     $team_member_special = new TeamMemberSpecial();
                     $team_member_special->participant_individual_id = $ml["participant_id"];
                     $team_member_special->participant_team_id = $participant_team_id;

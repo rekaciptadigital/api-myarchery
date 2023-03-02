@@ -70,6 +70,7 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/get-winer-participant-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMedalParticipantByEventId']);
         $router->get('/get-list-tab-category-by-event-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListTabCategoryByEventId']);
         $router->post('/add-all-category-event-to-series', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertAllCategoryEventToSeries']);
+        $router->post('/update-logo-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateLogoCity']);
     });
 });
 

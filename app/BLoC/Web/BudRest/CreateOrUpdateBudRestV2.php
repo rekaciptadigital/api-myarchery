@@ -90,7 +90,8 @@ class CreateOrUpdateBudRestV2 extends Transactional
                     }
 
                     if (strtotime($check_qualification_time->event_start_datetime) < strtotime('now')) {
-                        throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
+                        // TODO: DI uncomment
+                        // throw new BLoCException("tidak bisa update data karna sudah lewat dari tanggal mulai qualifikasi");
                     }
 
                     $budrest->archery_event_category_id = $category_id;
