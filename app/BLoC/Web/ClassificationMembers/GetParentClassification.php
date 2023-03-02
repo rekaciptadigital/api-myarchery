@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ClassificationMembers;
 
+use App\Models\ChildrenClassificationMembers;
 use App\Models\ParentClassificationMembers;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,11 @@ class GetParentClassification extends Retrieval
             })
             ->paginate($limit);
         $result->makeHidden(['admin_id', 'deleted_at']);
+        foreach ($result as $key => $value) {
+            $get_children = ChildrenClassificationMembers::where('parent_id', '=', $value->id)->get();
+            $result[$key]['childrens'] = $get_children;
+            $result[$key]['count_children'] = $get_children->count();
+        }
         return $result;
     }
 }
