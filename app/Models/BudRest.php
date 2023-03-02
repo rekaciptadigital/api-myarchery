@@ -339,33 +339,33 @@ class BudRest extends Model
             // return "ok";
         }
 
-        // $list_member = [];
-        // foreach ($club_or_city_ids as $coc_key => $coc_ids) {
-        //     foreach ($schedules as $key => $s) {
-        //         if ($coc_ids[$tag] == $s[$tag]) {
-        //             $list_member[] = $s;
-        //         }
-        //     }
-        // }
+        $list_member = [];
+        foreach ($club_or_city_ids as $coc_key => $coc_ids) {
+            foreach ($schedules as $key => $s) {
+                if ($coc_ids[$tag] == $s[$tag]) {
+                    $list_member[] = $s;
+                }
+            }
+        }
 
-        // for ($i = 0; $i < $bud_rest->target_face; $i++) {
-        //     for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
-        //         foreach ($list_member as $key_lm => $value_lm) {
-        //             $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
-        //                 ->where("target_face", $tf[$i])
-        //                 ->where("qalification_time_id", $qualification_time->id)
-        //                 ->first();
-        //             if ($check) {
-        //                 break;
-        //             }
-        //             $jadwal_member = ArcheryEventQualificationScheduleFullDay::find($value_lm["id"]);
-        //             $jadwal_member->bud_rest_number = $j;
-        //             $jadwal_member->target_face = $tf[$i];
-        //             $jadwal_member->save();
-        //             unset($list_member[$key_lm]);
-        //         }
-        //     }
-        // }
+        for ($i = 0; $i < $bud_rest->target_face; $i++) {
+            for ($j = $bud_rest_start; $j <= $bud_rest_end; $j++) {
+                foreach ($list_member as $key_lm => $value_lm) {
+                    $check = ArcheryEventQualificationScheduleFullDay::where("bud_rest_number", $j)
+                        ->where("target_face", $tf[$i])
+                        ->where("qalification_time_id", $qualification_time->id)
+                        ->first();
+                    if ($check) {
+                        break;
+                    }
+                    $jadwal_member = ArcheryEventQualificationScheduleFullDay::find($value_lm["id"]);
+                    $jadwal_member->bud_rest_number = $j;
+                    $jadwal_member->target_face = $tf[$i];
+                    $jadwal_member->save();
+                    unset($list_member[$key_lm]);
+                }
+            }
+        }
 
 
         return true;
