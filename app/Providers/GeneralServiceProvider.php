@@ -13,6 +13,7 @@ use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\General\Support\ImportMemberCollectiveClub;
 use App\BLoC\General\Support\UpdateLogoCity;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
@@ -47,6 +48,7 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("importMemberCollective", ImportMemberCollective::class);
         $this->registerService("importMemberCollectiveTeam", ImportMemberCollectiveTeam::class);
         $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
+        $this->registerService("importMemberCollectiveClub", ImportMemberCollectiveClub::class);
 
         // ======================================= End ==============================================
     }
