@@ -71,7 +71,7 @@ class ArcheryEventParticipant extends Model
 
     return (int)$count_participant_individu;
   }
-  
+
   public static function getElimination(ArcheryEventCategoryDetail $category_detail)
   {
 
@@ -272,6 +272,9 @@ class ArcheryEventParticipant extends Model
     $participant->is_special_team_member = $is_special_team_member;
     $participant->city_id = $city_id;
     $participant->order_event_id = $order_event_id;
+    $participant->classification_country_id = 0;
+    $participant->classification_province_id = 0;
+    $participant->children_classification_id = 0;
     $participant->save();
 
     return $participant;
@@ -407,7 +410,10 @@ class ArcheryEventParticipant extends Model
     $day_choice,
     $expired_booking_time = 0,
     $is_early_bird_payment = 0,
-    $city_id = 0
+    $city_id = 0,
+    $country_id = 0,
+    $province_id = 0,
+    $children_classification_id = 0
   ) {
     return self::create([
       'club_id' => $club_id,
@@ -430,7 +436,12 @@ class ArcheryEventParticipant extends Model
       'day_choice' => $day_choice,
       "expired_booking_time" => $expired_booking_time,
       "is_early_bird_payment" => $is_early_bird_payment,
-      "city_id" => $city_id
+      'classification_country_id' => $country_id,
+      'classification_province_id' => $province_id,
+      "city_id" => $city_id,
+      'classification_country_id' => $country_id,
+      'classification_province_id' => $province_id,
+      "children_classification_id" => $children_classification_id
     ]);
   }
 

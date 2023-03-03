@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\ParentClassificationMembers;
 use App\Models\ChildrenClassificationMembers;
 use App\Models\Country;
 use App\Models\ProvinceCountry;
 use App\Models\CityCountry;
 use App\Models\ArcheryClub;
+use App\Models\City;
+use App\Models\Provinces;
 
 class ClassificationEventRegisters extends Model
 {
@@ -18,7 +19,7 @@ class ClassificationEventRegisters extends Model
     protected $guarded = ['id'];
 
     protected $appends = [
-        'detail_parent_classification', 'detail_children_classification', 'detail_country', 'detail_provincy', 'detail_city', 'detail_club'
+        'detail_classification_children', 'detail_classification_country', 'detail_classification_provincy', 'detail_classification_city', 'detail_classification_archery_club'
     ];
 
     protected $dates = ['deleted_at'];
@@ -28,20 +29,7 @@ class ClassificationEventRegisters extends Model
         'updated_at' => 'datetime:Y-m-d H:m:s'
     ];
 
-    public function getDetailParentClassificationAttribute()
-    {
-        $response = [];
-        $parent = ParentClassificationMembers::find($this->parent_classification_id);
-
-        if ($parent) {
-            $response["id"] = $parent->id;
-            $response["title"] = $parent->title;
-        }
-
-        return $this->attributes['detail_parent_classification'] = $response;
-    }
-
-    public function getDetailChildrenClassificationAttribute()
+    public function getDetailClassificationChildrenAttribute()
     {
         $response = [];
         $parent = ChildrenClassificationMembers::find($this->children_classification_id);
@@ -51,10 +39,10 @@ class ClassificationEventRegisters extends Model
             $response["title"] = $parent->title;
         }
 
-        return $this->attributes['detail_children_classification'] = $response;
+        return $this->attributes['detail_classification_children'] = $response;
     }
 
-    public function getDetailCountryAttribute()
+    public function getDetailClassificationCountryAttribute()
     {
         $response = [];
         $data = Country::find($this->country_id);
@@ -64,36 +52,50 @@ class ClassificationEventRegisters extends Model
             $response["name"] = $data->name;
         }
 
-        return $this->attributes['detail_country'] = $response;
+        return $this->attributes['detail_classification_country'] = $response;
     }
 
-    public function getDetailProvincyAttribute()
+    public function getDetailClassificationProvincyAttribute()
     {
         $response = [];
-        $data = ProvinceCountry::find($this->states_id);
+        $data = false;
+
+        if ($this->country_id == 102 || empty($this->country_id)) {
+            $data = Provinces::find($this->provinsi_id);
+        } else {
+            $data = ProvinceCountry::find($this->provinsi_id);
+        }
 
         if ($data) {
             $response["id"] = $data->id;
             $response["name"] = $data->name;
         }
 
-        return $this->attributes['detail_provincy'] = $response;
+        return $this->attributes['detail_classification_provincy'] = $response;
     }
 
-    public function getDetailCityAttribute()
+    public function getDetailClassificationCityAttribute()
     {
         $response = [];
-        $data = CityCountry::find($this->city_of_contry_id);
+        // $data = CityCountry::find($this->city_id);
+
+        $data = false;
+
+        if ($this->country_id == 102 || empty($this->country_id)) {
+            $data = City::find($this->city_id);
+        } else {
+            $data = CityCountry::find($this->city_id);
+        }
 
         if ($data) {
             $response["id"] = $data->id;
             $response["name"] = $data->name;
         }
 
-        return $this->attributes['detail_city'] = $response;
+        return $this->attributes['detail_classification_city'] = $response;
     }
 
-    public function getDetailClubAttribute()
+    public function getDetailClassificationArcheryClubAttribute()
     {
         $response = [];
         $data = ArcheryClub::find($this->archery_club_id);
@@ -103,6 +105,6 @@ class ClassificationEventRegisters extends Model
             $response["name"] = $data->name;
         }
 
-        return $this->attributes['detail_club'] = $response;
+        return $this->attributes['detail_classification_archery_club'] = $response;
     }
 }

@@ -28,8 +28,37 @@ class SetConfigRegisterCategory extends Transactional
         $schedule_end_event = $parameters->get("schedule_end_event");
         $is_active_config = $parameters->get("is_active_config");
         $list_config = $parameters->get("list_config");
-        $is_active_classification = $parameters->get('is_active_classification');
-        $list_classification = $parameters->get("list_classification");
+        $withContingent = $parameters->get('withContingent');
+        $parentClassification = $parameters->get("parentClassification");
+        $classificationCountryId = $parameters->get("classificationCountryId");
+        $classificationProvinceId = $parameters->get("classificationProvinceId");
+
+        $event = ArcheryEvent::find($event_id);
+
+        //reset contingent setting
+        $event->with_contingent = !$withContingent ? 0 : $withContingent;
+        $event->parent_classification = !$parentClassification ? 0 : $parentClassification;
+        $event->province_id = !$classificationProvinceId ? 0 : $classificationProvinceId;
+        $event->classification_country_id = !$classificationCountryId ? 0 : $classificationCountryId;
+
+        // validation contingent
+        if ($withContingent == 1) {
+            if (empty($parentClassification)) {
+                throw new BLoCException("jika contingent aktif, maka wajib memilih parent classification!");
+            }
+
+            if (!$classificationCountryId) {
+                if ($parentClassification == 3 || $parentClassification == 4) {
+                    throw new BLoCException("jika memilih contingent provinsi atau kota, wajib mengisi negara!");
+                }
+            }
+
+            if (!$classificationProvinceId) {
+                if ($parentClassification == 4) {
+                    throw new BLoCException("jika memilih contingent kota, wajib mengisi negara!");
+                }
+            }
+        }
 
         // reset config
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
@@ -53,12 +82,8 @@ class SetConfigRegisterCategory extends Transactional
         }
         // akhir reset config
 
-        // reset classification
-        ClassificationEventRegisters::where("event_id", '=', $event_id)->delete();
-
 
         // set ulang tanggal pendaftaran event
-        $event = ArcheryEvent::find($event_id);
 
         // if (strtotime($default_datetime_start_register) < time()) {
         //     throw new BLoCException("event start register invalid");
@@ -82,7 +107,6 @@ class SetConfigRegisterCategory extends Transactional
         $event->event_start_datetime = $schedule_start_event;
         $event->event_end_datetime = $schedule_end_event;
         $event->save();
-
         // set ulang tanggal pendaftaran per kategori
         $category_where_event = ArcheryEventCategoryDetail::where("event_id", $event_id)->get();
         foreach ($category_where_event as $cwe) {
@@ -189,69 +213,6 @@ class SetConfigRegisterCategory extends Transactional
             }
         }
 
-        if ($is_active_classification == 1) {
-            $data_map_classification = [];
-            foreach ($list_classification as $key => $value) {
-                $set_data_classification = [
-                    'parent_classification_id' => $value['parent_classification_id'],
-                    'event_id' => $event_id,
-                    'children_classification_id' => null,
-                    'country_id' => null,
-                    'states_id' => null,
-                    'city_of_contry_id' => null,
-                    'archery_club_id' => null
-                ];
-
-                if (empty($value['parent_classification_id'])) throw new BLoCException("parent klasifikasi wajib di isi!");
-
-
-                switch ($value['parent_classification_id']) {
-                    case 1:
-                        if (empty($value['archery_club_id'])) {
-                            throw new BLoCException("jika memilih parent klasifikasi klub maka klub wajib di pilih!");
-                        } else {
-                            $set_data_classification['archery_club_id'] = $value['archery_club_id'];
-                        }
-                        break;
-                    case 2:
-                        if (empty($value['country_id'])) {
-                            throw new BLoCException("jika memilih parent klasifikasi negara maka negara wajib di pilih!");
-                        } else {
-                            $set_data_classification['country_id'] = $value['country_id'];
-                        }
-                        break;
-                    case 3:
-                        if (empty($value['country_id']) || empty($value['states_id'])) {
-                            throw new BLoCException("jika memilih parent klasifikasi provinsi maka negara, provinsi wajib di pilih!");
-                        } else {
-                            $set_data_classification['country_id'] = $value['country_id'];
-                            $set_data_classification['states_id'] = $value['states_id'];
-                        }
-                        break;
-                    case 4:
-                        if (empty($value['country_id']) || empty($value['states_id']) || empty($value['city_of_contry_id'])) {
-                            throw new BLoCException("jika memilih parent klasifikasi kota maka negara, provinsi, kota wajib di pilih!");
-                        } else {
-                            $set_data_classification['country_id'] = $value['country_id'];
-                            $set_data_classification['states_id'] = $value['states_id'];
-                            $set_data_classification['city_of_contry_id'] = $value['city_of_contry_id'];
-                        }
-                        break;
-                    default:
-                        if (empty($value['children_classification_id'])) {
-                            throw new BLoCException("jika memilih parent klasifikasi custom maka wajib di isi!");
-                        } else {
-                            $set_data_classification['children_classification_id'] = $value['children_classification_id'];
-                        }
-                        break;
-                }
-
-                array_push($data_map_classification, $set_data_classification);
-            }
-
-            ClassificationEventRegisters::insert($data_map_classification);
-        }
-
         // susun response
         $response = [];
         $response["event_id"] = $event->id;
@@ -264,6 +225,15 @@ class SetConfigRegisterCategory extends Transactional
             "start" => $event->event_start_datetime,
             "end" => $event->event_end_datetime,
         ];
+
+        // get contingent classification
+        $response['withContingent'] = $event->with_contingent;
+        $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+        $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+        $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+        $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+        $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+        $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
 
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
@@ -292,18 +262,6 @@ class SetConfigRegisterCategory extends Transactional
             }
             $response["list_config"][] = $c;
         }
-
-        $get_classification = ClassificationEventRegisters::where('event_id', '=', $event_id)
-            ->where('deleted_at', '=', null)
-            ->get();
-
-        $enable_classification = 0;
-        if ($get_classification->count() > 0) {
-            $enable_classification = 1;
-        }
-
-        $response['is_active_classification'] = $enable_classification;
-        $response['list_classification'] = $get_classification;
 
         return $response;
     }

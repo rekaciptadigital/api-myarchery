@@ -16,12 +16,12 @@ class ClassificationEventRegisters extends Migration
     {
         Schema::create('classification_event_registers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('parent_classification_id');
-            $table->bigInteger('children_classification_id')->nullable();
             $table->bigInteger('event_id');
+            $table->bigInteger('children_classification')->nullable();
+            $table->bigInteger('user_id')->nullable();
             $table->bigInteger('country_id')->nullable();
-            $table->bigInteger('states_id')->nullable();
-            $table->bigInteger('city_of_contry_id')->nullable();
+            $table->bigInteger('provinsi_id')->nullable();
+            $table->bigInteger('city_id')->nullable();
             $table->bigInteger('archery_club_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
