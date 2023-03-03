@@ -774,6 +774,7 @@ class ArcheryScoring extends Model
                 if ($a["member"]["member_rank"] != null && $b["member"]["member_rank"] != null) {
                     return $b["member"]["member_rank"] < $a["member"]["member_rank"] ? 1 : -1;
                 }
+                return $b["rank"] < $a["rank"] ? 1 : -1;
             });
         }
 

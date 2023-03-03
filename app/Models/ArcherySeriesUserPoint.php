@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
 use DAI\Utils\Exceptions\BLoCException;
+use DAI\Utils\Helpers\BLoC;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -205,6 +206,7 @@ class ArcherySeriesUserPoint extends Model
         foreach ($archery_user_point as $key => $value) {
             $event_series = ArcheryEventSerie::find($value->event_serie_id);
             if (!$event_series) {
+                throw new BLoCException("event series not found");
             }
             $event = ArcheryEvent::find($event_series->event_id);
             if (!$event) {
@@ -262,6 +264,9 @@ class ArcherySeriesUserPoint extends Model
             $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")
                 ->where("id", $u)
                 ->first();
+            if (!$user_detail) {
+                throw new BLoCException("user not found");
+            }
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
@@ -277,11 +282,15 @@ class ArcherySeriesUserPoint extends Model
             if (isset($user["event"]) && $user["event"]["with_contingent"] == 1) {
                 if (isset($user["contingent_id"])) {
                     $c = City::find($user["contingent_id"]);
-                    $city = $c->name;
+                    if ($c) {
+                        $city = $c->name;
+                    }
                 }
             } else {
                 $c = City::find($user_detail->address_city_id);
-                $city = $c->name;
+                if ($c) {
+                    $city = $c->name;
+                }
             }
 
             $user_profile = [
