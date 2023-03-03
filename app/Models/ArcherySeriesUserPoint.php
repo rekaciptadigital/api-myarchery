@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
 use DAI\Utils\Exceptions\BLoCException;
+use DAI\Utils\Helpers\BLoC;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -205,6 +206,7 @@ class ArcherySeriesUserPoint extends Model
         foreach ($archery_user_point as $key => $value) {
             $event_series = ArcheryEventSerie::find($value->event_serie_id);
             if (!$event_series) {
+                throw new BLoCException("event series not found");
             }
             $event = ArcheryEvent::find($event_series->event_id);
             if (!$event) {
