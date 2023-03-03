@@ -283,7 +283,9 @@ class ArcherySeriesUserPoint extends Model
                 }
             } else {
                 $c = City::find($user_detail->address_city_id);
-                $city = $c->name;
+                if ($c) {
+                    $city = $c->name;
+                }
             }
 
             $user_profile = [
