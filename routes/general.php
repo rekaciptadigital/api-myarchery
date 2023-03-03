@@ -29,6 +29,7 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     $router->post("/bulk-insert-member-contingent-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollective']);
     $router->post("/bulk-insert-member-club-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollectiveClub']);
     $router->post("/bulk-insert-member-contingent-team-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollectiveTeam']);
+    $router->post("/update-payment-status-oy", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateStatusPayment']);
     $router->group(["middleware" => "auth.user"], function () use ($router) {
         $router->group(['prefix' => 'download-template'], function () use ($router) {
             $router->post('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
