@@ -31,7 +31,7 @@ class GetParentClassification extends Retrieval
             ->paginate($limit);
         $result->makeHidden(['admin_id', 'deleted_at']);
         foreach ($result as $key => $value) {
-            $get_children = ChildrenClassificationMembers::where('parent_id', '=', $value->id)->get();
+            $get_children = ChildrenClassificationMembers::where('parent_id', '=', $value->id)->where('deleted_at', '=', null)->get();
             $result[$key]['childrens'] = $get_children;
             $result[$key]['count_children'] = $get_children->count();
         }
