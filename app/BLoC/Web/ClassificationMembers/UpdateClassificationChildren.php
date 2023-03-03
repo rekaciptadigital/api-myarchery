@@ -17,26 +17,40 @@ class UpdateClassificationChildren extends Retrieval
 
     protected function process($parameters)
     {
-        $data = [
-            'title' => $parameters->get('title'),
-            'status' => (int)$parameters->get('status') != 1 || $parameters->get('status') != true || $parameters->get('status') != 'true' ? 0 : 1
-        ];
-
-        $children = ChildrenClassificationMembers::where('id', '=', $parameters->get("id"));
-
-        if ($children->count() < 1) {
-            throw new BLoCException("children classification tidak ditemukan!");
+        $data_req = $parameters->get('data');
+        // return $data_req;
+        if (!$data_req) {
+            throw new BLoCException("data wajib di isi!");
         }
 
-        if (empty($parameters->get('title'))) {
-            throw new BLoCException("title tidak boleh kosong!");
+        foreach ($data_req as $key => $value) {
+            if (empty($value['id'])) {
+                throw new BLoCException("id wajib di isi!");
+            }
+
+            $check_data = ChildrenClassificationMembers::find($value['id']);
+
+            if (!$check_data) {
+                throw new BLoCException("request id :" . $value['id'] . " tidak ditemukan!");
+            }
+
+            if (empty($value['title'])) {
+                throw new BLoCException("title tidak boleh kosong!");
+            }
         }
 
-        $children->update($data);
+        $data_id = [];
+        foreach ($data_req as $key => $value) {
+            $data_id[$key] = $value['id'];
+            $save_data = [
+                'title' => $value['title'],
+                'status' => $value['status'] == true || $value['status'] == 1 || $value['status'] == null  ? 1 : 0,
+            ];
+            ChildrenClassificationMembers::find($value['id'])->update($save_data);
+        }
 
-        $result = ChildrenClassificationMembers::find($parameters->get('id'));
-        $result->makeHidden(['admin_id', 'parent_id', 'user_id', 'deleted_at']);
+        $get_all_childrens = ChildrenClassificationMembers::whereIn('id', $data_id)->get();
 
-        return $result;
+        return $get_all_childrens;
     }
 }

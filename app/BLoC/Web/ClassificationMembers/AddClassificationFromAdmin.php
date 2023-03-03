@@ -19,7 +19,7 @@ class AddClassificationFromAdmin extends Retrieval
     {
         $admin = Auth::user();
 
-        $get_childrens = empty($parameters->get('childrens')) ? [] : json_decode($parameters->get('childrens'), true);
+        $get_childrens = empty($parameters->get('childrens')) ? [] : $parameters->get('childrens');
 
         if (empty($parameters->get("parent_title"))) {
             throw new BLoCException("title parent wajib di isi!");
