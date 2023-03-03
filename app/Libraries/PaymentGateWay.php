@@ -469,7 +469,7 @@ class PaymentGateWay
 
     public static function notificationCallbackPaymnetOy($parameters)
     {
-        $order_id = $parameters->get('partner_tx_id');
+        $order_id = $parameters;
 
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', env('OY_BASEURL', "https://api-stg.oyindonesia.com") . '/api/payment-checkout/status?send_callback=false&partner_tx_id=' . $order_id, [
