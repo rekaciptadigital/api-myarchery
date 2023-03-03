@@ -62,16 +62,14 @@ class GetConfigCategoryRegistrationDate extends Transactional
             $response["list_config"][] = $c;
         }
 
-
-        $classification_list = ClassificationEventRegisters::where('event_id', '=', $event_id)->get();
-
-        $enable_classification = 0;
-        if ($classification_list->count() > 0) {
-            $enable_classification = 1;
-        }
-
-        $response['is_active_classification'] = $enable_classification;
-        $response['classification_list'] = $classification_list;
+        // get contingent classification
+        $response['withContingent'] = $event->with_contingent;
+        $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+        $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+        $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+        $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+        $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+        $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
 
         return $response;
     }
