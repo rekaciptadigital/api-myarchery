@@ -19,7 +19,6 @@ class BudRest extends Model
 
     protected function downloadQualificationScoreSheet($category_id, $update_file = true, $session = 1)
     {
-
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) {
             throw new BLoCException("event category tidak tersedia");
@@ -99,8 +98,6 @@ class BudRest extends Model
         foreach ($output['data_member'] as $m) {
             if ($m["detail_member"]["bud_rest_number"] == 0) {
                 throw new BLoCException("masih ada peserta yang belum memiliki bantalan");
-                // $member_not_have_budrest[] = $m["detail_member"]["member_id"];
-                // continue;
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
@@ -206,7 +203,7 @@ class BudRest extends Model
 
     public static function setMemberBudrest($category_id, $with_contingent)
     {
-        
+
         $tf = ["A", "C", "B", "D", "E", "F"];
         $bud_rest = BudRest::where("archery_event_category_id", $category_id)->first();
         if (!$bud_rest) {
@@ -241,7 +238,7 @@ class BudRest extends Model
             throw new BLoCException("jadwal belum dibuat");
         }
         $list_schedule_full_day = ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $qualification_time->id)->get();
-        
+
         foreach ($list_schedule_full_day as $key => $l_s_f_d) {
             $l_s_f_d->bud_rest_number = 0;
             $l_s_f_d->target_face = "";
@@ -366,9 +363,8 @@ class BudRest extends Model
         return true;
     }
 
-    protected function downloadQualificationSelectionScoreSheet($category_id, $update_file = false, $session = 1)
+    protected function downloadQualificationSelectionScoreSheet($category_id, $update_file = true, $session = 1)
     {
-
         $category = ArcheryEventCategoryDetail::find($category_id);
         if (!$category) {
             throw new BLoCException("event category tidak tersedia");
@@ -400,25 +396,25 @@ class BudRest extends Model
             'category' => $category
         ];
 
-        $participant_member_team = ParticipantMemberTeam::select(
-            'participant_member_teams.participant_member_id as member_id',
+        $participant_member_team = ArcheryEventParticipantMember::select(
+            'archery_event_participant_members.id as member_id',
             'archery_event_qualification_schedule_full_day.bud_rest_number',
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
             'users.name',
-            'archery_clubs.name as club_name'
+            'archery_clubs.name as club_name',
+            'cities.name as city_name'
         )
-            ->where('participant_member_teams.event_category_id', $category->id)
-            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'participant_member_teams.participant_member_id')
-            ->leftJoin('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'participant_member_teams.participant_member_id')
-            ->leftJoin('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->leftJoin('users', 'users.id', '=', 'archery_event_participants.user_id')
+            ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'archery_event_participant_members.id')
+            ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
             ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+            ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
+            ->where('archery_event_participants.event_category_id', $category->id)
+            ->where('archery_event_participants.status', 1)
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
-
-        // return $output;
 
         $array_pesrta_baru = [];
         $distance = $category->session_in_qualification <= 2  ? [$category->distance_id, $category->distance_id] : [
@@ -426,6 +422,7 @@ class BudRest extends Model
             substr($category->distance_id, 2, 2),
             substr($category->distance_id, 4, 2)
         ];
+
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
@@ -443,71 +440,89 @@ class BudRest extends Model
         }
         $member_in_budrest = [];
         $member_not_have_budrest = [];
-        $i = 0;
+        $i = 1;
         foreach ($output['data_member'] as $m) {
             if ($m["detail_member"]["bud_rest_number"] == 0) {
-                $member_not_have_budrest[] = $m["detail_member"]["member_id"];
+                throw new BLoCException("masih ada peserta yang belum memiliki bantalan");
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
                 $i++;
             }
-            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "1-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
+            $member_in_budrest[$m["detail_member"]["bud_rest_number"]]['code'] = "3-" . $category->id . "-" . $session . "-" . $m["detail_member"]["bud_rest_number"];
         }
 
         foreach ($member_in_budrest as $key => $data) {
-            if ($key != 0 && count($data["members"]) > 1) {
+            if (isset($data["members"]) && count($data["members"]) == 1) {
+                foreach ($data["members"] as $dm_key => $dm) {
+                    if (count($dm) == 1) {
+                        $qrCode = new QrCode($data['code']);
+                        $output_qrcode = new Output\Png();
+                        $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
+                        $full_path = $path . $qrCode_name_file;
+                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
+                        $html = \view('template.score_sheet_qualification', [
+                            "with_contingent" => $event->with_contingent,
+                            "data" => $dm[0],
+                            "category" => $output['category'],
+                            "category_label" => $output['category_label'],
+                            "qr" => $base64,
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
+                            "event" => $output['event'],
+                            "row_height" => "45px"
+                        ]);
+                        $mpdf->AddPage("P");
+                        $mpdf->WriteHTML($html);
+                    } else {
+                        $qrCode = new QrCode($data['code']);
+                        $output_qrcode = new Output\Png();
+                        $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
+                        $full_path = $path . $qrCode_name_file;
+                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
+                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
+                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
+                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
+                        $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                            "with_contingent" => $event->with_contingent,
+                            "data" => $data["members"],
+                            "category" => $output['category'],
+                            "category_label" => $output['category_label'],
+                            "total_shot_per_stage" => $category->count_shot_in_stage,
+                            "total_stage" => $category->count_stage,
+                            "qr" => $base64,
+                            "event" => $output['event'],
+                            "row_height" => "35px"
+                        ]);
+                        $mpdf->AddPage("L");
+                        $mpdf->WriteHTML($html);
+                    }
+                }
+            } else {
                 $qrCode = new QrCode($data['code']);
                 $output_qrcode = new Output\Png();
-                // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
                 $qrCode_name_file = "qr_code_" . $data['code'] . ".png";
                 $full_path = $path . $qrCode_name_file;
                 $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
                 file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                // return $type;
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                // return $data_get_qr_code;
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                // return $base64;
-                $html = \view('template.event_selection.score_sheet_qualification_group_by_budrest', [
+                $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                    "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
                     "total_shot_per_stage" => $category->count_shot_in_stage,
                     "total_stage" => $category->count_stage,
                     "qr" => $base64,
-                    "event" => $output['event']
+                    "event" => $output['event'],
+                    "row_height" => "40px",
                 ]);
+                $mpdf->AddPage("P");
                 $mpdf->WriteHTML($html);
-            } else {
-                foreach ($data["members"] as $group_member) {
-                    foreach ($group_member as $m) {
-                        $qrCode = new QrCode($m['code']);
-                        $output_qrcode = new Output\Png();
-                        // $qrCode_name_file = "qr_code_" . $pmt->member_id . ".png";
-                        $qrCode_name_file = "qr_code_" . $m['code'] . ".png";
-                        $full_path = $path . $qrCode_name_file;
-                        $data_qr_code =  $output_qrcode->output($qrCode,  100, [255, 255, 255], [0, 0, 0]);
-                        file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
-
-                        // return $type;
-                        $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
-                        // return $data_get_qr_code;
-                        $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                        // return $base64;
-                        $html = \view('template.event_selection.score_sheet_qualification', [
-                            "data" => $m,
-                            "category" => $output['category'],
-                            "category_label" => $output['category_label'],
-                            "qr" => $base64,
-                            "total_shot_per_stage" => $category->count_shot_in_stage,
-                            "total_stage" => $category->count_stage,
-                            "event" => $output['event']
-                        ]);
-                        $mpdf->WriteHTML($html);
-                    }
-                }
             }
         }
 

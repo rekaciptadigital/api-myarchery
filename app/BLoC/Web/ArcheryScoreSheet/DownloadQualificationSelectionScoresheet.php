@@ -2,12 +2,8 @@
 
 namespace App\BLoC\Web\ArcheryScoreSheet;
 
-use App\Models\ArcheryEvent;
-use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ParticipantMemberTeam;
 use App\Models\BudRest;
 use DAI\Utils\Abstracts\Retrieval;
-use DAI\Utils\Exceptions\BLoCException;
 
 
 class DownloadQualificationSelectionScoresheet extends Retrieval
