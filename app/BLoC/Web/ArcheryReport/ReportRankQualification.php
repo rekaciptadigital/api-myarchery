@@ -55,6 +55,7 @@ class ReportRankQualification extends Retrieval
         }
 
         $pdf = PDFv2::loadView('qualification-rank', [
+            "with_contingent" => $archery_event->with_contingent,
             'data' => $list_scoring_qualification,
             "logo_event" => $logo_event,
             "event_location_report" => $event_location_report,
