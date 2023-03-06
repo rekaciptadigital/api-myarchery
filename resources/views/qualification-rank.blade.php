@@ -72,7 +72,7 @@
                         <strong>Rank</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black;font-size: 14pt ">
-                        <strong>Club</strong>
+                        <strong>Club/Contingent</strong>
                     </th>
                     @foreach ($data[0]['sessions'] as $key => $item)
                         <th style="text-align: center;border: 1px solid black;font-size: 14pt">
@@ -98,7 +98,7 @@
                             {{ $key + 1 }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                            {{ $d['club_name'] }}
+                            {{ $with_contingent == 0 ? $d['club_name'] : $d['city_name'] }}
                         </td>
                         @foreach ($d['sessions'] as $key2 => $item)
                             <td style="text-align: center;border: 1px solid black;font-size: 14pt">
