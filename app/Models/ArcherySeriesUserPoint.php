@@ -42,7 +42,8 @@ class ArcherySeriesUserPoint extends Model
 
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
         if (!$event_serie) {
-            throw new BLoCException("event series not found");
+            // throw new BLoCException("event series not found");
+            return false;
         }
 
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
@@ -53,15 +54,18 @@ class ArcherySeriesUserPoint extends Model
             ->first();
 
         if (!$archerySeriesCategory) {
-            throw new BLoCException("archerySeriesCategory not found");
+            // throw new BLoCException("archerySeriesCategory not found");
+            return false;
         }
         $series = ArcherySerie::find($event_serie->serie_id);
         if (!$series) {
-            throw new BLoCException("series not found");
+            // throw new BLoCException("series not found");
+            return false;
         }
 
         if (!$archerySeriesCategory) {
-            throw new BLoCException("archerySeriesCategory not found");
+            // throw new BLoCException("archerySeriesCategory not found");
+            return false;
         }
         $t = 1;
         if ($type == "elimination") {
@@ -70,7 +74,8 @@ class ArcherySeriesUserPoint extends Model
 
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
         if (!$point) {
-            throw new BLoCException("point not found");
+            // throw new BLoCException("point not found");
+            return false;
         }
 
         $is_series = 1;

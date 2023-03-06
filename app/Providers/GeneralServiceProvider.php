@@ -15,6 +15,7 @@ use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
 use App\BLoC\General\Support\ImportMemberCollectiveClub;
 use App\BLoC\General\Support\UpdateLogoCity;
+use App\BLoC\General\Support\UpdateStatusPayment;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
 use Illuminate\Support\ServiceProvider;
@@ -49,6 +50,7 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("importMemberCollectiveTeam", ImportMemberCollectiveTeam::class);
         $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
         $this->registerService("importMemberCollectiveClub", ImportMemberCollectiveClub::class);
+        $this->registerService("updateStatusPayment", UpdateStatusPayment::class);
 
         // ======================================= End ==============================================
     }
