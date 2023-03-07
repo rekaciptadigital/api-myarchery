@@ -580,12 +580,12 @@ class BudRest extends Model
             ->get();
 
         $array_pesrta_baru = [];
-        $distance = $category->count_stage <= 2  ? [$category->distance_id, $category->distance_id] : [
+        $distance = env('COUNT_STAGE_ELIMINATION_SELECTION') <= 2  ? [$category->distance_id, $category->distance_id] : [
             substr($category->distance_id, 0, 2),
             substr($category->distance_id, 2, 2),
             substr($category->distance_id, 4, 2)
         ];
-        for ($i = 1; $i <= $category->count_stage; $i++) {
+        for ($i = 1; $i <= env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
