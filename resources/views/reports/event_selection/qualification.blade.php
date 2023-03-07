@@ -29,9 +29,11 @@
             <tbody>
                 <tr style="height: 20px;">
                     <td style="width: 2%; height: 50px;" rowspan="2"></td>
-                    <td style="width: 10%; height: 50px;" rowspan="2">{!! $logo_event !!}</td>
                     <td style="width: 10%; height: 50px;" rowspan="2">
                         <img src="{{ $logo_event }}" alt="" width="70%">
+                    </td>
+                    <td style="width: 10%; height: 50px;" rowspan="2">
+                        {!! $logo_archery !!}
                     </td>
                     <td style="width: 42%; height: 30px; ">
                         <p style="text-align: left; font-size: 14pt; font-family: helvetica;">
