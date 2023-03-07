@@ -579,17 +579,18 @@ class BudRest extends Model
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
 
+        $count_stage = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $array_pesrta_baru = [];
-        $distance = env('COUNT_STAGE_ELIMINATION_SELECTION') <= 2  ? [$category->distance_id, $category->distance_id] : [
+        $distance = $count_stage <= 2  ? [$category->distance_id, $category->distance_id] : [
             substr($category->distance_id, 0, 2),
             substr($category->distance_id, 2, 2),
             substr($category->distance_id, 4, 2)
         ];
-        for ($i = 1; $i <= env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+        for ($i = 1; $i <= $count_stage; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
-                    $code_sesi['sesi'] = '';
+                    $code_sesi['sesi'] = $i;
                     $code_sesi['code'] = "4-" . $pmt->member_id . "-" . $i;
                     array_push($array_pesrta_baru, $code_sesi);
                 }
