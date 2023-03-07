@@ -590,7 +590,7 @@ class BudRest extends Model
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
-                    $code_sesi['sesi'] = $i;
+                    $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
                     $code_sesi['code'] = "4-" . $pmt->member_id . "-" . $i;
                     array_push($array_pesrta_baru, $code_sesi);
                 }
@@ -603,10 +603,10 @@ class BudRest extends Model
         }
         $member_in_budrest = [];
         $member_not_have_budrest = [];
-        $i = 0;
+        $i = 1;
         foreach ($output['data_member'] as $m) {
             if ($m["detail_member"]["bud_rest_number"] == 0) {
-                $member_not_have_budrest[] = $m["detail_member"]["member_id"];
+                throw new BLoCException("masih ada peserta yang belum memiliki bantalan");
             }
             $member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i][] = $m;
             if (count($member_in_budrest[$m["detail_member"]["bud_rest_number"]]["members"][$i]) >= 2) {
@@ -627,14 +627,14 @@ class BudRest extends Model
                         file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                        $html = \view('template.score_sheet_qualification', [
+                        $html = \view('template.event_selection.score_sheet_elimination', [
                             "with_contingent" => $event->with_contingent,
                             "data" => $dm[0],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
                             "qr" => $base64,
                             "total_shot_per_stage" => $category->count_shot_in_stage,
-                            "total_stage" => $category->count_stage,
+                            "total_stage" => $count_stage,
                             "event" => $output['event'],
                             "row_height" => "45px"
                         ]);
@@ -649,13 +649,13 @@ class BudRest extends Model
                         file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                        $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                        $html = \view('template.event_selection.score_sheet_elimination_group_by_budrest', [
                             "with_contingent" => $event->with_contingent,
                             "data" => $data["members"],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
                             "total_shot_per_stage" => $category->count_shot_in_stage,
-                            "total_stage" => $category->count_stage,
+                            "total_stage" => $count_stage,
                             "qr" => $base64,
                             "event" => $output['event'],
                             "row_height" => "35px"
@@ -673,13 +673,13 @@ class BudRest extends Model
                 file_put_contents(public_path() . '/' . $full_path, $data_qr_code);
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
-                $html = \view('template.score_sheet_qualification_group_by_budrest', [
+                $html = \view('template.event_selection.score_sheet_elimination_group_by_budrest', [
                     "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
                     "total_shot_per_stage" => $category->count_shot_in_stage,
-                    "total_stage" => $category->count_stage,
+                    "total_stage" => $count_stage,
                     "qr" => $base64,
                     "event" => $output['event'],
                     "row_height" => "40px",
