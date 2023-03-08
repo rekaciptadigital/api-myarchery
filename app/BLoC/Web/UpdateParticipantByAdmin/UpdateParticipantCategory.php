@@ -28,73 +28,158 @@ class UpdateParticipantCategory extends Transactional
     {
         $admin = Auth::user();
         $participant_id = $parameters->get('participant_id');
-        $category_id = $parameters->get('category_id');
+        $category_id = $parameters->get('category_id'); // category id tujuan
 
-        $partticipant = ArcheryEventParticipant::find($participant_id);
+        // cek category tujuan apakah tersedia atau tidak
+        $new_category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_events.admin_id",
+            "archery_master_team_categories.type"
+        )
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->where("archery_event_category_details.id", $category_id)
+            ->first();
+
+        if (!$new_category) {
+            throw new BLoCException("Kategori tidak ditemukan");
+        }
+
+        $partticipant = ArcheryEventParticipant::select("archery_event_participants.*")
+            ->join("archery_event_category_details", "archery_event_category_details.id", "=", "archery_event_participants.event_category_id")
+            ->where("archery_event_participants.id", $participant_id)
+            ->where("archery_event_participants.status", 1)
+            ->where("archery_event_participants.event_id", $new_category->event_id)
+            ->first();
+
         if (!$partticipant) {
             throw new BLoCException("data participant tidak tersedia");
         }
 
-        $category_participant = ArcheryEventCategoryDetail::find($partticipant->event_category_id);
-        if (!$category_participant) {
-            throw new BLoCException("kategori participant tidak ditemukan");
-        }
+        $current_category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_team_categories.type")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->where("archery_event_category_details.id", $partticipant->event_category_id)
+            ->first();
 
         $user = User::find($partticipant->user_id);
         if (!$user) {
             throw new BLoCException("user tidak ditemukan");
         }
 
-        // cek category tujuan apakah tersedia atau tidak
-        $category = ArcheryEventCategoryDetail::find($category_id);
-        if (!$category) {
-            throw new BLoCException("Kategori tidak ditemukan");
+        $time_now = time();
+
+        $is_exists_pending_or_success = ArcheryEventParticipant::leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+            ->where("archery_event_participants.event_category_id", $category_id)
+            ->where("archery_event_participants.user_id", $user->id)
+            ->where(function ($query) use ($time_now) {
+                $query->where("archery_event_participants.status", 1);
+                $query->orWhere(function ($q) use ($time_now) {
+                    $q->where("archery_event_participants.status", 4);
+                    $q->where("transaction_logs.status", 4);
+                    $q->where("transaction_logs.expired_time", ">", $time_now);
+                });
+            })->get()->count();
+
+        if ($is_exists_pending_or_success > 0) {
+            throw new BLoCException("user telah terdaftar di categori ini");
         }
 
-        $event = ArcheryEvent::find($category->event_id);
-        if (!$event) {
-            throw new BLoCException("event tidak ditemukan");
-        }
-
-        if ($partticipant->event_id != $event->id) {
-            throw new BLoCException("event tidak sama");
-        }
-
-        if ($event->admin_id != $admin->id) {
-            throw new BLoCException("forbiden");
-        }
-
-        if ($partticipant->status != 1) {
-            throw new BLoCException("tidak dapat mengganti kategori");
-        }
-
-        $isExist = ArcheryEventParticipant::where('event_category_id', $category->id)
-            ->where('user_id', $user->id)
-            ->get();
-
-        if ($isExist->count() > 0) {
-            foreach ($isExist as $ie) {
-                if ($ie->status == 1) {
-                    // throw new BLoCException("event dengan kategori ini sudah di ikuti");
+        if (strtolower($new_category->type) == "individual") {
+            if (strtolower($current_category->type) == "individual") {
+                $participant_memmber = ArcheryEventParticipantMember::where('archery_event_participant_id', $partticipant->id)->first();
+                if (!$participant_memmber) {
+                    throw new BLoCException("participant member tidak tersedia");
                 }
 
-                if ($ie->status == 4) {
-                    $ie_transaction_log = TransactionLog::find($ie->transaction_log_id);
-                    if ($ie_transaction_log) {
-                        if ($ie_transaction_log->status == 4 && $ie_transaction_log->expired_time > time()) {
-                            // throw new BLoCException("transaksi dengan kategory ini sudah pernah dilakukan, silahkan selesaikan pembayaran atau batalkan pesanan");
-                        }
+                // if ($new_category->max_age != 0) {
+                //     if ($user->age == null) {
+                //         throw new BLoCException("tgl lahir user belum di set");
+                //     }
+                //     $check_date = $this->getAge($user->date_of_birth, $event->event_start_datetime);
+                //     // cek apakah usia user memenuhi syarat categori event
+                //     if ($check_date["y"] > $new_category->max_age) {
+                //         // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                //     }
+                //     if ($check_date["y"] == $new_category->max_age && ($check_date["m"] > 0 || $check_date["d"] > 0)) {
+                //         // throw new BLoCException("tidak memenuhi syarat usia, syarat maksimal usia adalah " . $new_category->max_age . " tahun");
+                //     }
+                // }
+
+                // cek jika memiliki syarat minimal umur
+                if ($new_category->min_age != 0) {
+                    if ($user->age == null) {
+                        throw new BLoCException("tgl lahir user belum di set");
+                    }
+                    // cek apakah usia user memenuhi syarat categori event
+                    if ($user->age < $new_category->min_age) {
+                        // throw new BLoCException("tidak memenuhi syarat usia, minimal usia adalah " . $new_category->min_age . " tahun");
                     }
                 }
-            }
-        }
 
-        if (($category->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) && ($category_participant->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE)) {
-            return $this->changeCategoryIndividu($category, $user, $partticipant, $event, $category_participant);
-        } elseif (($category->category_team == ArcheryEventCategoryDetail::TEAM_TYPE) && ($category_participant->category_team == ArcheryEventCategoryDetail::TEAM_TYPE)) {
-            return $this->changeCategoryTeam($category, $partticipant);
-        } else {
-            throw new BLoCException("tipe kategori tidak sama");
+                $gender_category = $new_category->gender_category;
+                if ($user->gender != $gender_category) {
+                    if (empty($user->gender))
+                        throw new BLoCException('user belum mengatur gender');
+
+                    throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+                }
+
+                $now = Carbon::now();
+                $new_format = Carbon::parse($new_category->start_event);
+
+                if ($now > $new_format) {
+                    // throw new BLoCException("event telah lewat");
+                }
+
+                if ($new_format->diffInDays($now) < 1) {
+                    // throw new BLoCException("tidak dapat mengubah kategori, minimal mengubah kategori adalah 24 jam sebelum berlangsungnya event");
+                }
+
+                $participant_count = ArcheryEventParticipant::countEventUserBooking($new_category->id);
+                if ($participant_count >= $new_category->quota) {
+                    $msg = "quota untuk kategori ini sudah penuh";
+                    // check kalo ada pembayaran yang pending
+                    $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+                        ->where("archery_event_participants.event_category_id", $new_category->id)
+                        ->where("transaction_logs.status", 4)->where("transaction_logs.expired_time", ">", time())
+                        ->count();
+
+                    if ($participant_count_pending > 0) {
+                        $msg = "untuk sementara  " . $msg . ", silahkan coba beberapa saat lagi";
+                    } else {
+                        $msg = $msg . ", silahkan daftar atau pindah di kategori lain";
+                    }
+                    // throw new BLoCException($msg);
+                }
+
+                $partticipant->update([
+                    "event_category_id" => $new_category->id,
+                    "team_category_id" => $new_category->team_category_id,
+                    "age_category_id" => $new_category->age_category_id,
+                    "competition_category_id" => $new_category->competition_category_id,
+                    "distance_id" => $new_category->distance_id
+                ]);
+
+                $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $new_category->id)->first();
+                if (!$qualification_time) {
+                    throw new BLoCException("waktu kualifikasi belum di set untuk kategory ini");
+                }
+
+                $qualification_full_day = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_memmber->id)->first();
+                if (!$qualification_full_day) {
+                    throw new BLoCException("jadwal kualifikasi untuk user ini belum diatur");
+                }
+                $qualification_full_day->update([
+                    "qalification_time_id" => $qualification_time->id
+                ]);
+
+                return [
+                    "participant" => $partticipant,
+                    "participant_member" => $participant_memmber,
+                    "qualification_time" => $qualification_time,
+                    "qualification_full_day" => $qualification_full_day
+                ];
+            }
         }
     }
 
