@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryEventParticipantMemberNumber;
-use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ArcheryEventSerie;
@@ -18,10 +16,8 @@ use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcherySeriesCategory;
 use App\Models\ArcherySeriesUserPoint;
-use App\Models\TransactionLog;
+use App\Models\TeamMemberSpecial;
 use App\Models\User;
-use DateTime;
-use Illuminate\Support\Carbon;
 
 class UpdateParticipantCategory extends Transactional
 {
@@ -288,167 +284,53 @@ class UpdateParticipantCategory extends Transactional
 
             // set point
             ArcherySeriesUserPoint::setAutoUserMemberCategory($new_category->event_id, $user->id);
+
+            // hapus jika participant memiliki member special
+            $team_member_special_ids = TeamMemberSpecial::where("participant_team_id", $participant->id)->pluck("id");
+            if (count($team_member_special_ids)) {
+                TeamMemberSpecial::whereIn("id", $team_member_special_ids)->delete();
+            }
         }
     }
 
     private function changeToTeamCategoryTeam(ArcheryEventCategoryDetail $current_category, ArcheryEventParticipant $participant, ArcheryEventCategoryDetail $new_category, User $user, ArcheryEvent $event)
     {
-        $gender_category = $new_category->gender_category;
-        $time_now = time();
-
-        $club_or_city = "Club";
+        $club_or_city_id = $participant->club_id;
         if ($event->with_contingent == 1) {
-            $club_or_city = "Kota";
+            $club_or_city_id = $participant->city_id;
         }
 
-        // cek total pendaftar yang masih pending dan sukses
-        $check_register_same_category = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $new_category->id)
-            ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->where(function ($query) use ($time_now) {
-                $query->where("archery_event_participants.status", 1);
-                $query->orWhere(function ($q) use ($time_now) {
-                    $q->where("archery_event_participants.status", 4);
-                    $q->where("transaction_logs.expired_time", ">", $time_now);
-                });
-            });
+        $total_participant_team = ArcheryEventParticipant::getCountParticipantTeamWithSameClubOrCity($new_category, $event, $club_or_city_id);
 
-        if ($event->with_contingent == 1) {
-            $check_register_same_category->where('archery_event_participants.city_id', $participant->city_id);
-        } else {
-            $check_register_same_category->where('archery_event_participants.club_id', $participant->club_id);
-        }
+        // validasi total peserta individu untuk pendaftaran beregu
+        if ($new_category->team_category_id == "male_team" || $new_category->team_category_id == "female_team") {
 
-        $check_register_same_category = $check_register_same_category->get()->count();
+            $team_category_id = $new_category->team_category_id == "male_team" ? "individu male" : "individu female";
+            $count_participant_individu = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, $team_category_id);
 
-        if ($gender_category == 'mix') {
-            $check_success_category_mix = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $new_category->id)
-                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                ->where("archery_event_participants.status", 1);
-
-            if ($event->with_contingent == 1) {
-                $check_success_category_mix->where('archery_event_participants.city_id', $participant->city_id);
-            } else {
-                $check_success_category_mix->where('archery_event_participants.club_id', $participant->club_id);
+            if ($count_participant_individu == 0) {
+                throw new BLoCException("participant individu not found");
             }
 
-            $check_success_category_mix = $check_success_category_mix->get()->count();
-
-            if ($check_success_category_mix >= 10) {
-                throw new BLoCException($club_or_city . " anda sudah terdaftar 10 kali pada kategori ini");
-            }
-
-            $check_panding_mix = ArcheryEventParticipant::select("archery_event_participants.*")->where('archery_event_participants.event_category_id', $new_category->id)
-                ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                ->where("archery_event_participants.status", 4)
-                ->where("transaction_logs.expired_time", ">", $time_now);
-
-            if ($event->with_contingent == 1) {
-                $check_panding_mix->where('archery_event_participants.city_id', $participant->city_id);
-            } else {
-                $check_panding_mix->where('archery_event_participants.club_id', $participant->club_id);
-            }
-
-            $check_panding_mix = $check_panding_mix->first();
-
-            if ($check_panding_mix) {
-                throw new BLoCException("terdapat pesanan yang belum di bayar oleh user dengan email " . $check_panding_mix->email);
-            }
-
-            $check_individu_category_detail_male = ArcheryEventCategoryDetail::where('event_id', $new_category->event_id)
-                ->where('age_category_id', $new_category->age_category_id)
-                ->where('competition_category_id', $new_category->competition_category_id)
-                ->where('distance_id', $new_category->distance_id)
-                ->where('team_category_id', "individu male")
-                ->first();
-
-            $check_individu_category_detail_female = ArcheryEventCategoryDetail::where('event_id', $new_category->event_id)
-                ->where('age_category_id', $new_category->age_category_id)
-                ->where('competition_category_id', $new_category->competition_category_id)
-                ->where('distance_id', $new_category->distance_id)
-                ->where('team_category_id', "individu female")
-                ->first();
-
-            if (!$check_individu_category_detail_male || !$check_individu_category_detail_female) {
-                throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
-            }
-
-            $check_participant_male = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-                ->where("archery_event_participants.status", 1)
-                ->where('archery_event_participants.event_category_id', $check_individu_category_detail_male->id);
-
-            if ($event->with_contingent == 1) {
-                $check_participant_male->where('archery_event_participants.city_id', $participant->city_id);
-            } else {
-                $check_participant_male->where('archery_event_participants.club_id', $participant->club_id);
-            }
-
-            $check_participant_male = $check_participant_male->get()->count();
-
-            $check_participant_female = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-                ->where("archery_event_participants.status", 1)
-                ->where('archery_event_participants.event_category_id', $check_individu_category_detail_female->id);
-
-            if ($event->with_contingent == 1) {
-                $check_participant_female->where('archery_event_participants.city_id', $participant->city_id);
-            } else {
-                $check_participant_female->where('archery_event_participants.club_id', $participant->club_id);
-            }
-
-            $check_participant_female = $check_participant_female->get()->count();
-
-            if ($check_participant_male < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta laki-laki");
-            }
-
-            if ($check_participant_female < (($check_success_category_mix + 1) * 1)) {
-                throw new BLoCException("untuk pendaftaran ke " . $check_success_category_mix . " membutuhkan " . (($check_success_category_mix + 1) * 1) . " peserta perempuan");
+            $tmp = $count_participant_individu / 3;
+            if ($tmp < $total_participant_team) {
+                $total_member_individu_must_join = $total_participant_team * 3;
+                throw new BLoCException("jumlah peserta tidak mencukupi, minimal peserta yang harus terdaftar adalah " . $total_member_individu_must_join . ". sedangkan total peserta individu saat ini adalah " . $count_participant_individu . " peserta");
             }
         } else {
-            if ($check_register_same_category >= 10) {
-                $check_panding = ArcheryEventParticipant::where('archery_event_participants.event_category_id', $new_category->id)
-                    ->join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-                    ->where("archery_event_participants.status", 4)
-                    ->where("transaction_logs.expired_time", ">", $time_now);
+            $count_participant_individu_male = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, "individu male");
+            $count_participant_individu_female = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, "individu female");
 
-                if ($event->with_contingent == 1) {
-                    $check_panding->where('archery_event_participants.city_id', $participant->city_id);
-                } else {
-                    $check_panding->where('archery_event_participants.club_id', $participant->club_id);
-                }
-
-                $check_panding = $check_panding->get()->count();
-
-                if ($check_panding > 0) {
-                    throw new BLoCException("ada transaksi yang belum diselesaikan oleh " . $club_or_city . " pada category ini");
-                } else {
-                    throw new BLoCException($club_or_city . " anda sudah terdaftar 10 kali di kategory ini");
-                }
-            }
-            $team_category_id = $new_category->team_category_id == "female_team" ? "individu female" : "individu male";
-            $check_individu_category_detail = ArcheryEventCategoryDetail::where('event_id', $new_category->event_id)
-                ->where('age_category_id', $new_category->age_category_id)
-                ->where('competition_category_id', $new_category->competition_category_id)
-                ->where('distance_id', $new_category->distance_id)
-                ->where('team_category_id', $team_category_id)
-                ->first();
-
-            if (!$check_individu_category_detail) {
-                throw new BLoCException("kategori individu untuk kategori ini tidak tersedia");
+            if ($count_participant_individu_male == 0 || $count_participant_individu_female == 0) {
+                throw new BLoCException("participant not enought");
             }
 
-            $check_participant = ArcheryEventParticipant::join('archery_event_participant_members', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-                ->where('archery_event_participants.event_category_id', $check_individu_category_detail->id);
-
-            if ($event->with_contingent == 1) {
-                $check_participant->where('archery_event_participants.city_id', $participant->city_id);
-            } else {
-                $check_participant->where('archery_event_participants.club_id', $participant->club_id);
+            if ($count_participant_individu_male < $total_participant_team) {
+                throw new BLoCException("jumlah peserta tidak mencukupi, minimal peserta male yang harus terdaftar adalah " . $total_participant_team . ". sedangkan total peserta individu male saat ini adalah " . $count_participant_individu_male . " peserta");
             }
 
-            $check_participant = $check_participant->get()->count();
-
-            if ($check_participant < (($check_register_same_category + 1) * 3)) {
-                throw new BLoCException("untuk pendaftaran ke " . ($check_register_same_category + 1) . " minimal harus ada " . (($check_register_same_category + 1) * 3) . " peserta tedaftar dengan kontingen ini");
+            if ($count_participant_individu_female < $total_participant_team) {
+                throw new BLoCException("jumlah peserta tidak mencukupi, minimal peserta female yang harus terdaftar adalah " . $total_participant_team . ". sedangkan total peserta individu female saat ini adalah " . $count_participant_individu_female . " peserta");
             }
         }
 
@@ -489,6 +371,12 @@ class UpdateParticipantCategory extends Transactional
 
             // delete member
             $member->delete();
+        } else {
+            // hapus jika participant memiliki member special
+            $team_member_special_ids = TeamMemberSpecial::where("participant_team_id", $participant->id)->pluck("id");
+            if (count($team_member_special_ids)) {
+                TeamMemberSpecial::whereIn("id", $team_member_special_ids)->delete();
+            }
         }
     }
 }
