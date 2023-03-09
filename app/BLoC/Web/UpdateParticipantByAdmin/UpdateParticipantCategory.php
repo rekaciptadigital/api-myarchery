@@ -5,7 +5,6 @@ namespace App\BLoC\Web\UpdateParticipantByAdmin;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Transactional;
-use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
@@ -28,7 +27,6 @@ class UpdateParticipantCategory extends Transactional
 
     protected function process($parameters)
     {
-        $admin = Auth::user();
         $participant_id = $parameters->get('participant_id');
         $category_id = $parameters->get('category_id'); // category id tujuan
         $time_now = time();
@@ -294,42 +292,43 @@ class UpdateParticipantCategory extends Transactional
         }
 
         if (strtolower($current_category->type) == "individual") {
-            $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
-            if (!$member) {
-                throw new BLoCException("member not found");
-            }
+            throw new BLoCException("forbiden");
+            // $member = ArcheryEventParticipantMember::where("archery_event_participant_id", $participant->id)->first();
+            // if (!$member) {
+            //     throw new BLoCException("member not found");
+            // }
 
-            // delete schedule
-            $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
-            if ($schedule) {
-                $schedule->delete();
-            }
+            // // delete schedule
+            // $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
+            // if ($schedule) {
+            //     $schedule->delete();
+            // }
 
-            // delete series user point
-            $event_series = ArcheryEventSerie::where("event_id", $current_category->event_id)->first();
-            if ($event_series) {
-                $series_category = ArcherySeriesCategory::where("serie_id", $event_series->serie_id)
-                    ->where("age_category_id", $current_category->age_category_id)
-                    ->where("competition_category_id", $current_category->competition_category_id)
-                    ->where("distance_id", $current_category->distance_id)
-                    ->where("team_category_id", $current_category->team_category_id)
-                    ->first();
+            // // delete series user point
+            // $event_series = ArcheryEventSerie::where("event_id", $current_category->event_id)->first();
+            // if ($event_series) {
+            //     $series_category = ArcherySeriesCategory::where("serie_id", $event_series->serie_id)
+            //         ->where("age_category_id", $current_category->age_category_id)
+            //         ->where("competition_category_id", $current_category->competition_category_id)
+            //         ->where("distance_id", $current_category->distance_id)
+            //         ->where("team_category_id", $current_category->team_category_id)
+            //         ->first();
 
-                if ($series_category) {
-                    $user_point =  ArcherySeriesUserPoint::where("event_serie_id", $event_series->id)
-                        ->where("user_id", $user->id)
-                        ->where("event_category_id", $series_category->id)
-                        ->where("member_id", $member->id)
-                        ->first();
+            //     if ($series_category) {
+            //         $user_point =  ArcherySeriesUserPoint::where("event_serie_id", $event_series->id)
+            //             ->where("user_id", $user->id)
+            //             ->where("event_category_id", $series_category->id)
+            //             ->where("member_id", $member->id)
+            //             ->first();
 
-                    if ($user_point) {
-                        $user_point->delete();
-                    }
-                }
-            }
+            //         if ($user_point) {
+            //             $user_point->delete();
+            //         }
+            //     }
+            // }
 
-            // delete member
-            $member->delete();
+            // // delete member
+            // $member->delete();
         } else {
             // hapus jika participant memiliki member special
             $team_member_special_ids = TeamMemberSpecial::where("participant_team_id", $participant->id)->pluck("id");
