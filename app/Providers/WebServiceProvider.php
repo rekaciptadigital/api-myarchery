@@ -229,6 +229,7 @@ use App\BLoC\Web\ClassificationMembers\DeleteClassificationChildren;
 use App\BLoC\Web\ClassificationMembers\DeleteClassificationParent;
 use App\BLoC\Web\ClassificationMembers\UpdateClassificationChildren;
 use App\BLoC\Web\ClassificationMembers\UpdateClassificationParent;
+use App\BLoC\Web\Member\GetAccessMemberCategoryTeam;
 
 // End of Archery Enterprise Section //
 
@@ -346,6 +347,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+        $this->registerService("getAccessMemberCategoryTeam", GetAccessMemberCategoryTeam::class);
 
 
         // ==================================== master age category ======================================
