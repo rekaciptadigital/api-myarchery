@@ -23,26 +23,30 @@ class GetMemberAccessCategories extends Retrieval
 
         $participant = ArcheryEventParticipant::find($participant_id);
 
-        if (!$participant) {
-            throw new BLoCException("participant not found");
-        }
-
         $user = User::find($participant->user_id);
 
         $age = $user->age;
 
         // cek gender participant
         $gender_participant = $user->gender;
+
+        // pemilihan kategori individu sesuai gender
         if ($gender_participant == "male") {
-            $list_gender = ["individu male", "individu_mix"];
+            $list_category_individu_ids = ["individu male", "individu_mix"];
         } else {
-            $list_gender = ["individu female", "individu_mix"];
+            $list_category_individu_ids = ["individu female", "individu_mix"];
         }
 
-        $categories = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_age_categories.max_age", "archery_master_age_categories.min_age")->join("archery_master_age_categories", "archery_master_age_categories.id", "archery_event_category_details.age_category_id")
+        // insert kategori beregu ke list gender agar user individu bisa pindah ke kategori beregu
+        // $list_category_team_ids = ["male_team", "female_team", "mix_team"];
+        // $list_team_category_ids = array_merge($list_category_individu_ids, $list_category_team_ids);
+
+        // query category berdasarkan event id dan array team category id
+        $categories = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_age_categories.max_age", "archery_master_age_categories.min_age")
+            ->join("archery_master_age_categories", "archery_master_age_categories.id", "archery_event_category_details.age_category_id")
             ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
             ->where("archery_event_category_details.event_id", $participant->event_id)
-            ->whereIn("archery_master_team_categories.id", $list_gender)
+            ->whereIn("archery_master_team_categories.id", $list_category_individu_ids)
             ->get();
 
 
