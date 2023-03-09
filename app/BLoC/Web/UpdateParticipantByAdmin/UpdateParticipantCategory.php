@@ -55,7 +55,8 @@ class UpdateParticipantCategory extends Transactional
 
         // cek kuota kategori tujuan
         $participant_count = ArcheryEventParticipant::countEventUserBooking($category_id); // hitung jumlah peserta yang status transaksi nya sukses, pending, dan booking 
-        if ($participant_count > $new_category->quota) {
+        $quota_left = $new_category->quota - $participant_count;
+        if ($quota_left < 1) {
             $msg = "quota kategori ini sudah penuh";
             // check kalo ada pembayaran yang pending
             $participant_count_pending = ArcheryEventParticipant::join("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
