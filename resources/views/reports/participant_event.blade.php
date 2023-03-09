@@ -65,7 +65,7 @@
                         JAKARTA)</strong></th> --}}
                 {{-- <th style="text-align: center; background: #FFFF00;"><strong>FOTO PESERTA</strong></th> --}}
                 {{-- <th style="text-align: center; background: #FFFF00;"><strong>FOTO BUKTI TRANSFER</strong></th> --}}
-                <th style="text-align: center; background: #FFFF00;"><strong>KLUB BERLATIH</strong></th>
+                <th style="text-align: center; background: #FFFF00;"><strong>KLUB/KONTINGEN</strong></th>
             </tr>
             @foreach ($datas as $data)
                 <tr>
@@ -95,7 +95,8 @@
                     {{-- <td style="text-align: center;">{{ $data['foto_ktp'] ? $data['foto_ktp'] : '-' }} </td> --}}
                     {{-- <td style="text-align: center;">{{ $data['foto_peserta'] ? $data['foto_peserta'] : '-' }} </td> --}}
                     {{-- <td style="text-align: center;">{{ $data['foto_bukti'] ? $data['foto_bukti'] : '-' }} </td> --}}
-                    <td style="text-align: left;">{{ $data['club'] ? $data['club'] : '-' }} </td>
+                    <td style="text-align: left;">{{ $with_contingent == 0 ? $data['club'] : $data['contingent'] }}
+                    </td>
                 </tr>
             @endforeach
             <!-- <tr>
