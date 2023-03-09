@@ -9,25 +9,21 @@ use App\Models\ArcheryEvent;
 use App\Models\User;
 use App\Models\City;
 use App\Models\Provinces;
-use App\Models\ArcheryEventIdcardTemplate;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithDrawings;
-use Maatwebsite\Excel\Concerns\WithEvents;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\CityCountry;
 use App\Models\Country;
-use Maatwebsite\Excel\Events\AfterSheet;
 use DateTime;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
-class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHeadings
+class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHeadings, WithColumnFormatting
 {
     protected $event_id;
 
@@ -125,7 +121,7 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 'province' => $province ? $province->name : "",
                 'city' => $city ? $city->name : "",
                 'category' => $category_label,
-                'nik' => $user['nik'] ? $user['nik'] : '-',
+                'nik' => $user['nik'] ? "'" . $user['nik'] : '-',
                 'nationality' => $user->is_wna == 1 ? "Asing" : "Indonesia",
                 "country" => $country ? $country->name : "-",
                 "city_of_country" => $city_country ? $city_country->name : "-",
@@ -160,6 +156,13 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'A' => 200,
             'B' => 200,
             'C' => 200
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'Q' => NumberFormat::FORMAT_TEXT,
         ];
     }
 
