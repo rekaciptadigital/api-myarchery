@@ -50,12 +50,14 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'archery_event_participants.phone_number',
             'archery_event_participants.team_category_id',
             'archery_event_participants.gender',
-            'event_name'
+            'event_name',
+            "cities.name as contingent"
         )
             ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
             ->leftJoin("archery_event_participant_members", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where('event_id', $event_id)
             ->where("archery_event_participants.status", 1)
             ->get();
@@ -127,6 +129,7 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 "city_of_country" => $city_country ? $city_country->name : "-",
                 "passport_number" => $user->passport_number,
                 'club' => $value->club ? $value->club : '-',
+                'contingent' => $value->contingent ? $value->contingent : "-"
             ];
         }
 
@@ -135,7 +138,8 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         return view('reports.participant_event', [
             'datas' => $export_data,
             'event_name' => $event_name,
-            'event_start_date' => $event_start_date
+            'event_start_date' => $event_start_date,
+            "with_contingent" => $event->with_contingent
         ]);
     }
 
@@ -186,6 +190,10 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'O' => 30,
             'P' => 20,
             'Q' => 30,
+            'R' => 30,
+            'S' => 30,
+            'T' => 30,
+            'U' => 30,
         ];
     }
 }
