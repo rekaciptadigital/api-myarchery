@@ -63,6 +63,9 @@ class ChangePaymentStatus extends Transactional
         }
 
         if ($status == 5 || $status == 2) {
+            if ($status != 1) {
+                throw new BLoCException("tidak bisa ubah status karena status payment sebelumnya tidak succes");
+            }
             return $this->changeToRefundOrFailedStatus($participant, $category);
         }
     }
