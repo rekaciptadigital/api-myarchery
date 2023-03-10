@@ -3,6 +3,7 @@
 namespace App\BLoC\Web\EventOrder;
 
 use App\Models\ArcheryEventParticipant;
+use App\Models\ClassificationEventRegisters;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -20,8 +21,13 @@ class DeleteBookingTemporary extends Retrieval
         if (!$participant) {
             throw new BLoCException("participant not found");
         }
+        $id_user = $participant['user_id'];
+        $event_id = $participant['event_id'];
+
+        $classification = ClassificationEventRegisters::where('user_id', '=', $id_user)->where('event_id', '=', $event_id)->first();
 
         $participant->delete();
+        $classification->delete();
 
         return "success";
     }

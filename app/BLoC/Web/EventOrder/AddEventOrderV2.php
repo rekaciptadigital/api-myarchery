@@ -20,6 +20,7 @@ use App\Models\ParticipantMemberTeam;
 use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcherySeriesUserPoint;
+use App\Models\ChildrenClassificationMembers;
 use App\Models\City;
 use App\Models\CityCountry;
 use App\Models\Country;
@@ -56,34 +57,118 @@ class AddEventOrderV2 extends Transactional
         $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
 
         $user_login = Auth::guard('app-api')->user();
-        $club_or_city_id = $parameters->get("club_or_city_id");
+        // $club_or_city_id = $parameters->get("club_or_city_id");
         $this->gateway = $parameters->get("gateway") ? $parameters->get("gateway") : env("PAYMENT_GATEWAY", "midtrans");
         $members = $parameters->get("members");
         $event_id = $parameters->get("event_id");
+        $get_city_id = $parameters->get("classification_city");
+        $get_province_id = $parameters->get("classification_province");
+        $get_country_id = $parameters->get("classification_country");
+        $get_club_id = $parameters->get("classification_club_id");
+        $get_children_id = $parameters->get("classification_children_id");
 
         $event = ArcheryEvent::find($event_id);
+        // return $event;
 
         $city_id = 0;
         $club_id = 0;
+        $classification_country_id = 0;
+        $classification_province_id = 0;
+        $classification_children_id = 0;
 
         if ($event->with_contingent == 1) {
-            $city = City::where("id", $club_or_city_id)
-                ->where("province_id", $event->province_id)
-                ->first();
-            if (!$city) {
-                throw new BLoCException("city not found");
-            }
-            $city_id = $city->id;
-        } else {
-            if ($club_or_city_id != 0) {
-                $club = ArcheryClub::find($club_or_city_id);
-                if (!$club) {
-                    throw new BLoCException("club not found");
+            if ($event['parent_classification'] == 1) {
+                if (empty($get_club_id)) {
+                    throw new BLoCException("club is required, because contingent club!");
                 }
-                $club_id = $club->id;
-            }
-        }
+                $club = ArcheryClub::find($get_club_id);
+                if (empty($club)) {
+                    throw new BLoCException("club not found!");
+                }
 
+                $club_id = $get_club_id;
+            } elseif ($event['parent_classification'] == 2) {
+                if (empty($get_country_id)) {
+                    throw new BLoCException("country is required, because contingent territory of the country!");
+                }
+                $country = Country::find($get_country_id);
+                if (empty($country)) {
+                    throw new BLoCException("country not found!");
+                }
+
+                $classification_country_id = $get_country_id;
+            } elseif ($event['parent_classification'] == 3) {
+                $query_province = false;
+                if (empty($get_province_id)) {
+                    throw new BLoCException("province is required, because contingent territory of the province!");
+                }
+
+                if ($event['classification_country_id'] == 102) {
+                    $query_province = Provinces::find($get_province_id);
+                } else {
+                    $query_province = ProvinceCountry::where('country_id', '=', $event['classification_country_id'])
+                        ->where('id', '=', $get_province_id)
+                        ->first();
+                }
+
+                if (empty($query_province)) {
+                    throw new BLoCException("province not found!");
+                }
+
+                $classification_country_id = $event['classification_country_id'];
+                $classification_province_id = $get_province_id;
+            } elseif ($event['parent_classification'] == 4) {
+                $query_city = false;
+                if (empty($get_city_id)) {
+                    throw new BLoCException("city is required, because contingent territory of the city!");
+                }
+
+                if ($event['classification_country_id'] == 102) {
+                    $query_city = City::find($get_city_id);
+                } else {
+                    $query_city = CityCountry::where('state_id', '=', $event['province_id'])
+                        ->where('country_id', '=', $event['classification_country_id'])
+                        ->where('id', '=', $get_city_id)
+                        ->first();
+                }
+
+                if (empty($query_city)) {
+                    throw new BLoCException("city not found!");
+                }
+
+                $classification_country_id = $event['classification_country_id'];
+                $classification_province_id = $event['classification_province_id'];
+                $city_id = $get_city_id;
+            } else {
+                if (empty($get_children_id)) {
+                    throw new BLoCException("children classification is required!");
+                }
+
+                $check_child = ChildrenClassificationMembers::where('id', '=', $get_children_id)->where('parent_id', '=', $event['parent_classification'])->first();
+
+                if (empty($check_child)) {
+                    throw new BLoCException("children classification not found!");
+                }
+
+                $classification_children_id = $get_children_id;
+            }
+            // $city = City::where("id", $club_or_city_id)
+            //     ->where("province_id", $event->province_id)
+            //     ->first();
+            // if (!$city) {
+            //     throw new BLoCException("city not found");
+            // }
+            // $city_id = $city->id;
+        }
+        // else {
+        //     if ($club_or_city_id != 0) {
+        //         $club = ArcheryClub::find($club_or_city_id);
+        //         if (!$club) {
+        //             throw new BLoCException("club not found");
+        //         }
+        //         $club_id = $club->id;
+        //     }
+        // }
         $order_event = OrderEvent::saveOrderEvent($user_login->id, 4, 0, 0, 0);
 
         $total_price = 0;
@@ -258,7 +343,8 @@ class AddEventOrderV2 extends Transactional
                 throw new BLoCException("user telah mendaftar kategori ini, dan transaksi sedang berlangsung");
             }
 
-            $participant = ArcheryEventParticipant::saveArcheryEventParticipant($user_new, $event_category_detail, "individual", 0, Str::uuid(), null, null, 4, $club_id, null, null, 1, 1, null, 0, $with_early_bird, 0, $city_id, $order_event->id);
+            // $participant = ArcheryEventParticipant::saveArcheryEventParticipant($user_new, $event_category_detail, "individual", 0, Str::uuid(), null, null, 4, $club_id, null, null, 1, 1, null, 0, $with_early_bird, 0, $city_id, $order_event->id);
+            $participant = ArcheryEventParticipant::saveArcheryEventParticipant($user_new, $event_category_detail, "individual", 0, Str::uuid(), null, null, 4, $club_id, null, null, 1, 1, null, 0, $with_early_bird, 0, $city_id, $order_event->id, $classification_country_id, $classification_province_id, $classification_children_id);
             $member = ArcheryEventParticipantMember::saveArcheryEventParticipantMember($participant, $user_new, $event_category_detail, 0);
         }
 
@@ -557,7 +643,7 @@ class AddEventOrderV2 extends Transactional
     {
         return [
             "event_id" => "required|exists:archery_events,id",
-            "club_or_city_id" => "required",
+            // "club_or_city_id" => "required",
             "members" => "required|array",
             "members.*.event_category_id" => "required|exists:archery_event_category_details,id",
             "members.*.email" => "required|email",
