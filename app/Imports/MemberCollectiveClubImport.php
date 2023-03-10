@@ -11,6 +11,7 @@ use App\Models\ArcheryEventParticipantMemberNumber;
 use App\Models\ArcheryEventParticipantNumber;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
+use App\Models\ArcherySeriesUserPoint;
 use App\Models\ParticipantMemberTeam;
 use App\Models\User;
 use DAI\Utils\Exceptions\BLoCException;
@@ -203,7 +204,7 @@ class MemberCollectiveClubImport implements ToCollection, WithHeadingRow
                 'qalification_time_id' => $qualification_time->id,
                 'participant_member_id' => $member->id,
             ]);
-            ParticipantMemberTeam::saveParticipantMemberTeam($category->id, $participant->id, $member->id, $category->category_team);
+            ArcherySeriesUserPoint::setAutoUserMemberCategory($category->event_id, $user_new->id);
         }
 
         if (count($list_errors) > 0) {
