@@ -194,16 +194,6 @@ class UpdateParticipantCategory extends Transactional
             "distance_id" => $new_category->distance_id
         ]);
 
-        $participant_member_team_old = ParticipantMemberTeam::where('participant_id', $partticipant->id)
-            ->where('event_category_id', $category_participant->id)->first();
-        if (!$participant_member_team_old) {
-            throw new BLoCException("participant member team tidak ditemukan");
-        }
-
-        $participant_member_team_old->update([
-            "event_category_id" => $new_category->id,
-        ]);
-
         $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $new_category->id)->first();
         if (!$qualification_time) {
             throw new BLoCException("waktu kualifikasi belum di set untuk kategory ini");
@@ -220,7 +210,6 @@ class UpdateParticipantCategory extends Transactional
         return [
             "participant" => $partticipant,
             "participant_member" => $participant_memmber,
-            "participant_member_team" => $participant_member_team_old,
             "qualification_time" => $qualification_time,
             "qualification_full_day" => $qualification_full_day
         ];
