@@ -152,10 +152,13 @@ class UpdateParticipantCategory extends Transactional
 
         $gender_category = $new_category->gender_category;
         if ($user_participant->gender != $gender_category) {
-            if (empty($user_participant->gender))
+            if (empty($user_participant->gender)) {
                 throw new BLoCException('user belum mengatur gender');
+            }
 
-            throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+            if ($new_category->team_category_id != "individu_mix") {
+                throw new BLoCException('oops.. kategori ini  hanya untuk gender ' . $gender_category);
+            }
         }
 
         $now = Carbon::now();
