@@ -32,7 +32,7 @@ class ClassificationEventRegisters extends Model
     public function getDetailClassificationChildrenAttribute()
     {
         $response = [];
-        $parent = ChildrenClassificationMembers::find($this->children_classification_id);
+        $parent = ChildrenClassificationMembers::find($this->children_classification);
 
         if ($parent) {
             $response["id"] = $parent->id;

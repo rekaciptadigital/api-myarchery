@@ -32,9 +32,9 @@ class SetConfigRegisterCategory extends Transactional
         $parentClassification = $parameters->get("parentClassification");
         $classificationCountryId = $parameters->get("classificationCountryId");
         $classificationProvinceId = $parameters->get("classificationProvinceId");
+        $classificationChildrenId = $parameters->get("classificationChildrenId");
 
         $event = ArcheryEvent::find($event_id);
-
         //reset contingent setting
         $event->with_contingent = !$withContingent ? 0 : $withContingent;
         $event->parent_classification = !$parentClassification ? 0 : $parentClassification;
