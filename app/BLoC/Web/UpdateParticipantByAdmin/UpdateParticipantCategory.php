@@ -11,6 +11,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
 use App\Models\ArcheryEventQualificationTime;
+use App\Models\MemberRank;
 use App\Models\ParticipantMemberTeam;
 use App\Models\TransactionLog;
 use App\Models\User;
@@ -123,6 +124,14 @@ class UpdateParticipantCategory extends Transactional
         $participant_memmber = ArcheryEventParticipantMember::where('archery_event_participant_id', $partticipant->id)->first();
         if (!$participant_memmber) {
             throw new BLoCException("participant member tidak tersedia");
+        }
+
+        $check_member_rank = MemberRank::where("category_id", $partticipant->event_category_id)
+            ->where("member_id", $participant_memmber->id)
+            ->first();
+
+        if ($check_member_rank) {
+            $check_member_rank->delete();
         }
 
         if ($new_category->max_age != 0) {
