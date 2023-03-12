@@ -15,6 +15,7 @@ use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcherySeriesCategory;
 use App\Models\ArcherySeriesUserPoint;
+use App\Models\MemberRank;
 use App\Models\TeamMemberSpecial;
 use App\Models\User;
 
@@ -189,6 +190,14 @@ class UpdateParticipantCategory extends Transactional
                 ->first();
             if (!$participant_memmber) {
                 throw new BLoCException("participant member tidak tersedia");
+            }
+
+            $member_rank = MemberRank::where("category_id", $current_category->id)
+                ->where("member_id", $participant_memmber->id)
+                ->first();
+                
+            if ($member_rank) {
+                $member_rank->delete();
             }
 
             // ambil jadwal member
