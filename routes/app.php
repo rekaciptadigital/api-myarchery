@@ -103,6 +103,10 @@ $router->group(['prefix' => 'app'], function () use ($router) {
                 $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getDownloadCard']);
             });
         });
+
+        $router->group(['prefix' => 'classification-member'], function () use ($router) {
+            $router->get('/children', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:getChildrenClassification']);
+        });
     });
 
     $router->group(["prefix" => "v2"], function () use ($router) {

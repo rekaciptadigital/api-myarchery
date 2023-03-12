@@ -61,6 +61,7 @@ use App\BLoC\App\Enterprise\GetListProductByVenuePlace;
 use App\BLoC\App\Enterprise\GetInfoOrderProduct;
 use App\BLoC\App\Enterprise\AddOrderVenueProduct;
 use App\BLoC\App\Enterprise\GetTransactionVenueUser;
+use App\BLoC\App\ClassificationMembers\GetChildrenClassification;
 use App\BLoC\Web\EventOrder\AddEventOrderTeam;
 use App\BLoC\Web\EventOrder\AddEventOrderV2;
 use App\BLoC\Web\EventOrder\CheckEmailIsRegister;
@@ -115,6 +116,10 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getParticipantMemberByCategory", GetParticipantMemberByCategory::class);
         $this->registerService("updateParticipantMember", UpdateParticipantMember::class);
         $this->registerService("getDetailEventById", GetDetailEventById::class);
+
+
+        // classification member
+        $this->registerService("getChildrenClassification", GetChildrenClassification::class);
 
 
         $this->registerService("updateVerifikasiUser", UpdateVerifikasiUser::class);
