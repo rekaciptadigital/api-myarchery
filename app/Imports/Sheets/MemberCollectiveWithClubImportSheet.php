@@ -24,7 +24,6 @@ use Illuminate\Support\Str;
 
 class MemberCollectiveWithClubImportSheet implements ToCollection, WithHeadingRow
 {
-    protected $error_message = [];
     /**
      * @param Collection $collection
      */
