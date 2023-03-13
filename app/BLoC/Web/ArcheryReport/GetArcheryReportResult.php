@@ -41,7 +41,7 @@ class GetArcheryReportResult extends Retrieval
 
         $pages = array();
         $logo_event = '<img src="'.Storage::disk('public')->path('logo/logo-event.png').'" alt="" width="80%"></img>';
-        $logo_archery = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="80%"></img>';
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))->where("event_id", $event_id)
             ->orderBy('competition_category_id', 'DESC')->get();
@@ -50,7 +50,7 @@ class GetArcheryReportResult extends Retrieval
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
         $logo_event_cover = '<img src="'.Storage::disk('public')->path("logo/cover-event.png").'" alt="" width="100%"></img>';
-        $logo_archery_cover = '<img src="'.Storage::disk('public')->path("logo/logo-archery.png").'" alt="" width="60%"></img>';
+        $logo_archery_cover = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="60%"></img>';
         $pages[] = view('report_result/cover', [
             'cover_event' => $logo_event_cover,
             'logo_archery' => $logo_archery_cover,
