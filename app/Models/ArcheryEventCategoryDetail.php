@@ -249,21 +249,21 @@ class ArcheryEventCategoryDetail extends Model
     public function getEventNameAttribute()
     {
         $event = ArcheryEvent::find($this->event_id);
-        return $this->attributes['event_name'] = $event->event_name;
+        return $this->attributes['event_name'] = empty($event->event_name) ? $event['event_name'] : $event->event_name;
     }
 
     public function getStartEventAttribute()
     {
         $event =  ArcheryEvent::find($this->event_id);
 
-        return $this->attributes['start_event'] = $event->event_start_datetime;
+        return $this->attributes['start_event'] = empty($event->event_start_datetime) ? $event['event_start_datetime'] : $event->event_start_datetime;
     }
 
     public function getEndEventAttribute()
     {
         $event =  ArcheryEvent::find($this->event_id);
 
-        return $this->attributes['end_event'] = $event->event_end_datetime;
+        return $this->attributes['end_event'] = empty($event->event_end_datetime) ? $event['event_end_datetime'] : $event->event_end_datetime;
     }
 
     public static function getCategoriesRegisterEvent($event_id)

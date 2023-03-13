@@ -25,7 +25,7 @@ class GetProvinceCountry extends Retrieval
         $provinceCountry->when($country_id, function ($query) use ($country_id) {
             return $query->where("country_id", $country_id);
         });
-        
+
         $provinceCountry->when($name, function ($query) use ($name) {
             return $query->whereRaw("name LIKE ?", ["%" . $name . "%"]);
         });

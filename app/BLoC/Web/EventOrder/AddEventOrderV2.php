@@ -68,7 +68,6 @@ class AddEventOrderV2 extends Transactional
         $get_children_id = $parameters->get("classification_children_id");
 
         $event = ArcheryEvent::find($event_id);
-        // return $event;
 
         $city_id = 0;
         $club_id = 0;
@@ -137,7 +136,7 @@ class AddEventOrderV2 extends Transactional
                 }
 
                 $classification_country_id = $event['classification_country_id'];
-                $classification_province_id = $event['classification_province_id'];
+                $classification_province_id = $event['province_id'];
                 $city_id = $get_city_id;
             } else {
                 if (empty($get_children_id)) {
@@ -152,6 +151,7 @@ class AddEventOrderV2 extends Transactional
 
                 $classification_children_id = $get_children_id;
             }
+
             // $city = City::where("id", $club_or_city_id)
             //     ->where("province_id", $event->province_id)
             //     ->first();
@@ -344,6 +344,7 @@ class AddEventOrderV2 extends Transactional
             }
 
             // $participant = ArcheryEventParticipant::saveArcheryEventParticipant($user_new, $event_category_detail, "individual", 0, Str::uuid(), null, null, 4, $club_id, null, null, 1, 1, null, 0, $with_early_bird, 0, $city_id, $order_event->id);
+
             $participant = ArcheryEventParticipant::saveArcheryEventParticipant($user_new, $event_category_detail, "individual", 0, Str::uuid(), null, null, 4, $club_id, null, null, 1, 1, null, 0, $with_early_bird, 0, $city_id, $order_event->id, $classification_country_id, $classification_province_id, $classification_children_id);
             $member = ArcheryEventParticipantMember::saveArcheryEventParticipantMember($participant, $user_new, $event_category_detail, 0);
         }
