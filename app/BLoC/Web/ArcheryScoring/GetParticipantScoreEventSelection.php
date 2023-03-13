@@ -38,6 +38,7 @@ class GetParticipantScoreEventSelection extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
+        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
         $standings_type = $parameters->get("standings_type");
@@ -70,7 +71,7 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
 
         $session_elimination = [];
-        for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
             $session_elimination[] = $i + 1;
         }
 
