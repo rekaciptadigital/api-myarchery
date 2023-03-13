@@ -86,6 +86,12 @@ class GetDownloadBaganElimination extends Retrieval
                             $view_path = 'report_result/graph_eight';
                             $view = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
                         }
+                    } elseif ($elimination_individu->count_participant == 4) {
+                        if ($data_graph) {
+                            $data = EliminationFormatPDF::getViewDataGraph4($data_graph);
+                            $view_path = 'report_result/graph_four';
+                            $view = EliminationFormatPDF::renderPageGraph4_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
+                        }
                     }
                 }
             }
