@@ -326,7 +326,7 @@ class ArcheryEventParticipant extends Model
     string $qualification_date = null,
     string $team_name = null,
     int $status,
-    int $club_id = 0,
+    $club_id = 0,
     string $reason_refund = null,
     string $upload_image_refund = null,
     int $is_present = 1,
@@ -335,12 +335,36 @@ class ArcheryEventParticipant extends Model
     int $expired_booking_time = 0,
     int $is_early_bird_payment = 0,
     int $is_special_team_member = 0,
-    int $city_id = 0,
+    $city_id = 0,
     int $order_event_id,
-    int $classification_country_id = 0,
-    int $classification_province_id = 0,
-    int $classification_children_id = 0
+    $classification_country_id = 0,
+    $classification_province_id = 0,
+    $classification_children_id = 0
   ) {
+    // return [
+    //   'user' => $user,
+    //   'category' => $category,
+    //   'type' => $type,
+    //   'transaction_log_id' => $transaction_log_id,
+    //   'unique_id' => $unique_id,
+    //   'qualification_date' => $qualification_date,
+    //   'team_name' => $team_name,
+    //   'status' => $status,
+    //   'club_id' => $club_id,
+    //   'reason_refund' => $reason_refund,
+    //   'upload_image_refund' => $upload_image_refund,
+    //   'is_present' => $is_present,
+    //   'register_by' => $register_by,
+    //   'day_choice' => $day_choice,
+    //   'expired_booking_time' => $expired_booking_time,
+    //   'is_early_bird_payment' => $is_early_bird_payment,
+    //   'is_special_team_member' => $is_special_team_member,
+    //   'city_id' => $city_id,
+    //   'order_event_id' => $order_event_id,
+    //   'classification_country_id' => $classification_country_id,
+    //   'classification_province_id' => $classification_province_id,
+    //   'classification_children_id' => $classification_children_id,
+    // ];
     $participant = new ArcheryEventParticipant();
     $participant->event_id = $category->event_id;
     $participant->user_id = $user->id;
