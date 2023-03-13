@@ -51,6 +51,46 @@ class ArcheryEventParticipant extends Model
     return $data;
   }
 
+  public static function getCountParticipantIndividuByCategoryTeam(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id, string $team_category_id)
+  {
+    $count_participant_individu = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $team_category_id)
+      ->where("status", 1);
+
+    if ($event->with_contingent == 1) {
+      $count_participant_individu->where("city_id", $club_or_city_id);
+    } else {
+      $count_participant_individu->where("club_id", $club_or_city_id);
+    }
+
+    $count_participant_individu = $count_participant_individu->get()->count();
+
+    return (int)$count_participant_individu;
+  }
+
+  // dapatkan participant team yang status 1 dengan kategori yang sama dan club atau city yang sama
+  public static function getCountParticipantTeamWithSameClubOrCity(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id)
+  {
+    $count_participant_team_with_same_club_or_city = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $category_team->team_category_id)
+      ->where("status", 1);
+    if ($event->with_contingent == 1) {
+      $count_participant_team_with_same_club_or_city->where("city_id", $club_or_city_id);
+    } else {
+      $count_participant_team_with_same_club_or_city->where("club_id", $club_or_city_id);
+    }
+
+    $count_participant_team_with_same_club_or_city = $count_participant_team_with_same_club_or_city->get()->count();
+
+    return (int)$count_participant_team_with_same_club_or_city;
+  }
+
   public static function getMedalStanding($event_id)
   {
     $data = ClubRanked::getEventRanked($event_id, 1, null);

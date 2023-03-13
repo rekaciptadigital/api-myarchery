@@ -29,7 +29,7 @@ class GetArcheryReportEventSelection extends Retrieval
         $date_filter = $parameters->get('date');
 
         $pages = array();
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="70%"></img>';
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="70%"></img>';
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
