@@ -790,6 +790,8 @@ class AddParticipantMemberScore extends Transactional
             throw new BLoCException("kode bermasalah");
         }
 
+        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
+
         $type = $code[0];
         $participant_member_id = $code[1];
         $session = $code[2];
@@ -826,8 +828,9 @@ class AddParticipantMemberScore extends Transactional
         //     throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
 
 
-        if (env('COUNT_STAGE_ELIMINATION_SELECTION') < $session)
+        if ($COUNT_STAGE_ELIMINATION_SELECTION < $session) {
             throw new BLoCException("sesi tidak tersedia");
+        }
 
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         if (!$schedule)

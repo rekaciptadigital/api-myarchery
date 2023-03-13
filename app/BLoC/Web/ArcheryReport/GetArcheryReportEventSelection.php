@@ -22,7 +22,8 @@ class GetArcheryReportEventSelection extends Retrieval
 
     protected function process($parameters)
     {
-
+        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
+        $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
         $date_filter = $parameters->get('date');
@@ -93,7 +94,7 @@ class GetArcheryReportEventSelection extends Retrieval
             if ($category_detail->category_team == "Team") continue;
 
             $session_elimination = [];
-            for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+            for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
                 $session_elimination[] = $i + 1;
             }
 
@@ -101,7 +102,8 @@ class GetArcheryReportEventSelection extends Retrieval
             if (sizeof($data_elimination) == 0) continue;
 
             $elimination['category'] = $category_detail->label_category;
-            $elimination['total_arrow'] = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION') * env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
+            
+            $elimination['total_arrow'] = ($COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION * $COUNT_STAGE_ELIMINATION_SELECTION) * $COUNT_STAGE_ELIMINATION_SELECTION;
             $elimination['data'] = $data_elimination;
 
             $all_result_elimination[] = $elimination;
@@ -131,7 +133,7 @@ class GetArcheryReportEventSelection extends Retrieval
             }
 
             $session_elimination = [];
-            for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+            for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
                 $session_elimination[] = $i + 1;
             }
 
