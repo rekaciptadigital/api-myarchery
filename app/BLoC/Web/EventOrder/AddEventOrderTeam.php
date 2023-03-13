@@ -163,7 +163,7 @@ class AddEventOrderTeam extends Transactional
                 }
 
                 $classification_country_id = $event['classification_country_id'];
-                $classification_province_id = $event['classification_province_id'];
+                $classification_province_id = $event['province_id'];
                 $city_id = $get_city_id;
             } else {
                 if (empty($get_children_id)) {
