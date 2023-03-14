@@ -44,7 +44,6 @@ class GetParticipantScoreEliminationSelection extends Retrieval
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         if (!$category_detail) {
             throw new BLoCException("category tidak ditemukan");
         }
@@ -67,7 +66,7 @@ class GetParticipantScoreEliminationSelection extends Retrieval
         }
 
         $session = [];
-        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
+        for ($i = 0; $i < $category_detail->session_in_elimination_selection; $i++) {
             $session[] = $i + 1;
         }
 

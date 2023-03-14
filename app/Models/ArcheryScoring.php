@@ -947,7 +947,6 @@ class ArcheryScoring extends Model
 
     protected function getScoringRankForEliminationSelection($distance_id, $team_category_id, $competition_category_id, $age_category_id, $gender, $score_type, $event_id)
     {
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $archery_event_participant = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.name",
@@ -1008,7 +1007,7 @@ class ArcheryScoring extends Model
         $archery_event_score = [];
 
         $session = [];
-        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
+        for ($i = 0; $i < $category->session_in_elimination_selection; $i++) {
             $session[] = $i + 1;
         }
 
@@ -1034,7 +1033,6 @@ class ArcheryScoring extends Model
 
     protected function generateScoreBySessionEliminationSelection(int $participant_member_id, int $type, array $filter_session = [1, 2, 3, 4, 5])
     {
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
         $total_per_points = [
             "" => 0,
@@ -1128,8 +1126,8 @@ class ArcheryScoring extends Model
 
         $total_fix = $total + $total_shot_off;
 
-        $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
-        $total_arrow = ($COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION * $COUNT_STAGE_ELIMINATION_SELECTION) * $COUNT_STAGE_ELIMINATION_SELECTION;
+        $category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
+        $total_arrow = ($COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION * $category_detail->session_in_elimination_selection) * $category_detail->session_in_elimination_selection;
         $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
 
         $output = [

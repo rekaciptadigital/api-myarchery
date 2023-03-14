@@ -25,6 +25,8 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         "8" => 0,
         "9" => 0,
         "10" => 0,
+        "11" => 0,
+        "12" => 0,
         "x" => 0,
         "m" => 0,
     ];
@@ -39,7 +41,6 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         $score_type = 4;
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category_detail) {
             throw new BLoCException("category tidak ditemukan");
@@ -50,18 +51,13 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
             throw new BLoCException("team category not found");
         }
 
-        $event = ArcheryEvent::find($category_detail->event_id);
-        if (!$event) {
-            throw new BLoCException("CATEGORY INVALID");
-        }
-
         $session = [];
-        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
+        for ($i = 0; $i < $category_detail->session_in_elimination_selection; $i++) {
             $session[] = $i + 1;
         }
 
         if ($category_detail->category_team == "Individual") {
-            return $this->getListMemberScoringIndividual($event_category_id, $score_type, $session, $name, $event->id);
+            return $this->getListMemberScoringIndividual($event_category_id, $score_type, $session, $name, $category_detail->event_id);
         }
     }
 
@@ -94,14 +90,5 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         }
 
         return $response;
-
-        // sorting by total irat
-        // $data_collection = collect($response);
-        // $sorted_data = $data_collection->sortByDesc("total_irat")->toArray();
-        // $output = [];
-        // foreach ($sorted_data as $data) {
-        //     array_push($output, $data);
-        // }
-        // return $output;
     }
 }
