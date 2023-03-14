@@ -12,6 +12,7 @@ use App\BLoC\General\GetListTabCategoryByEventId;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\General\Support\DownloadTemplateMemberCollectiveClub;
 use App\BLoC\General\Support\ImportMemberCollectiveClub;
 use App\BLoC\General\Support\UpdateLogoCity;
 use App\BLoC\General\Support\UpdateStatusPayment;
@@ -40,6 +41,8 @@ class GeneralServiceProvider extends ServiceProvider
         // ==================================== Fast Open 3 ========================================
         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
         // ==================================== End ================================================
+
+        $this->registerService("downloadTemplateMemberCollectiveClub", DownloadTemplateMemberCollectiveClub::class);
 
         // ===================================== queen archery =====================================
         $this->registerService("exportClubRankedGroupByTeamCategory", ExportClubRankedGroupByTeamCategory::class);
