@@ -221,6 +221,7 @@ use App\BLoC\Web\Enterprise\Venue\Products\GetVenueProductDetailById;
 use App\BLoC\Web\Enterprise\Venue\Products\UpdateProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\Products\DeleteProductVenuePlace;
 use App\BLoC\Web\Enterprise\Venue\GetListAllVenuePlace;
+use App\BLoC\Web\Member\GetAccessMemberCategoryTeam;
 
 // End of Archery Enterprise Section //
 
@@ -338,6 +339,7 @@ class WebServiceProvider extends ServiceProvider
         $this->registerService("getBudRest", GetBudRest::class);
         $this->registerService("getArcheryEventMasterDistanceCategory", GetArcheryEventMasterDistanceCategory::class);
         $this->registerService("getArcheryEventMasterCompetitionCategory", GetArcheryEventMasterCompetitionCategory::class);
+        $this->registerService("getAccessMemberCategoryTeam", GetAccessMemberCategoryTeam::class);
 
 
         // ==================================== master age category ======================================
