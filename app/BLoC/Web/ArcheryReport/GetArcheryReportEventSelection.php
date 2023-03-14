@@ -22,7 +22,6 @@ class GetArcheryReportEventSelection extends Retrieval
 
     protected function process($parameters)
     {
-        $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
         $date_filter = $parameters->get('date');
@@ -42,19 +41,7 @@ class GetArcheryReportEventSelection extends Retrieval
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $archery_event->location;
 
-        $event_category_details = ArcheryEventCategoryDetail::select(
-            'id',
-            'event_id',
-            'age_category_id',
-            'competition_category_id',
-            'distance_id',
-            'team_category_id',
-            'session_in_qualification',
-            'count_stage',
-            'count_shot_in_stage',
-            "session_in_elimination_selection"
-        )
-            ->where("event_id", $event_id)
+        $event_category_details = ArcheryEventCategoryDetail::where("event_id", $event_id)
             ->get();
 
         if (!$event_category_details) {
@@ -123,13 +110,11 @@ class GetArcheryReportEventSelection extends Retrieval
 
             $elimination['category'] = $category_detail->label_category;
 
-            $elimination['total_arrow'] = ($COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION * $category_detail->session_in_elimination_selection) * $category_detail->session_in_elimination_selection;
+            $elimination['total_arrow'] = ($category_detail->count_shoot_elimination_selection * $category_detail->session_in_elimination_selection) * $category_detail->session_in_elimination_selection;
             $elimination['data'] = $data_elimination;
 
             $all_result_elimination[] = $elimination;
         }
-
-        // return $all_result_elimination;
 
         $pages[] = view('reports/event_selection/elimination', [
             'datas' => $all_result_elimination,
