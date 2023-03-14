@@ -47,7 +47,7 @@ class GetArcheryReportResultV2 extends Retrieval
         }
 
         $pages = array();
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
@@ -69,7 +69,7 @@ class GetArcheryReportResultV2 extends Retrieval
         if (!$competition_category) throw new BLoCException("tidak ada data kategori terdaftar untuk event tersebut");
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
-        $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
+        $logo_archery_cover = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="60%"></img>';
         $cover_page = view('report_result/cover', [
             'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,

@@ -36,7 +36,6 @@ class GetDownloadBaganElimination extends Retrieval
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $event->location;
         $logo_event = $event->logo;
-        // $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
         $logo_archery = Storage::disk('public')->path("logo/logo-archery.png");
 
         $category_id = $parameters->get("category_id");
