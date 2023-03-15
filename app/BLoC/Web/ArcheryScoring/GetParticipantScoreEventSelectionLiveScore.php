@@ -2,11 +2,8 @@
 
 namespace App\BLoC\Web\ArcheryScoring;
 
-use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -39,19 +36,16 @@ class GetParticipantScoreEventSelectionLiveScore extends Retrieval
     {
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
-        $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
+        $category_detail = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_master_team_categories.type",
+        )
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->where("archery_event_category_details.id", $event_category_id)
+            ->first();
+
         if (!$category_detail) {
-            throw new BLoCException("category tidak ditemukan");
-        }
-
-        $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
-        if (!$team_category) {
-            throw new BLoCException("team category not found");
-        }
-
-        $event = ArcheryEvent::find($category_detail->event_id);
-        if (!$event) {
-            throw new BLoCException("CATEGORY INVALID");
+            throw new BLoCException("category not found");
         }
 
         $session_qualification = [];
@@ -64,8 +58,8 @@ class GetParticipantScoreEventSelectionLiveScore extends Retrieval
             $session_elimination[] = $i + 1;
         }
 
-        if ($category_detail->category_team == "Individual") {
-            return app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection')->getListMemberScoringIndividual($event_category_id, $session_qualification, $session_elimination, $name, $event->id);
+        if ($category_detail->type == "Individual") {
+            return ArcheryScoring::getScoringRankByCategoryIdForEventSelection($event_category_id, $session_qualification, $session_elimination, $name);
         }
     }
 

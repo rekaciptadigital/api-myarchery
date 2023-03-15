@@ -697,6 +697,15 @@ class ArcheryScoring extends Model
 
     protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false, $with_member_rank = 1)
     {
+        $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_events.is_private")
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->where("archery_event_category_details.id", $event_category_id)
+            ->first();
+
+        if (!$category) {
+            throw new BLoCException("category not found");
+        }
+
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
@@ -749,16 +758,22 @@ class ArcheryScoring extends Model
         }
 
         // urutkan berdasarkan skor
-        usort($archery_event_score, function ($a, $b) {
-            if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
-                if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
-                    return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+        if ($category->is_private == 1) {
+            usort($archery_event_score, function ($a, $b) {
+                return $b["total_irat"] > $a["total_irat"] ? 1 : -1;
+            });
+        } else {
+            usort($archery_event_score, function ($a, $b) {
+                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
+                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
+                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
+                    }
+                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
                 }
-                return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
-            }
 
-            return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-        });
+                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+            });
+        }
 
         // set rank user jika tidak ada di member rank
         foreach ($archery_event_score as $key3 => $value3) {
@@ -906,12 +921,6 @@ class ArcheryScoring extends Model
             $participants_query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
         }
 
-
-        if ($orderByBudrestNumber) {
-            $participants_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
-                ->orderBy("archery_event_qualification_schedule_full_day.target_face");
-        }
-
         if ($is_present) {
             $participants_query->where("archery_event_participants.is_present", 1);
         }
@@ -930,15 +939,23 @@ class ArcheryScoring extends Model
             $archery_event_score[] = $score;
         }
 
-        if (!$orderByBudrestNumber) {
+        // urutkan berdasarkan skor irat
+        usort($archery_event_score, function ($a, $b) {
+            return $b["total_irat"] > $a["total_irat"] ? 1 : -1;
+        });
+
+        // set rank user jika tidak ada di member rank
+        foreach ($archery_event_score as $key3 => $value3) {
+            $archery_event_score[$key3]["rank"] = $key3 + 1;
+        }
+
+        // urut berdasarkan target face dan budrest number
+        if ($orderByBudrestNumber == true) {
             usort($archery_event_score, function ($a, $b) {
-                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
-                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
-                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
-                    }
-                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
+                if ($a["member"]["bud_rest_number"] == $b["member"]["bud_rest_number"]) {
+                    return $b["member"]["target_face"] < $a["member"]["target_face"] ? 1 : -1;
                 }
-                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
+                return $b["member"]["bud_rest_number"] < $a["member"]["bud_rest_number"] ? 1 : -1;
             });
         }
 
@@ -1033,7 +1050,7 @@ class ArcheryScoring extends Model
 
     protected function generateScoreBySessionEliminationSelection(int $participant_member_id, int $type, array $filter_session = [1, 2, 3, 4, 5])
     {
-        
+
         $total_per_points = [
             "" => 0,
             "1" => 0,
@@ -1146,7 +1163,7 @@ class ArcheryScoring extends Model
     }
 
     // All result of qualification & elimination to get total irat for event selection
-    protected function getScoringRankByCategoryIdForEventSelection($event_category_id, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $orderByBudrestNumber = false, $name = null, $is_present = false)
+    protected function getScoringRankByCategoryIdForEventSelection($event_category_id, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $name = null)
     {
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -1173,16 +1190,6 @@ class ArcheryScoring extends Model
             $participants_query->whereRaw("users.name LIKE ?", ["%" . $name . "%"]);
         }
 
-
-        if ($orderByBudrestNumber) {
-            $participants_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
-                ->orderBy("archery_event_qualification_schedule_full_day.target_face");
-        }
-
-        if ($is_present) {
-            $participants_query->where("archery_event_participants.is_present", 1);
-        }
-
         $participants_collection = $participants_query->get();
         $archery_event_score = [];
         foreach ($participants_collection as $key => $value) {
@@ -1199,17 +1206,10 @@ class ArcheryScoring extends Model
             $archery_event_score[] = $score;
         }
 
-        if (!$orderByBudrestNumber) {
-            usort($archery_event_score, function ($a, $b) {
-                if ($a["have_shoot_off"] != 0 && $b["have_shoot_off"] != 0) {
-                    if ($a["total_shot_off"] != 0 && $b["total_shot_off"] != 0 && $a["total_shot_off"] == $b["total_shot_off"]) {
-                        return $b["total_distance_from_x"] < $a["total_distance_from_x"] ? 1 : -1;
-                    }
-                    return $b["total_shot_off"] > $a["total_shot_off"] ? 1 : -1;
-                }
-                return $b["total_tmp"] > $a["total_tmp"] ? 1 : -1;
-            });
-        }
+        // urutkan berdasarkan skor irat
+        usort($archery_event_score, function ($a, $b) {
+            return $b["all_total_irat"] > $a["all_total_irat"] ? 1 : -1;
+        });
 
         return $archery_event_score;
     }

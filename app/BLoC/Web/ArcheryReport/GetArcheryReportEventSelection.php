@@ -70,7 +70,7 @@ class GetArcheryReportEventSelection extends Retrieval
                 $session_qualification[] = $i + 1;
             }
 
-            $data_qualification = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 3, $session_qualification, false, null, false, 1);
+            $data_qualification = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 3, $session_qualification, false, null, false, 0);
             if (sizeof($data_qualification) == 0) {
                 continue;
             }
@@ -103,7 +103,7 @@ class GetArcheryReportEventSelection extends Retrieval
                 $session_elimination[] = $i + 1;
             }
 
-            $data_elimination = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($category_detail->id, 4, $session_elimination, null, $event_id);
+            $data_elimination = ArcheryScoring::getScoringRankByCategoryIdForEliminationSelection($category_detail->id, 4, $session_elimination, true, null, false);
             if (sizeof($data_elimination) == 0) {
                 continue;
             }
@@ -142,8 +142,10 @@ class GetArcheryReportEventSelection extends Retrieval
                 $session_elimination[] = $i + 1;
             }
 
-            $data_all_result = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelection')->getListMemberScoringIndividual($category_detail->id, $session_qualification, $session_elimination, null, $event_id);
-            if (sizeof($data_all_result) == 0) continue;
+            $data_all_result = ArcheryScoring::getScoringRankByCategoryIdForEventSelection($category_detail->id, $session_qualification, $session_elimination, null);
+            if (sizeof($data_all_result) == 0) {
+                continue;
+            }
 
             $all_result['category'] = $category_detail->label_category;
             $all_result['data'] = $data_all_result;
