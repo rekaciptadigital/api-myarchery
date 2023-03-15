@@ -30,11 +30,10 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
     $router->post("/bulk-insert-member-club-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollectiveClub']);
     $router->post("/bulk-insert-member-contingent-team-excell", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:importMemberCollectiveTeam']);
     $router->post("/update-payment-status-oy", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateStatusPayment']);
-    $router->group(["middleware" => "auth.user"], function () use ($router) {
-        $router->group(['prefix' => 'download-template'], function () use ($router) {
-            $router->post('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
-            $router->post('/member-contingent-team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberCollectiveTeam']);
-        });
+    $router->group(['prefix' => 'download-template'], function () use ($router) {
+        $router->post('/member-contingent', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportmemberCollective']);
+        $router->post('/member-contingent-team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberCollectiveTeam']);
+        $router->get('/member-club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:downloadTemplateMemberCollectiveClub']);
     });
 
     $router->group(['prefix' => 'event-elimination'], function () use ($router) {
