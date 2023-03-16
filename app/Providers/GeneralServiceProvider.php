@@ -13,7 +13,10 @@ use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\General\Support\DownloadTemplateMemberCollectiveClub;
+use App\BLoC\General\Support\ImportMemberCollectiveClub;
 use App\BLoC\General\Support\UpdateLogoCity;
+use App\BLoC\General\Support\UpdateStatusPayment;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore;
 use App\BLoC\Web\ArcheryScoring\GetParticipantScoreEventSelectionLiveScore;
 use Illuminate\Support\ServiceProvider;
@@ -41,12 +44,16 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("exportMemberSeriesRank", ExportMemberSeriesRank::class);
         // ==================================== End ================================================
 
+        $this->registerService("downloadTemplateMemberCollectiveClub", DownloadTemplateMemberCollectiveClub::class);
+
         // ===================================== queen archery =====================================
         $this->registerService("exportClubRankedGroupByTeamCategory", ExportClubRankedGroupByTeamCategory::class);
         $this->registerService("exportmemberCollective", ExportmemberCollective::class);
         $this->registerService("importMemberCollective", ImportMemberCollective::class);
         $this->registerService("importMemberCollectiveTeam", ImportMemberCollectiveTeam::class);
         $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
+        $this->registerService("importMemberCollectiveClub", ImportMemberCollectiveClub::class);
+        $this->registerService("updateStatusPayment", UpdateStatusPayment::class);
 
         // ======================================= End ==============================================
     }

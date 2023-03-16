@@ -468,59 +468,58 @@ $router->group(['prefix' => 'web'], function () use ($router) {
 
         // ------------------------------------------------------------- Archery Enterprise ------------------------------------------------------------- //
         $router->group(['prefix' => 'enterprise'], function () use ($router) {
-                $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
-                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
-                    $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
-                    $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlace']);
-                    $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
-                    $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
-                    $router->get('/list-facilities-by-eo-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlaceOtherFacilitiesByEoId']);
-                    $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
-                    $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
-                    $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
-                    $router->get('/list-capacity-area', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListCapacityArea']);
-                    $router->post('/complete-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:completeVenuePlace']);
+            $router->group(['prefix' => 'venue', 'middleware' => 'auth.admin'], function () use ($router) {
+                $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlace']);
+                $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createVenuePlace']);
+                $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenuePlace']);
+                $router->get('/list-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListFacilities']);
+                $router->get('/list-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenuePlace']);
+                $router->get('/list-facilities-by-eo-id', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenuePlaceOtherFacilitiesByEoId']);
+                $router->post('/update-is-hide-other-facilities', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateIsHideOtherFacilities']);
+                $router->post('/delete-image-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteImageVenuePlace']);
+                $router->post('/delete-draft', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteDraftVenuePlace']);
+                $router->get('/list-capacity-area', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueListCapacityArea']);
+                $router->post('/complete-venue-place', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:completeVenuePlace']);
 
-                    $router->group(['prefix' => 'schedule'], function () use ($router) {
-                        $router->group(['prefix' => 'operational'], function () use ($router) {
-                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleOperational']);
-                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleOperational']);
-                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleOperationalDetailById']);
-                            $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleOperationalByPlaceId']);
-                        });
-
-                        $router->group(['prefix' => 'holiday'], function () use ($router) {
-                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleHoliday']);
-                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleHoliday']);
-                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleHolidayDetailById']);
-                            $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleHolidayByPlaceId']);
-                            $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
-                        });
+                $router->group(['prefix' => 'schedule'], function () use ($router) {
+                    $router->group(['prefix' => 'operational'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleOperational']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleOperational']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleOperationalDetailById']);
+                        $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleOperationalByPlaceId']);
                     });
 
-                    $router->group(['prefix' => 'product'], function () use ($router) {
-                        $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
-                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
-                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
-                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProductVenuePlace']);
-                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteProductVenuePlace']);
-    
-                        $router->group(['prefix' => 'session-setting'], function () use ($router) {
-                            $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
-                            $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueSessionSetting']);
-                            $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
-                            $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
-                            $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
-                        });
+                    $router->group(['prefix' => 'holiday'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueScheduleHoliday']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueScheduleHoliday']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueScheduleHolidayDetailById']);
+                        $router->get('/get-all-list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListVenueScheduleHolidayByPlaceId']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueScheduleHoliday']);
                     });
-    
                 });
+
+                $router->group(['prefix' => 'product'], function () use ($router) {
+                    $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAllProductVenuePlace']);
+                    $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addProductVenuePlace']);
+                    $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueProductDetailById']);
+                    $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateProductVenuePlace']);
+                    $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteProductVenuePlace']);
+
+                    $router->group(['prefix' => 'session-setting'], function () use ($router) {
+                        $router->post('/add', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:addVenueSessionSetting']);
+                        $router->post('/update', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateVenueSessionSetting']);
+                        $router->get('/detail', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getVenueSessionSettingDetailById']);
+                        $router->post('/delete', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:deleteVenueSessionSetting']);
+                        $router->get('/list', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListSessionSettingByPlaceId']);
+                    });
+                });
+            });
         });
         // ------------------------------------------------------------- End Archery Enterprise ------------------------------------------------------------- //
     });
 
-     // ============================================ v2 =======================================================
-     $router->group(['prefix' => 'v2'], function () use ($router) {
+    // ============================================ v2 =======================================================
+    $router->group(['prefix' => 'v2'], function () use ($router) {
         $router->group(['prefix' => 'events', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createArcheryEventV2']);
             $router->put('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:updateArcheryEventV2']);
@@ -544,6 +543,7 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberV2']);
             $router->get('/team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:listMemberTeamV2']);
             $router->get('/access-categories', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getMemberAccessCategories']);
+            $router->get('/access-categories-team', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getAccessMemberCategoryTeam']);
         });
 
         $router->group(['prefix' => 'qualification-time', 'middleware' => 'auth.admin'], function () use ($router) {

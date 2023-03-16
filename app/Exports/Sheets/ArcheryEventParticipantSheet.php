@@ -9,25 +9,21 @@ use App\Models\ArcheryEvent;
 use App\Models\User;
 use App\Models\City;
 use App\Models\Provinces;
-use App\Models\ArcheryEventIdcardTemplate;
-use Maatwebsite\Excel\Concerns\FromCollection;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithDrawings;
-use Maatwebsite\Excel\Concerns\WithEvents;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Support\Facades\DB;
 use App\Models\ArcheryUserAthleteCode;
 use App\Models\CityCountry;
 use App\Models\Country;
-use Maatwebsite\Excel\Events\AfterSheet;
 use DateTime;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
-class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHeadings
+class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHeadings, WithColumnFormatting
 {
     protected $event_id;
 
@@ -54,12 +50,14 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'archery_event_participants.phone_number',
             'archery_event_participants.team_category_id',
             'archery_event_participants.gender',
-            'event_name'
+            'event_name',
+            "cities.name as contingent"
         )
             ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
             ->leftJoin("archery_event_participant_members", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
             ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
+            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where('event_id', $event_id)
             ->where("archery_event_participants.status", 1)
             ->get();
@@ -125,12 +123,13 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 'province' => $province ? $province->name : "",
                 'city' => $city ? $city->name : "",
                 'category' => $category_label,
-                'nik' => $user['nik'] ? $user['nik'] : '-',
+                'nik' => $user['nik'] ? "'" . $user['nik'] : '-',
                 'nationality' => $user->is_wna == 1 ? "Asing" : "Indonesia",
                 "country" => $country ? $country->name : "-",
                 "city_of_country" => $city_country ? $city_country->name : "-",
                 "passport_number" => $user->passport_number,
                 'club' => $value->club ? $value->club : '-',
+                'contingent' => $value->contingent ? $value->contingent : "-"
             ];
         }
 
@@ -139,7 +138,8 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         return view('reports.participant_event', [
             'datas' => $export_data,
             'event_name' => $event_name,
-            'event_start_date' => $event_start_date
+            'event_start_date' => $event_start_date,
+            "with_contingent" => $event->with_contingent
         ]);
     }
 
@@ -163,6 +163,13 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         ];
     }
 
+    public function columnFormats(): array
+    {
+        return [
+            'Q' => NumberFormat::FORMAT_TEXT,
+        ];
+    }
+
     public function columnWidths(): array
     {
         return [
@@ -183,6 +190,10 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'O' => 30,
             'P' => 20,
             'Q' => 30,
+            'R' => 30,
+            'S' => 30,
+            'T' => 30,
+            'U' => 30,
         ];
     }
 }

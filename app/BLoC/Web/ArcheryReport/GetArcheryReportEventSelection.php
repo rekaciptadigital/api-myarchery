@@ -2,27 +2,15 @@
 
 namespace App\BLoC\Web\ArcheryReport;
 
-use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryMasterTeamCategory;
 use App\Models\ArcheryScoring;
-use App\Models\ArcheryEventElimination;
 use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
-use App\Libraries\EliminationFormatPDF;
-use App\Libraries\EliminationFormatPDFV2;
-use App\Models\ArcheryEventQualificationTime;
-use App\Models\ArcheryEventEliminationGroup;
-use App\Models\ArcheryEventEliminationGroupMatch;
-use App\Models\ArcheryEventEliminationGroupTeams;
-use App\Libraries\ClubRanked;
 use Illuminate\Support\Carbon;
 
 class GetArcheryReportEventSelection extends Retrieval
@@ -34,21 +22,20 @@ class GetArcheryReportEventSelection extends Retrieval
 
     protected function process($parameters)
     {
-
+        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
+        $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
         $admin = Auth::user();
         $event_id = $parameters->get('event_id');
         $date_filter = $parameters->get('date');
-        // $id = array();
 
         $pages = array();
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="70%"></img>';
-        $logo_event = '<img src="' . Storage::disk('public')->path("logo/perpani-jkt.png") . '" alt="" width="70%"></img>';
-
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="70%"></img>';
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
         }
-        // $logo_event = $archery_event->logo;
+
+        $logo_event = $archery_event->logo;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -71,64 +58,67 @@ class GetArcheryReportEventSelection extends Retrieval
         // ------------------------------------------ END PRINT HEADER ------------------------------------------ //
 
         // ------------------------------------------ QUALIFICATION ------------------------------------------ //
-            $all_result_qualification = [];
-            foreach ($event_category_details as $category_detail) {
-                if ($category_detail->category_team == "Team") continue;
+        $all_result_qualification = [];
+        foreach ($event_category_details as $category_detail) {
+            if ($category_detail->category_team == "Team") continue;
 
-                $session_qualification = [];
-                for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
-                    $session_qualification[] = $i + 1;
-                }
+            $session_qualification = [];
+            for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
+                $session_qualification[] = $i + 1;
+            }
 
             $data_qualification = ArcheryScoring::getScoringRankByCategoryId($category_detail->id, 3, $session_qualification, false, null, false, 1);
             if (sizeof($data_qualification) == 0) continue;
 
-                $qualification['category'] = $category_detail->label_category;
-                $qualification['total_arrow'] = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
-                $qualification['data'] = $data_qualification;
+            $qualification['category'] = $category_detail->label_category;
+            $qualification['total_arrow'] = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
+            $qualification['data'] = $data_qualification;
 
-                $all_result_qualification[] = $qualification;
-            }
+            $all_result_qualification[] = $qualification;
+        }
 
-            $pages[] = view('reports/event_selection/qualification', [
-                'datas' => $all_result_qualification,
-                'logo_event' => $logo_event,
-                'logo_archery' => $logo_archery,
-                'event_name_report' => $event_name_report,
-                'event_date_report' => $event_date_report,
-                'event_location_report' => $event_location_report
-            ]);
+        $pages[] = view('reports/event_selection/qualification', [
+            'datas' => $all_result_qualification,
+            'logo_event' => $logo_event,
+            'logo_archery' => $logo_archery,
+            'event_name_report' => $event_name_report,
+            'event_date_report' => $event_date_report,
+            'event_location_report' => $event_location_report
+        ]);
         // ------------------------------------------ END QUALIFICATION ------------------------------------------ //
 
 
         // ------------------------------------------ ELIMINATION ------------------------------------------ //
-            $all_result_elimination = [];
-            foreach ($event_category_details as $category_detail) {
-                if ($category_detail->category_team == "Team") continue;
+        $all_result_elimination = [];
+        foreach ($event_category_details as $category_detail) {
+            if ($category_detail->category_team == "Team") continue;
 
-                $session_elimination = [];
-                for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
-                    $session_elimination[] = $i + 1;
-                }
-
-                $data_elimination = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($category_detail->id, 4, $session_elimination, null, $event_id);
-                if (sizeof($data_elimination) == 0) continue;
-
-                $elimination['category'] = $category_detail->label_category;
-                $elimination['total_arrow'] = (env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION')* env('COUNT_STAGE_ELIMINATION_SELECTION')) * env('COUNT_STAGE_ELIMINATION_SELECTION');
-                $elimination['data'] = $data_elimination;
-
-                $all_result_elimination[] = $elimination;
+            $session_elimination = [];
+            for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
+                $session_elimination[] = $i + 1;
             }
 
-            $pages[] = view('reports/event_selection/elimination', [
-                'datas' => $all_result_elimination,
-                'logo_event' => $logo_event,
-                'logo_archery' => $logo_archery,
-                'event_name_report' => $event_name_report,
-                'event_date_report' => $event_date_report,
-                'event_location_report' => $event_location_report
-            ]);
+            $data_elimination = app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($category_detail->id, 4, $session_elimination, null, $event_id);
+            if (sizeof($data_elimination) == 0) continue;
+
+            $elimination['category'] = $category_detail->label_category;
+            
+            $elimination['total_arrow'] = ($COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION * $COUNT_STAGE_ELIMINATION_SELECTION) * $COUNT_STAGE_ELIMINATION_SELECTION;
+            $elimination['data'] = $data_elimination;
+
+            $all_result_elimination[] = $elimination;
+        }
+
+        // return $all_result_elimination;
+
+        $pages[] = view('reports/event_selection/elimination', [
+            'datas' => $all_result_elimination,
+            'logo_event' => $logo_event,
+            'logo_archery' => $logo_archery,
+            'event_name_report' => $event_name_report,
+            'event_date_report' => $event_date_report,
+            'event_location_report' => $event_location_report
+        ]);
         // ------------------------------------------ END ELIMINATION ------------------------------------------ //
 
 
@@ -143,7 +133,7 @@ class GetArcheryReportEventSelection extends Retrieval
             }
 
             $session_elimination = [];
-            for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+            for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
                 $session_elimination[] = $i + 1;
             }
 
@@ -164,7 +154,7 @@ class GetArcheryReportEventSelection extends Retrieval
             'event_date_report' => $event_date_report,
             'event_location_report' => $event_location_report
         ]);
-    // ------------------------------------------ END ALL RESULT TOTAL IRAT ------------------------------------------ //
+        // ------------------------------------------ END ALL RESULT TOTAL IRAT ------------------------------------------ //
 
         $pdf = PDFv2::loadView('reports/event_selection/all', ['pages' => $pages]);
         $pdf->setOptions([
@@ -198,7 +188,7 @@ class GetArcheryReportEventSelection extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "event_id" => 'required|integer'
+            "event_id" => 'required|integer|exists:archery_events,id'
         ];
     }
 }

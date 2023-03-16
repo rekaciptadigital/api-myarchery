@@ -39,6 +39,7 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         $score_type = 4;
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
+        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category_detail) {
             throw new BLoCException("category tidak ditemukan");
@@ -55,7 +56,7 @@ class GetParticipantScoreEliminationSelectionLiveScore extends Retrieval
         }
 
         $session = [];
-        for ($i = 0; $i < env('COUNT_STAGE_ELIMINATION_SELECTION'); $i++) {
+        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
             $session[] = $i + 1;
         }
 

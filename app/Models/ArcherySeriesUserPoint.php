@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
 use DAI\Utils\Exceptions\BLoCException;
+use DAI\Utils\Helpers\BLoC;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -41,7 +42,8 @@ class ArcherySeriesUserPoint extends Model
 
         $event_serie = ArcheryEventSerie::where("event_id", $category->event_id)->first();
         if (!$event_serie) {
-            throw new BLoCException("event series not found");
+            // throw new BLoCException("event series not found");
+            return false;
         }
 
         $archerySeriesCategory = ArcherySeriesCategory::where("age_category_id", $category->age_category_id)
@@ -52,15 +54,18 @@ class ArcherySeriesUserPoint extends Model
             ->first();
 
         if (!$archerySeriesCategory) {
-            throw new BLoCException("archerySeriesCategory not found");
+            // throw new BLoCException("archerySeriesCategory not found");
+            return false;
         }
         $series = ArcherySerie::find($event_serie->serie_id);
         if (!$series) {
-            throw new BLoCException("series not found");
+            // throw new BLoCException("series not found");
+            return false;
         }
 
         if (!$archerySeriesCategory) {
-            throw new BLoCException("archerySeriesCategory not found");
+            // throw new BLoCException("archerySeriesCategory not found");
+            return false;
         }
         $t = 1;
         if ($type == "elimination") {
@@ -69,7 +74,8 @@ class ArcherySeriesUserPoint extends Model
 
         $point = ArcherySeriesMasterPoint::where("type", $t)->where("serie_id", $event_serie->serie_id)->where("start_pos", "<=", $pos)->where("end_pos", ">=", $pos)->first();
         if (!$point) {
-            throw new BLoCException("point not found");
+            // throw new BLoCException("point not found");
+            return false;
         }
 
         $is_series = 1;
@@ -205,6 +211,7 @@ class ArcherySeriesUserPoint extends Model
         foreach ($archery_user_point as $key => $value) {
             $event_series = ArcheryEventSerie::find($value->event_serie_id);
             if (!$event_series) {
+                throw new BLoCException("event series not found");
             }
             $event = ArcheryEvent::find($event_series->event_id);
             if (!$event) {
@@ -262,6 +269,9 @@ class ArcherySeriesUserPoint extends Model
             $user_detail = User::select("id", "name", "email", "avatar", "address_city_id", "date_of_birth")
                 ->where("id", $u)
                 ->first();
+            if (!$user_detail) {
+                throw new BLoCException("user not found");
+            }
             $city = "";
             $total_score = 0;
             $x_y_qualification = 0;
@@ -277,11 +287,15 @@ class ArcherySeriesUserPoint extends Model
             if (isset($user["event"]) && $user["event"]["with_contingent"] == 1) {
                 if (isset($user["contingent_id"])) {
                     $c = City::find($user["contingent_id"]);
-                    $city = $c->name;
+                    if ($c) {
+                        $city = $c->name;
+                    }
                 }
             } else {
                 $c = City::find($user_detail->address_city_id);
-                $city = $c->name;
+                if ($c) {
+                    $city = $c->name;
+                }
             }
 
             $user_profile = [
