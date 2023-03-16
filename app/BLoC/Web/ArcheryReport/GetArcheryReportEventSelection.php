@@ -8,7 +8,6 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
-use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Carbon;
@@ -78,6 +77,7 @@ class GetArcheryReportEventSelection extends Retrieval
             $qualification['category'] = $category_detail->label_category;
             $qualification['total_arrow'] = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
             $qualification['data'] = $data_qualification;
+            $qualification["session_qualification"] = $category_detail->session_in_qualification;
 
             $all_result_qualification[] = $qualification;
         }
@@ -112,6 +112,7 @@ class GetArcheryReportEventSelection extends Retrieval
 
             $elimination['total_arrow'] = ($category_detail->count_shoot_elimination_selection * $category_detail->session_in_elimination_selection) * $category_detail->session_in_elimination_selection;
             $elimination['data'] = $data_elimination;
+            $elimination["session_in_elimination_selection"] = $category_detail->session_in_elimination_selection;
 
             $all_result_elimination[] = $elimination;
         }

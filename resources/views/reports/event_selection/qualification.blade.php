@@ -71,12 +71,11 @@
                         <th style="text-align: center;border: 1px solid black; ">
                             <strong>Club</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Sesi 1</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Sesi 2</strong>
-                        </th>
+                        @for ($i = 1; $i <= $qualification['session_qualification']; $i++)
+                            <th style="text-align: center;border: 1px solid black;">
+                                <strong>Sesi {{ $i }}</strong>
+                            </th>
+                        @endfor
                         <th style="text-align: center; border: 1px solid black;">
                             <strong>Total</strong>
                         </th>
@@ -94,10 +93,11 @@
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['sessions']['1']['total'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['sessions']['2']['total'] }}</td>
+                            @for ($i = 1; $i <= $qualification['session_qualification']; $i++)
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ $data['sessions'][$i]['total'] }}
+                                </td>
+                            @endfor
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total'] }}</td>
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total_irat'] }}</td>
                         </tr>
