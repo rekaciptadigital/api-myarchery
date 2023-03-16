@@ -14,19 +14,21 @@ class ClassificationEventRegisters extends Migration
      */
     public function up()
     {
-        Schema::create('classification_event_registers', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('event_id');
-            $table->bigInteger('children_classification')->nullable();
-            $table->bigInteger('user_id')->nullable();
-            $table->bigInteger('country_id')->nullable();
-            $table->bigInteger('provinsi_id')->nullable();
-            $table->bigInteger('city_id')->nullable();
-            $table->bigInteger('archery_club_id')->nullable();
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
-            $table->softDeletes();
-        });
+        if (!Schema::hasTable('classification_event_registers')) {
+            Schema::create('classification_event_registers', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->bigInteger('event_id');
+                $table->bigInteger('children_classification')->nullable();
+                $table->bigInteger('user_id')->nullable();
+                $table->bigInteger('country_id')->nullable();
+                $table->bigInteger('provinsi_id')->nullable();
+                $table->bigInteger('city_id')->nullable();
+                $table->bigInteger('archery_club_id')->nullable();
+                $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+                $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+                $table->softDeletes();
+            });
+        }
     }
 
     /**
