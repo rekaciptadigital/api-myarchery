@@ -72,7 +72,7 @@
                             <strong>Athlete</strong>
                         </th>
                         <th style="text-align: center;border: 1px solid black;width:5%">
-                            <strong>Club</strong>
+                            <strong>Club/Contingent</strong>
                         </th>
                         @for ($i = 1; $i <= $elimination['session_in_elimination_selection']; $i++)
                             <th style="text-align: center;border: 1px solid black;">
@@ -96,10 +96,11 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
+                                {{ $qualification['with_contingent'] == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
+                            </td>
                             @for ($j = 1; $j <= $elimination['session_in_elimination_selection']; $j++)
                                 <td style="text-align: center;border: 1px solid black;">
-                                    {{ isset($data['sessions']) && isset($data['sessions'][$i]) && isset($data['sessions'][$i]['total']) ? $data['sessions'][$i]['total'] : 0 }}
+                                    {{ isset($data['sessions']) && isset($data['sessions'][$j]) && isset($data['sessions'][$j]['total']) ? $data['sessions'][$j]['total'] : 0 }}
                                 </td>
                             @endfor
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total'] }}</td>

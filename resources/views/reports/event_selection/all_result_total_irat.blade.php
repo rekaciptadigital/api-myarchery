@@ -71,7 +71,7 @@
                             <strong>Athlete</strong>
                         </th>
                         <th style="text-align: center;border: 1px solid black; ">
-                            <strong>Club</strong>
+                            <strong>Club/Contingent</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
                             <strong>Total Kualifikasi</strong>
@@ -98,16 +98,19 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
+                                {{ $qualification['with_contingent'] == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['qualification']['total'] }}</td>
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['qualification']['total_irat'] }}
                             </td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['elimination']['total'] }}</td>
+                                {{ $data['elimination']['total'] }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['elimination']['total_irat'] }}</td>
+                                {{ $data['elimination']['total_irat'] }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['all_total_irat'] }}</td>
                         </tr>
                         @php($i++)

@@ -1178,12 +1178,15 @@ class ArcheryScoring extends Model
             "archery_event_participants.is_present",
             "archery_clubs.name as club_name",
             "archery_clubs.id as club_id",
+            "cities.id as city_id",
+            "cities.name as city_name",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
             ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
+            ->leftJoin("cities", "archery_event_participants.city_id", "=", "cities.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->where('archery_event_participants.status', 1)
             ->where('archery_event_participants.event_category_id', $event_category_id);
@@ -1201,6 +1204,8 @@ class ArcheryScoring extends Model
             $score["elimination"] = $score_elimination;
             $score["club_id"] = $value->club_id;
             $score["club_name"] = $value->club_name;
+            $score["city_id"] = $value->city_id;
+            $score["city_name"] = $value->city_name;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $formula = $score_qualification['total_irat'] + $score_elimination['total_irat'];
