@@ -83,6 +83,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/qualification', [
+            "with_contingent" => $archery_event->with_contingent,
             'datas' => $all_result_qualification,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
@@ -118,6 +119,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/elimination', [
+            "with_contingent" => $archery_event->with_contingent,
             'datas' => $all_result_elimination,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
@@ -155,6 +157,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/all_result_total_irat', [
+            "with_contingent" => $archery_event->with_contingent,
             'datas' => $all_result_total_irat,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
