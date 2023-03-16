@@ -63,7 +63,7 @@ class GetEventOrder extends Retrieval
             $participant->category_label = $category_label;
             $output[] = [
                 "archery_event" => $archery_event,
-                "participant" => $participant,
+                // "participant" => $participant,
                 "transaction_info" => $transaction_info,
             ];
         }
