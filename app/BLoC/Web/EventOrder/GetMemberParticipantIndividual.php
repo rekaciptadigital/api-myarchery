@@ -68,11 +68,18 @@ class GetMemberParticipantIndividual extends Retrieval
 
         if ($event->with_contingent == 1) {
             if ($event->parent_classification == 1) {
-                $club = ArcheryClub::find($classification_club_id);
+                if (!empty($classification_club_id)) {
+                    $club = ArcheryClub::find($classification_club_id);
 
-                if (!$club) {
-                    throw new BLoCException("club not found");
+                    if (!$club) {
+                        throw new BLoCException("club not found");
+                    }
                 }
+                // $club = ArcheryClub::find($classification_club_id);
+
+                // if (!$club) {
+                //     throw new BLoCException("club not found");
+                // }
             } elseif ($event->parent_classification == 2) {
                 $country = Country::find($classification_country_id);
 
@@ -155,7 +162,10 @@ class GetMemberParticipantIndividual extends Retrieval
 
                 if ($event->with_contingent == 1) {
                     if ($event['parent_classification'] == 1) {
-                        $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
+                        if ($classification_club_id) {
+                            $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
+                        }
+                        // $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
                     } elseif ($event['parent_classification'] == 2) {
                         $participants =  $participants->where('archery_event_participants.classification_country_id', '=', $classification_country_id);
                     } elseif ($event['parent_classification'] == 3) {

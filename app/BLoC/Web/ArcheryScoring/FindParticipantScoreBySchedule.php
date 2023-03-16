@@ -404,7 +404,6 @@ class FindParticipantScoreBySchedule extends Retrieval
     private function eliminationSelection($parameters)
     {
         $code = explode("-", $parameters->code);
-        $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
         $type = $code[0];
         $participant_member_id = $code[1];
         $session = $code[2];
@@ -427,8 +426,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         if (!$category_detail) {
             throw new BLoCException("kategori tidak ditemukan");
         }
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
-        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $COUNT_STAGE_ELIMINATION_SELECTION, $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION) : ArcheryScoring::makeScoringFormat((object) array(), null, $COUNT_STAGE_ELIMINATION_SELECTION, $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION);
+        $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $category_detail->session_in_elimination_selection, $category_detail->count_shoot_elimination_selection) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->session_in_elimination_selection, $category_detail->count_shoot_elimination_selection);
         $output->score = $s;
         $output->category = $category_detail->getCategoryDetailById($category_detail->id);
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
@@ -448,8 +446,6 @@ class FindParticipantScoreBySchedule extends Retrieval
         $category_id = $code[1];
         $session = $code[2];
         $budrest = $code[3];
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
-        $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION = env('COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION', 3);
 
         $participant_members_schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
             ->join("archery_event_qualification_time", "archery_event_qualification_schedule_full_day.qalification_time_id", "=", "archery_event_qualification_time.id")
@@ -477,7 +473,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             if (!$category_detail) {
                 throw new BLoCException("kategori tidak ditemukan");
             }
-            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $COUNT_STAGE_ELIMINATION_SELECTION, $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION) : ArcheryScoring::makeScoringFormat((object) array(), null, $COUNT_STAGE_ELIMINATION_SELECTION, $COUNT_SHOT_IN_STAGE_ELIMINATION_SELECTION);
+            $s = isset($score->scoring_detail) ? ArcheryScoring::makeScoringFormat(\json_decode($score->scoring_detail), null, $category_detail->session_in_elimination_selection, $category_detail->count_shoot_elimination_selection) : ArcheryScoring::makeScoringFormat((object) array(), null, $category_detail->session_in_elimination_selection, $category_detail->count_shoot_elimination_selection);
             $output->participant = ArcheryEventParticipantMember::memberDetail($participant_member_id);
             $output->score = $s;
             $output->category = $category_detail->getCategoryDetailById($category_detail->id);

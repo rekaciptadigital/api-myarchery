@@ -25,6 +25,8 @@ class GetParticipantScoreQualification extends Retrieval
         "8" => 0,
         "9" => 0,
         "10" => 0,
+        "11" => 0,
+        "12" => 0,
         "x" => 0,
         "m" => 0,
     ];

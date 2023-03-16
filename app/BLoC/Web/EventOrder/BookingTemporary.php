@@ -54,15 +54,27 @@ class BookingTemporary extends Retrieval
 
         if ($event['with_contingent'] == 1) {
             if ($event['detail_parent_classification']['id'] == 1) {
-                if (empty($classificationArcheryClub)) {
-                    throw new BLoCException("classification from archery club is required!");
-                } else {
+                if (!empty($get_club_id)) {
                     $check_club = ArcheryClub::find($classificationArcheryClub);
+
                     if (!$check_club) {
                         throw new BLoCException("club not found!");
                     }
+
+                    // $club_id = $get_club_id;
                     $data_classification_event_register['archery_club_id'] = $classificationArcheryClub;
+                } else {
+                    $data_classification_event_register['archery_club_id'] = 0;
                 }
+                // if (empty($classificationArcheryClub)) {
+                //     throw new BLoCException("classification from archery club is required!");
+                // } else {
+                //     $check_club = ArcheryClub::find($classificationArcheryClub);
+                //     if (!$check_club) {
+                //         throw new BLoCException("club not found!");
+                //     }
+                //     $data_classification_event_register['archery_club_id'] = $classificationArcheryClub;
+                // }
             } elseif ($event['detail_parent_classification']['id'] == 2) {
                 if (empty($classificationCountryId)) {
                     throw new BLoCException("classification country is required!");

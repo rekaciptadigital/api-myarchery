@@ -115,8 +115,7 @@ class GetListCategoryByEventId extends Retrieval
                 $response["default_elimination_count"] = $category->default_elimination_count;
                 $response["elimination_lock"] = $event_elimination_lock;
                 $response["session_in_qualification"] = $category->session_in_qualification;
-                $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
-                $response["session_in_elimination_selection"] = $COUNT_STAGE_ELIMINATION_SELECTION;
+                $response["session_in_elimination_selection"] = $category->session_in_elimination_selection;
                 $response["count_user_booking"] = $countUserBooking;
 
                 if ($category_dos == 'true') {

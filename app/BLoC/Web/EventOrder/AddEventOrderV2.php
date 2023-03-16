@@ -54,7 +54,7 @@ class AddEventOrderV2 extends Transactional
 
     protected function process($parameters)
     {
-        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode') : "bankTransfer";
+        $this->payment_methode = $parameters->get('payment_methode') ? $parameters->get('payment_methode    ') : "bankTransfer";
 
         $user_login = Auth::guard('app-api')->user();
         // $club_or_city_id = $parameters->get("club_or_city_id");
@@ -77,15 +77,17 @@ class AddEventOrderV2 extends Transactional
 
         if ($event->with_contingent == 1) {
             if ($event['parent_classification'] == 1) {
-                if (empty($get_club_id)) {
-                    throw new BLoCException("club is required, because contingent club!");
-                }
-                $club = ArcheryClub::find($get_club_id);
-                if (empty($club)) {
-                    throw new BLoCException("club not found!");
-                }
+                if (!empty($get_club_id)) {
+                    $club = ArcheryClub::find($get_club_id);
 
-                $club_id = $get_club_id;
+                    if (empty($club)) {
+                        throw new BLoCException("club not found!");
+                    }
+
+                    $club_id = $get_club_id;
+                } else {
+                    $club_id = 0;
+                }
             } elseif ($event['parent_classification'] == 2) {
                 if (empty($get_country_id)) {
                     throw new BLoCException("country is required, because contingent territory of the country!");
@@ -421,9 +423,15 @@ class AddEventOrderV2 extends Transactional
             $lp->save();
         }
 
+        $participant = ArcheryEventParticipant::where('user_id', '=', $user_login->id)
+            ->where('event_id', '=', $event_id)
+            ->orderBy('id', 'desc')
+            ->first();
+
         $res = [
             "order_event_id" => $order_event->id,
-            'payment_info' => $payment
+            'payment_info' => $payment,
+            'participant' => $participant
         ];
 
         return $res;
