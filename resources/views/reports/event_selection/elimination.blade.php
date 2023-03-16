@@ -96,7 +96,7 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $qualification['with_contingent'] == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
+                                {{ $with_contingent == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
                             </td>
                             @for ($j = 1; $j <= $elimination['session_in_elimination_selection']; $j++)
                                 <td style="text-align: center;border: 1px solid black;">
