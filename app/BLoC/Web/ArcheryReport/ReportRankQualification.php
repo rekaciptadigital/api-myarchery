@@ -28,7 +28,7 @@ class ReportRankQualification extends Retrieval
         $event_id = $parameters->get('event_id');
         $category_id = $parameters->get("category_id");
 
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
 

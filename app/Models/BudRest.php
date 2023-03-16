@@ -579,7 +579,7 @@ class BudRest extends Model
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
 
-        $count_stage = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
+        $count_stage = $category->session_in_elimination_selection;
         $array_pesrta_baru = [];
         $distance = $count_stage <= 2  ? [$category->distance_id, $category->distance_id] : [
             substr($category->distance_id, 0, 2),

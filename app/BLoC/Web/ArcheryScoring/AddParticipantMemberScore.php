@@ -797,7 +797,8 @@ class AddParticipantMemberScore extends Transactional
         $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id", "archery_event_participants.event_id")
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->where("archery_event_participants.status", 1)
-            ->where("archery_event_participant_members.id", $participant_member_id)->first();
+            ->where("archery_event_participant_members.id", $participant_member_id)
+            ->first();
 
         if (!$participant_member) {
             throw new BLoCException("peserta tidak terdaftar");
@@ -826,8 +827,9 @@ class AddParticipantMemberScore extends Transactional
         //     throw new BLoCException("tidak bisa input skoring karena eliminasi telah ditentukan");
 
 
-        if (env('COUNT_STAGE_ELIMINATION_SELECTION') < $session)
+        if ($category->session_in_elimination_selection < $session) {
             throw new BLoCException("sesi tidak tersedia");
+        }
 
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         if (!$schedule)

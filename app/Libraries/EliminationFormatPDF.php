@@ -13,6 +13,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryScoringEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ArcheryEventParticipantMember;
 
 class EliminationFormatPDF
 {
@@ -307,6 +308,72 @@ class EliminationFormatPDF
         $template["updated"] = $updated;
         $template["elimination_group_id"] = $elimination_id;
         return $template;
+    }
+
+    public static function getViewDataGraph4($data_graph, $first_loop = 2)
+    {
+        for ($a = 0; $a <= $first_loop - 1; $a++) {
+            for ($i = 0; $i <= 1; $i++) {
+                if ($data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
+                    $round1[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['name'];
+                    $round1result[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['result'];
+                    $round1position[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['potition'];
+                    $round1status[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'];
+                } else {
+                    $round1result[] = '-';
+                    $round1[] = 'bye';
+                    $round1position[] = '-';
+                    $round1status[] = 'wait';
+                }
+            }
+        }
+
+        for ($i = 0; $i < 1; $i++) {
+            for ($i = 0; $i <= 1; $i++) {
+                if ($data_graph['rounds'][1]['seeds'][0]['teams'][$i]['status'] != 'bye') {
+                    $round2[] = $data_graph['rounds'][1]['seeds'][0]['teams'][$i]['name'];
+                    $round2result[] = $data_graph['rounds'][1]['seeds'][0]['teams'][$i]['result'];
+                    $round2position[] = $data_graph['rounds'][1]['seeds'][0]['teams'][$i]['potition'];
+                    $round2status[] = $data_graph['rounds'][1]['seeds'][0]['teams'][$i]['status'];
+                } else {
+                    $round2result[] = '-';
+                    $round2[] = 'bye';
+                    $round2position[] = '-';
+                    $round2status[] = 'wait';
+                }
+            }
+        }
+
+        for ($i = 0; $i < 1; $i++) {
+            for ($i = 0; $i <= 1; $i++) {
+                if ($data_graph['rounds'][2]['seeds'][0]['teams'][$i]['status'] != 'bye') {
+                    $round3[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['name'];
+                    $round3result[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['result'];
+                    $round3position[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['potition'];
+                    $round3status[] = $data_graph['rounds'][2]['seeds'][0]['teams'][$i]['status'];
+                } else {
+                    $round3result[] = '-';
+                    $round3[] = 'bye';
+                    $round3position[] = '-';
+                    $round3status[] = 'wait';
+                }
+            }
+        }
+
+        return array(
+            '$round1' => $round1,
+            '$round2' => $round2,
+            '$round3' => $round3,
+            '$round1result' => $round1result,
+            '$round2result' => $round2result,
+            '$round3result' => $round3result,
+            '$round1position' => $round1position,
+            '$round2position' => $round2position,
+            '$round3position' => $round3position,
+            '$round1status' => $round1status,
+            '$round2status' => $round2status,
+            '$round3status' => $round3status
+        );
     }
 
     public static function getViewDataGraph8($data_graph, $first_loop = 4, $second_loop = 2, $third_loop = 1)
@@ -868,7 +935,6 @@ class EliminationFormatPDF
 
     public static function renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report)
     {
-        // dd($data_report[0][0]['category']);
         return view($view_path, [
             'round1member1' => $data['$round1'][0],
             'round1member2' => $data['$round1'][1],
@@ -937,6 +1003,68 @@ class EliminationFormatPDF
             'round3member2status' => $data['$round3status'][1],
             'round4member1status' => $data['$round4status'][0],
             'round4member2status' => $data['$round4status'][1],
+
+            'report' => $report,
+            'category' => $data_report[0][0]['category'],
+            'logo_event' => $logo_event,
+            'logo_archery' => $logo_archery,
+            'competition' => $competition->competition_category,
+            'event_name_report' => $event_name_report,
+            'event_location_report' => $event_location_report,
+            "event_date_report" => $event_date_report
+        ]);
+    }
+
+    public static function renderPageGraph4_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report)
+    {
+        return view($view_path, [
+            'round1member1' => $data['$round1'][0],
+            'round1member2' => $data['$round1'][1],
+            'round1member3' => $data['$round1'][2],
+            'round1member4' => $data['$round1'][3],
+
+            'round2member1' => $data['$round2'][0],
+            'round2member2' => $data['$round2'][1],
+
+            'round3member1' => $data['$round3'][0],
+            'round3member2' => $data['$round3'][1],
+
+
+            'round1member1result' => $data['$round1result'][0],
+            'round1member2result' => $data['$round1result'][1],
+            'round1member3result' => $data['$round1result'][2],
+            'round1member4result' => $data['$round1result'][3],
+
+            'round2member1result' => $data['$round2result'][0],
+            'round2member2result' => $data['$round2result'][1],
+
+            'round3member1result' => $data['$round3result'][0],
+            'round3member2result' => $data['$round3result'][1],
+
+
+            'round1member1position' => $data['$round1position'][0],
+            'round1member2position' => $data['$round1position'][1],
+            'round1member3position' => $data['$round1position'][2],
+            'round1member4position' => $data['$round1position'][3],
+
+            'round2member1position' => $data['$round2position'][0],
+            'round2member2position' => $data['$round2position'][1],
+
+            'round3member1position' => $data['$round3position'][0],
+            'round3member2position' => $data['$round3position'][1],
+
+
+            'round1member1status' => $data['$round1status'][0],
+            'round1member2status' => $data['$round1status'][1],
+            'round1member3status' => $data['$round1status'][2],
+            'round1member4status' => $data['$round1status'][3],
+            
+            'round2member1status' => $data['$round2status'][0],
+            'round2member2status' => $data['$round2status'][1],
+            
+            'round3member1status' => $data['$round3status'][0],
+            'round3member2status' => $data['$round3status'][1],
+
 
             'report' => $report,
             'category' => $data_report[0][0]['category'],

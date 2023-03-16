@@ -36,7 +36,6 @@ class GetDownloadBaganElimination extends Retrieval
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $event->location;
         $logo_event = $event->logo;
-        // $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
         $logo_archery = Storage::disk('public')->path("logo/logo-archery.png");
 
         $category_id = $parameters->get("category_id");
@@ -85,6 +84,12 @@ class GetDownloadBaganElimination extends Retrieval
                             $data = EliminationFormatPDF::getViewDataGraph8($data_graph);
                             $view_path = 'report_result/graph_eight';
                             $view = EliminationFormatPDF::renderPageGraph8_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
+                        }
+                    } elseif ($elimination_individu->count_participant == 4) {
+                        if ($data_graph) {
+                            $data = EliminationFormatPDF::getViewDataGraph4($data_graph);
+                            $view_path = 'report_result/graph_four';
+                            $view = EliminationFormatPDF::renderPageGraph4_reportEvent($view_path, $data, $report, $data_report, $logo_event, $logo_archery, $competition, $event_name_report, $event_location_report, $event_date_report);
                         }
                     }
                 }

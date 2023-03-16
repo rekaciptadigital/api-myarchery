@@ -33,11 +33,10 @@ class ReportMedalClub extends Retrieval
     protected function process($parameters)
     {
 
-        $admin = Auth::user();
         $event_id = $parameters->get('event_id');
 
         $pages = array();
-        $logo_archery = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="80%"></img>';
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) throw new BLoCException("event tidak terdaftar");
@@ -59,7 +58,7 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
         $logo_event = $archery_event->logo;
-        $logo_archery_cover = '<img src="' . Storage::disk('public')->path("logo/logo-archery.png") . '" alt="" width="60%"></img>';
+        $logo_archery_cover = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="60%"></img>';
         $cover_page = view('report_medal_club/cover', [
             'cover_event' => $logo_event,
             'logo_archery' => $logo_archery_cover,
