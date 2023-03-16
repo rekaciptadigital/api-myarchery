@@ -71,43 +71,22 @@
                             <strong>Athlete</strong>
                         </th>
                         <th style="text-align: center;border: 1px solid black; ">
-                            <strong>Club</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Sesi 1</strong>
+                            <strong>Club/Contingent</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
-                            <strong>Sesi 2</strong>
+                            <strong>Total Kualifikasi</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
-                            <strong>Total</strong>
+                            <strong>IRAT Kualifikasi</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
-                            <strong>IRAT</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-1</strong>
+                            <strong>Total Eliminasi</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
-                            <strong>Eli-2</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-3</strong>
+                            <strong>IRAT Eliminasi</strong>
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
-                            <strong>Eli-4</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-5</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Total</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>IRAT</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Total IRAT</strong>
+                            <strong>Total IRAT Keseluruhan</strong>
                         </th>
                     </tr>
                     @php($i = 1)
@@ -119,59 +98,19 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['qualification']['sessions']['1']['total'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['qualification']['sessions']['2']['total'] }}</td>
+                                {{ $with_contingent == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
+                            </td>
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['qualification']['total'] }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['qualification']['total_irat'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['elimination']) &&
-                                isset($data['elimination']['sessions']) &&
-                                isset($data['elimination']['sessions']['1']) &&
-                                isset($data['elimination']['sessions']['1']['total'])
-                                    ? $data['elimination']['sessions']['1']['total']
-                                    : 0 }}
+                                {{ $data['qualification']['total_irat'] }}
                             </td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['elimination']) &&
-                                isset($data['elimination']['sessions']) &&
-                                isset($data['elimination']['sessions']['2']) &&
-                                isset($data['elimination']['sessions']['2']['total'])
-                                    ? $data['elimination']['sessions']['2']['total']
-                                    : 0 }}
+                                {{ $data['elimination']['total'] }}
                             </td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['elimination']) &&
-                                isset($data['elimination']['sessions']) &&
-                                isset($data['elimination']['sessions']['3']) &&
-                                isset($data['elimination']['sessions']['3']['total'])
-                                    ? $data['elimination']['sessions']['3']['total']
-                                    : 0 }}
+                                {{ $data['elimination']['total_irat'] }}
                             </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['elimination']) &&
-                                isset($data['elimination']['sessions']) &&
-                                isset($data['elimination']['sessions']['4']) &&
-                                isset($data['elimination']['sessions']['4']['total'])
-                                    ? $data['elimination']['sessions']['4']['total']
-                                    : 0 }}
-                            </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['elimination']) &&
-                                isset($data['elimination']['sessions']) &&
-                                isset($data['elimination']['sessions']['5']) &&
-                                isset($data['elimination']['sessions']['5']['total'])
-                                    ? $data['elimination']['sessions']['5']['total']
-                                    : 0 }}
-                            </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['elimination']['total'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['elimination']['total_irat'] }}</td>
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['all_total_irat'] }}</td>
                         </tr>
                         @php($i++)

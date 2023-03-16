@@ -54,7 +54,8 @@
                 <thead>
                     <tr>
                         <th style="text-align: center;border: 1px solid black; font-size: 20px; background-color: lightgray;"
-                            colspan="9">{{ $qualification['category'] }}</th>
+                            colspan="{{ $qualification['session_qualification'] + 6 }}">{{ $qualification['category'] }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody style="font-size: 18px;">
@@ -62,21 +63,20 @@
                         <th style="text-align: center;border: 1px solid black; ">
                             <strong>Pos.</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
+                        <th style="text-align: center;border: 1px solid black;width:1% ">
                             <strong>Budrest</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
+                        <th style="text-align: center;border: 1px solid black;width:5% ">
                             <strong>Athlete</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
-                            <strong>Club</strong>
+                        <th style="text-align: center;border: 1px solid black;width:5% ">
+                            <strong>Club/Contingent</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Sesi 1</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Sesi 2</strong>
-                        </th>
+                        @for ($i = 1; $i <= $qualification['session_qualification']; $i++)
+                            <th style="text-align: center;border: 1px solid black;">
+                                <strong>Sesi {{ $i }}</strong>
+                            </th>
+                        @endfor
                         <th style="text-align: center; border: 1px solid black;">
                             <strong>Total</strong>
                         </th>
@@ -93,11 +93,13 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['sessions']['1']['total'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['sessions']['2']['total'] }}</td>
+                                {{ $with_contingent == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
+                            </td>
+                            @for ($j = 1; $j <= $qualification['session_qualification']; $j++)
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ $data['sessions'][$j]['total'] }}
+                                </td>
+                            @endfor
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total'] }}</td>
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total_irat'] }}</td>
                         </tr>

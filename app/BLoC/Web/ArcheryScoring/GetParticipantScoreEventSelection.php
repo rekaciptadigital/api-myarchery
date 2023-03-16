@@ -3,11 +3,8 @@
 namespace App\BLoC\Web\ArcheryScoring;
 
 use App\Models\AdminRole;
-use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryMasterTeamCategory;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +23,8 @@ class GetParticipantScoreEventSelection extends Retrieval
         "8" => 0,
         "9" => 0,
         "10" => 0,
+        "11" => 0,
+        "12" => 0,
         "x" => 0,
         "m" => 0,
     ];
@@ -38,28 +37,28 @@ class GetParticipantScoreEventSelection extends Retrieval
     protected function process($parameters)
     {
         $admin = Auth::user();
-        $COUNT_STAGE_ELIMINATION_SELECTION = env('COUNT_STAGE_ELIMINATION_SELECTION', 5);
         $name = $parameters->get("name");
         $event_category_id = $parameters->get('event_category_id');
         $standings_type = $parameters->get("standings_type");
 
-        $category_detail = ArcheryEventCategoryDetail::find($event_category_id);
+        $category_detail = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_master_team_categories.type",
+            "archery_events.admin_id"
+        )
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->where("archery_event_category_details.id", $event_category_id)
+            ->first();
+
         if (!$category_detail) {
-            throw new BLoCException("category tidak ditemukan");
+            throw new BLoCException("category not found");
         }
 
-        $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
-        if (!$team_category) {
-            throw new BLoCException("team category not found");
-        }
-
-        $event = ArcheryEvent::find($category_detail->event_id);
-        if (!$event) {
-            throw new BLoCException("CATEGORY INVALID");
-        }
-
-        if ($event->admin_id !== $admin->id) {
-            $role = AdminRole::where("admin_id", $admin->id)->where("event_id", $event->id)->first();
+        if ($category_detail->admin_id !== $admin->id) {
+            $role = AdminRole::where("admin_id", $admin->id)
+                ->where("event_id", $category_detail->event_id)
+                ->first();
             if (!$role || $role->role_id != 6) {
                 throw new BLoCException("you are not owner this event");
             }
@@ -71,18 +70,18 @@ class GetParticipantScoreEventSelection extends Retrieval
         }
 
         $session_elimination = [];
-        for ($i = 0; $i < $COUNT_STAGE_ELIMINATION_SELECTION; $i++) {
+        for ($i = 0; $i < $category_detail->session_in_elimination_selection; $i++) {
             $session_elimination[] = $i + 1;
         }
 
-        if ($category_detail->category_team == "Individual") {
+        if ($category_detail->type == "Individual") {
             //filter klasemen
             if ($standings_type == 3) {
-                return ArcheryScoring::getScoringRankByCategoryId($event_category_id, 3, $session_qualification, false, null, false, 1);
+                return ArcheryScoring::getScoringRankByCategoryId($event_category_id, 3, $session_qualification, false, null, false);
             } else if ($standings_type == 4) {
-                return app('App\BLoC\Web\ArcheryScoring\GetParticipantScoreEliminationSelectionLiveScore')->getListMemberScoringIndividual($event_category_id, 4, $session_elimination, $name, $event->id);
+                return ArcheryScoring::getScoringRankByCategoryIdForEliminationSelection($event_category_id, 4, $session_elimination, false, $name, false);
             } else {
-                return $this->getListMemberScoringIndividual($event_category_id, $session_qualification, $session_elimination, $name, $event->id);
+                return ArcheryScoring::getScoringRankByCategoryIdForEventSelection($event_category_id, $session_qualification, $session_elimination, $name);
             }
         }
     }
@@ -93,19 +92,5 @@ class GetParticipantScoreEventSelection extends Retrieval
         return [
             "event_category_id" => "required"
         ];
-    }
-
-    public function getListMemberScoringIndividual($category_id, $session_qualification, $session_elimination, $name, $event_id)
-    {
-        $data_scoring = ArcheryScoring::getScoringRankByCategoryIdForEventSelection($category_id, $session_qualification, $session_elimination, true, $name);
-        $category = ArcheryEventCategoryDetail::find($category_id);
-
-        $data_collection = collect($data_scoring);
-        $sorted_data = $data_collection->sortByDesc("all_total_irat")->toArray();
-        $response = [];
-        foreach ($sorted_data as $data) {
-            array_push($response, $data);
-        }
-        return $response;
     }
 }

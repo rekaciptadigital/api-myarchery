@@ -55,7 +55,7 @@
                 <thead>
                     <tr>
                         <th style="text-align: center;border: 1px solid black; font-size: 20px; background-color: lightgray;"
-                            colspan="11">
+                            colspan="{{ $elimination['session_in_elimination_selection'] + 6 }}">
                             {{ $elimination['category'] }}
                         </th>
                     </tr>
@@ -65,29 +65,20 @@
                         <th style="text-align: center;border: 1px solid black; ">
                             <strong>Pos.</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
+                        <th style="text-align: center;border: 1px solid black; width:1% ">
                             <strong>Budrest</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
+                        <th style="text-align: center;border: 1px solid black; width:5% ">
                             <strong>Athlete</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black; ">
-                            <strong>Club</strong>
+                        <th style="text-align: center;border: 1px solid black;width:5%">
+                            <strong>Club/Contingent</strong>
                         </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-1</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Eli-2</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-3</strong>
-                        </th>
-                        <th style="text-align: center; border: 1px solid black;">
-                            <strong>Eli-4</strong>
-                        </th>
-                        <th style="text-align: center;border: 1px solid black;">
-                            <strong>Eli-5</strong>
+                        @for ($i = 1; $i <= $elimination['session_in_elimination_selection']; $i++)
+                            <th style="text-align: center;border: 1px solid black;">
+                                <strong>Eli-{{ $i }}</strong>
+                            </th>
+                        @endfor
                         </th>
                         <th style="text-align: center; border: 1px solid black;">
                             <strong>Total</strong>
@@ -105,22 +96,13 @@
                             <td style="text-align: center;border: 1px solid black;">
                                 {{ $data['member'] ? strtoupper($data['member']['name']) : '-' }}</td>
                             <td style="text-align: center;border: 1px solid black;">
-                                {{ $data['club_name'] ? strtoupper($data['club_name']) : '-' }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['sessions']) && isset($data['sessions']['1']) && isset($data['sessions']['1']['total']) ? $data['sessions']['1']['total'] : 0 }}
+                                {{ $with_contingent == 0 ? strtoupper($data['club_name']) : strtoupper($data['city_name']) }}
                             </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['sessions']) && isset($data['sessions']['2']) && isset($data['sessions']['2']['total']) ? $data['sessions']['2']['total'] : 0 }}
-                            </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['sessions']) && isset($data['sessions']['3']) && isset($data['sessions']['3']['total']) ? $data['sessions']['3']['total'] : 0 }}
-                            </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['sessions']) && isset($data['sessions']['4']) && isset($data['sessions']['4']['total']) ? $data['sessions']['4']['total'] : 0 }}
-                            </td>
-                            <td style="text-align: center;border: 1px solid black;">
-                                {{ isset($data['sessions']) && isset($data['sessions']['5']) && isset($data['sessions']['5']['total']) ? $data['sessions']['5']['total'] : 0 }}
-                            </td>
+                            @for ($j = 1; $j <= $elimination['session_in_elimination_selection']; $j++)
+                                <td style="text-align: center;border: 1px solid black;">
+                                    {{ isset($data['sessions']) && isset($data['sessions'][$j]) && isset($data['sessions'][$j]['total']) ? $data['sessions'][$j]['total'] : 0 }}
+                                </td>
+                            @endfor
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total'] }}</td>
                             <td style="text-align: center;border: 1px solid black;"> {{ $data['total_irat'] }}</td>
                         </tr>
