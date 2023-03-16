@@ -13,19 +13,16 @@ class AddSessionInQualificationAndEliminationOnCategoryTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('archery_event_category_details')) {
-            Schema::table('archery_event_category_details', function (Blueprint $table) {
-                $table->integer("session_in_qualification_selection")->default(2);
-                $table->integer("session_in_elimination_selection")->default(5);
-                $table->integer("count_shoot_elimination_selection")->default(3);
-            });
-        }
 
-        if (!Schema::hasTable('archery_events')) {
-            Schema::table('archery_events', function (Blueprint $table) {
-                $table->integer("type_formula_irate")->default(1)->comment("type perhitungan irate jika event menggunakan irate");
-            });
-        }
+        Schema::table('archery_event_category_details', function (Blueprint $table) {
+            $table->integer("session_in_qualification_selection")->default(2);
+            $table->integer("session_in_elimination_selection")->default(5);
+            $table->integer("count_shoot_elimination_selection")->default(3);
+        });
+
+        Schema::table('archery_events', function (Blueprint $table) {
+            $table->integer("type_formula_irate")->default(1)->comment("type perhitungan irate jika event menggunakan irate");
+        });
     }
 
     /**
