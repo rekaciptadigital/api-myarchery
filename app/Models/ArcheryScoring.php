@@ -1205,7 +1205,7 @@ class ArcheryScoring extends Model
             $score["have_shoot_off"] = $value->have_shoot_off;
             $formula = $score_qualification['total_irat'] + $score_elimination['total_irat'];
             if ($event->type_formula_irate == 2) {
-                $formula = ($score_qualification["total"] + $score_elimination["total"]) / ($score_qualification["total_arrow"] + $score_elimination["total_arrow"]);
+                $formula = round(($score_qualification["total"] + $score_elimination["total"]) / ($score_qualification["total_arrow"] + $score_elimination["total_arrow"]), 3);
             }
             $score["all_total_irat"] = $formula;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
