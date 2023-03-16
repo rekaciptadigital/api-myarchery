@@ -1165,6 +1165,8 @@ class ArcheryScoring extends Model
     // All result of qualification & elimination to get total irat for event selection
     protected function getScoringRankByCategoryIdForEventSelection($event_category_id, array $session_qualification = [1, 2], array $session_elimination = [1, 2, 3, 4, 5], $name = null)
     {
+        $category = ArcheryEventCategoryDetail::find($event_category_id);
+        $event = ArcheryEvent::find($category->event_id);
         $participants_query = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
             "archery_event_participant_members.have_shoot_off",
@@ -1201,7 +1203,11 @@ class ArcheryScoring extends Model
             $score["club_name"] = $value->club_name;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
-            $score["all_total_irat"] = $score_qualification['total_irat'] + $score_elimination['total_irat'];
+            $formula = $score_qualification['total_irat'] + $score_elimination['total_irat'];
+            if ($event->type_formula_irate == 2) {
+                $formula = ($score_qualification["total"] + $score_elimination["total"]) / ($score_qualification["total_arrow"] + $score_elimination["total_arrow"]);
+            }
+            $score["all_total_irat"] = $formula;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
             $archery_event_score[] = $score;
         }
