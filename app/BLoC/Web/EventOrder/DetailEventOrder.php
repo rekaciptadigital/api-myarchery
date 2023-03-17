@@ -79,7 +79,7 @@ class DetailEventOrder extends Retrieval
 
         $output = [
             "order_event_id" => $order_event->id,
-            "total_price" => $order_event->total_price,
+            "total_price" => (int)$order_event->total_price,
             "user_order" => [
                 "id" => $user->id,
                 "name" => $user->name,
