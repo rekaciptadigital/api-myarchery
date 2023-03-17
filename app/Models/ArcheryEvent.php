@@ -24,8 +24,7 @@ class ArcheryEvent extends Model
     public static function checUserAgeCanOrderCategory(string $date_of_birth, ArcheryMasterAgeCategory $age_category, ArcheryEvent $event)
     {
         $date_of_birth = date("Y-m-d", strtotime($date_of_birth));
-        $event_start_datetime = date("Y-m-d H-i-s", strtotime($event->event_start_datetime));
-
+        $event_start_datetime = date("Y-m-d H:i:s", strtotime($event->event_start_datetime));
         if ($date_of_birth == false) {
             return "invalid date of birth format";
         }

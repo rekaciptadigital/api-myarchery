@@ -414,17 +414,12 @@ class BudRest extends Model
             ->get();
 
         $array_pesrta_baru = [];
-        $distance = $category->session_in_qualification <= 2  ? [$category->distance_id, $category->distance_id] : [
-            substr($category->distance_id, 0, 2),
-            substr($category->distance_id, 2, 2),
-            substr($category->distance_id, 4, 2)
-        ];
 
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
-                    $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
+                    $code_sesi['sesi'] = $i;
                     $code_sesi['code'] = "3-" . $pmt->member_id . "-" . $i;
                     array_push($array_pesrta_baru, $code_sesi);
                 }
@@ -581,16 +576,12 @@ class BudRest extends Model
 
         $count_stage = $category->session_in_elimination_selection;
         $array_pesrta_baru = [];
-        $distance = $count_stage <= 2  ? [$category->distance_id, $category->distance_id] : [
-            substr($category->distance_id, 0, 2),
-            substr($category->distance_id, 2, 2),
-            substr($category->distance_id, 4, 2)
-        ];
+        
         for ($i = 1; $i <= $count_stage; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
                     $code_sesi['detail_member'] = $pmt;
-                    $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
+                    $code_sesi['sesi'] = $i;
                     $code_sesi['code'] = "4-" . $pmt->member_id . "-" . $i;
                     array_push($array_pesrta_baru, $code_sesi);
                 }
