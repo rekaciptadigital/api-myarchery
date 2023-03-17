@@ -69,7 +69,8 @@ class DetailEventOrder extends Retrieval
                 $list_member[] = [
                     "name" => $user->name,
                     "club_name" => $m->club_name,
-                    "age" => $m->age
+                    "age" => $m->age,
+                    "photo" => $user->avatar
                 ];
             }
         }
@@ -77,6 +78,7 @@ class DetailEventOrder extends Retrieval
 
         $output = [
             "order_event_id" => $order_event->id,
+            "total_price" => $order_event->total_price,
             "user_order" => [
                 "id" => $user->id,
                 "name" => $user->name,
