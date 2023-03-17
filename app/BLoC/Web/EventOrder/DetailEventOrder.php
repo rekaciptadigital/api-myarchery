@@ -70,7 +70,8 @@ class DetailEventOrder extends Retrieval
                     "name" => $user->name,
                     "club_name" => $m->club_name,
                     "age" => $m->age,
-                    "photo" => $user->avatar
+                    "photo" => $user->avatar,
+                    "gender" => $m->gender
                 ];
             }
         }
