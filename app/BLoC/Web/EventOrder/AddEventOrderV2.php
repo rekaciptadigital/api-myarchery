@@ -171,7 +171,7 @@ class AddEventOrderV2 extends Transactional
         //         $club_id = $club->id;
         //     }
         // }
-        $order_event = OrderEvent::saveOrderEvent($user_login->id, 4, 0, 0, 0);
+        $order_event = OrderEvent::saveOrderEvent($user_login->id, 4, 0, 0, 0, $event->id);
 
         $total_price = 0;
         $with_early_bird = 0;

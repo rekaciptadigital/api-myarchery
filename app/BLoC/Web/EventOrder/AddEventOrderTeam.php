@@ -260,7 +260,7 @@ class AddEventOrderTeam extends Transactional
                 throw new BLoCException("jumlah peserta tidak mencukupi, minimal peserta female yang harus terdaftar adalah " . $total_participant_team . ". sedangkan total peserta individu female saat ini adalah " . $count_participant_individu_female . " peserta");
             }
         }
-        $order_event = OrderEvent::saveOrderEvent($user_login->id, 4, 0, 0, 0);
+        $order_event = OrderEvent::saveOrderEvent($user_login->id, 4, 0, 0, 0, $event->id);
 
         $price_with_early_bird = ArcheryEventCategoryDetail::getPriceCategory($category);
         $total_price = (int)$price_with_early_bird->price * $total_slot;
