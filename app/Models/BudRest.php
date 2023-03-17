@@ -525,7 +525,6 @@ class BudRest extends Model
 
     protected function downloadEliminationSelectionScoreSheet($category_id, $update_file = false, $session = 1)
     {
-
         $category = ArcheryEventCategoryDetail::find($category_id);
         $path = 'asset/score_sheet/' . $category->id . '/';
         if (!$update_file) {
@@ -574,7 +573,7 @@ class BudRest extends Model
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
             ->get();
 
-        $count_stage = $category->session_in_elimination_selection;
+        $count_stage = $category->count_stage_elimination_selection;
         $array_pesrta_baru = [];
         
         for ($i = 1; $i <= $count_stage; $i++) {
