@@ -67,10 +67,10 @@ class DetailEventOrder extends Retrieval
             }
             foreach ($members as $key => $m) {
                 $list_member[] = [
-                    "name" => $user->name,
+                    "name" => $m->name,
                     "club_name" => $m->club_name,
                     "age" => $m->age,
-                    "photo" => $user->avatar,
+                    "photo" => $m->avatar,
                     "gender" => $m->gender
                 ];
             }
