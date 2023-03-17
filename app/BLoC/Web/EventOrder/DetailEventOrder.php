@@ -86,7 +86,7 @@ class DetailEventOrder extends Retrieval
             "archery_event" => [
                 "id" => $archery_event->id,
                 "event_name" => $archery_event->event_name,
-                "pster" => $archery_event->poster,
+                "poster" => $archery_event->poster,
                 "event_start" => $archery_event->event_start_datetime,
                 "event_end" => $archery_event->event_end_datetime,
                 "location" => $archery_event->location,
