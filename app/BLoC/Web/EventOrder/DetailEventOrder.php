@@ -26,7 +26,7 @@ class DetailEventOrder extends Retrieval
         if ($order_event->user_id != $user->id) {
             throw new BLoCException("forbiden");
         }
-        
+
         $archery_event = ArcheryEvent::find($order_event->event_id);
         if (!$archery_event) {
             throw new BLoCException("event not found");
@@ -92,6 +92,7 @@ class DetailEventOrder extends Retrieval
                 "event_start" => $archery_event->event_start_datetime,
                 "event_end" => $archery_event->event_end_datetime,
                 "location" => $archery_event->location,
+                "event_slug" => $archery_event->event_slug
             ],
             "list_member" => $list_member,
             "transaction_info" => $transaction_info,
