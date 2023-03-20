@@ -43,7 +43,6 @@ class User extends Model implements JWTSubject, AuthenticatableContract
         $date_of_birth = date("Y-m-d", strtotime($date_of_birth));
         $event_start_datetime = date("Y-m-d H:i:s", strtotime($event_start_datetime));
 
-
         if ($date_of_birth == false) {
             throw new BLoCException("invalid date of birth format");
         }
