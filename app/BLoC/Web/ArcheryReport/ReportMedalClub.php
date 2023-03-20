@@ -76,10 +76,10 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id);
-        // return $data_medal_standing;
 
         if ($data_medal_standing != [] && count($data_medal_standing["datatable"]) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
+                "with_contingent" => $archery_event->with_contingent,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
@@ -97,6 +97,8 @@ class ReportMedalClub extends Retrieval
             // =============================== data ======================================
             foreach ($data_medal_standing['datatable'] as $key => $dms) {
                 $pages[] = view('report_medal_club/dataTable', [
+                    "with_contingent" => $dms["with_contingent"],
+                    "contingent_name" => $dms["contingent_name"],
                     'logo_event' => $logo_event,
                     "dms" => $dms,
                     'logo_archery' => $logo_archery,

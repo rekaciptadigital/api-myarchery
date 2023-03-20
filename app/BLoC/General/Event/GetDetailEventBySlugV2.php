@@ -51,6 +51,13 @@ class GetDetailEventBySlugV2 extends Retrieval
             $response["can_register"] = $event->getCanRegister();
             $response["with_contingent"] = $event->with_contingent;
             $response["province_id"] = $event->province_id;
+            $response['withContingent'] = $event->with_contingent;
+            $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+            $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+            $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+            $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+            $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+            $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
         }
 
         return $response;

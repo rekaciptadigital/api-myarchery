@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ClassificationEventRegisters;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -27,6 +28,37 @@ class SetConfigRegisterCategory extends Transactional
         $schedule_end_event = $parameters->get("schedule_end_event");
         $is_active_config = $parameters->get("is_active_config");
         $list_config = $parameters->get("list_config");
+        $withContingent = $parameters->get('withContingent');
+        $parentClassification = $parameters->get("parentClassification");
+        $classificationCountryId = $parameters->get("classificationCountryId");
+        $classificationProvinceId = $parameters->get("classificationProvinceId");
+        $classificationChildrenId = $parameters->get("classificationChildrenId");
+
+        $event = ArcheryEvent::find($event_id);
+        //reset contingent setting
+        $event->with_contingent = !$withContingent ? 0 : $withContingent;
+        $event->parent_classification = !$parentClassification ? 0 : $parentClassification;
+        $event->province_id = !$classificationProvinceId ? 0 : $classificationProvinceId;
+        $event->classification_country_id = !$classificationCountryId ? 0 : $classificationCountryId;
+
+        // validation contingent
+        if ($withContingent == 1) {
+            if (empty($parentClassification)) {
+                throw new BLoCException("jika contingent aktif, maka wajib memilih parent classification!");
+            }
+
+            if (!$classificationCountryId) {
+                if ($parentClassification == 3 || $parentClassification == 4) {
+                    throw new BLoCException("jika memilih contingent provinsi atau kota, wajib mengisi negara!");
+                }
+            }
+
+            if (!$classificationProvinceId) {
+                if ($parentClassification == 4) {
+                    throw new BLoCException("jika memilih contingent kota, wajib mengisi negara!");
+                }
+            }
+        }
 
         // reset config
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
@@ -51,10 +83,7 @@ class SetConfigRegisterCategory extends Transactional
         // akhir reset config
 
 
-
-
         // set ulang tanggal pendaftaran event
-        $event = ArcheryEvent::find($event_id);
 
         // if (strtotime($default_datetime_start_register) < time()) {
         //     throw new BLoCException("event start register invalid");
@@ -78,7 +107,6 @@ class SetConfigRegisterCategory extends Transactional
         $event->event_start_datetime = $schedule_start_event;
         $event->event_end_datetime = $schedule_end_event;
         $event->save();
-
         // set ulang tanggal pendaftaran per kategori
         $category_where_event = ArcheryEventCategoryDetail::where("event_id", $event_id)->get();
         foreach ($category_where_event as $cwe) {
@@ -197,6 +225,16 @@ class SetConfigRegisterCategory extends Transactional
             "start" => $event->event_start_datetime,
             "end" => $event->event_end_datetime,
         ];
+
+        // get contingent classification
+        $response['withContingent'] = $event->with_contingent;
+        $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+        $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+        $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+        $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+        $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+        $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
+
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {
@@ -236,7 +274,7 @@ class SetConfigRegisterCategory extends Transactional
             "default_datetime_end_register" => "required|string",
             "is_active_config" => "required|integer|in:1,0",
             "schedule_start_event" => "required|string",
-            "schedule_end_event" => "required|string"
+            "schedule_end_event" => "required|string",
         ];
 
         if ($parameters->get("is_active_config") == 1) {
@@ -244,6 +282,7 @@ class SetConfigRegisterCategory extends Transactional
             $rules["list_config.*.config_type"] = "required|integer|in:1,2,3,4";
             $rules["list_config.*.is_have_special_category"] = "in:0,1";
         }
+
 
         return $rules;
     }

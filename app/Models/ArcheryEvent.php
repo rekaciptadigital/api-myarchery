@@ -16,7 +16,7 @@ class ArcheryEvent extends Model
 {
     protected $appends = [
         'event_url', 'flat_categories', 'detail_city', 'event_status',
-        'detail_admin', 'more_information', "event_price", "location_date_event"
+        'detail_admin', 'more_information', "event_price", "location_date_event", "detail_parent_classification", "detail_country_classification", "detail_province_classification"
     ];
     protected $guarded = ['id'];
 
@@ -242,6 +242,50 @@ class ArcheryEvent extends Model
         return $this->attributes['event_status'] = $event_status;
     }
 
+    public function getDetailParentClassificationAttribute()
+    {
+        $response = [];
+        $get_parent = ParentClassificationMembers::find($this->parent_classification);
+
+        if ($get_parent) {
+            $response['id'] = $get_parent->id;
+            $response['title'] = $get_parent->title;
+        }
+        return $this->attributes['detail_parent_classification'] = $response;
+    }
+
+    public function getDetailCountryClassificationAttribute()
+    {
+        $response = [];
+        $get_country = Country::find($this->classification_country_id);
+
+        if ($get_country) {
+            $response['id'] = $get_country->id;
+            $response['name'] = $get_country->name;
+        }
+
+        return $this->attributes['detail_country_classification'] = $response;
+    }
+
+    public function getDetailProvinceClassificationAttribute()
+    {
+        $response = [];
+        $get_province = false;
+
+        if ($this->classification_country_id == 102) {
+            $get_province = Provinces::find($this->province_id);
+        } else {
+            $get_province = ProvinceCountry::find($this->province_id);
+        }
+
+        if ($get_province) {
+            $response['id'] = $get_province->id;
+            $response['name'] = $get_province->name;
+        }
+
+        return $this->attributes['detail_province_classification'] = $response;
+    }
+
     public function archeryEventCategories()
     {
         return $this->hasMany(ArcheryEventCategory::class, 'event_id', 'id');
@@ -295,6 +339,11 @@ class ArcheryEvent extends Model
             "archery_event_category_details.id AS key",
             "archery_master_age_categories.label as label_age",
             "archery_master_age_categories.id as id_age",
+            "archery_master_age_categories.min_age as min_age_master",
+            "archery_master_age_categories.max_age as max_age_master",
+            "archery_master_age_categories.min_date_of_birth as min_date_of_birth_master",
+            "archery_master_age_categories.max_date_of_birth as max_date_of_birth_master",
+            "archery_master_age_categories.is_age as is_age_master",
             "archery_master_competition_categories.label as label_competition_categories",
             "archery_master_competition_categories.id as id_competition_categories",
             "archery_master_distances.label as label_distances",
@@ -362,6 +411,7 @@ class ArcheryEvent extends Model
 
         return $results;
     }
+
     public static function isOwnEvent($admin_id, $event_id)
     {
         $archery_event = DB::table('archery_events')->where('admin_id', $admin_id)->where('id', $event_id)->first();
@@ -444,7 +494,14 @@ class ArcheryEvent extends Model
                     "label" => $value->label_category,
                     "is_show" => $value->is_show,
                     "start_registration" => $value->start_registration,
-                    "end_registration" => $value->end_registration
+                    "end_registration" => $value->end_registration,
+                    "age_rules" => [
+                        "is_age" => $value->is_age_master,
+                        "min_age" => $value->min_age_master,
+                        "max_age" => $value->max_age_master,
+                        "min_date_of_birth" => $value->min_date_of_birth_master,
+                        "max_date_of_birth" => $value->max_date_of_birth_master,
+                    ]
                 ];
             }
         }
@@ -452,7 +509,6 @@ class ArcheryEvent extends Model
         if ($datas) {
             foreach ($datas as $key => $data) {
                 $event_url = env('WEB_DOMAIN', 'https://my-archery.id') . '/event/' . Str::slug($data->admin_name) . '/' . $data->event_slug;
-
                 $admins = Admin::where('id', $data->admin_id)->get();
                 $admins_data = [];
                 if ($admins) {
@@ -470,8 +526,13 @@ class ArcheryEvent extends Model
                 $event = ArcheryEvent::find($data->id_event);
 
                 $detail['id'] = $data->id_event;
-                $detail['with_contingent'] = $data->with_contingent;
-                $detail['province_id_contingent'] = $data->province_id_contingent;
+                $detail['withContingent'] = $event->with_contingent;
+                $detail['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+                $detail['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+                $detail['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+                $detail['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+                $detail['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+                $detail['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
                 $detail['event_type'] = $data->event_type;
                 $detail['event_competition'] = $data->event_competition;
                 $detail['is_private'] = $data->is_private;
@@ -791,8 +852,14 @@ class ArcheryEvent extends Model
                 'event_url' => $event_url
             ],
             'more_information' => $moreinformations_data,
-            'admins' => $admins_data
-
+            'admins' => $admins_data,
+            'withContingent' => $data->with_contingent,
+            'parentClassification' => !empty($data->detailParentClassification) ? $data->detailParentClassification['id'] : 0,
+            'parentClassificationTitle' => !empty($data->detailParentClassification) ? $data->detailParentClassification['title'] : null,
+            'classificationCountryId' => !empty($data->detailCountryClassification) ? $data->detailCountryClassification['id'] : 0,
+            'classificationCountryName' => !empty($data->detailCountryClassification) ?  $data->detailCountryClassification['name'] : null,
+            'classificationProvinceId' => !empty($data->detailProvinceClassification) ?  $data->detailProvinceClassification['id'] : 0,
+            'classificationProvinceName' => !empty($data->detailProvinceClassification) ? $data->detailProvinceClassification['name'] : null
         ];
 
         unset($moreinformations_data);

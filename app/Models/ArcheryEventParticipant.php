@@ -51,6 +51,45 @@ class ArcheryEventParticipant extends Model
     return $data;
   }
 
+  public static function getCountParticipantTeamWithSameWithContingent(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, $classification_data)
+  {
+    $query_count_participant_team = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $category_team->team_category_id)
+      ->where("status", 1);
+    if ($event->with_contingent == 1) {
+      if ($event['parent_classification'] == 1) {
+        $query_count_participant_team = $query_count_participant_team->where('club_id', '=', $classification_data['club_id']);
+      } elseif ($event['parent_classification'] == 2) {
+        $query_count_participant_team = $query_count_participant_team->where('classification_country_id', '=', $classification_data['country_id']);
+      } elseif ($event['parent_classification'] == 3) {
+        $query_count_participant_team = $query_count_participant_team
+          ->where('classification_country_id', '=', $classification_data['country_id'])
+          ->where('classification_province_id', '=', $classification_data['province_id']);
+      } elseif ($event['parent_classification'] == 4) {
+        $query_count_participant_team = $query_count_participant_team
+          ->where('classification_country_id', '=', $classification_data['country_id'])
+          ->where('classification_province_id', '=', $classification_data['province_id'])
+          ->where('city_id', '=', $classification_data['city_id']);
+      } else {
+        $query_count_participant_team = $query_count_participant_team
+          ->where('children_classification_id', '=', $classification_data['children_id']);
+      }
+    }
+    // if ($event->with_contingent == 1) {
+    //   $count_participant_team_with_same_club_or_city->where("city_id", $club_or_city_id);
+    // } else {
+    //   $count_participant_team_with_same_club_or_city->where("club_id", $club_or_city_id);
+    // }
+
+    // return $query_count_participant_team->toSql();
+    $query_count_participant_team = $query_count_participant_team->get()->count();
+
+    return (int)$query_count_participant_team;
+  }
+
   public static function getCountParticipantIndividuByCategoryTeam(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id, string $team_category_id)
   {
     $count_participant_individu = ArcheryEventParticipant::where("event_id", $event->id)
@@ -71,7 +110,6 @@ class ArcheryEventParticipant extends Model
     return (int)$count_participant_individu;
   }
 
-  // dapatkan participant team yang status 1 dengan kategori yang sama dan club atau city yang sama
   public static function getCountParticipantTeamWithSameClubOrCity(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, int $club_or_city_id)
   {
     $count_participant_team_with_same_club_or_city = ArcheryEventParticipant::where("event_id", $event->id)
@@ -90,6 +128,64 @@ class ArcheryEventParticipant extends Model
 
     return (int)$count_participant_team_with_same_club_or_city;
   }
+
+
+  public static function getCountParticipantIndividuByCategoryTeamContingent(ArcheryEventCategoryDetail $category_team, ArcheryEvent $event, $classification_data, string $team_category_id)
+  {
+    $count_participant_individu = ArcheryEventParticipant::where("event_id", $event->id)
+      ->where("age_category_id", $category_team->age_category_id)
+      ->where("competition_category_id", $category_team->competition_category_id)
+      ->where("distance_id", $category_team->distance_id)
+      ->where("team_category_id", $team_category_id)
+      ->where("status", 1);
+    if ($event->with_contingent == 1) {
+      if ($event['parent_classification'] == 1) {
+        $count_participant_individu = $count_participant_individu->where('club_id', '=', $classification_data['club_id']);
+      } elseif ($event['parent_classification'] == 2) {
+        $count_participant_individu = $count_participant_individu->where('classification_country_id', '=', $classification_data['country_id']);
+      } elseif ($event['parent_classification'] == 3) {
+        $count_participant_individu = $count_participant_individu
+          ->where('classification_country_id', '=', $classification_data['country_id'])
+          ->where('classification_province_id', '=', $classification_data['province_id']);
+      } elseif ($event['parent_classification'] == 4) {
+        $count_participant_individu = $count_participant_individu
+          ->where('classification_country_id', '=', $classification_data['country_id'])
+          ->where('classification_province_id', '=', $classification_data['province_id'])
+          ->where('city_id', '=', $classification_data['city_id']);
+      } else {
+        $count_participant_individu = $count_participant_individu
+          ->where('children_classification_id', '=', $classification_data['children_id']);
+      }
+    }
+    // if ($event->with_contingent == 1) {
+    //   $count_participant_individu->where("city_id", $club_or_city_id);
+    // } else {
+    //   $count_participant_individu->where("club_id", $club_or_city_id);
+    // }
+
+    $count_participant_individu = $count_participant_individu->get()->count();
+    return $count_participant_individu;
+    // return (int)$count_participant_individu;
+  }
+
+  // public static function getElimination(ArcheryEventCategoryDetail $category_detail)
+  // {
+  //   $count_participant_team_with_same_club_or_city = ArcheryEventParticipant::where("event_id", $event->id)
+  //     ->where("age_category_id", $category_team->age_category_id)
+  //     ->where("competition_category_id", $category_team->competition_category_id)
+  //     ->where("distance_id", $category_team->distance_id)
+  //     ->where("team_category_id", $category_team->team_category_id)
+  //     ->where("status", 1);
+  //   if ($event->with_contingent == 1) {
+  //     $count_participant_team_with_same_club_or_city->where("city_id", $club_or_city_id);
+  //   } else {
+  //     $count_participant_team_with_same_club_or_city->where("club_id", $club_or_city_id);
+  //   }
+
+  //   $count_participant_team_with_same_club_or_city = $count_participant_team_with_same_club_or_city->get()->count();
+
+  //   return (int)$count_participant_team_with_same_club_or_city;
+  // }
 
   public static function getMedalStanding($event_id)
   {
@@ -230,7 +326,7 @@ class ArcheryEventParticipant extends Model
     string $qualification_date = null,
     string $team_name = null,
     int $status,
-    int $club_id = 0,
+    $club_id = 0,
     string $reason_refund = null,
     string $upload_image_refund = null,
     int $is_present = 1,
@@ -239,8 +335,36 @@ class ArcheryEventParticipant extends Model
     int $expired_booking_time = 0,
     int $is_early_bird_payment = 0,
     int $is_special_team_member = 0,
-    int $city_id = 0
+    $city_id = 0,
+    int $order_event_id,
+    $classification_country_id = 0,
+    $classification_province_id = 0,
+    $classification_children_id = 0
   ) {
+    // return [
+    //   'user' => $user,
+    //   'category' => $category,
+    //   'type' => $type,
+    //   'transaction_log_id' => $transaction_log_id,
+    //   'unique_id' => $unique_id,
+    //   'qualification_date' => $qualification_date,
+    //   'team_name' => $team_name,
+    //   'status' => $status,
+    //   'club_id' => $club_id,
+    //   'reason_refund' => $reason_refund,
+    //   'upload_image_refund' => $upload_image_refund,
+    //   'is_present' => $is_present,
+    //   'register_by' => $register_by,
+    //   'day_choice' => $day_choice,
+    //   'expired_booking_time' => $expired_booking_time,
+    //   'is_early_bird_payment' => $is_early_bird_payment,
+    //   'is_special_team_member' => $is_special_team_member,
+    //   'city_id' => $city_id,
+    //   'order_event_id' => $order_event_id,
+    //   'classification_country_id' => $classification_country_id,
+    //   'classification_province_id' => $classification_province_id,
+    //   'classification_children_id' => $classification_children_id,
+    // ];
     $participant = new ArcheryEventParticipant();
     $participant->event_id = $category->event_id;
     $participant->user_id = $user->id;
@@ -270,6 +394,10 @@ class ArcheryEventParticipant extends Model
     $participant->is_early_bird_payment = $is_early_bird_payment;
     $participant->is_special_team_member = $is_special_team_member;
     $participant->city_id = $city_id;
+    $participant->order_event_id = $order_event_id;
+    $participant->classification_country_id = $classification_country_id;
+    $participant->classification_province_id = $classification_province_id;
+    $participant->children_classification_id = $classification_children_id;
     $participant->save();
 
     return $participant;
@@ -405,7 +533,10 @@ class ArcheryEventParticipant extends Model
     $day_choice,
     $expired_booking_time = 0,
     $is_early_bird_payment = 0,
-    $city_id = 0
+    $city_id = 0,
+    $country_id = 0,
+    $province_id = 0,
+    $children_classification_id = 0
   ) {
     return self::create([
       'club_id' => $club_id,
@@ -428,7 +559,12 @@ class ArcheryEventParticipant extends Model
       'day_choice' => $day_choice,
       "expired_booking_time" => $expired_booking_time,
       "is_early_bird_payment" => $is_early_bird_payment,
-      "city_id" => $city_id
+      'classification_country_id' => $country_id,
+      'classification_province_id' => $province_id,
+      "city_id" => $city_id,
+      'classification_country_id' => $country_id,
+      'classification_province_id' => $province_id,
+      "children_classification_id" => $children_classification_id
     ]);
   }
 

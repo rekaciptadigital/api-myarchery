@@ -40,6 +40,7 @@ class CreateArcheryEventV2 extends Transactional
                     throw new BLoCException("mohon inputkan tipe data gambar");
                 }
                 $poster = Upload::setPath("asset/poster/")->setFileName("poster_" . $parameters->get("event_name"))->setBase64($parameters->get('event_banner'))->save();
+                // $poster = Upload::setPath("/Users/faizadie/Projects/my-archery/api/public/asset/poster/")->setFileName("poster_" . $parameters->get("event_name"))->setBase64($parameters->get('event_banner'))->save();
                 $archery_event->poster = $poster;
             }
 
@@ -51,6 +52,7 @@ class CreateArcheryEventV2 extends Transactional
                     throw new BLoCException("mohon inputkan tipe data pdf");
                 }
                 $handbook = Upload::setPath("asset/handbook/")->setFileName("handbook_" . $parameters->get("event_name"))->setBase64($parameters->get("handbook"))->pdf();
+                // $handbook = Upload::setPath("/Users/faizadie/Projects/my-archery/api/public/asset/handbook/")->setFileName("handbook_" . $parameters->get("event_name"))->setBase64($parameters->get("handbook"))->pdf();
                 $archery_event->handbook = $handbook;
             }
 

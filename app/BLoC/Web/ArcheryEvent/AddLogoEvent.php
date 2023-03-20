@@ -28,6 +28,7 @@ class AddLogoEvent extends Transactional
         }
 
         $logo = Upload::setPath("asset/logo_event/")->setFileName("logo_event_" . $event_id)->setBase64($logo)->save();
+        // $logo = Upload::setPath("/Users/faizadie/Projects/my-archery/api/public/asset/logo_event/")->setFileName("logo_event_" . $event_id)->setBase64($logo)->save();
 
         $event->logo = $logo;
         $event->save();
