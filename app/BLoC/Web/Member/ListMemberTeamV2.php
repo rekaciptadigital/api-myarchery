@@ -2,11 +2,8 @@
 
 namespace App\BLoC\Web\Member;
 
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
-use App\Models\City;
-use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
@@ -41,8 +38,74 @@ class ListMemberTeamV2 extends Retrieval
             throw new BLoCException("access denied");
         }
 
-        $participant_query = ArcheryEventParticipant::select("archery_event_participants.*", "transaction_logs.status as status_payment", "transaction_logs.expired_time")
-            ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
+        $parent_classfification_id = $event->parent_classification;
+
+        if ($parent_classfification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $select_classification_query = "archery_clubs.name as classification_name";
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $select_classification_query = "countries.name as classification_name";
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $select_classification_query = "provinces.name as classification_name";
+            } else {
+                $select_classification_query = "states.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $select_classification_query = "cities.name as classification_name";
+            } else {
+                $select_classification_query = "cities_of_countries.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $select_classification_query = "children_classification_members.title as classification_name";
+        }
+
+        $participant_query = ArcheryEventParticipant::select(
+            "archery_event_participants.*",
+            "transaction_logs.status as status_payment",
+            "transaction_logs.expired_time",
+            $select_classification_query
+        );
+
+        if ($parent_classfification_id == 1) { // jika mewakili club
+            $participant_query = $participant_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        }
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $participant_query = $participant_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $participant_query = $participant_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+            } else {
+                $participant_query = $participant_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $participant_query = $participant_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
+            } else {
+                $participant_query = $participant_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $participant_query = $participant_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+        }
+
+        $participant_query = $participant_query->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
             ->where("archery_event_participants.event_id", $event_id)
             ->where("archery_event_participants.type", "team")
             ->where("archery_event_participants.status", "!=", 6);
@@ -93,14 +156,6 @@ class ListMemberTeamV2 extends Retrieval
         $detail_member = [];
 
         foreach ($participant_collection as $participant) {
-
-            $club = ArcheryClub::find($participant->club_id);
-            $club_name = $club ? $club->name : "";
-
-            $city = City::find($participant->city_id);
-            $city_name = $city ? $city->name : "";
-
-            $status_payment = "";
             if ($participant->status_payment != null) {
                 if ($participant->status == 1) {
                     $status_payment = "Lunas";
@@ -131,8 +186,7 @@ class ListMemberTeamV2 extends Retrieval
                 "user_id" => $participant->user_id,
                 "name" => $participant->name,
                 "email" => $participant->email,
-                "club_name" => $club_name,
-                "city_name" => $city_name,
+                "classification_name" => $participant->classification_name,
                 "phone_number" => $participant->phone_number,
                 "competition_category" => $participant->competition_category_id,
                 "status_payment" => $status_payment,
