@@ -756,45 +756,49 @@ class ArcheryScoring extends Model
             "archery_event_participants.id as participant_id",
             "archery_event_participants.event_id",
             "archery_event_participants.is_present",
-            "archery_event_participants.club_id as club_id",
-            "archery_event_participants.city_id as city_id",
+            "archery_event_participants.club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.city_id",
+            $category->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
             "archery_event_participants.classification_country_id",
+            "countries.name as country_name",
             "archery_event_participants.classification_province_id",
+            $category->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
             "archery_event_participants.children_classification_id",
-            $select_classification_query,
+            "children_classification_members.title as children_classification_members_name",
             "member_rank.rank as member_rank",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id");
 
-        if ($parent_classfification_id == 1) { // jika mewakili club
-            $participants_query = $participants_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        // jika mewakili club
+        $participants_query = $participants_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $participants_query = $participants_query->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($category->classification_country_id == 102) {
+            $participants_query = $participants_query->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $participants_query = $participants_query->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
         }
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
-            $participants_query = $participants_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+        // jika mewakili kota
+        if ($category->classification_country_id == 102) {
+            $participants_query = $participants_query->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $participants_query = $participants_query->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
-            if ($category->classification_country_id == 102) {
-                $participants_query = $participants_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
-            } else {
-                $participants_query = $participants_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
-            }
-        }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
-            if ($category->classification_country_id == 102) {
-                $participants_query = $participants_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
-            } else {
-                $participants_query = $participants_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
-            }
-        }
+        // jika berasal dari settingan admin
+        $participants_query = $participants_query->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
-            $participants_query = $participants_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
-        }
 
         $participants_query = $participants_query->join("users", "archery_event_participant_members.user_id", "=", "users.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
@@ -814,12 +818,17 @@ class ArcheryScoring extends Model
         $archery_event_score = [];
         foreach ($participants_collection as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type, $sessions);
-            $score["classification_name"] = $value->classification_name;
             $score["club_id"] = $value->club_id;
-            $score["city_id"] = $value->city_id;
+            $score["club_name"] = $value->club_name;
             $score["classification_country_id"] = $value->classification_country_id;
+            $score["country_name"] = $value->country_name;
             $score["classification_province_id"] = $value->classification_province_id;
+            $score["province_name"] = $value->province_name;
+            $score["city_id"] = $value->city_id;
+            $score["city_name"] = $value->city_name;
             $score["children_classification_id"] = $value->children_classification_id;
+            $score["children_classification_members_name"] = $value->children_classification_members_name;
+            $score["parent_classification_type"] = $parent_classfification_id;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["have_coint_tost"] = $value->have_coint_tost;
