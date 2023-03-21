@@ -2,18 +2,11 @@
 
 namespace App\BLoC\Web\Member;
 
-use App\Models\AdminRole;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
-use App\Models\ArcheryMasterCompetitionCategory;
-use App\Models\TransactionLog;
-use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ListMemberV2 extends Retrieval
 {
@@ -44,6 +37,38 @@ class ListMemberV2 extends Retrieval
             throw new BLoCException("access denied");
         }
 
+        $parent_classfification_id = $event->parent_classification;
+
+        if ($parent_classfification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $select_classification_query = "archery_clubs.name as classification_name";
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $select_classification_query = "countries.name as classification_name";
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $select_classification_query = "provinces.name as classification_name";
+            } else {
+                $select_classification_query = "states.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $select_classification_query = "cities.name as classification_name";
+            } else {
+                $select_classification_query = "cities_of_countries.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $select_classification_query = "children_classification_members.title as classification_name";
+        }
+
         $participant_query = ArcheryEventParticipant::select(
             'archery_event_participant_members.id as member_id',
             'archery_event_participants.id as participant_id',
@@ -52,17 +77,45 @@ class ListMemberV2 extends Retrieval
             'archery_event_participants.event_category_id',
             'users.name',
             'users.email',
-            'cities.name as city_name',
-            'archery_clubs.name as club_name',
+            $select_classification_query,
             'archery_event_participants.phone_number',
             'archery_event_participants.competition_category_id',
             'archery_event_participants.status as status_participant',
             'transaction_logs.status as status_transaction_log',
             'transaction_logs.expired_time as expired_time'
-        )->leftJoin('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
-            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
+        );
+
+        if ($parent_classfification_id == 1) { // jika mewakili club
+            $participant_query = $participant_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        }
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $participant_query = $participant_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $participant_query = $participant_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+            } else {
+                $participant_query = $participant_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $participant_query = $participant_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
+            } else {
+                $participant_query = $participant_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $participant_query = $participant_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+        }
+
+
+        $participant_query = $participant_query->join('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
             ->leftJoin('transaction_logs', 'transaction_logs.id', '=', 'archery_event_participants.transaction_log_id')
-            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->join("users", "users.id", "=", "archery_event_participants.user_id")
             ->where("archery_event_participants.status", "!=", 6)
             ->where("archery_event_participants.event_id", $event_id)
@@ -113,13 +166,12 @@ class ListMemberV2 extends Retrieval
                 $response["age_category_id"] = $pc->age_category_id;
                 $response["member_id"] = $pc->member_id;
                 $response["participant_id"] = $pc->participant_id;
-                $response["city_name"] = $pc->city_name;
                 $response["user_id"] = $pc->user_id;
                 $response["event_id"] = $pc->event_id;
                 $response["event_category_id"] = $pc->event_category_id;
                 $response["name"] = $pc->name;
                 $response["email"] = $pc->email;
-                $response["club_name"] = $pc->club_name;
+                $response["classification_name"] = $pc->classification_name;
                 $response["phone_number"] = $pc->phone_number;
                 $response["competition_category_id"] = $pc->competition_category_id;
                 $response["status_payment"] = $status_payment;
