@@ -37,7 +37,10 @@ class FindParticipantScoreBySchedule extends Retrieval
         $type_code = $array_code[0];
         if ($type_code == 1) {
             if (isset($array_code[3])) {
-                return $this->qualificationFullDayByBudrest($parameters);
+                $category_id = $array_code[1];
+                $session = $array_code[2];
+                $budrest = $array_code[3];
+                return $this->qualificationFullDayByBudrest($type_code, $category_id, $session, $budrest);
             }
             $session = $array_code[2];
             if ($session == 11) {
@@ -54,7 +57,10 @@ class FindParticipantScoreBySchedule extends Retrieval
             return $this->elimination($elimination_id, $match, $round);
         } elseif ($type_code == 3) {
             if (isset($array_code[3])) {
-                return $this->qualificationFullDayByBudrest($parameters);
+                $category_id = $array_code[1];
+                $session = $array_code[2];
+                $budrest = $array_code[3];
+                return $this->qualificationFullDayByBudrest($type_code, $category_id, $session, $budrest);
             }
             $session = $array_code[2];
             if ($session == 11) {
@@ -63,21 +69,18 @@ class FindParticipantScoreBySchedule extends Retrieval
             return $this->qualificationFullDay($parameters);
         } elseif ($type_code == 4) {
             if (isset($array_code[3])) {
-                return $this->eliminationFullDayByBudrestSelection($parameters);
+                $category_id = $array_code[1];
+                $session = $array_code[2];
+                $budrest = $array_code[3];
+                return $this->eliminationFullDayByBudrestSelection($type_code, $category_id, $session, $budrest);
             }
             return $this->eliminationSelection($parameters);
         }
         throw new BLoCException("gagal find score");
     }
 
-    private function qualificationFullDayByBudrest($parameters)
+    private function qualificationFullDayByBudrest($type, $category_id, $session, $budrest)
     {
-        $code = explode("-", $parameters->code);
-        $type = $code[0];
-        $category_id = $code[1];
-        $session = $code[2];
-        $budrest = $code[3];
-
         $participant_members_schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
             ->join("archery_event_qualification_time", "archery_event_qualification_schedule_full_day.qalification_time_id", "=", "archery_event_qualification_time.id")
             ->where("archery_event_qualification_time.category_detail_id", $category_id)
@@ -109,6 +112,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $schedule = $value;
             $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
             $output->session = $session;
+            $output->scoring_id = $score ? $score->id : 0;
             $output->schedule_id = $value->id;
             $output->is_updated = 1;
             if (isset($score->is_lock))
@@ -184,6 +188,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
         $output->session = $session;
+        $output->scoring_id = $score ? $score->id : 0;
         $output->schedule_id = $schedule->id;
         $output->is_updated = 1;
         if (isset($score->is_lock))
@@ -421,6 +426,7 @@ class FindParticipantScoreBySchedule extends Retrieval
         $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member_id)->first();
         $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
         $output->session = $session;
+        $output->scoring_id = $score ? $score->id : 0;
         $output->schedule_id = $schedule->id;
         $output->is_updated = 1;
         if (isset($score->is_lock))
@@ -428,14 +434,8 @@ class FindParticipantScoreBySchedule extends Retrieval
         return $output;
     }
 
-    private function eliminationFullDayByBudrestSelection($parameters)
+    private function eliminationFullDayByBudrestSelection($type, $category_id, $session, $budrest)
     {
-        $code = explode("-", $parameters->code);
-        $type = $code[0];
-        $category_id = $code[1];
-        $session = $code[2];
-        $budrest = $code[3];
-
         $participant_members_schedules = ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.*")
             ->join("archery_event_qualification_time", "archery_event_qualification_schedule_full_day.qalification_time_id", "=", "archery_event_qualification_time.id")
             ->where("archery_event_qualification_time.category_detail_id", $category_id)
@@ -469,6 +469,7 @@ class FindParticipantScoreBySchedule extends Retrieval
             $schedule = $value;
             $output->budrest_number = $schedule && !empty($schedule->bud_rest_number) ? $schedule->bud_rest_number . $schedule->target_face : "";
             $output->session = $session;
+            $output->scoring_id = $score ? $score->id : 0;
             $output->schedule_id = $value->id;
             $output->is_updated = 1;
             if (isset($score->is_lock))
