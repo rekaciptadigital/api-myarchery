@@ -697,13 +697,50 @@ class ArcheryScoring extends Model
 
     protected function getScoringRankByCategoryId($event_category_id, $score_type, array $sessions = [1, 2], $orderByBudrestNumber = false, $name = null, $is_present = false, $with_member_rank = 1)
     {
-        $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_events.is_private")
+        $category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_events.is_private",
+            "archery_events.parent_classification",
+            "archery_events.classification_country_id"
+        )
             ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
             ->where("archery_event_category_details.id", $event_category_id)
             ->first();
 
         if (!$category) {
             throw new BLoCException("category not found");
+        }
+
+        $parent_classfification_id = $category->parent_classification;
+
+        if ($parent_classfification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $select_classification_query = "archery_clubs.name as classification_name";
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $select_classification_query = "countries.name as classification_name";
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($category->classification_country_id == 102) {
+                $select_classification_query = "provinces.name as classification_name";
+            } else {
+                $select_classification_query = "states.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($category->classification_country_id == 102) {
+                $select_classification_query = "cities.name as classification_name";
+            } else {
+                $select_classification_query = "cities_of_countries.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $select_classification_query = "children_classification_members.title as classification_name";
         }
 
         $participants_query = ArcheryEventParticipantMember::select(
@@ -717,18 +754,47 @@ class ArcheryScoring extends Model
             "archery_event_participants.id as participant_id",
             "archery_event_participants.event_id",
             "archery_event_participants.is_present",
-            "archery_clubs.name as club_name",
-            "archery_clubs.id as club_id",
-            "cities.id as city_id",
-            "cities.name as city_name",
+            "archery_event_participants.club_id as club_id",
+            "archery_event_participants.city_id as city_id",
+            "archery_event_participants.classification_country_id",
+            "archery_event_participants.classification_province_id",
+            "archery_event_participants.children_classification_id",
+            $select_classification_query,
             "member_rank.rank as member_rank",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
             "archery_event_qualification_schedule_full_day.target_face"
         )
-            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
-            ->join("users", "archery_event_participant_members.user_id", "=", "users.id")
-            ->leftJoin("archery_clubs", "archery_event_participants.club_id", "=", "archery_clubs.id")
-            ->leftJoin("cities", "archery_event_participants.city_id", "=", "cities.id")
+            ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id");
+
+        if ($parent_classfification_id == 1) { // jika mewakili club
+            $participants_query = $participants_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        }
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $participants_query = $participants_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($category->classification_country_id == 102) {
+                $participants_query = $participants_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+            } else {
+                $participants_query = $participants_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($category->classification_country_id == 102) {
+                $participants_query = $participants_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
+            } else {
+                $participants_query = $participants_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $participants_query = $participants_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+        }
+
+        $participants_query = $participants_query->join("users", "archery_event_participant_members.user_id", "=", "users.id")
             ->leftJoin("archery_event_qualification_schedule_full_day", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->leftJoin("member_rank", "member_rank.member_id", "=", "archery_event_participant_members.id")
             ->where('archery_event_participants.status', 1)
@@ -746,10 +812,12 @@ class ArcheryScoring extends Model
         $archery_event_score = [];
         foreach ($participants_collection as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type, $sessions);
+            $score["classification_name"] = $value->classification_name;
             $score["club_id"] = $value->club_id;
             $score["city_id"] = $value->city_id;
-            $score["city_name"] = $value->city_name;
-            $score["club_name"] = $value->club_name;
+            $score["classification_country_id"] = $value->classification_country_id;
+            $score["classification_province_id"] = $value->classification_province_id;
+            $score["children_classification_id"] = $value->children_classification_id;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["have_coint_tost"] = $value->have_coint_tost;
