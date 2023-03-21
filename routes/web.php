@@ -526,6 +526,17 @@ $router->group(['prefix' => 'web'], function () use ($router) {
             $router->get('/download-selection-report', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getArcheryReportEventSelection']);
         });
 
+        $router->group(['prefix' => 'classification-member', 'middleware' => 'auth.admin'], function () use ($router) {
+            $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:getParentClassification']);
+            $router->get('/children', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:getChildrenClassification']);
+            $router->post('/add-admin', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:addClassificationFromAdmin']);
+            $router->post('/add-children', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:addClassificationChildren']);
+            $router->delete('/delete-parent', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:deleteClassificationParent']);
+            $router->delete('/delete-children', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:deleteClassificationChildren']);
+            $router->put('/update-parent', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:updateClassificationParent']);
+            $router->put('/update-children', ['uses' => 'BLoCController@execute', 'middleware' =>  'bloc:updateClassificationChildren']);
+        });
+
         $router->group(['prefix' => 'bud-rest', 'middleware' => 'auth.admin'], function () use ($router) {
             $router->get('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getBudRestV2']);
             $router->post('/', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:createOrUpdateBudRestV2']);

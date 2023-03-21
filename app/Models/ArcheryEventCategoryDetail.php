@@ -22,6 +22,25 @@ class ArcheryEventCategoryDetail extends Model
     const INDIVIDUAL_TYPE = "Individual";
     const TEAM_TYPE = "Team";
 
+    public static function getPriceCategory(ArcheryEventCategoryDetail $category)
+    {
+        $with_early_bird = 0;
+        $price = 0;
+        if ($category->fee) {
+            $price = $category->fee;
+            // cek harga apakah normal atau early bird
+            if ($category->is_early_bird == 1) {
+                $price = $category->early_bird;
+                $with_early_bird = 1;
+            }
+        }
+
+        return (object)[
+            "price" => $price,
+            "with_early_bird" => $with_early_bird
+        ];
+    }
+
     /*
         digunakan untuk menangkap type category tersebut
 
@@ -230,21 +249,21 @@ class ArcheryEventCategoryDetail extends Model
     public function getEventNameAttribute()
     {
         $event = ArcheryEvent::find($this->event_id);
-        return $this->attributes['event_name'] = $event->event_name;
+        return $this->attributes['event_name'] = empty($event->event_name) ? $event['event_name'] : $event->event_name;
     }
 
     public function getStartEventAttribute()
     {
         $event =  ArcheryEvent::find($this->event_id);
 
-        return $this->attributes['start_event'] = $event->event_start_datetime;
+        return $this->attributes['start_event'] = empty($event->event_start_datetime) ? $event['event_start_datetime'] : $event->event_start_datetime;
     }
 
     public function getEndEventAttribute()
     {
         $event =  ArcheryEvent::find($this->event_id);
 
-        return $this->attributes['end_event'] = $event->event_end_datetime;
+        return $this->attributes['end_event'] = empty($event->event_end_datetime) ? $event['event_end_datetime'] : $event->event_end_datetime;
     }
 
     public static function getCategoriesRegisterEvent($event_id)

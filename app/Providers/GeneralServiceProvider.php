@@ -9,6 +9,7 @@ use App\BLoC\General\ExportMemberCollectiveTeam;
 use App\BLoC\General\GetCityCountry;
 use App\BLoC\General\GetCountry;
 use App\BLoC\General\GetListTabCategoryByEventId;
+use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BloC\General\Series\ExportMemberSeriesRank;
@@ -31,6 +32,7 @@ class GeneralServiceProvider extends ServiceProvider
     {
         $this->registerService("getEventClubRanked", GetEventClubRanked::class);
         $this->registerService("getCityCountry", GetCityCountry::class);
+        $this->registerService("getProvinceCountry", GetProvinceCountry::class);
         $this->registerService("getCountry", GetCountry::class);
         $this->registerService("getMedalParticipantByEventId", GetMedalParticipantByEventId::class);
         $this->registerService("getListTabCategoryByEventId", GetListTabCategoryByEventId::class);

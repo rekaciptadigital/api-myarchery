@@ -6,6 +6,7 @@ use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEventParticipant;
+use App\Models\OrderEvent;
 use DAI\Utils\Exceptions\BLoCException;
 
 class CancelBuyEvent extends Retrieval
@@ -18,32 +19,42 @@ class CancelBuyEvent extends Retrieval
     protected function process($parameters)
     {
         $user_login = Auth::guard('app-api')->user();
-        $participant_id = $parameters->get("participant_id");
+        $order_event_id = $parameters->get("order_event_id");
 
-        $participant = ArcheryEventParticipant::select(
-            "archery_event_participants.*",
+        $order_event = OrderEvent::select(
+            "order_events.*",
             "transaction_logs.id as transaction_id",
             "transaction_logs.status as transaction_status",
             "transaction_logs.expired_time as transaction_expired_time"
+        )->leftJoin(
+            "transaction_logs",
+            "transaction_logs.id",
+            "=",
+            "order_events.transaction_log_id"
         )
-            ->leftJoin(
-                "transaction_logs",
-                "transaction_logs.id",
-                "=",
-                "archery_event_participants.transaction_log_id"
-            )->where("archery_event_participants.id", $participant_id)
+            ->where("order_events.id", $order_event_id)
             ->first();
 
         if (
-            $participant->status == 1 ||
-            $participant->status == 4 &&
-            $participant->transaction_status == 4 &&
-            $participant->transaction_expired_time > time()
+            $order_event->status == 1 ||
+            $order_event->status == 4 &&
+            $order_event->transaction_status == 4 &&
+            $order_event->transaction_expired_time > time()
         ) {
-            $participant->status = 3;
-            $participant->save();
+            $order_event->status = 3;
+            $order_event->save();
 
-            $transaction_log = TransactionLog::find($participant->transaction_id);
+            $participant = ArcheryEventParticipant::where("order_event_id", $order_event_id)
+                ->get();
+
+            if (count($participant) > 0) {
+                foreach ($participant as $key => $p) {
+                    $p->status = 3;
+                    $p->save();
+                }
+            }
+
+            $transaction_log = TransactionLog::find($order_event->transaction_id);
             if ($transaction_log) {
                 $transaction_log->status = 3;
                 $transaction_log->save();
@@ -58,7 +69,7 @@ class CancelBuyEvent extends Retrieval
     protected function validation($parameters)
     {
         return [
-            "participant_id" => "required|exists:archery_event_participants,id"
+            "order_event_id" => "required|exists:order_events,id"
         ];
     }
 }

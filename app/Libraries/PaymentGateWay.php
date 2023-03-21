@@ -6,8 +6,6 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventOfficial;
 use App\Models\TransactionLog;
 use App\Models\EoCashFlow;
-
-use Illuminate\Support\Facades\Storage;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryEventParticipantMemberNumber;
@@ -20,6 +18,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\ArcheryEventOfficialDetail;
 use App\Models\ArcheryEvent;
+use App\Models\OrderEvent;
 use App\Models\VenuePlace;
 use App\Models\VenuePlaceProduct;
 use App\Models\VenuePlaceProductOrder;
@@ -511,7 +510,14 @@ class PaymentGateWay
                 return self::orderOfficial($transaction_log, $status);
             }
         } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_ID_PREFIX"))) == env("ORDER_ID_PREFIX")) {
-            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
+            $participants = ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->get();
+            foreach ($participants as $key => $p) {
+                $p->status = $status;
+                $p->save();
+            }
+            $order_event = OrderEvent::where("transaction_log_id", $transaction_log->id)->first();
+            $order_event->status = $status;
+            $order_event->save();
             if ($status == 1) {
                 self::$oy_callback = $result->data;
                 return self::orderEvent($transaction_log, $status);
@@ -564,7 +570,14 @@ class PaymentGateWay
                 return self::orderOfficial($transaction_log, $status);
             }
         } elseif (substr($transaction_log->order_id, 0, strlen(env("ORDER_ID_PREFIX"))) == env("ORDER_ID_PREFIX")) {
-            ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->update(["status" => $status]);
+            $participants = ArcheryEventParticipant::where("transaction_log_id", $transaction_log->id)->get();
+            foreach ($participants as $key => $p) {
+                $p->status = $status;
+                $p->save();
+            }
+            $order_event = OrderEvent::where("transaction_log_id", $transaction_log->id)->first();
+            $order_event->status = $status;
+            $order_event->save();
             if ($status == 1) {
                 return self::orderEvent($transaction_log, $status);
             }
@@ -576,123 +589,122 @@ class PaymentGateWay
 
     private static function orderEvent($transaction_log, $status)
     {
-        $participant = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->first();
-        if (!$participant) {
-            throw new BLoCException("participant data not found");
-        }
-
-        $event_category_detail = ArcheryEventCategoryDetail::find($participant->event_category_id);
-        if (!$event_category_detail) {
-            throw new BLoCException("category not found");
-        }
-
-        if ($event_category_detail->category_team == 'Team') {
-            // $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
-            // foreach ($temporary_participant_member as $tmp) {
-            //     ParticipantMemberTeam::create([
-            //         'participant_id' => $tmp->participant_id,
-            //         'participant_member_id' => $tmp->participant_member_id,
-            //         'event_category_id' => $event_category_detail->id,
-            //         'type' => $event_category_detail->category_team,
-            //     ]);
-            // }
-        } else {
-            $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $participant->id)->first();
-            $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
-
-            $user = User::find($participant_member->user_id);
-            if (!$user) {
-                throw new BLoCException("user not found");
+        $participants = ArcheryEventParticipant::where('transaction_log_id', $transaction_log->id)->get();
+        foreach ($participants as $key => $p) {
+            $event_category_detail = ArcheryEventCategoryDetail::find($p->event_category_id);
+            if (!$event_category_detail) {
+                throw new BLoCException("category not found");
             }
-            ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($event_category_detail->id, $user->gender), $participant->id);
-            ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
-            $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
-            Redis::hset($key, $event_category_detail->id, $event_category_detail->id);
-            ArcheryEventQualificationScheduleFullDay::create([
-                'qalification_time_id' => $qualification_time->id,
-                'participant_member_id' => $participant_member->id,
-            ]);
 
-            ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $participant->id, $participant_member->id, "individual");
-            ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id, $user->id);
-        }
 
-        // create cash flow
-        if ($status == 1) {
-            $event = ArcheryEvent::where('id', $participant->event_id)->first();
-            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
-            $admin_have_event = Admin::where('id', $event->admin_id)->first();
-            $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
-            $note = $event->name . " (" . $category_label . ")";
-            $cash_flow[] = [
-                'eo_id' => $admin_have_event->eo_id,
-                'note' => "[register event] " . $note,
-                'gateway' => $transaction_log->gateway,
-                'transaction_log_id' => $transaction_log->id,
-                'amount' => $transaction_log->total_amount,
-            ];
-            if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
-                if ($gateway_fee > 0) {
-                    $cash_flow[] = [
-                        'eo_id' => $admin_have_event->eo_id,
-                        'note' => "[fee payment register event] " . $note,
-                        'gateway' => $transaction_log->gateway,
-                        'transaction_log_id' => $transaction_log->id,
-                        'amount' => -1 * $gateway_fee,
-                    ];
+            if ($event_category_detail->category_team == 'Team') {
+                // $temporary_participant_member = TemporaryParticipantMember::where('participant_id', $participant->id)->where('event_category_id', $event_category_detail->id)->get();
+                // foreach ($temporary_participant_member as $tmp) {
+                //     ParticipantMemberTeam::create([
+                //         'participant_id' => $tmp->participant_id,
+                //         'participant_member_id' => $tmp->participant_member_id,
+                //         'event_category_id' => $event_category_detail->id,
+                //         'type' => $event_category_detail->category_team,
+                //     ]);
+                // }
+            } else {
+                $participant_member = ArcheryEventParticipantMember::where('archery_event_participant_id', $p->id)->first();
+                $qualification_time = ArcheryEventQualificationTime::where('category_detail_id', $event_category_detail->id)->first();
+
+                $user = User::find($participant_member->user_id);
+                if (!$user) {
+                    throw new BLoCException("user not found");
                 }
+                ArcheryEventParticipantNumber::saveNumber(ArcheryEventParticipantNumber::makePrefix($event_category_detail->id, $user->gender), $p->id);
+                ArcheryEventParticipantMemberNumber::saveMemberNumber(ArcheryEventParticipantMemberNumber::makePrefix($event_category_detail->event_id, $user->gender), $participant_member->user_id, $event_category_detail->event_id);
+                $key = env("REDIS_KEY_PREFIX") . ":qualification:score-sheet:updated";
+                Redis::hset($key, $event_category_detail->id, $event_category_detail->id);
+                ArcheryEventQualificationScheduleFullDay::create([
+                    'qalification_time_id' => $qualification_time->id,
+                    'participant_member_id' => $participant_member->id,
+                ]);
+
+                ParticipantMemberTeam::saveParticipantMemberTeam($event_category_detail->id, $p->id, $participant_member->id, "individual");
+                ArcherySeriesUserPoint::setAutoUserMemberCategory($event_category_detail->event_id, $user->id);
             }
-            if ($transaction_log->include_my_archery_fee > 0) {
+
+            // create cash flow
+            if ($status == 1) {
+                $event = ArcheryEvent::where('id', $p->event_id)->first();
+                $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
+                $admin_have_event = Admin::where('id', $event->admin_id)->first();
+                $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
+                $note = $event->name . " (" . $category_label . ")";
                 $cash_flow[] = [
                     'eo_id' => $admin_have_event->eo_id,
-                    'note' => "[fee MyArchery register event] " . $note,
+                    'note' => "[register event] " . $note,
                     'gateway' => $transaction_log->gateway,
                     'transaction_log_id' => $transaction_log->id,
-                    'amount' => -1 * $transaction_log->include_my_archery_fee,
+                    'amount' => $transaction_log->total_amount,
                 ];
-            }
-
-            EoCashFlow::insert($cash_flow);
-        }
-
-        // create cash flow
-        if ($status == 1) {
-            $event = ArcheryEvent::where('id', $participant->event_id)->first();
-            $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
-            $admin_have_event = Admin::where('id', $event->admin_id)->first();
-            $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
-            $note = $event->name . " (" . $category_label . ")";
-            $cash_flow[] = [
-                'eo_id' => $admin_have_event->eo_id,
-                'note' => "[register event] " . $note,
-                'gateway' => $transaction_log->gateway,
-                'transaction_log_id' => $transaction_log->id,
-                'amount' => $transaction_log->total_amount,
-            ];
-            if (!$have_payment_fee && $transaction_log->gateway == "OY") {
-                $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
-                if ($gateway_fee > 0) {
+                if (!$have_payment_fee && $transaction_log->gateway == "OY") {
+                    $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
+                    if ($gateway_fee > 0) {
+                        $cash_flow[] = [
+                            'eo_id' => $admin_have_event->eo_id,
+                            'note' => "[fee payment register event] " . $note,
+                            'gateway' => $transaction_log->gateway,
+                            'transaction_log_id' => $transaction_log->id,
+                            'amount' => -1 * $gateway_fee,
+                        ];
+                    }
+                }
+                if ($transaction_log->include_my_archery_fee > 0) {
                     $cash_flow[] = [
                         'eo_id' => $admin_have_event->eo_id,
-                        'note' => "[fee payment register event] " . $note,
+                        'note' => "[fee MyArchery register event] " . $note,
                         'gateway' => $transaction_log->gateway,
                         'transaction_log_id' => $transaction_log->id,
-                        'amount' => -1 * $gateway_fee,
+                        'amount' => -1 * $transaction_log->include_my_archery_fee,
                     ];
                 }
-            }
-            if ($transaction_log->include_my_archery_fee > 0) {
-                $cash_flow[] = [
-                    'eo_id' => $admin_have_event->eo_id,
-                    'note' => "[fee MyArchery register event] " . $note,
-                    'gateway' => $transaction_log->gateway,
-                    'transaction_log_id' => $transaction_log->id,
-                    'amount' => -1 * $transaction_log->include_my_archery_fee,
-                ];
+
+                EoCashFlow::insert($cash_flow);
             }
 
-            EoCashFlow::insert($cash_flow);
+            // create cash flow
+            if ($status == 1) {
+                $event = ArcheryEvent::where('id', $p->event_id)->first();
+                $have_payment_fee = $event->include_payment_gateway_fee_to_user ? true : false;
+                $admin_have_event = Admin::where('id', $event->admin_id)->first();
+                $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($event_category_detail->id);
+                $note = $event->name . " (" . $category_label . ")";
+                $cash_flow[] = [
+                    'eo_id' => $admin_have_event->eo_id,
+                    'note' => "[register event] " . $note,
+                    'gateway' => $transaction_log->gateway,
+                    'transaction_log_id' => $transaction_log->id,
+                    'amount' => $transaction_log->total_amount,
+                ];
+                if (!$have_payment_fee && $transaction_log->gateway == "OY") {
+                    $gateway_fee = self::getPaymentFee(self::$oy_callback->payment_method, self::$oy_callback->sender_bank, $transaction_log->amount, true);
+                    if ($gateway_fee > 0) {
+                        $cash_flow[] = [
+                            'eo_id' => $admin_have_event->eo_id,
+                            'note' => "[fee payment register event] " . $note,
+                            'gateway' => $transaction_log->gateway,
+                            'transaction_log_id' => $transaction_log->id,
+                            'amount' => -1 * $gateway_fee,
+                        ];
+                    }
+                }
+                if ($transaction_log->include_my_archery_fee > 0) {
+                    $cash_flow[] = [
+                        'eo_id' => $admin_have_event->eo_id,
+                        'note' => "[fee MyArchery register event] " . $note,
+                        'gateway' => $transaction_log->gateway,
+                        'transaction_log_id' => $transaction_log->id,
+                        'amount' => -1 * $transaction_log->include_my_archery_fee,
+                    ];
+                }
+
+                EoCashFlow::insert($cash_flow);
+            }
         }
     }
 

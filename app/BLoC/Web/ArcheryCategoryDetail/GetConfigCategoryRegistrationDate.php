@@ -4,6 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ClassificationEventRegisters;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -32,7 +33,7 @@ class GetConfigCategoryRegistrationDate extends Transactional
             "start" => $event->event_start_datetime,
             "end" => $event->event_end_datetime,
         ];
-        
+
         $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
         $enable_config = 0;
         if ($config->count() > 0) {
@@ -60,6 +61,15 @@ class GetConfigCategoryRegistrationDate extends Transactional
             }
             $response["list_config"][] = $c;
         }
+
+        // get contingent classification
+        $response['withContingent'] = $event->with_contingent;
+        $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
+        $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
+        $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
+        $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
+        $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
+        $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
 
         return $response;
     }

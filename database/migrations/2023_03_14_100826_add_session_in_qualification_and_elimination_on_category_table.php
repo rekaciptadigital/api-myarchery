@@ -13,6 +13,7 @@ class AddSessionInQualificationAndEliminationOnCategoryTable extends Migration
      */
     public function up()
     {
+
         Schema::table('archery_event_category_details', function (Blueprint $table) {
             $table->integer("session_in_qualification_selection")->default(2);
             $table->integer("session_in_elimination_selection")->default(5);
