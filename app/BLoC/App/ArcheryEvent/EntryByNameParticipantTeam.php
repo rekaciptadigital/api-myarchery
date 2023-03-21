@@ -38,10 +38,10 @@ class EntryByNameParticipantTeam extends Transactional
 
         if ($is_entry_by_name == 0) {
             if ($participant_team->is_special_team_member == 1) {
-                TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
+                TeamMemberSpecial::deleteMemberSpecial($participant_team);
             }
         } else {
-            TeamMemberSpecial::deleteMemberSpecial($participant_team, $with_contingent);
+            TeamMemberSpecial::deleteMemberSpecial($participant_team);
             if ($participant_team->team_category_id != "mix_team") {
                 if (count($member_list) != 3) {
                     throw new BLoCException("member harus terdiri dari 3 anggota");

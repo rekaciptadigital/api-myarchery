@@ -687,39 +687,40 @@ class ArcheryEventParticipant extends Model
       $select_classification_query = "children_classification_members.title as classification_name";
     }
 
-    $participants = ArcheryEventParticipant::where("event_category_id", $category_detail_team->id)->where("status", 1);
+    $participants = ArcheryEventParticipant::where("archery_event_participants.event_category_id", $category_detail_team->id)->where("archery_event_participants.status", 1);
 
-    if ($parent_classfification_id == 1) { // jika mewakili club
-      $participants = $participants->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+    // jika mewakili club
+    $participants = $participants->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+    // jika mewakili negara
+    $participants = $participants->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+    // jika mewakili provinsi
+    if ($event->classification_country_id == 102) {
+      $participants = $participants->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+    } else {
+      $participants = $participants->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
     }
 
-    if ($parent_classfification_id == 2) { // jika mewakili negara
-      $participants = $participants->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+    // jika mewakili kota
+    if ($event->classification_country_id == 102) {
+      $participants = $participants->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+    } else {
+      $participants = $participants->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
     }
 
-    if ($parent_classfification_id == 3) { // jika mewakili provinsi
-      if ($event->classification_country_id == 102) {
-        $participants = $participants->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
-      } else {
-        $participants = $participants->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
-      }
-    }
+    // jika berasal dari settingan admin
+    $participants = $participants->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
 
-    if ($parent_classfification_id == 4) { // jika mewakili kota
-      if ($event->classification_country_id == 102) {
-        $participants = $participants->join("cities", "cities.id", "=", "archery_event_participants.city_id");
-      } else {
-        $participants = $participants->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
-      }
-    }
-
-    if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
-      $participants = $participants->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
-    }
 
     $participants = $participants->select(
       "archery_event_participants.*",
-      $select_classification_query
+      "archery_clubs.name as club_name",
+      $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+      "countries.name as country_name",
+      $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+      "children_classification_members.title as children_classification_members_name",
     )->get();
 
     foreach ($participants as $key => $value) {
@@ -832,7 +833,17 @@ class ArcheryEventParticipant extends Model
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
         "is_special_team_member" => $value->is_special_team_member,
-        "classification_name" => $value->classification_name,
+        "club_id" => $value->club_id,
+        "club_name" => $value->club_name,
+        "classification_country_id" => $value->classification_country_id,
+        "country_name" => $value->country_name,
+        "classification_province_id" => $value->classification_province_id,
+        "province_name" => $value->province_name,
+        "city_id" => $value->city_id,
+        "city_name" => $value->city_name,
+        "children_classification_id" => $value->children_classification_id,
+        "children_classification_members_name" => $value->children_classification_members_name,
+        "parent_classification_type" => $parent_classfification_id,
         "team" => $team,
         "total" => $total,
         "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
