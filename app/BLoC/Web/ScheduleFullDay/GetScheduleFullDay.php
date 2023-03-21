@@ -34,38 +34,97 @@ class GetScheduleFullDay extends Retrieval
             throw new BLoCException('you are not owner this event');
         }
 
+        $parent_classfification_id = $event->parent_classification;
+
+        if ($parent_classfification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $select_classification_query = "archery_clubs.name as classification_name";
+        $table_for_search = "archery_clubs.name";
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $table_for_search = "countries.name";
+            $select_classification_query = "countries.name as classification_name";
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $table_for_search = "provinces.name";
+                $select_classification_query = "provinces.name as classification_name";
+            } else {
+                $table_for_search = "states.name";
+                $select_classification_query = "states.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $table_for_search = "cities.name";
+                $select_classification_query = "cities.name as classification_name";
+            } else {
+                $table_for_search = "cities_of_countries.name";
+                $select_classification_query = "cities_of_countries.name as classification_name";
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $table_for_search = "children_classification_members.title";
+            $select_classification_query = "children_classification_members.title as classification_name";
+        }
+
         $schedule_member_query = ArcheryEventQualificationScheduleFullDay::select(
             "archery_event_qualification_schedule_full_day.*",
             "archery_event_qualification_time.category_detail_id as category_id",
             "users.name as name",
-            "archery_clubs.name as club_name",
-            "archery_event_participants.club_id as club_id",
-            "cities.id as city_id",
-            "cities.name as city_name",
-            "archery_event_participants.id as participant_id"
+            "archery_event_participants.id as participant_id",
+            $select_classification_query
         )
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
             ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
-            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-            ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
-            ->where("archery_event_participants.event_id", $event_id)
+            ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id");
+
+        if ($parent_classfification_id == 1) { // jika mewakili club
+            $schedule_member_query = $schedule_member_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        }
+
+        if ($parent_classfification_id == 2) { // jika mewakili negara
+            $schedule_member_query = $schedule_member_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+        }
+
+        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+                $schedule_member_query = $schedule_member_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+            } else {
+                $schedule_member_query = $schedule_member_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
+            }
+        }
+
+        if ($parent_classfification_id == 4) { // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+                $schedule_member_query = $schedule_member_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
+            } else {
+                $schedule_member_query = $schedule_member_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+            }
+        }
+
+        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+            $schedule_member_query = $schedule_member_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+        }
+
+        $schedule_member_query = $schedule_member_query->where("archery_event_participants.event_id", $event_id)
             ->where("archery_event_participants.status", 1)
             ->whereDate("event_start_datetime", $date);
 
-        $schedule_member_query->when($search, function ($query) use ($search, $event) {
-            return $query->where(function ($q) use ($search, $event) {
-                $q = $q->whereRaw("users.name LIKE ?", [$search]);
-                if ($event->with_contingent == 1) {
-                    $q = $q->orWhereRaw("cities.name Like ?", [$search]);
-                } else {
-                    $q = $q->orWhereRaw("archery_clubs.name Like ?", [$search]);
-                }
+        $schedule_member_query->when($search, function ($query) use ($search, $table_for_search) {
+            return $query->where(function ($q) use ($search, $table_for_search) {
+                return $q->whereRaw("users.name LIKE ?", [$search])
+                    ->orWhereRaw($table_for_search . " Like ?", [$search]);
             });
         });
 
-        $schedule_member_collection = $schedule_member_query->orDerBy("archery_event_qualification_schedule_full_day.bud_rest_number")
+        $schedule_member_collection = $schedule_member_query->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face")
             ->get();
 
@@ -75,7 +134,7 @@ class GetScheduleFullDay extends Retrieval
 
         if ($schedule_member_collection->count() > 0) {
             foreach ($schedule_member_collection as $schedule) {
-                $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_events.with_contingent")
+                $category = ArcheryEventCategoryDetail::select("archery_event_category_details.*")
                     ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
                     ->where("archery_event_category_details.id", $schedule->category_id)
                     ->first();
@@ -90,11 +149,7 @@ class GetScheduleFullDay extends Retrieval
                     "label_category" => $category->label_category,
                     "bud_rest_number" => $schedule->bud_rest_number === 0 ? "" : $schedule->bud_rest_number . "" . $schedule->target_face,
                     "name" => $schedule->name,
-                    "club_id" => $schedule->club_id,
-                    "club_name" => $schedule->club_name,
-                    "city_name" => $schedule->city_name,
-                    "city_id" => $schedule->city_id,
-                    "with_contingent" => $category->with_contingent,
+                    "classification_name" => $schedule->classification_name,
                     "participant_id" => $schedule->participant_id,
                 ];
             }
@@ -102,123 +157,6 @@ class GetScheduleFullDay extends Retrieval
 
         return $output;
     }
-
-    // protected function process($parameters)
-    // {
-    //     // param
-    //     $date = $parameters->get("date");
-    //     $event_id = $parameters->get("event_id");
-    //     $admin = Auth::user();
-
-    //     $event = ArcheryEvent::find($event_id);
-    //     if (!$event) {
-    //         throw new BLoCException("event tidak ditemukan");
-    //     }
-
-    //     if ($event->admin_id != $admin->id) {
-    //         throw new BLoCException('you are not owner this event');
-    //     }
-
-    //     $member_not_have_budrest = ArcheryEventQualificationScheduleFullDay::select(
-    //         "archery_event_qualification_schedule_full_day.*",
-    //         "archery_event_qualification_time.category_detail_id as category_id",
-    //         "users.name as name",
-    //         "archery_clubs.name as club_name",
-    //         "archery_clubs.id as club_id"
-    //     )
-    //         ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
-    //         ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
-    //         ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
-    //         ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-    //         ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-    //         ->where("archery_event_participants.event_id", $event_id)
-    //         ->whereDate("event_start_datetime", $date)
-    //         ->where("archery_event_qualification_schedule_full_day.bud_rest_number", 0)
-    //         ->where("archery_event_qualification_schedule_full_day.target_face", "")
-    //         ->get();
-
-
-    //     $output = [];
-    //     $output["date"] = $date;
-    //     $output["category_budrest"] = null;
-    //     $response = [];
-
-    //     if ($member_not_have_budrest->count() > 0) {
-    //         foreach ($member_not_have_budrest as $mnhb) {
-    //             $category = ArcheryEventCategoryDetail::find($mnhb->category_id);
-    //             if (!$category) {
-    //                 throw new BLoCException("category tidak tersedia");
-    //             }
-    //             $response["schedule_full_day_id"] = $mnhb->schedule_id;
-    //             $response["category_id"] = $category->id;
-    //             $response["label_category"] = $category->label_category;
-    //             $response["bud_rest_number"] = "";
-    //             $response["name"] = $mnhb->name;
-    //             $response["club_id"] = $mnhb->club_id;
-    //             $response["club_name"] = $mnhb->club_name;
-
-    //             $output["category_budrest"][$category->id][] = $response;
-    //         }
-    //     }
-
-    //     $bud_rest = BudRest::select("bud_rest.*")
-    //         ->join("archery_event_category_details", "archery_event_category_details.id", "=", "bud_rest.archery_event_category_id")
-    //         ->join("archery_event_qualification_time", "archery_event_qualification_time.category_detail_id", "=", "bud_rest.archery_event_category_id")
-    //         ->where("archery_event_category_details.event_id", $event_id)
-    //         ->whereDate("event_start_datetime", $date)
-    //         ->get();
-
-
-    //     $target_face = ["A", "C", "B", "D", "E", "F"];
-    //     if ($bud_rest->count() > 0) {
-    //         foreach ($bud_rest as $value) {
-    //             for ($i = $value->bud_rest_start; $i <= $value->bud_rest_end; $i++) {
-    //                 for ($j = $target_face[0]; $j <= $target_face[$value->target_face - 1]; $j++) {
-    //                     $label = $i . "" . $j;
-
-    //                     error_log($label);
-
-    //                     $schedule_full_day =  ArcheryEventQualificationScheduleFullDay::select("archery_event_qualification_schedule_full_day.bud_rest_number", "archery_event_qualification_schedule_full_day.target_face", "archery_event_qualification_time.category_detail_id as category_id", "users.name", "archery_clubs.id", "archery_clubs.name")
-    //                         ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
-    //                         ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
-    //                         ->join("users", "users.id", "=", "archery_event_participant_members.user_id")
-    //                         ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-    //                         ->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-    //                         ->where("archery_event_qualification_time.category_detail_id", $value->archery_event_category_id)
-    //                         ->where("archery_event_qualification_schedule_full_day.bud_rest_number", $i)
-    //                         ->where("archery_event_qualification_schedule_full_day.target_face", $j)
-    //                         ->first();
-
-    //                     if (!$schedule_full_day) {
-    //                         continue;
-    //                     }
-
-    //                     $category = ArcheryEventCategoryDetail::find($schedule_full_day->category_id);
-    //                     if (!$category) {
-    //                         throw new BLoCException("category tidak tersedia");
-    //                     }
-
-    //                     $response["schedule_full_day_id"] = null;
-    //                     $response["category_id"] = $category->id;
-    //                     $response["label_category"] = $category->label_category;
-    //                     $response["bud_rest_number"] = $label;
-    //                     $response["name"] = null;
-    //                     $response["club_id"] = null;
-    //                     $response["club_name"] = null;
-    //                     if ($schedule_full_day) {
-    //                         $response["schedule_full_day_id"] = $schedule_full_day->id;
-    //                         $response["name"] = $schedule_full_day->name;
-    //                         $response["club_id"] = $schedule_full_day->club_id;
-    //                         $response["club_name"] = $schedule_full_day->club_name;
-    //                     }
-    //                     $output["category_budrest"][$category->id][] = $response;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return $output;
-    // }
-
 
     protected function validation($parameters)
     {

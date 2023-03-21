@@ -65,11 +65,8 @@ class GetParticipantScoreQualificationV2 extends Retrieval
             }
         }
 
-        $session = [];
-        for ($i = 0; $i < $category_detail->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
-
+        $session = $category_detail->getArraySessionCategory();
+        
         if ($category_detail->category_team == "Individual") {
             return $this->getListMemberScoringIndividual($event_category_id, $score_type, $session, $name, $event->id);
         }
