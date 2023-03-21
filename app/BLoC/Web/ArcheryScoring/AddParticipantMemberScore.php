@@ -61,9 +61,13 @@ class AddParticipantMemberScore extends Transactional
             return $this->addScoringQualificationSelection($parameters);
         }
 
-        if ($type == 4)
-            return $this->addScoringEliminationSelection($parameters);
-
+        if ($type == 4) {
+            $participant_member_id = $code[1];
+            $session = $code[2];
+            $target_no = $parameters->get("target_no");
+            $shoot_scores = $parameters->get("shoot_scores");
+            return $this->addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores);
+        }
 
         throw new BLoCException("gagal input skoring");
     }
@@ -729,7 +733,10 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule) {
             throw new BLoCException("jadwal belum di set");
         }
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 3)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)
+            ->where("participant_member_id", $participant_member_id)
+            ->where('type', $type)
+            ->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
         }
@@ -782,17 +789,10 @@ class AddParticipantMemberScore extends Transactional
         return $scoring;
     }
 
-    private function addScoringEliminationSelection($parameters)
+    private function addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores)
     {
         $admin = Admin::getProfile();
-        $code = \explode("-", $parameters->code);
-        if (count($code) < 3) {
-            throw new BLoCException("kode bermasalah");
-        }
 
-        $type = $code[0];
-        $participant_member_id = $code[1];
-        $session = $code[2];
 
         $participant_member = ArcheryEventParticipantMember::select("archery_event_participant_members.*", "archery_event_participants.event_category_id", "archery_event_participants.event_id")
             ->join("archery_event_participants", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
@@ -835,7 +835,10 @@ class AddParticipantMemberScore extends Transactional
         if (!$schedule)
             throw new BLoCException("jadwal belum di set");
 
-        $get_score = ArcheryScoring::where("scoring_session", $session)->where("participant_member_id", $participant_member_id)->where('type', 4)->first();
+        $get_score = ArcheryScoring::where("scoring_session", $session)
+            ->where("participant_member_id", $participant_member_id)
+            ->where('type', $type)
+            ->first();
         if ($get_score && $get_score->is_lock == 1 && $admin->role->role->id != 4) {
             throw new BLoCException("scoring sudah dikunci");
         }
@@ -858,7 +861,7 @@ class AddParticipantMemberScore extends Transactional
             }
         }
 
-        $score = ArcheryScoring::makeScoring($parameters->shoot_scores, $score_x_value);
+        $score = ArcheryScoring::makeScoring($shoot_scores, $score_x_value);
         $event_score_id = $get_score ? $get_score->id : 0;
 
         if ($event_score_id) {
@@ -872,17 +875,15 @@ class AddParticipantMemberScore extends Transactional
         $scoring->total_tmp = $score->total_tmp_string;
         $scoring->scoring_session = $session;
         $scoring->type = $type;
-        $scoring->item_value = "archery_event_qualification_schedule_full_day";
+        $scoring->item_value = "archery_event_qualification_schedule_full_day_elimination_selection";
         $scoring->item_id = $schedule->id;
         $scoring->scoring_log = \json_encode([
             "admin" => $admin,
-            "archery_event_qualification_schedule_full_day" => $schedule,
-            "target_no" => $parameters->target_no
+            "archery_event_qualification_schedule_full_day_elimination_selection" => $schedule,
+            "target_no" => $target_no
         ]);
         $scoring->scoring_detail = \json_encode($score->scors);
-        if ($parameters->save_permanent) {
-            $scoring->is_lock = 1;
-        }
+        $scoring->is_lock = 1;
 
         $scoring->save();
         return $scoring;
