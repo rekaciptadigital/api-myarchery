@@ -646,25 +646,25 @@ class ArcheryEventParticipant extends Model
     $participant_club_or_city = [];
     $sequence = [];
 
-    $parent_classfification_id = $event->parent_classification;
+    $parent_classifification_id = $event->parent_classification;
 
-    if ($parent_classfification_id == 0) {
+    if ($parent_classifification_id == 0) {
       throw new BLoCException("parent calassification_id invalid");
     }
 
-    if ($parent_classfification_id == 5) {
+    if ($parent_classifification_id == 5) {
       throw new BLoCException("config not found");
     }
 
     $tag_ranked = "club_id";
     $select_classification_query = "archery_clubs.name as classification_name";
 
-    if ($parent_classfification_id == 2) { // jika mewakili negara
+    if ($parent_classifification_id == 2) { // jika mewakili negara
       $tag_ranked = "classification_country_id";
       $select_classification_query = "countries.name as classification_name";
     }
 
-    if ($parent_classfification_id == 3) { // jika mewakili provinsi
+    if ($parent_classifification_id == 3) { // jika mewakili provinsi
       $tag_ranked = "classification_province_id";
       if ($event->classification_country_id == 102) {
         $select_classification_query = "provinces.name as classification_name";
@@ -673,7 +673,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 4) { // jika mewakili kota
+    if ($parent_classifification_id == 4) { // jika mewakili kota
       $tag_ranked = "city_id";
       if ($event->classification_country_id == 102) {
         $select_classification_query = "cities.name as classification_name";
@@ -682,7 +682,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+    if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
       $tag_ranked = "children_classification_id";
       $select_classification_query = "children_classification_members.title as classification_name";
     }
@@ -843,7 +843,7 @@ class ArcheryEventParticipant extends Model
         "city_name" => $value->city_name,
         "children_classification_id" => $value->children_classification_id,
         "children_classification_members_name" => $value->children_classification_members_name,
-        "parent_classification_type" => $parent_classfification_id,
+        "parent_classification_type" => $parent_classifification_id,
         "team" => $team,
         "total" => $total,
         "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
@@ -891,21 +891,21 @@ class ArcheryEventParticipant extends Model
     $participant_club_or_city = [];
     $sequence = [];
 
-    $parent_classfification_id = $event->parent_classification;
+    $parent_classifification_id = $event->parent_classification;
 
-    if ($parent_classfification_id == 0) {
+    if ($parent_classifification_id == 0) {
       throw new BLoCException("parent calassification_id invalid");
     }
 
     $tag_ranked = "club_id";
     $select_classification_query = "archery_clubs.name as classification_name";
 
-    if ($parent_classfification_id == 2) { // jika mewakili negara
+    if ($parent_classifification_id == 2) { // jika mewakili negara
       $tag_ranked = "classification_country_id";
       $select_classification_query = "countries.name as classification_name";
     }
 
-    if ($parent_classfification_id == 3) { // jika mewakili provinsi
+    if ($parent_classifification_id == 3) { // jika mewakili provinsi
       $tag_ranked = "classification_province_id";
       if ($event->classification_country_id == 102) {
         $select_classification_query = "provinces.name as classification_name";
@@ -914,7 +914,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 4) { // jika mewakili kota
+    if ($parent_classifification_id == 4) { // jika mewakili kota
       $tag_ranked = "city_id";
       if ($event->classification_country_id == 102) {
         $select_classification_query = "cities.name as classification_name";
@@ -923,7 +923,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+    if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
       $tag_ranked = "children_classification_id";
       $select_classification_query = "children_classification_members.title as classification_name";
     }
@@ -931,15 +931,15 @@ class ArcheryEventParticipant extends Model
     $participants = ArcheryEventParticipant::where("event_category_id", $category_detail_team->id)
       ->where("status", 1);
 
-    if ($parent_classfification_id == 1) { // jika mewakili club
+    if ($parent_classifification_id == 1) { // jika mewakili club
       $participants = $participants->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
     }
 
-    if ($parent_classfification_id == 2) { // jika mewakili negara
+    if ($parent_classifification_id == 2) { // jika mewakili negara
       $participants = $participants->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
     }
 
-    if ($parent_classfification_id == 3) { // jika mewakili provinsi
+    if ($parent_classifification_id == 3) { // jika mewakili provinsi
       if ($event->classification_country_id == 102) {
         $participants = $participants->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
       } else {
@@ -947,7 +947,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 4) { // jika mewakili kota
+    if ($parent_classifification_id == 4) { // jika mewakili kota
       if ($event->classification_country_id == 102) {
         $participants = $participants->join("cities", "cities.id", "=", "archery_event_participants.city_id");
       } else {
@@ -955,7 +955,7 @@ class ArcheryEventParticipant extends Model
       }
     }
 
-    if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+    if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
       $participants = $participants->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
     }
 

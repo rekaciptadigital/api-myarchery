@@ -33,21 +33,21 @@ class GetScheduleFullDay extends Retrieval
             throw new BLoCException('you are not owner this event');
         }
 
-        $parent_classfification_id = $event->parent_classification;
+        $parent_classifification_id = $event->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
         $select_classification_query = "archery_clubs.name as classification_name";
         $table_for_search = "archery_clubs.name";
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
+        if ($parent_classifification_id == 2) { // jika mewakili negara
             $table_for_search = "countries.name";
             $select_classification_query = "countries.name as classification_name";
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+        if ($parent_classifification_id == 3) { // jika mewakili provinsi
             if ($event->classification_country_id == 102) {
                 $table_for_search = "provinces.name";
                 $select_classification_query = "provinces.name as classification_name";
@@ -57,7 +57,7 @@ class GetScheduleFullDay extends Retrieval
             }
         }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
+        if ($parent_classifification_id == 4) { // jika mewakili kota
             if ($event->classification_country_id == 102) {
                 $table_for_search = "cities.name";
                 $select_classification_query = "cities.name as classification_name";
@@ -67,7 +67,7 @@ class GetScheduleFullDay extends Retrieval
             }
         }
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $table_for_search = "children_classification_members.title";
             $select_classification_query = "children_classification_members.title as classification_name";
         }
@@ -165,7 +165,7 @@ class GetScheduleFullDay extends Retrieval
                     "country_name" => $schedule->country_name,
                     "children_classification_id" => $schedule->children_classification_id,
                     "children_classification_members_name" => $schedule->children_classification_members_name,
-                    "parent_classification_type" => $parent_classfification_id,
+                    "parent_classification_type" => $parent_classifification_id,
                     "participant_id" => $schedule->participant_id,
                 ];
             }

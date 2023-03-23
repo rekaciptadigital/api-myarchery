@@ -257,50 +257,50 @@ class BudRest extends Model
             throw new BLoCException("event not found");
         }
 
-        $parent_classfification_id = $event->parent_classification;
+        $parent_classifification_id = $event->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
-        if ($parent_classfification_id == 5) {
+        if ($parent_classifification_id == 5) {
             throw new BLoCException("config not found");
         }
 
         $tag = "club_id";
         $select_classification_query = "archery_event_participants.club_id";
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
+        if ($parent_classifification_id == 2) { // jika mewakili negara
             $tag = "classification_country_id";
             $select_classification_query = "archery_event_participants.classification_country_id";
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+        if ($parent_classifification_id == 3) { // jika mewakili provinsi
             $tag = "classification_province_id";
             $select_classification_query = "archery_event_participants.classification_province_id";
         }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
+        if ($parent_classifification_id == 4) { // jika mewakili kota
             $tag = "city_id";
             $select_classification_query = "archery_event_participants.city_id";
         }
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $tag = "children_classification_id";
             $select_classification_query = "archery_event_participants.children_classification_id";
         }
 
         $data = ArcheryEventParticipant::select($select_classification_query);
 
-        if ($parent_classfification_id == 1) { // jika mewakili club
+        if ($parent_classifification_id == 1) { // jika mewakili club
             $data = $data->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
         }
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
+        if ($parent_classifification_id == 2) { // jika mewakili negara
             $data = $data->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+        if ($parent_classifification_id == 3) { // jika mewakili provinsi
             if ($event->classification_country_id == 102) {
                 $data = $data->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
             } else {
@@ -308,7 +308,7 @@ class BudRest extends Model
             }
         }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
+        if ($parent_classifification_id == 4) { // jika mewakili kota
             if ($event->classification_country_id == 102) {
                 $data = $data->join("cities", "cities.id", "=", "archery_event_participants.city_id");
             } else {
@@ -316,7 +316,7 @@ class BudRest extends Model
             }
         }
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $data = $data->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
         }
 

@@ -38,9 +38,9 @@ class ListMemberTeamV2 extends Retrieval
             throw new BLoCException("access denied");
         }
 
-        $parent_classfification_id = $event->parent_classification;
+        $parent_classifification_id = $event->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
@@ -57,7 +57,7 @@ class ListMemberTeamV2 extends Retrieval
             "archery_event_participants.city_id",
             $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
             "archery_event_participants.children_classification_id",
-            "children_classification_members.title as children_classification_members_name",
+            "children_classification_members.title as children_classification_members_name"
         );
 
         // jika mewakili club
@@ -179,7 +179,7 @@ class ListMemberTeamV2 extends Retrieval
                 "city_name" => $participant->city_name,
                 "children_classification_id" => $participant->children_classification_id,
                 "children_classification_members_name" => $participant->children_classification_members_name,
-                "parent_classification_type" => $parent_classfification_id,
+                "parent_classification_type" => $parent_classifification_id,
                 "phone_number" => $participant->phone_number,
                 "competition_category" => $participant->competition_category_id,
                 "status_payment" => $status_payment,

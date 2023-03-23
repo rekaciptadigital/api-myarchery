@@ -10,7 +10,6 @@ use App\Models\Provinces;
 use Illuminate\Support\Str;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class GetDetailEventById extends Retrieval
 {
