@@ -62,6 +62,11 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
             $router->get("download-excell-member-series-rank", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportMemberSeriesRank']);
         });
         // ================================= End ====================================================
+
+        $router->group(['prefix' => 'revision-flow'], function () use ($router) {
+            $router->get('/register-with-classification-event', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:insertDataParticipantToClassificationEvent']);
+        });
+
         $router->get('/get-province', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getProvince']);
         $router->get('/get-city', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getCity']);
         $router->get('/list-official', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getListOfficial']);

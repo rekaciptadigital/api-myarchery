@@ -12,6 +12,7 @@ use App\BLoC\General\GetListTabCategoryByEventId;
 use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
+use App\BLoC\General\InsertDataParticipantToClassificationEvent;
 use App\BloC\General\Series\ExportMemberSeriesRank;
 use App\BLoC\General\Support\DownloadTemplateMemberCollectiveClub;
 use App\BLoC\General\Support\ImportMemberCollectiveClub;
@@ -54,6 +55,11 @@ class GeneralServiceProvider extends ServiceProvider
         $this->registerService("exportMemberCollectiveTeam", ExportMemberCollectiveTeam::class);
         $this->registerService("importMemberCollectiveClub", ImportMemberCollectiveClub::class);
         $this->registerService("updateStatusPayment", UpdateStatusPayment::class);
+
+
+        // new condition register with classification or contingent history
+        $this->registerService("insertDataParticipantToClassificationEvent", InsertDataParticipantToClassificationEvent::class);
+
 
         // ======================================= End ==============================================
     }
