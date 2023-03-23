@@ -66,7 +66,8 @@ class AddParticipantMemberScore extends Transactional
             $session = $code[2];
             $target_no = $parameters->get("target_no");
             $shoot_scores = $parameters->get("shoot_scores");
-            return $this->addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores);
+            $save_permanent = $parameters->get("save_permanent");
+            return $this->addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores, $save_permanent);
         }
 
         throw new BLoCException("gagal input skoring");
@@ -789,7 +790,7 @@ class AddParticipantMemberScore extends Transactional
         return $scoring;
     }
 
-    private function addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores)
+    private function addScoringEliminationSelection($type, $participant_member_id, $session, $target_no, $shoot_scores, $save_permanent)
     {
         $admin = Admin::getProfile();
 
@@ -883,7 +884,9 @@ class AddParticipantMemberScore extends Transactional
             "target_no" => $target_no
         ]);
         $scoring->scoring_detail = \json_encode($score->scors);
-        $scoring->is_lock = 1;
+        if ($save_permanent == 1) {
+            $scoring->is_lock = 1;
+        }
 
         $scoring->save();
         return $scoring;

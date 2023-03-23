@@ -43,32 +43,6 @@ class ListMemberV2 extends Retrieval
             throw new BLoCException("parent calassification_id invalid");
         }
 
-        $select_classification_query = "archery_clubs.name as classification_name";
-
-        if ($parent_classfification_id == 2) { // jika mewakili negara
-            $select_classification_query = "countries.name as classification_name";
-        }
-
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
-            if ($event->classification_country_id == 102) {
-                $select_classification_query = "provinces.name as classification_name";
-            } else {
-                $select_classification_query = "states.name as classification_name";
-            }
-        }
-
-        if ($parent_classfification_id == 4) { // jika mewakili kota
-            if ($event->classification_country_id == 102) {
-                $select_classification_query = "cities.name as classification_name";
-            } else {
-                $select_classification_query = "cities_of_countries.name as classification_name";
-            }
-        }
-
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
-            $select_classification_query = "children_classification_members.title as classification_name";
-        }
-
         $participant_query = ArcheryEventParticipant::select(
             'archery_event_participant_members.id as member_id',
             'archery_event_participants.id as participant_id',
@@ -77,7 +51,16 @@ class ListMemberV2 extends Retrieval
             'archery_event_participants.event_category_id',
             'users.name',
             'users.email',
-            $select_classification_query,
+            "archery_event_participants.club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.classification_country_id as country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id as province_id",
+            $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.city_id",
+            $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name",
             'archery_event_participants.phone_number',
             'archery_event_participants.competition_category_id',
             'archery_event_participants.status as status_participant',
@@ -85,33 +68,33 @@ class ListMemberV2 extends Retrieval
             'transaction_logs.expired_time as expired_time'
         );
 
-        if ($parent_classfification_id == 1) { // jika mewakili club
-            $participant_query = $participant_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+        // jika mewakili club
+        $participant_query = $participant_query->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $participant_query = $participant_query->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($event->classification_country_id == 102) {
+            $participant_query = $participant_query->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $participant_query = $participant_query->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
         }
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
-            $participant_query = $participant_query->join("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+        // jika mewakili kota
+        if ($event->classification_country_id == 102) {
+            $participant_query = $participant_query->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $participant_query = $participant_query->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
-            if ($event->classification_country_id == 102) {
-                $participant_query = $participant_query->join("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
-            } else {
-                $participant_query = $participant_query->join("states", "states.id", "=", "archery_event_participants.classification_province_id");
-            }
-        }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
-            if ($event->classification_country_id == 102) {
-                $participant_query = $participant_query->join("cities", "cities.id", "=", "archery_event_participants.city_id");
-            } else {
-                $participant_query = $participant_query->join("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
-            }
-        }
+        // jika berasal dari settingan admin
+        $participant_query = $participant_query->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
-            $participant_query = $participant_query->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
-        }
 
 
         $participant_query = $participant_query->join('archery_event_participant_members', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
@@ -171,7 +154,17 @@ class ListMemberV2 extends Retrieval
                 $response["event_category_id"] = $pc->event_category_id;
                 $response["name"] = $pc->name;
                 $response["email"] = $pc->email;
-                $response["classification_name"] = $pc->classification_name;
+                $response["club_id"] = $pc->club_id;
+                $response["club_name"] = $pc->club_name;
+                $response["country_id"] = $pc->country_id;
+                $response["country_name"] = $pc->country_name;
+                $response["province_id"] = $pc->province_id;
+                $response["province_name"] = $pc->province_name;
+                $response["city_id"] = $pc->city_id;
+                $response["city_name"] = $pc->city_name;
+                $response["children_classification_id"] = $pc->children_classification_id;
+                $response["children_classification_members_name"] = $pc->children_classification_members_name;
+                $response["parent_classification_type"] = $parent_classfification_id;
                 $response["phone_number"] = $pc->phone_number;
                 $response["competition_category_id"] = $pc->competition_category_id;
                 $response["status_payment"] = $status_payment;
