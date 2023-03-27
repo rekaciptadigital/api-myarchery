@@ -55,10 +55,10 @@ class GetParticipantMemberByCategory extends Retrieval
 
         if ($participant->classification_country == 102) {
             $province = Provinces::find($participant->classification_province_id);
-            $city = CityCountry::find($participant->city_id);
+            $city = City::find($participant->city_id);
         } else {
             $province = ProvinceCountry::find($participant->classification_province_id);
-            $city = ProvinceCountry::find($participant->city_id);
+            $city = CityCountry::find($participant->city_id);
         }
 
         $province_id = null;
