@@ -28,6 +28,9 @@ class GetEventEliminationTemplate extends Retrieval
     protected function process($parameters)
     {
         $event_category_id = $parameters->get("event_category_id");
+        $event_id = $parameters->get("event_id");
+
+        $event = ArcheryEvent::find($event_id);
 
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category) {
@@ -44,7 +47,7 @@ class GetEventEliminationTemplate extends Retrieval
         }
 
         if (strtolower($team_category->type) == "individual") {
-            return $this->getTemplateIndividu($category);
+            return $this->getTemplateIndividu($category, $event);
         }
 
         throw new BLoCException("gagal menampilkan template");
