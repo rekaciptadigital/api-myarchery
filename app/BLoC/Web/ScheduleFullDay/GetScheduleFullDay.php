@@ -33,21 +33,21 @@ class GetScheduleFullDay extends Retrieval
             throw new BLoCException('you are not owner this event');
         }
 
-        $parent_classfification_id = $event->parent_classification;
+        $parent_classifification_id = $event->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
         $select_classification_query = "archery_clubs.name as classification_name";
         $table_for_search = "archery_clubs.name";
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
+        if ($parent_classifification_id == 2) { // jika mewakili negara
             $table_for_search = "countries.name";
             $select_classification_query = "countries.name as classification_name";
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+        if ($parent_classifification_id == 3) { // jika mewakili provinsi
             if ($event->classification_country_id == 102) {
                 $table_for_search = "provinces.name";
                 $select_classification_query = "provinces.name as classification_name";
@@ -57,7 +57,7 @@ class GetScheduleFullDay extends Retrieval
             }
         }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
+        if ($parent_classifification_id == 4) { // jika mewakili kota
             if ($event->classification_country_id == 102) {
                 $table_for_search = "cities.name";
                 $select_classification_query = "cities.name as classification_name";
@@ -67,7 +67,7 @@ class GetScheduleFullDay extends Retrieval
             }
         }
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $table_for_search = "children_classification_members.title";
             $select_classification_query = "children_classification_members.title as classification_name";
         }
@@ -77,16 +77,16 @@ class GetScheduleFullDay extends Retrieval
             "archery_event_qualification_time.category_detail_id as category_id",
             "users.name as name",
             "archery_event_participants.id as participant_id",
-            "archery_clubs.name as club_name",
             "archery_event_participants.club_id as club_id",
-            $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
-            "archery_event_participants.city_id",
-            $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
-            "archery_event_participants.classification_province_id as province_id",
-            "countries.name as country_name",
+            "archery_clubs.name as club_name",
             "archery_event_participants.classification_country_id as country_id",
-            "children_classification_members.title as children_classification_members_name",
-            "archery_event_participants.children_classification_id"
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id as province_id",
+            $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.city_id",
+            $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
         )
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
@@ -157,15 +157,15 @@ class GetScheduleFullDay extends Retrieval
                     "name" => $schedule->name,
                     "club_id" => $schedule->club_id,
                     "club_name" => $schedule->club_name,
-                    "city_id" => $schedule->city_id,
-                    "city_name" => $schedule->city_name,
-                    "province_id" => $schedule->province_id,
-                    "province_name" => $schedule->province_name,
                     "country_id" => $schedule->country_id,
                     "country_name" => $schedule->country_name,
+                    "province_id" => $schedule->province_id,
+                    "province_name" => $schedule->province_name,
+                    "city_id" => $schedule->city_id,
+                    "city_name" => $schedule->city_name,
                     "children_classification_id" => $schedule->children_classification_id,
                     "children_classification_members_name" => $schedule->children_classification_members_name,
-                    "parent_classification_type" => $parent_classfification_id,
+                    "parent_classification_type" => $parent_classifification_id,
                     "participant_id" => $schedule->participant_id,
                 ];
             }

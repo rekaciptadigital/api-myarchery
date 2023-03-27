@@ -37,9 +37,9 @@ class ListMemberV2 extends Retrieval
             throw new BLoCException("access denied");
         }
 
-        $parent_classfification_id = $event->parent_classification;
+        $parent_classifification_id = $event->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
@@ -164,7 +164,7 @@ class ListMemberV2 extends Retrieval
                 $response["city_name"] = $pc->city_name;
                 $response["children_classification_id"] = $pc->children_classification_id;
                 $response["children_classification_members_name"] = $pc->children_classification_members_name;
-                $response["parent_classification_type"] = $parent_classfification_id;
+                $response["parent_classification_type"] = $parent_classifification_id;
                 $response["phone_number"] = $pc->phone_number;
                 $response["competition_category_id"] = $pc->competition_category_id;
                 $response["status_payment"] = $status_payment;

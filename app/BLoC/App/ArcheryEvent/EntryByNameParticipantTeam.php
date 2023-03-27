@@ -21,7 +21,10 @@ class EntryByNameParticipantTeam extends Transactional
         $is_entry_by_name = $parameters->get("is_entry_by_name");
         $member_list = $parameters->get("members");
 
-        $participant_team = ArcheryEventParticipant::select("archery_event_participants.*", "archery_events.with_contingent")
+        $participant_team = ArcheryEventParticipant::select(
+            "archery_event_participants.*",
+            "archery_events.parent_classification"
+        )
             ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
             ->where("archery_event_participants.id", $participant_team_id)
             ->where("archery_event_participants.status", 1)
@@ -32,7 +35,8 @@ class EntryByNameParticipantTeam extends Transactional
             throw new BLoCException("participant team not found");
         }
 
-        $with_contingent = $participant_team->with_contingent;
+        $parent_classification = $participant_team->parent_classification;
+
 
         $category_team = ArcheryEventCategoryDetail::find($participant_team->event_category_id);
 
@@ -65,10 +69,24 @@ class EntryByNameParticipantTeam extends Transactional
                         ->where("status", 1)
                         ->where("event_category_id", $category_individu->id);
 
-                    if ($with_contingent == 0) {
+                    if ($parent_classification == 1) {
                         $participant_individu->where("club_id", $participant_team->club_id);
-                    } else {
+                    }
+
+                    if ($parent_classification == 2) {
+                        $participant_individu->where("classification_country_id", $participant_team->classification_country_id);
+                    }
+
+                    if ($parent_classification == 3) {
+                        $participant_individu->where("classification_province_id", $participant_team->classification_province_id);
+                    }
+
+                    if ($parent_classification == 4) {
                         $participant_individu->where("city_id", $participant_team->city_id);
+                    }
+
+                    if ($parent_classification == 6) {
+                        $participant_individu->where("children_classification_id", $participant_team->children_classification_id);
                     }
 
                     $participant_individu =  $participant_individu->first();
@@ -130,11 +148,26 @@ class EntryByNameParticipantTeam extends Transactional
                 })->where("status", 1)
                     ->where("event_category_id", $category_individu_male->id);
 
-                if ($with_contingent == 0) {
+                if ($parent_classification == 1) {
                     $participant_individu_male->where("club_id", $participant_team->club_id);
-                } else {
+                }
+
+                if ($parent_classification == 2) {
+                    $participant_individu_male->where("classification_country_id", $participant_team->classification_country_id);
+                }
+
+                if ($parent_classification == 3) {
+                    $participant_individu_male->where("classification_province_id", $participant_team->classification_province_id);
+                }
+
+                if ($parent_classification == 4) {
                     $participant_individu_male->where("city_id", $participant_team->city_id);
                 }
+
+                if ($parent_classification == 6) {
+                    $participant_individu_male->where("children_classification_id", $participant_team->children_classification_id);
+                }
+
                 $participant_individu_male = $participant_individu_male->get();
 
                 $participant_individu_female = ArcheryEventParticipant::where(function ($query) use ($participant_individu_id_0, $participant_individu_id_1) {
@@ -143,10 +176,24 @@ class EntryByNameParticipantTeam extends Transactional
                 })->where("status", 1)
                     ->where("event_category_id", $category_individu_female->id);
 
-                if ($with_contingent == 0) {
+                if ($parent_classification == 1) {
                     $participant_individu_female->where("club_id", $participant_team->club_id);
-                } else {
+                }
+
+                if ($parent_classification == 2) {
+                    $participant_individu_female->where("classification_country_id", $participant_team->classification_country_id);
+                }
+
+                if ($parent_classification == 3) {
+                    $participant_individu_female->where("classification_province_id", $participant_team->classification_province_id);
+                }
+
+                if ($parent_classification == 4) {
                     $participant_individu_female->where("city_id", $participant_team->city_id);
+                }
+
+                if ($parent_classification == 6) {
+                    $participant_individu_female->where("children_classification_id", $participant_team->children_classification_id);
                 }
                 $participant_individu_female = $participant_individu_female->get();
 
@@ -161,7 +208,6 @@ class EntryByNameParticipantTeam extends Transactional
                 foreach ($member_list as $ml) {
                     $team_member_special = TeamMemberSpecial::join("archery_event_participants", "archery_event_participants.id", "=", "team_member_special.participant_team_id")
                         ->where("team_member_special.participant_individual_id", $ml["participant_id"])
-                        // ->where("team_member_special.participant_team_id", $participant_team_id)
                         ->where("archery_event_participants.event_category_id", $participant_team->event_category_id)
                         ->first();
 

@@ -713,19 +713,19 @@ class ArcheryScoring extends Model
             throw new BLoCException("category not found");
         }
 
-        $parent_classfification_id = $category->parent_classification;
+        $parent_classifification_id = $category->parent_classification;
 
-        if ($parent_classfification_id == 0) {
+        if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
 
         $select_classification_query = "archery_clubs.name as classification_name";
 
-        if ($parent_classfification_id == 2) { // jika mewakili negara
+        if ($parent_classifification_id == 2) { // jika mewakili negara
             $select_classification_query = "countries.name as classification_name";
         }
 
-        if ($parent_classfification_id == 3) { // jika mewakili provinsi
+        if ($parent_classifification_id == 3) { // jika mewakili provinsi
             if ($category->classification_country_id == 102) {
                 $select_classification_query = "provinces.name as classification_name";
             } else {
@@ -733,7 +733,7 @@ class ArcheryScoring extends Model
             }
         }
 
-        if ($parent_classfification_id == 4) { // jika mewakili kota
+        if ($parent_classifification_id == 4) { // jika mewakili kota
             if ($category->classification_country_id == 102) {
                 $select_classification_query = "cities.name as classification_name";
             } else {
@@ -741,7 +741,7 @@ class ArcheryScoring extends Model
             }
         }
 
-        if ($parent_classfification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $select_classification_query = "children_classification_members.title as classification_name";
         }
 
@@ -828,7 +828,7 @@ class ArcheryScoring extends Model
             $score["city_name"] = $value->city_name;
             $score["children_classification_id"] = $value->children_classification_id;
             $score["children_classification_members_name"] = $value->children_classification_members_name;
-            $score["parent_classification_type"] = $parent_classfification_id;
+            $score["parent_classification_type"] = $parent_classifification_id;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["have_coint_tost"] = $value->have_coint_tost;

@@ -2,7 +2,7 @@
 
 namespace App\BLoC\Web\EventElimination;
 
-use App\Models\ArcheryClub;
+use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
 use App\Models\ArcheryEventEliminationSchedule;
 use App\Models\ArcheryEventEliminationMatch;
@@ -55,11 +55,17 @@ class GetEventEliminationTemplate extends Retrieval
         return [];
     }
 
-    public function getTemplateIndividu($category)
+    public function getTemplateIndividu(ArcheryEventCategoryDetail $category, ArcheryEvent $event)
     {
         $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
         $elimination_id = 0;
         $elimination_member_count = 16;
+
+        $parent_classifification_id = $event->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
 
         if ($elimination) {
             $elimination_id = $elimination->id;
@@ -125,10 +131,44 @@ class GetEventEliminationTemplate extends Retrieval
                         }
                     }
 
-                    $club_and_city =  ArcheryEventParticipant::select("archery_clubs.name as club_name", "cities.name as city_name")
-                        ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-                        ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
-                        ->where("archery_event_participants.id", $value->participant_id)
+                    $contingent =  ArcheryEventParticipant::select(
+                        "archery_event_participants.club_id as club_id",
+                        "archery_clubs.name as club_name",
+                        "archery_event_participants.classification_country_id as country_id",
+                        "countries.name as country_name",
+                        "archery_event_participants.classification_province_id as province_id",
+                        $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+                        "archery_event_participants.city_id",
+                        $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+                        "archery_event_participants.children_classification_id",
+                        "children_classification_members.title as children_classification_members_name"
+                    );
+                    // jika mewakili club
+                    $contingent = $contingent->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+                    // jika mewakili negara
+                    $contingent = $contingent->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+                    // jika mewakili provinsi
+                    if ($event->classification_country_id == 102) {
+                        $contingent = $contingent->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+                    } else {
+                        $contingent = $contingent->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+                    }
+
+                    // jika mewakili kota
+                    if ($event->classification_country_id == 102) {
+                        $contingent = $contingent->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+                    } else {
+                        $contingent = $contingent->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+                    }
+
+                    // jika berasal dari settingan admin
+                    $contingent = $contingent->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+                    $contingent = $contingent->where("archery_event_participants.id", $value->participant_id)
                         ->where("archery_event_participants.status", 1)
                         ->first();
 
@@ -137,7 +177,7 @@ class GetEventEliminationTemplate extends Retrieval
                         "match_id" => $value->id,
                         "name" => $value->name,
                         "gender" => $value->gender,
-                        "club" =>  $club_and_city->club_name ?? '-',
+                        "club" =>  $contingent->club_name ?? '-',
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "total_scoring" => $total_scoring,
@@ -146,7 +186,18 @@ class GetEventEliminationTemplate extends Retrieval
                         "result" => $value->result,
                         "budrest_number" => $value->bud_rest != 0 ? $value->bud_rest . "" . $value->target_face : "",
                         "is_different" => $is_different,
-                        "city" => $club_and_city->city_name ?? "-"
+                        "city" => $contingent->city_name ?? "-",
+                        "club_id" => $contingent->club_id,
+                        "club_name" => $contingent->club_name,
+                        "country_id" => $contingent->country_id,
+                        "country_name" => $contingent->country_name,
+                        "province_id" => $contingent->province_id,
+                        "province_name" => $contingent->province_name,
+                        "city_id" => $contingent->city_id,
+                        "city_name" => $contingent->city_name,
+                        "children_classification_id" => $contingent->children_classification_id,
+                        "children_classification_members_name" => $contingent->children_classification_members_name,
+                        "parent_classification_type" => $parent_classifification_id,
                     );
                 } else {
                     $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
