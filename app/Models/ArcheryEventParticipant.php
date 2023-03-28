@@ -32,9 +32,8 @@ class ArcheryEventParticipant extends Model
     "m" => 0,
   ];
 
-  public static function getElimination(ArcheryEventCategoryDetail $category_detail)
+  public static function getElimination(ArcheryEventCategoryDetail $category_detail, ArcheryEvent $event)
   {
-
     $team_category = ArcheryMasterTeamCategory::find($category_detail->team_category_id);
     if (!$team_category) {
       throw new BLoCException("team category not found");
@@ -45,7 +44,7 @@ class ArcheryEventParticipant extends Model
     }
 
     if (strtolower($team_category->type) == "individual") {
-      $data = ArcheryEventParticipant::getTemplateIndividu($category_detail);
+      $data = ArcheryEventParticipant::getTemplateIndividu($category_detail, $event);
     }
 
     return $data;
@@ -157,35 +156,10 @@ class ArcheryEventParticipant extends Model
           ->where('children_classification_id', '=', $classification_data['children_id']);
       }
     }
-    // if ($event->with_contingent == 1) {
-    //   $count_participant_individu->where("city_id", $club_or_city_id);
-    // } else {
-    //   $count_participant_individu->where("club_id", $club_or_city_id);
-    // }
 
     $count_participant_individu = $count_participant_individu->get()->count();
     return $count_participant_individu;
-    // return (int)$count_participant_individu;
   }
-
-  // public static function getElimination(ArcheryEventCategoryDetail $category_detail)
-  // {
-  //   $count_participant_team_with_same_club_or_city = ArcheryEventParticipant::where("event_id", $event->id)
-  //     ->where("age_category_id", $category_team->age_category_id)
-  //     ->where("competition_category_id", $category_team->competition_category_id)
-  //     ->where("distance_id", $category_team->distance_id)
-  //     ->where("team_category_id", $category_team->team_category_id)
-  //     ->where("status", 1);
-  //   if ($event->with_contingent == 1) {
-  //     $count_participant_team_with_same_club_or_city->where("city_id", $club_or_city_id);
-  //   } else {
-  //     $count_participant_team_with_same_club_or_city->where("club_id", $club_or_city_id);
-  //   }
-
-  //   $count_participant_team_with_same_club_or_city = $count_participant_team_with_same_club_or_city->get()->count();
-
-  //   return (int)$count_participant_team_with_same_club_or_city;
-  // }
 
   public static function getMedalStanding($event_id)
   {
@@ -904,34 +878,21 @@ class ArcheryEventParticipant extends Model
     }
 
     $tag_ranked = "club_id";
-    $select_classification_query = "archery_clubs.name as classification_name";
 
     if ($parent_classifification_id == 2) { // jika mewakili negara
       $tag_ranked = "classification_country_id";
-      $select_classification_query = "countries.name as classification_name";
     }
 
     if ($parent_classifification_id == 3) { // jika mewakili provinsi
       $tag_ranked = "classification_province_id";
-      if ($event->classification_country_id == 102) {
-        $select_classification_query = "provinces.name as classification_name";
-      } else {
-        $select_classification_query = "states.name as classification_name";
-      }
     }
 
     if ($parent_classifification_id == 4) { // jika mewakili kota
       $tag_ranked = "city_id";
-      if ($event->classification_country_id == 102) {
-        $select_classification_query = "cities.name as classification_name";
-      } else {
-        $select_classification_query = "cities_of_countries.name as classification_name";
-      }
     }
 
     if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
       $tag_ranked = "children_classification_id";
-      $select_classification_query = "children_classification_members.title as classification_name";
     }
 
     $participants = ArcheryEventParticipant::where("event_category_id", $category_detail_team->id)
@@ -1084,7 +1045,7 @@ class ArcheryEventParticipant extends Model
     $elimination_rank = 0;
 
     $members = ArcheryEventEliminationMember::select(
-      "*",
+      "archery_event_elimination_members.*",
       "archery_event_category_details.id as category_details_id",
       "archery_event_participant_members.id as participant_member_id",
       "users.name as member_name",
@@ -1222,11 +1183,17 @@ class ArcheryEventParticipant extends Model
     return array($sorted_data, $category_id);
   }
 
-  public static function getTemplateIndividu($category)
+  public static function getTemplateIndividu(ArcheryEventCategoryDetail $category, ArcheryEvent $event)
   {
     $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
     $elimination_id = 0;
     $elimination_member_count = 16;
+
+    $parent_classifification_id = $event->parent_classification;
+
+    if ($parent_classifification_id == 0) {
+      throw new BLoCException("parent calassification_id invalid");
+    }
 
     if ($elimination) {
       $elimination_id = $elimination->id;
@@ -1237,10 +1204,7 @@ class ArcheryEventParticipant extends Model
 
 
     $score_type = 1; // 1 for type qualification
-    $session = [];
-    for ($i = 0; $i < $category->session_in_qualification; $i++) {
-      $session[] = $i + 1;
-    }
+    $session = $category->getArraySessionCategory();
 
     $fix_members1 = ArcheryEventEliminationMatch::select(
       "archery_event_elimination_members.position_qualification",
@@ -1265,8 +1229,6 @@ class ArcheryEventParticipant extends Model
       ->orderBy("archery_event_elimination_matches.index")
       ->get();
 
-    // return $fix_members1;
-
     $qualification_rank = [];
     $updated = true;
     if ($fix_members1->count() > 0) {
@@ -1282,26 +1244,66 @@ class ArcheryEventParticipant extends Model
           if ($archery_scooring) {
             $admin_total = $archery_scooring->admin_total;
             $scoring_detail = json_decode($archery_scooring->scoring_detail);
+            $total_scoring_detail = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
 
             if ($admin_total != 0) {
               $total_scoring = $admin_total;
             } else {
-              $total_scoring = isset($scoring_detail->result) ? $scoring_detail->result : $scoring_detail->total;
+              $total_scoring = $total_scoring_detail;
             }
 
-            if ($total_scoring != $admin_total) {
+            if ($total_scoring_detail != $admin_total) {
               $is_different = 1;
             }
           }
 
-          $club =  ArcheryEventParticipant::select("archery_clubs.name")->join("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")->where("archery_event_participants.id", $value->participant_id)->where("archery_event_participants.status", 1)->first();
+          $contingent =  ArcheryEventParticipant::select(
+            "archery_event_participants.club_id as club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.classification_country_id as country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id as province_id",
+            $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.city_id",
+            $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
+          );
+          // jika mewakili club
+          $contingent = $contingent->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+          // jika mewakili negara
+          $contingent = $contingent->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+          // jika mewakili provinsi
+          if ($event->classification_country_id == 102) {
+            $contingent = $contingent->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+          } else {
+            $contingent = $contingent->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+          }
+
+          // jika mewakili kota
+          if ($event->classification_country_id == 102) {
+            $contingent = $contingent->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+          } else {
+            $contingent = $contingent->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+          }
+
+          // jika berasal dari settingan admin
+          $contingent = $contingent->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+          $contingent = $contingent->where("archery_event_participants.id", $value->participant_id)
+            ->where("archery_event_participants.status", 1)
+            ->first();
 
           $members[$value->round][$value->match]["teams"][] = array(
             "id" => $value->member_id,
             "match_id" => $value->id,
             "name" => $value->name,
             "gender" => $value->gender,
-            "club" =>  $club->name ?? '-',
+            "club" =>  $contingent->club_name ?? '-',
             "potition" => $value->position_qualification,
             "win" => $value->win,
             "total_scoring" => $total_scoring,
@@ -1310,6 +1312,18 @@ class ArcheryEventParticipant extends Model
             "result" => $value->result,
             "budrest_number" => $value->bud_rest != 0 ? $value->bud_rest . "" . $value->target_face : "",
             "is_different" => $is_different,
+            "city" => $contingent->city_name ?? "-",
+            "club_id" => $contingent->club_id,
+            "club_name" => $contingent->club_name,
+            "country_id" => $contingent->country_id,
+            "country_name" => $contingent->country_name,
+            "province_id" => $contingent->province_id,
+            "province_name" => $contingent->province_name,
+            "city_id" => $contingent->city_id,
+            "city_name" => $contingent->city_name,
+            "children_classification_id" => $contingent->children_classification_id,
+            "children_classification_members_name" => $contingent->children_classification_members_name,
+            "parent_classification_type" => $parent_classifification_id
           );
         } else {
           $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
@@ -1388,14 +1402,14 @@ class ArcheryEventParticipant extends Model
           if ($archery_scooring_team) {
             $admin_total = $archery_scooring_team->admin_total;
             $scoring_detail = json_decode($archery_scooring_team->scoring_detail);
-
+            $total_scoring_detail = $scoring_detail->result;
             if ($admin_total != 0) {
               $total_scoring = $admin_total;
             } else {
-              $total_scoring = $scoring_detail->result;
+              $total_scoring = $total_scoring_detail;
             }
 
-            if ($total_scoring != $admin_total) {
+            if ($total_scoring_detail != $admin_total) {
               $is_different = 1;
             }
           }
@@ -1446,9 +1460,9 @@ class ArcheryEventParticipant extends Model
       $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_team_2, $elimination_member_count);
     } else {
       if ($category_team->team_category_id == "mix_team") {
-        $lis_team = self::mixTeamBestOfThree($category_team);
+        $lis_team = ArcheryEventParticipant::mixTeamBestOfThree($category_team);
       } else {
-        $lis_team = self::teamBestOfThree($category_team);
+        $lis_team = ArcheryEventParticipant::teamBestOfThree($category_team);
       }
       $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplateTeam($lis_team, $elimination_member_count);
     }

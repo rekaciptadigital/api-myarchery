@@ -25,7 +25,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">

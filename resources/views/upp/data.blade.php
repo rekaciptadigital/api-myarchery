@@ -133,15 +133,17 @@
                                     {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                                    {{ ((($parent_classification == 2
-                                                    ? ucwords(strtolower($data['country_name']))
-                                                    : $parent_classification == 3)
-                                                ? ucwords(strtolower($data['province_name']))
-                                                : $parent_classification == 4)
-                                            ? ucwords(strtolower($data['city_name']))
-                                            : $parent_classification == 6)
-                                        ? ucwords(strtolower($data['children_classification_members_name']))
-                                        : ucwords(strtolower($data['club_name'])) }}
+                                    @if ($data['parent_classification_type'] == 2)
+                                        {{ ucwords(strtolower($data['country_name'])) }}
+                                    @elseif ($data['parent_classification_type'] == 3)
+                                        {{ ucwords(strtolower($data['province_name'])) }}
+                                    @elseif ($data['parent_classification_type'] == 4)
+                                        {{ ucwords(strtolower($data['city_name'])) }}
+                                    @elseif ($data['parent_classification_type'] == 6)
+                                        {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                                    @else
+                                        {{ ucwords(strtolower($data['club_name'])) }}
+                                    @endif
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;font-size: 14pt">
                                     {{ $data['scoring']['sessions']['1'] ? $data['scoring']['sessions']['1']['total'] : '-' }}
@@ -293,15 +295,17 @@
                                     <td style="text-align: center;border: 1px solid black;">
                                         {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}</td>
                                     <td style="text-align: center;border: 1px solid black;">
-                                        {{ ((($parent_classification == 2
-                                                        ? ucwords(strtolower($data['country_name']))
-                                                        : $parent_classification == 3)
-                                                    ? ucwords(strtolower($data['province_name']))
-                                                    : $parent_classification == 4)
-                                                ? ucwords(strtolower($data['city_name']))
-                                                : $parent_classification == 6)
-                                            ? ucwords(strtolower($data['children_classification_members_name']))
-                                            : ucwords(strtolower($data['club_name'])) }}
+                                        @if ($data['parent_classification_type'] == 2)
+                                            {{ ucwords(strtolower($data['country_name'])) }}
+                                        @elseif ($data['parent_classification_type'] == 3)
+                                            {{ ucwords(strtolower($data['province_name'])) }}
+                                        @elseif ($data['parent_classification_type'] == 4)
+                                            {{ ucwords(strtolower($data['city_name'])) }}
+                                        @elseif ($data['parent_classification_type'] == 6)
+                                            {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                                        @else
+                                            {{ ucwords(strtolower($data['club_name'])) }}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
