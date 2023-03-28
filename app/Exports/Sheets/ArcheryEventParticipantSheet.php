@@ -11,7 +11,6 @@ use App\Models\City;
 use App\Models\Provinces;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -35,8 +34,10 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
     public function view(): View
     {
         $event_id = $this->event_id;
-        $admin = Auth::user();
 
+        $event = ArcheryEvent::find($event_id);
+
+        $parent_classifification_id = $event->parent_classification;
 
         $data = ArcheryEventParticipant::select(
             'archery_events.event_start_datetime',
@@ -46,19 +47,50 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
             'archery_event_participants.created_at',
             'archery_event_participant_members.is_series',
             'archery_event_participants.email',
-            'archery_clubs.name as club',
             'archery_event_participants.phone_number',
             'archery_event_participants.team_category_id',
             'archery_event_participants.gender',
             'event_name',
-            "cities.name as contingent"
+            "archery_event_participants.club_id as club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.classification_country_id as country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id as province_id",
+            $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.city_id",
+            $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
         )
             ->leftJoin("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
             ->leftJoin("archery_event_participant_members", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
-            ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id")
-            ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
-            ->where('event_id', $event_id)
+            ->leftJoin("transaction_logs", "transaction_logs.id", "=", "archery_event_participants.transaction_log_id");
+        // jika mewakili club
+        $data = $data->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $data = $data->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($event->classification_country_id == 102) {
+            $data = $data->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $data = $data->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+        }
+
+        // jika mewakili kota
+        if ($event->classification_country_id == 102) {
+            $data = $data->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $data = $data->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+        }
+
+        // jika berasal dari settingan admin
+        $data = $data->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+        $data = $data->where('archery_event_participants.event_id', $event_id)
             ->where("archery_event_participants.status", 1)
             ->get();
 
@@ -72,7 +104,6 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
         $export_data = [];
 
         foreach ($data as $key => $value) {
-
             $category = ArcheryEventCategoryDetail::find($value->event_category_id);
             $category_label = ArcheryEventCategoryDetail::getCategoryLabelComplete($value->event_category_id);
             $category_code = ArcheryEventMasterCategoryCode::where("age_category_id", $category->age_category_id)
@@ -128,18 +159,26 @@ class ArcheryEventParticipantSheet implements FromView, WithColumnWidths, WithHe
                 "country" => $country ? $country->name : "-",
                 "city_of_country" => $city_country ? $city_country->name : "-",
                 "passport_number" => $user->passport_number,
-                'club' => $value->club ? $value->club : '-',
-                'contingent' => $value->contingent ? $value->contingent : "-"
+                "club_id" => $value->club_id,
+                "club_name" => $value->club_name,
+                "country_id" => $value->country_id,
+                "country_name" => $value->country_name,
+                "province_id" => $value->province_id,
+                "province_name" => $value->province_name,
+                "city_id" => $value->city_id,
+                "city_name" => $value->city_name,
+                "children_classification_id" => $value->children_classification_id,
+                "children_classification_members_name" => $value->children_classification_members_name,
+                "parent_classification_type" => $parent_classifification_id,
             ];
         }
 
         $event_name = strtoupper($data[0]['event_name']);
-        $event_start_date = $newDate = date("Y/m/d", strtotime($data[0]['event_start_datetime']));
+        $event_start_date = date("Y/m/d", strtotime($data[0]['event_start_datetime']));
         return view('reports.participant_event', [
             'datas' => $export_data,
             'event_name' => $event_name,
             'event_start_date' => $event_start_date,
-            "with_contingent" => $event->with_contingent
         ]);
     }
 
