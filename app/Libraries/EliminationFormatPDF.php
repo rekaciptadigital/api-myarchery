@@ -14,6 +14,7 @@ use App\Models\ArcheryScoringEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use DAI\Utils\Exceptions\BLoCException;
 
 class EliminationFormatPDF
 {
@@ -38,6 +39,7 @@ class EliminationFormatPDF
 
         $fix_members = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.position_qualification",
+            "archery_event_participant_members.archery_event_participant_id as participant_id",
             "users.name",
             "archery_event_participant_members.id AS member_id",
             "archery_event_participant_members.club",

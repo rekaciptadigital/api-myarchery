@@ -25,7 +25,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">
@@ -108,7 +107,17 @@
                             {{ $data['athlete'] ? $data['athlete'] : '-' }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;">
-                            {{ $with_contingent == 1 ? $data['city'] : $data['club'] }}
+                            @if ($data['parent_classification_type'] == 2)
+                                {{ ucwords(strtolower($data['country_name'])) }}
+                            @elseif ($data['parent_classification_type'] == 3)
+                                {{ ucwords(strtolower($data['province_name'])) }}
+                            @elseif ($data['parent_classification_type'] == 4)
+                                {{ ucwords(strtolower($data['city_name'])) }}
+                            @elseif ($data['parent_classification_type'] == 6)
+                                {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                            @else
+                                {{ ucwords(strtolower($data['club_name'])) }}
+                            @endif
                         </td>
                     </tr>
                 @endforeach

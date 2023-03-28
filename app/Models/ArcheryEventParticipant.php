@@ -878,34 +878,21 @@ class ArcheryEventParticipant extends Model
     }
 
     $tag_ranked = "club_id";
-    $select_classification_query = "archery_clubs.name as classification_name";
 
     if ($parent_classifification_id == 2) { // jika mewakili negara
       $tag_ranked = "classification_country_id";
-      $select_classification_query = "countries.name as classification_name";
     }
 
     if ($parent_classifification_id == 3) { // jika mewakili provinsi
       $tag_ranked = "classification_province_id";
-      if ($event->classification_country_id == 102) {
-        $select_classification_query = "provinces.name as classification_name";
-      } else {
-        $select_classification_query = "states.name as classification_name";
-      }
     }
 
     if ($parent_classifification_id == 4) { // jika mewakili kota
       $tag_ranked = "city_id";
-      if ($event->classification_country_id == 102) {
-        $select_classification_query = "cities.name as classification_name";
-      } else {
-        $select_classification_query = "cities_of_countries.name as classification_name";
-      }
     }
 
     if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
       $tag_ranked = "children_classification_id";
-      $select_classification_query = "children_classification_members.title as classification_name";
     }
 
     $participants = ArcheryEventParticipant::where("event_category_id", $category_detail_team->id)
@@ -1058,7 +1045,7 @@ class ArcheryEventParticipant extends Model
     $elimination_rank = 0;
 
     $members = ArcheryEventEliminationMember::select(
-      "*",
+      "archery_event_elimination_members.*",
       "archery_event_category_details.id as category_details_id",
       "archery_event_participant_members.id as participant_member_id",
       "users.name as member_name",
