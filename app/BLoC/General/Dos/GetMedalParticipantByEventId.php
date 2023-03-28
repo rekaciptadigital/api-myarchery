@@ -32,9 +32,11 @@ class GetMedalParticipantByEventId extends Retrieval
                 }
                 $category_team_type = $category_detail->getCategoryType();
 
-                $data_report_qualification_individu = ArcheryEventParticipant::getData($category_detail->id, "qualification", $event_id);
+                // $data_report_qualification_individu = ArcheryEventParticipant::getData($category_detail->id, "qualification", $event_id);
+                $data_report_qualification_individu = ArcheryEventParticipant::getDataEliminationWithContingent($category_detail->id, "qualification", $event_id);
 
                 // ====================== qualification ==========================
+
                 if (strtolower($category_team_type) == "individual") {
                     if (!empty($data_report_qualification_individu[0])) {
                         $array_member = [];
@@ -43,8 +45,14 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "type" => "individu",
                                 "category_id" => $category_detail->id,
                                 "winner_name" => $athlete["athlete"],
+                                "parent_classification" => $athlete["parent_classification"],
+                                "city_name" => $athlete["city"],
+                                "country_name" => $athlete["country"],
+                                "province_name" => $athlete["province"],
                                 "club_name" => $athlete["club"],
-                                "city_name" => $athlete["city_name"],
+                                "children_name" => $athlete["children_classification"],
+                                // "city_name" => $athlete["city_name"],
+                                "athlete" => $athlete,
                                 "rank" => $key + 1,
                                 "participant_id" => $athlete["participant_id"],
                                 "category_label" => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id)
@@ -54,7 +62,9 @@ class GetMedalParticipantByEventId extends Retrieval
                     }
                 }
 
-                $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
+                // $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
+                $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeamWithContingent($category_detail->id);
+
                 if (strtolower($category_team_type) == "team") {
                     $data_qualification = ArcheryEventParticipant::getQualification($category_detail);
                     if ($data_elimination_team == null && $data_qualification != []) {
@@ -67,7 +77,12 @@ class GetMedalParticipantByEventId extends Retrieval
                                     "name" => $value["name"],
                                     "participant_id" => $value["participant_id"],
                                     "member_id" => $value["id"],
-                                    "club_name" => $value["club_name"]
+                                    "club_name" => $value["club_name"],
+                                    "city_name" => $value["city_name"],
+                                    "country_name" => $value["classification_country_name"],
+                                    "province_name" => $value["province_name"],
+                                    "children_classification_name" => $value["children_classification_members_name"],
+                                    "parent_classification" => $dq["parent_classification_type"],
                                 ];
                                 array_push($athlete, $res_athlete);
                                 if (count($athlete) == 3) {
@@ -92,10 +107,13 @@ class GetMedalParticipantByEventId extends Retrieval
                         }
                     }
                 }
+
                 // ================================ end qualification ==========================
 
                 // ================================ elimination ==================================
-                $data_report_elimination_individu = ArcheryEventParticipant::getData($category_detail->id, "elimination", $event_id);
+
+                // $data_report_elimination_individu = ArcheryEventParticipant::getData($category_detail->id, "elimination", $event_id);
+                $data_report_elimination_individu = ArcheryEventParticipant::getDataEliminationWithContingent($category_detail->id, "elimination", $event_id);
                 if (strtolower($category_team_type) == "individual") {
                     if (!empty($data_report_elimination_individu[0])) {
                         $athlete = [];
@@ -105,6 +123,11 @@ class GetMedalParticipantByEventId extends Retrieval
                                 "type" => "individu",
                                 "winner_name" => $value["athlete"],
                                 "club_name" => $value["club"],
+                                "city_name" => $value["city"],
+                                "country_name" => $value["country"],
+                                "province_name" => $value["province"],
+                                "children_classification_name" => $value["children_classification"],
+                                "parent_classification" => $value["parent_classification"],
                                 "rank" => $key + 1,
                                 "participant_id" => $value["participant_id"],
                                 "category_id" => $category_detail->id,
@@ -116,15 +139,21 @@ class GetMedalParticipantByEventId extends Retrieval
                 }
 
                 if (strtolower($category_team_type) == "team") {
-                    $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
+                    // $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeam($category_detail->id);
+                    $data_elimination_team = ArcheryEventParticipant::getDataEliminationTeamWithContingent($category_detail->id);
                     if (!empty($data_elimination_team)) {
                         $response_tim = [];
                         foreach ($data_elimination_team as $key_r => $value) {
-                            
+
                             $array_member = [];
                             $response_tim["winner_name"] = $value["team_name"];
                             $response_tim["participant_id"] = $value["participant_id"];
                             $response_tim["club_name"] = $value["club_name"];
+                            $response_tim["city_name"] = $value["city_name"];
+                            $response_tim["parent_classification"] = $value["parent_classification"];
+                            $response_tim["province_name"] = $value["province_name"];
+                            $response_tim["country_name"] = $value["country_name"];
+                            $response_tim["children_name"] = $value["children_name"];
                             foreach ($value["member_team"] as $key => $value_a) {
                                 $participant_member = ArcheryEventParticipantMember::select("archery_event_participants.id", "archery_clubs.name")->where("archery_event_participant_members.id", $value_a["member_id"])
                                     ->join("archery_event_participants", "archery_event_participants.id", "=", "archery_event_participant_members.archery_event_participant_id")
@@ -149,7 +178,6 @@ class GetMedalParticipantByEventId extends Retrieval
                 }
 
                 // ================================end elimination ===============================
-
 
             }
             $dates[$value1["date_format"]] = [
