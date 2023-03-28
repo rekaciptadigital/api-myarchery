@@ -227,11 +227,16 @@ class ArcheryEventParticipant extends Model
       $detail_club_with_medal_response = [];
       foreach ($data as $key => $d) {
         $detail_club_with_medal_response["club_name"] = $d["club_name"];
+        $detail_club_with_medal_response["country_name"] = $d["country_name"];
+        $detail_club_with_medal_response["province_name"] = $d["province_name"];
+        $detail_club_with_medal_response["city_name"] = $d["city_name"];
+        $detail_club_with_medal_response["children_classification_members_name"] = $d["children_classification_members_name"];
         $detail_club_with_medal_response["contingent_name"] = $d["contingent_name"];
         $detail_club_with_medal_response["total_gold"] = $d["gold"];
         $detail_club_with_medal_response["total_silver"] = $d["silver"];
         $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
         $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
+        $detail_club_with_medal_response["parent_classification_type"] = $d["parent_classification_type"];
 
         foreach ($competition_category as $competition) {
           $age_category = ArcheryEventCategoryDetail::select("archery_master_age_categories.label as age_category")
@@ -1073,6 +1078,7 @@ class ArcheryEventParticipant extends Model
   // digunakan untuk mendapatkan data qualification atau elimination dari peringkat satu sampai 3
   public static function getData($category_detail_id, $type, $event_id)
   {
+    $event = ArcheryEvent::find($event_id);
     $data_report = [];
     $category_id = null;
     $elimination_rank = 0;
@@ -1081,17 +1087,45 @@ class ArcheryEventParticipant extends Model
       "*",
       "archery_event_category_details.id as category_details_id",
       "archery_event_participant_members.id as participant_member_id",
-      "cities.name as city_name",
       "users.name as member_name",
+      "archery_event_participants.club_id as club_id",
       "archery_clubs.name as club_name",
+      "archery_event_participants.classification_country_id",
+      "countries.name as country_name",
+      "archery_event_participants.classification_province_id",
+      $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+      "archery_event_participants.city_id",
+      $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+      "archery_event_participants.children_classification_id",
+      "children_classification_members.title as children_classification_members_name",
       DB::RAW('date(archery_event_elimination_members.created_at) as date')
     )
       ->join('archery_event_participant_members', 'archery_event_participant_members.id', '=', 'archery_event_elimination_members.member_id')
       ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-      ->join("users", "users.id", "=", "archery_event_participants.user_id")
-      ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
-      ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-      ->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
+      ->join("users", "users.id", "=", "archery_event_participants.user_id");
+
+    // jika mewakili negara
+    $members = $members->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+    // jika mewakili provinsi
+    if ($event->classification_country_id == 102) {
+      $members = $members->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+    } else {
+      $members = $members->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+    }
+
+    // jika mewakili kota
+    if ($event->classification_country_id == 102) {
+      $members = $members->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+    } else {
+      $members = $members->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+    }
+
+    $members = $members->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+    $members = $members->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+    $members = $members->join('archery_event_category_details', 'archery_event_category_details.id', '=', 'archery_event_participants.event_category_id')
       ->where("archery_event_category_details.id", $category_detail_id)
       ->where("archery_event_participants.event_id", $event_id)
       ->where(function ($query) use ($type) {
@@ -1112,7 +1146,7 @@ class ArcheryEventParticipant extends Model
       ->get();
 
 
-    if ($members) {
+    if (count($members) > 0) {
       foreach ($members as $member) {
 
         $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($member->category_details_id);
@@ -1161,6 +1195,17 @@ class ArcheryEventParticipant extends Model
           "scoring" => $scoring,
           "elimination_rank" => $elimination_rank,
           "participant_id" => $member->archery_event_participant_id,
+          "club_id" => $member->club_id,
+          "club_name" => $member["club_name"],
+          "classification_country_id" => $member["classification_country_id"],
+          "country_name" => $member["country_name"],
+          "classification_province_id" => $member["classification_province_id"],
+          "province_name" => $member["province_name"],
+          "city_id" => $member["city_id"],
+          "city_name" => $member["city_name"],
+          "children_classification_id" => $member["children_classification_id"],
+          "children_classification_members_name" => $member["children_classification_members_name"],
+          "parent_classification_type" => $event->parent_classification,
         );
 
         $category_id = $member->category_details_id;
@@ -1414,6 +1459,8 @@ class ArcheryEventParticipant extends Model
 
   public static function getDataEliminationTeam($category_detail_id)
   {
+    $category = ArcheryEventCategoryDetail::find($category_detail_id);
+    $event = ArcheryEvent::find($category->event_id);
     $elimination_group = ArcheryEventEliminationGroup::where('category_id', $category_detail_id)->first();
     if ($elimination_group) {
       $elimination_group_match = ArcheryEventEliminationGroupMatch::select(DB::RAW('distinct group_team_id as teamid'))
@@ -1427,23 +1474,56 @@ class ArcheryEventParticipant extends Model
 
         if ($elimination_group_team) {
           if ($elimination_group_team->elimination_ranked <= 3) {
-            $participant = ArcheryEventParticipant::select("archery_clubs.name as club_name", "cities.name as city_name")
-              ->where("archery_event_participants.id", $elimination_group_team->participant_id)
-              ->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id")
-              ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
-              ->first();
-            $club_name = "";
-            $city_name = "";
-            if ($participant) {
-              $club_name = $participant->club_name;
-              $city_name = $participant->city_name;
+            $participant = ArcheryEventParticipant::select(
+              "archery_event_participants.*",
+              "archery_clubs.name as club_name",
+              "countries.name as country_name",
+              $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+              $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+              "children_classification_members.title as children_classification_members_name",
+            )
+              ->where("archery_event_participants.id", $elimination_group_team->participant_id);
+
+            // jika mewakili negara
+            $participant = $participant->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+            // jika mewakili provinsi
+            if ($event->classification_country_id == 102) {
+              $participant = $participant->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+            } else {
+              $participant = $participant->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+            }
+
+            // jika mewakili kota
+            if ($event->classification_country_id == 102) {
+              $participant = $participant->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+            } else {
+              $participant = $participant->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+            }
+
+            $participant = $participant->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+            $participant = $participant->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+            $participant = $participant->first();
+
+            if (!$participant) {
+              throw new BLoCException("participant not found");
             }
 
             $data[] = [
               'id' => $elimination_group_team->id,
               'participant_id' => $elimination_group_team->participant_id,
-              'club_name' => $club_name,
-              'city_name' => $city_name,
+              "club_id" => $participant->club_id,
+              "club_name" => $participant["club_name"],
+              "classification_country_id" => $participant["classification_country_id"],
+              "country_name" => $participant["country_name"],
+              "classification_province_id" => $participant["classification_province_id"],
+              "province_name" => $participant["province_name"],
+              "city_id" => $participant["city_id"],
+              "city_name" => $participant["city_name"],
+              "children_classification_id" => $participant["children_classification_id"],
+              "children_classification_members_name" => $participant["children_classification_members_name"],
+              "parent_classification_type" => $event->parent_classification,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
               'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
