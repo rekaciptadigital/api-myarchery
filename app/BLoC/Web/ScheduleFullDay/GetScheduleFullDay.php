@@ -38,38 +38,31 @@ class GetScheduleFullDay extends Retrieval
         if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
-
-        $select_classification_query = "archery_clubs.name as classification_name";
+                
         $table_for_search = "archery_clubs.name";
 
         if ($parent_classifification_id == 2) { // jika mewakili negara
             $table_for_search = "countries.name";
-            $select_classification_query = "countries.name as classification_name";
         }
 
         if ($parent_classifification_id == 3) { // jika mewakili provinsi
             if ($event->classification_country_id == 102) {
                 $table_for_search = "provinces.name";
-                $select_classification_query = "provinces.name as classification_name";
             } else {
                 $table_for_search = "states.name";
-                $select_classification_query = "states.name as classification_name";
             }
         }
 
         if ($parent_classifification_id == 4) { // jika mewakili kota
             if ($event->classification_country_id == 102) {
                 $table_for_search = "cities.name";
-                $select_classification_query = "cities.name as classification_name";
             } else {
                 $table_for_search = "cities_of_countries.name";
-                $select_classification_query = "cities_of_countries.name as classification_name";
             }
         }
 
         if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
             $table_for_search = "children_classification_members.title";
-            $select_classification_query = "children_classification_members.title as classification_name";
         }
 
         $schedule_member_query = ArcheryEventQualificationScheduleFullDay::select(
