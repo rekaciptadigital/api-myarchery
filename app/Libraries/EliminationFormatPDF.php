@@ -2,8 +2,8 @@
 
 namespace App\Libraries;
 
-use App\Models\ArcheryScoring;
 use App\Models\ArcheryEvent;
+use App\Models\ArcheryScoring;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventElimination;
 use App\Models\ArcheryEventEliminationMatch;
@@ -17,8 +17,9 @@ use App\Models\ArcheryEventParticipantMember;
 
 class EliminationFormatPDF
 {
-    public static function getDataGraph($event_category_id)
+    public static function getDataGraph($event_category_id, ArcheryEvent $event)
     {
+        $parent_classifification_id = $event->parent_classification;
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
         $elimination_id = 0;
         if ($elimination) {
@@ -63,6 +64,48 @@ class EliminationFormatPDF
             foreach ($fix_members as $key => $value) {
                 $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
                 if ($value->name != null) {
+
+                    $contingent =  ArcheryEventParticipant::select(
+                        "archery_event_participants.club_id as club_id",
+                        "archery_clubs.name as club_name",
+                        "archery_event_participants.classification_country_id as country_id",
+                        "countries.name as country_name",
+                        "archery_event_participants.classification_province_id as province_id",
+                        $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+                        "archery_event_participants.city_id",
+                        $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+                        "archery_event_participants.children_classification_id",
+                        "children_classification_members.title as children_classification_members_name"
+                    );
+                    // jika mewakili club
+                    $contingent = $contingent->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+                    // jika mewakili negara
+                    $contingent = $contingent->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+                    // jika mewakili provinsi
+                    if ($event->classification_country_id == 102) {
+                        $contingent = $contingent->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+                    } else {
+                        $contingent = $contingent->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+                    }
+
+                    // jika mewakili kota
+                    if ($event->classification_country_id == 102) {
+                        $contingent = $contingent->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+                    } else {
+                        $contingent = $contingent->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+                    }
+
+                    // jika berasal dari settingan admin
+                    $contingent = $contingent->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+                    $contingent = $contingent->where("archery_event_participants.id", $value->participant_id)
+                        ->where("archery_event_participants.status", 1)
+                        ->first();
+
                     $members[$value->round][$value->match]["teams"][] = array(
                         "id" => $value->member_id,
                         "name" => $value->name,
@@ -71,7 +114,18 @@ class EliminationFormatPDF
                         "potition" => $value->position_qualification,
                         "win" => $value->win,
                         "result" => $value->result,
-                        "status" => $value->win == 1 ? "win" : "wait"
+                        "status" => $value->win == 1 ? "win" : "wait",
+                        "club_id" => $contingent->club_id,
+                        "club_name" => $contingent->club_name,
+                        "country_id" => $contingent->country_id,
+                        "country_name" => $contingent->country_name,
+                        "province_id" => $contingent->province_id,
+                        "province_name" => $contingent->province_name,
+                        "city_id" => $contingent->city_id,
+                        "city_name" => $contingent->city_name,
+                        "children_classification_id" => $contingent->children_classification_id,
+                        "children_classification_members_name" => $contingent->children_classification_members_name,
+                        "parent_classification_type" => $parent_classifification_id
                     );
                 } else {
                     $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
@@ -86,111 +140,6 @@ class EliminationFormatPDF
             $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
         }
         // $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate2($qualification_rank, $elimination_member_count, $match_type, $event_category_id, $gender, $fix_members);
-        $template["updated"] = $updated;
-        $template["elimination_id"] = $elimination_id;
-        return $template;
-    }
-
-    public static function getDataGraphIndividu($category)
-    {
-        $elimination = ArcheryEventElimination::where("event_category_id", $category->id)->first();
-        $elimination_id = 0;
-        $elimination_member_count = $category->default_elimination_count;
-        if ($elimination) {
-            $elimination_id = $elimination->id;
-        }
-
-
-        $score_type = 1; // 1 for type qualification
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
-
-        $fix_members1 = ArcheryEventEliminationMatch::select(
-            "archery_event_elimination_members.position_qualification",
-            "users.name",
-            "archery_event_participant_members.id AS member_id",
-            "archery_event_participant_members.club",
-            "archery_event_participant_members.gender",
-            "archery_event_elimination_matches.id",
-            "archery_event_elimination_matches.round",
-            "archery_event_elimination_matches.match",
-            "archery_event_elimination_matches.win",
-            "archery_event_elimination_matches.result",
-            "archery_event_elimination_matches.bud_rest",
-            "archery_event_elimination_matches.target_face",
-            "archery_scorings.total as total_scoring",
-            "archery_scorings.scoring_detail"
-        )
-            ->leftJoin("archery_event_elimination_members", "archery_event_elimination_matches.elimination_member_id", "=", "archery_event_elimination_members.id")
-            ->leftJoin("archery_event_participant_members", "archery_event_elimination_members.member_id", "=", "archery_event_participant_members.id")
-            ->leftJoin("users", "users.id", "=", "archery_event_participant_members.user_id")
-            ->leftJoin("archery_scorings", "archery_scorings.item_id", "=", "archery_event_elimination_matches.id")
-            ->where("archery_event_elimination_matches.event_elimination_id", $elimination_id)
-            ->orderBy("archery_event_elimination_matches.round")
-            ->orderBy("archery_event_elimination_matches.match")
-            ->orderBy("archery_event_elimination_matches.index")
-            ->get();
-
-        // return $fix_members1;
-
-        $qualification_rank = [];
-        $updated = true;
-        if ($fix_members1->count() > 0) {
-            $members = [];
-            foreach ($fix_members1 as $key => $value) {
-                $members[$value->round][$value->match]["date"] = $value->date . " " . $value->start_time . " - " . $value->end_time;
-                if ($value->member_id != null) {
-                    $archery_scooring = ArcheryScoring::where("item_id", $value->id)->first();
-                    $admin_total = 0;
-                    $is_different = 0;
-                    $total_scoring = 0;
-                    if ($archery_scooring) {
-                        $admin_total = $archery_scooring->admin_total;
-                        $scoring_detail = json_decode($archery_scooring->scoring_detail);
-                        $total_scoring = $scoring_detail->result;
-                        if ($total_scoring != $admin_total) {
-                            $is_different = 1;
-                        }
-                    }
-
-                    $members[$value->round][$value->match]["teams"][] = array(
-                        "id" => $value->member_id,
-                        "match_id" => $value->id,
-                        "name" => $value->name,
-                        "gender" => $value->gender,
-                        "club" => $value->club,
-                        "potition" => $value->position_qualification,
-                        "win" => $value->win,
-                        "total_scoring" => $total_scoring,
-                        "result" => $value->result,
-                        "status" => $value->win == 1 ? "win" : "wait",
-                        "admin_total" => $admin_total,
-                        "budrest_number" => $value->bud_rest != 0 && $value->target_face != "" ? $value->bud_rest . "" . $value->target_face : "",
-                        "is_different" => $is_different,
-                    );
-                } else {
-                    $match =  ArcheryEventEliminationMatch::where("event_elimination_id", $elimination_id)->where("round", $value->round)->where("match", $value->match)->get();
-                    if ($match[0]->elimination_member_id == 0 && $match[1]->win == 1) {
-                        $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
-                    } elseif ($match[1]->elimination_member_id == 0 && $match[0]->win == 1) {
-                        $members[$value->round][$value->match]["teams"][] = ["status" => "bye"];
-                    } elseif (($match[1]->elimination_member_id == 0 && $match[0]->elimination_member_id == 0) && $value->round == 1) {
-                        $members[$value->round][$value->match]["teams"][] = ["status" => "wait"];
-                    } else {
-                        $members[$value->round][$value->match]["teams"][] = ["status" => "wait"];
-                    }
-                }
-            }
-
-            $fix_members2 = $members;
-            $updated = false;
-            $template["rounds"] = ArcheryEventEliminationSchedule::getTemplate($fix_members2, $elimination_member_count);
-        } else {
-            $qualification_rank = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, null, true, 1);
-            $template["rounds"] = ArcheryEventEliminationSchedule::makeTemplate($qualification_rank, $elimination_member_count);
-        }
         $template["updated"] = $updated;
         $template["elimination_id"] = $elimination_id;
         return $template;
@@ -1058,10 +1007,10 @@ class EliminationFormatPDF
             'round1member2status' => $data['$round1status'][1],
             'round1member3status' => $data['$round1status'][2],
             'round1member4status' => $data['$round1status'][3],
-            
+
             'round2member1status' => $data['$round2status'][0],
             'round2member2status' => $data['$round2status'][1],
-            
+
             'round3member1status' => $data['$round3status'][0],
             'round3member2status' => $data['$round3status'][1],
 

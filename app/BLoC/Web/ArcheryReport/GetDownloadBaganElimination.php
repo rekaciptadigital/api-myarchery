@@ -36,7 +36,7 @@ class GetDownloadBaganElimination extends Retrieval
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $event->location;
         $logo_event = $event->logo;
-        $logo_archery = Storage::disk('public')->path("logo/logo-archery.png");
+        $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $category_id = $parameters->get("category_id");
         $category = ArcheryEventCategoryDetail::find($category_id);
@@ -54,7 +54,7 @@ class GetDownloadBaganElimination extends Retrieval
         if (strtolower($team_category->type) == "team") {
             $data_elimination = ArcheryEventParticipant::getTemplateTeam($category);
         } else {
-            $data_elimination = ArcheryEventParticipant::getTemplateIndividu($category);
+            $data_elimination = ArcheryEventParticipant::getTemplateIndividu($category, $event);
         }
 
         $type = 'Elimination';
@@ -66,7 +66,7 @@ class GetDownloadBaganElimination extends Retrieval
             if (!empty($data_report[0])) {
 
                 $elimination_individu = ArcheryEventElimination::where("event_category_id", $category_id)->first();
-                $data_graph = EliminationFormatPDF::getDataGraph($data_report[1]);
+                $data_graph = EliminationFormatPDF::getDataGraph($data_report[1], $event);
 
                 if ($data_elimination['updated'] == false) {
                     if ($elimination_individu->count_participant == 32) {
@@ -102,7 +102,6 @@ class GetDownloadBaganElimination extends Retrieval
             //print bagan eliminasi
             if ($data_elimination['updated'] == false) {
                 if ($elimination_team->count_participant == 4) {
-                    // return ($data_elimination); die;
                     $data_graph_team = EliminationFormatPDFV2::getViewDataGraphTeamOfBigFour($data_elimination);
                     $view_path = 'report_result/elimination_graph/team/graph_four';
                     $title_category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);

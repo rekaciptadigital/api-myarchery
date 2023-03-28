@@ -523,7 +523,7 @@ class ClubRanked
                     $club_or_city_ids[$lcity_value->id]["classification_province_id"] = 0;
                     $club_or_city_ids[$lcity_value->id]["province_name"] = null;
                     $club_or_city_ids[$lcity_value->id]["city_id"] = $lcity_value->id;
-                    $club_or_city_ids[$lcity_value->id]["city_name"] = $lcity_value->city_name;
+                    $club_or_city_ids[$lcity_value->id]["city_name"] = $lcity_value->name;
                     $club_or_city_ids[$lcity_value->id]["children_classification_id"] = 0;
                     $club_or_city_ids[$lcity_value->id]["children_classification_members_name"] = null;
                     $club_or_city_ids[$lcity_value->id]["total"] = 0;
