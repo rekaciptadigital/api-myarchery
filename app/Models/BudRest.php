@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEvent;
-use App\Models\ParticipantMemberTeam;
 use DAI\Utils\Exceptions\BLoCException;
 use Mpdf\Mpdf;
 use Mpdf\QrCode\QrCode;
@@ -19,10 +18,22 @@ class BudRest extends Model
 
     protected function downloadQualificationScoreSheet($category_id, $update_file = true, $session = 1)
     {
-        $category = ArcheryEventCategoryDetail::find($category_id);
-        if (!$category) {
-            throw new BLoCException("event category tidak tersedia");
+        $category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_events.is_private",
+            "archery_events.parent_classification",
+            "archery_events.classification_country_id"
+        )
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->where("archery_event_category_details.id", $category_id)
+            ->first();
+
+        $parent_classifification_id = $category->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
         }
+
         $path = 'asset/score_sheet/' . $category->id . '/';
         if (!$update_file) {
             if (file_exists(public_path() . "/" . $path . "score_sheet_" . $category->id . ".pdf")) {
@@ -56,15 +67,49 @@ class BudRest extends Model
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
             'users.name',
-            'archery_clubs.name as club_name',
-            'cities.name as city_name'
+            "archery_event_participants.club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.city_id",
+            $category->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.classification_country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id",
+            $category->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
         )
             ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'archery_event_participant_members.id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
-            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
-            ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
-            ->where('archery_event_participants.event_category_id', $category->id)
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id');
+
+        // jika mewakili club
+        $participant_member_team = $participant_member_team->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $participant_member_team = $participant_member_team->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+        }
+
+
+        // jika mewakili kota
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+        }
+
+
+        // jika berasal dari settingan admin
+        $participant_member_team = $participant_member_team->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+        $participant_member_team = $participant_member_team->where('archery_event_participants.event_category_id', $category->id)
             ->where('archery_event_participants.status', 1)
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
@@ -80,6 +125,7 @@ class BudRest extends Model
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
+                    $pmt->parent_classification_type = $parent_classifification_id;
                     $code_sesi['detail_member'] = $pmt;
                     $code_sesi['sesi'] = $distance[$i - 1] . "-" . $i;
                     $code_sesi['code'] = "1-" . $pmt->member_id . "-" . $i;
@@ -119,7 +165,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $dm[0],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -141,7 +186,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification_group_by_budrest', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $data["members"],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -165,7 +209,6 @@ class BudRest extends Model
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                 $html = \view('template.score_sheet_qualification_group_by_budrest', [
-                    "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
@@ -419,13 +462,29 @@ class BudRest extends Model
 
     protected function downloadQualificationSelectionScoreSheet($category_id, $update_file = true, $session = 1)
     {
-        $category = ArcheryEventCategoryDetail::find($category_id);
+        $category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_events.is_private",
+            "archery_events.parent_classification",
+            "archery_events.classification_country_id"
+        )
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->where("archery_event_category_details.id", $category_id)
+            ->first();
+
+        $parent_classifification_id = $category->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
         $path = 'asset/score_sheet/' . $category->id . '/';
         if (!$update_file) {
             if (file_exists(public_path() . "/" . $path . "score_sheet_" . $category->id . ".pdf")) {
                 return ["url" => $path . "score_sheet_qualification_selection" . $category->id . ".pdf#oldData", "member_not_have_budrest" => []];
             }
         }
+
         $mpdf = new Mpdf([
             'margin_left' => 1,
             'margin_right' => 1,
@@ -453,15 +512,48 @@ class BudRest extends Model
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
             'users.name',
-            'archery_clubs.name as club_name',
-            'cities.name as city_name'
+            "archery_event_participants.club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.city_id",
+            $category->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.classification_country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id",
+            $category->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
         )
             ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'archery_event_participant_members.id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
-            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
-            ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
-            ->where('archery_event_participants.event_category_id', $category->id)
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id');
+        // jika mewakili club
+        $participant_member_team = $participant_member_team->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $participant_member_team = $participant_member_team->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+        }
+
+
+        // jika mewakili kota
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+        }
+
+
+        // jika berasal dari settingan admin
+        $participant_member_team = $participant_member_team->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+        $participant_member_team = $participant_member_team->where('archery_event_participants.event_category_id', $category->id)
             ->where('archery_event_participants.status', 1)
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
@@ -472,6 +564,7 @@ class BudRest extends Model
         for ($i = 1; $i <= $category->session_in_qualification; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
+                    $pmt->parent_classification_type = $parent_classifification_id;
                     $code_sesi['detail_member'] = $pmt;
                     $code_sesi['sesi'] = $i;
                     $code_sesi['code'] = "3-" . $pmt->member_id . "-" . $i;
@@ -511,7 +604,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $dm[0],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -533,7 +625,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.score_sheet_qualification_group_by_budrest', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $data["members"],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -557,7 +648,6 @@ class BudRest extends Model
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                 $html = \view('template.score_sheet_qualification_group_by_budrest', [
-                    "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],
@@ -579,7 +669,22 @@ class BudRest extends Model
 
     protected function downloadEliminationSelectionScoreSheet($category_id, $update_file = false, $session = 1)
     {
-        $category = ArcheryEventCategoryDetail::find($category_id);
+        $category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_events.is_private",
+            "archery_events.parent_classification",
+            "archery_events.classification_country_id"
+        )
+            ->join("archery_events", "archery_events.id", "=", "archery_event_category_details.event_id")
+            ->where("archery_event_category_details.id", $category_id)
+            ->first();
+
+        $parent_classifification_id = $category->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
         $path = 'asset/score_sheet/' . $category->id . '/';
         if (!$update_file) {
             if (file_exists(public_path() . "/" . $path . "score_sheet_" . $category->id . ".pdf")) {
@@ -613,15 +718,49 @@ class BudRest extends Model
             'archery_event_qualification_schedule_full_day.target_face',
             'archery_event_participants.id as participant_id',
             'users.name',
-            'archery_clubs.name as club_name',
-            'cities.name as city_name'
+            "archery_event_participants.club_id",
+            "archery_clubs.name as club_name",
+            "archery_event_participants.city_id",
+            $category->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+            "archery_event_participants.classification_country_id",
+            "countries.name as country_name",
+            "archery_event_participants.classification_province_id",
+            $category->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+            "archery_event_participants.children_classification_id",
+            "children_classification_members.title as children_classification_members_name"
         )
             ->leftJoin('archery_event_qualification_schedule_full_day', 'archery_event_qualification_schedule_full_day.participant_member_id', '=', 'archery_event_participant_members.id')
             ->join('archery_event_participants', 'archery_event_participants.id', '=', 'archery_event_participant_members.archery_event_participant_id')
-            ->join('users', 'users.id', '=', 'archery_event_participants.user_id')
-            ->leftJoin('archery_clubs', 'archery_clubs.id', '=', 'archery_event_participants.club_id')
-            ->leftJoin('cities', 'cities.id', '=', 'archery_event_participants.city_id')
-            ->where('archery_event_participants.event_category_id', $category->id)
+            ->join('users', 'users.id', '=', 'archery_event_participants.user_id');
+
+        // jika mewakili club
+        $participant_member_team = $participant_member_team->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+
+        // jika mewakili negara
+        $participant_member_team = $participant_member_team->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+        // jika mewakili provinsi
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+        }
+
+
+        // jika mewakili kota
+        if ($category->classification_country_id == 102) {
+            $participant_member_team = $participant_member_team->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+        } else {
+            $participant_member_team = $participant_member_team->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+        }
+
+
+        // jika berasal dari settingan admin
+        $participant_member_team = $participant_member_team->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+        $participant_member_team = $participant_member_team->where('archery_event_participants.event_category_id', $category->id)
             ->where('archery_event_participants.status', 1)
             ->orderBy("archery_event_qualification_schedule_full_day.bud_rest_number", "ASC")
             ->orderBy("archery_event_qualification_schedule_full_day.target_face", "ASC")
@@ -633,6 +772,7 @@ class BudRest extends Model
         for ($i = 1; $i <= $count_stage; $i++) {
             if ($i == $session) {
                 foreach ($participant_member_team as $pmt) {
+                    $pmt->parent_classification_type = $parent_classifification_id;
                     $code_sesi['detail_member'] = $pmt;
                     $code_sesi['sesi'] = $i;
                     $code_sesi['code'] = "4-" . $pmt->member_id . "-" . $i;
@@ -672,7 +812,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.event_selection.score_sheet_elimination', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $dm[0],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -694,7 +833,6 @@ class BudRest extends Model
                         $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                         $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                         $html = \view('template.event_selection.score_sheet_elimination_group_by_budrest', [
-                            "with_contingent" => $event->with_contingent,
                             "data" => $data["members"],
                             "category" => $output['category'],
                             "category_label" => $output['category_label'],
@@ -718,7 +856,6 @@ class BudRest extends Model
                 $data_get_qr_code = file_get_contents(public_path() . "/" . $full_path);
                 $base64 = 'data:image/png;base64,' . base64_encode($data_get_qr_code);
                 $html = \view('template.event_selection.score_sheet_elimination_group_by_budrest', [
-                    "with_contingent" => $event->with_contingent,
                     "data" => $data["members"],
                     "category" => $output['category'],
                     "category_label" => $output['category_label'],

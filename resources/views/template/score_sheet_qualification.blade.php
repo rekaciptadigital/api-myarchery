@@ -83,7 +83,17 @@
                 <td style="border-bottom: 1pt solid black;width: 9px; text-align: center; height: 30px;">:</td>
                 <td style="border-bottom: 1pt solid black;width: 340px; height: 30px;text-align: left;float: left;"
                     colspan="3">
-                    {{ $with_contingent == 0 ? $data['detail_member']['club_name'] : $data['detail_member']['city_name'] }}
+                    @if ($data['detail_member']['parent_classification_type'] == 2)
+                        {{ ucwords(strtolower($data['detail_member']['country_name'])) }}
+                    @elseif ($data['detail_member']['parent_classification_type'] == 3)
+                        {{ ucwords(strtolower($data['detail_member']['province_name'])) }}
+                    @elseif ($data['detail_member']['parent_classification_type'] == 4)
+                        {{ ucwords(strtolower($data['detail_member']['city_name'])) }}
+                    @elseif ($data['detail_member']['parent_classification_type'] == 6)
+                        {{ ucwords(strtolower($data['detail_member']['children_classification_members_name'])) }}
+                    @else
+                        {{ ucwords(strtolower($data['detail_member']['club_name'])) }}
+                    @endif
                 </td>
             </tr>
         </tbody>
