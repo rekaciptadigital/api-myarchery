@@ -123,7 +123,8 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
                 "qr" => "",
                 "event_name" => $event_name,
                 "location" => $location_event,
-                "elimination_scoring_type" => 0
+                "elimination_scoring_type" => 0,
+                "title_parent" => $title_parent
             ]);
         }
 
