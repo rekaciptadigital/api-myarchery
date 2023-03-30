@@ -70,7 +70,6 @@ class ReportMedalClub extends Retrieval
 
         if ($data_medal_standing != [] && count($data_medal_standing["datatable"]) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
-                "with_contingent" => $archery_event->with_contingent,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,

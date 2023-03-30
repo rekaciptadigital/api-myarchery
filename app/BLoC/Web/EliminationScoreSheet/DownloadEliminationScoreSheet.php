@@ -358,7 +358,6 @@ class DownloadEliminationScoreSheet extends Retrieval
         ]);
 
         $html = view('template.score_sheet_elimination_team', [
-            "with_contingent" => $with_contingent,
             'tim_1_name' => $result['name_athlete'][0],
             'tim_2_name' => $result['name_athlete'][1],
             'club_1' => $result['club'][0],

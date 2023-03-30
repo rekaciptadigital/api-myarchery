@@ -54,7 +54,6 @@ class GetDetailEventByIdGeneral extends Retrieval
             $response["event_status"] = $event->event_status;
             $response["more_information"] = $event->more_information;
             $response["event_price"] = $event->event_price;
-            $response["with_contingent"] = $event->with_contingent;
             $response["province_id"] = $event->province_id;
             $response["parent_classification"] = $event->parent_classification;
             $response["parent_classification_title"] = $parent_classification_title;
