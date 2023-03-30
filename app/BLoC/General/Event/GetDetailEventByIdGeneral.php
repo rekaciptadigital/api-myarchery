@@ -3,6 +3,7 @@
 namespace App\BLoC\General\Event;
 
 use App\Models\ArcheryEvent;
+use App\Models\ParentClassificationMembers;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 
@@ -25,6 +26,11 @@ class GetDetailEventByIdGeneral extends Retrieval
         $response = [];
 
         if ($event) {
+            $parent_classification_title = "";
+            $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+            if ($parent_classification) {
+                $parent_classification_title = $parent_classification->title;
+            }
             $response["id"] = $event->id;
             $response["poster"] = $event->poster;
             $response["handbook"] = $event->handbook;
@@ -50,6 +56,8 @@ class GetDetailEventByIdGeneral extends Retrieval
             $response["event_price"] = $event->event_price;
             $response["with_contingent"] = $event->with_contingent;
             $response["province_id"] = $event->province_id;
+            $response["parent_classification"] = $event->parent_classification;
+            $response["parent_classification_title"] = $parent_classification_title;
         }
 
         return $response;
