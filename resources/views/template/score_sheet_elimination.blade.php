@@ -92,13 +92,13 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td>{{ $title_parent }}</td>
                     <td>:</td>
                     <td>
-                        @if ($parent_classification_type == 2)
+                        @if ($parent_classifification_type == 2)
                             {{ ucwords(strtolower($peserta1_country_name)) }}
-                        @elseif ($parent_classification_type == 3)
+                        @elseif ($parent_classifification_type == 3)
                             {{ ucwords(strtolower($peserta1_province_name)) }}
-                        @elseif ($parent_classification_type == 4)
+                        @elseif ($parent_classifification_type == 4)
                             {{ ucwords(strtolower($peserta1_city_name)) }}
-                        @elseif ($parent_classification_type > 5)
+                        @elseif ($parent_classifification_type > 5)
                             {{ ucwords(strtolower($peserta1_children_classification_members_name)) }}
                         @else
                             {{ ucwords(strtolower($peserta1_club_name)) }}
@@ -136,13 +136,13 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td>{{ $title_parent }}</td>
                     <td>:</td>
                     <td>
-                        @if ($parent_classification_type == 2)
+                        @if ($parent_classifification_type == 2)
                             {{ ucwords(strtolower($peserta2_country_name)) }}
-                        @elseif ($parent_classification_type == 3)
+                        @elseif ($parent_classifification_type == 3)
                             {{ ucwords(strtolower($peserta2_province_name)) }}
-                        @elseif ($parent_classification_type == 4)
+                        @elseif ($parent_classifification_type == 4)
                             {{ ucwords(strtolower($peserta2_city_name)) }}
-                        @elseif ($parent_classification_type > 5)
+                        @elseif ($parent_classifification_type > 5)
                             {{ ucwords(strtolower($peserta2_children_classification_members_name)) }}
                         @else
                             {{ ucwords(strtolower($peserta2_club_name)) }}
