@@ -35,7 +35,7 @@ class ClubRanked
             $tag_ranked = "classification_province_id";
         } elseif ($event->parent_classification == 4) {
             $tag_ranked = "city_id";
-        } elseif ($event->parent_classification == 6) {
+        } elseif ($event->parent_classification > 5) {
             $tag_ranked = "children_classification_id";
         } else {
             $tag_ranked = "club_id";

@@ -65,7 +65,7 @@
                 {{ ucwords(strtolower($province_name)) }}
             @elseif ($parent_classification_type == 4)
                 {{ ucwords(strtolower($city_name)) }}
-            @elseif ($parent_classification_type == 6)
+            @elseif ($parent_classification_type > 5)
                 {{ ucwords(strtolower($children_classification_members_name)) }}
             @else
                 {{ ucwords(strtolower($club_name)) }}
@@ -103,7 +103,7 @@
                             {{ ucwords(strtolower($province_name)) }}
                         @elseif ($parent_classification_type == 4)
                             {{ ucwords(strtolower($city_name)) }}
-                        @elseif ($parent_classification_type == 6)
+                        @elseif ($parent_classification_type > 5)
                             {{ ucwords(strtolower($children_classification_members_name)) }}
                         @else
                             {{ ucwords(strtolower($club_name)) }}

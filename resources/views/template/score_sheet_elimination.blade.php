@@ -66,7 +66,6 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     </td>
                     <td style="padding-left:0; padding-top:15px; vertical-align:top; width:65%; line-height: 1.6">
                         <h1 style="font-size: 14pt;">{{ $event_name }}</h1>
-                        {{-- <p>KELAB MEMANAH PD (PDA2019)</p> --}}
                         <p>{{ $location }}</p>
                     </td>
                     <td>
@@ -90,9 +89,21 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                         Rank</td>
                 </tr>
                 <tr>
-                    <td>Club/Contingent</td>
+                    <td>{{ $title_parent }}</td>
                     <td>:</td>
-                    <td>{{ $with_contingent == 0 ? $peserta1_club : $peserta1_city }}</td>
+                    <td>
+                        @if ($parent_classification_type == 2)
+                            {{ ucwords(strtolower($peserta1_country_name)) }}
+                        @elseif ($parent_classification_type == 3)
+                            {{ ucwords(strtolower($peserta1_province_name)) }}
+                        @elseif ($parent_classification_type == 4)
+                            {{ ucwords(strtolower($peserta1_city_name)) }}
+                        @elseif ($parent_classification_type > 5)
+                            {{ ucwords(strtolower($peserta1_children_classification_members_name)) }}
+                        @else
+                            {{ ucwords(strtolower($peserta1_club_name)) }}
+                        @endif
+                    </td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
                         rowspan="3">{{ $peserta1_rank }}</td>
@@ -122,9 +133,21 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                         Rank</td>
                 </tr>
                 <tr>
-                    <td>Club/Contingent</td>
+                    <td>{{ $title_parent }}</td>
                     <td>:</td>
-                    <td>{{ $with_contingent == 0 ? $peserta2_club : $peserta2_city }}</td>
+                    <td>
+                        @if ($parent_classification_type == 2)
+                            {{ ucwords(strtolower($peserta2_country_name)) }}
+                        @elseif ($parent_classification_type == 3)
+                            {{ ucwords(strtolower($peserta2_province_name)) }}
+                        @elseif ($parent_classification_type == 4)
+                            {{ ucwords(strtolower($peserta2_city_name)) }}
+                        @elseif ($parent_classification_type > 5)
+                            {{ ucwords(strtolower($peserta2_children_classification_members_name)) }}
+                        @else
+                            {{ ucwords(strtolower($peserta2_club_name)) }}
+                        @endif
+                    </td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
                         rowspan="3">{{ $peserta2_rank }}</td>

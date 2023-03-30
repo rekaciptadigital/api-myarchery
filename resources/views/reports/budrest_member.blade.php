@@ -44,7 +44,17 @@
                         {{ $data['name'] }}
                     </td>
                     <td style="text-align: center;border: 1px solid black;">
-                        {{ ((($data['parent_classification_type'] == 6 ? $data['children_classification_members_name'] : $data['parent_classification_type'] == 2) ? $data['country_name'] : $data['parent_classification_type'] == 3) ? $data['province_name'] : $data['parent_classification_type'] == 4) ? $data['city_name'] : $data['club_name'] }}
+                        @if ($data['parent_classification_type'] == 2)
+                            {{ ucwords(strtolower($data['country_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 3)
+                            {{ ucwords(strtolower($data['province_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 4)
+                            {{ ucwords(strtolower($data['city_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 6)
+                            {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                        @else
+                            {{ ucwords(strtolower($data['club_name'])) }}
+                        @endif
                     </td>
                 </tr>
             @endforeach

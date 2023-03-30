@@ -121,7 +121,7 @@ class GetParticipantMemberByCategory extends Retrieval
                 $participant_individu->where("archery_event_participants.city_id", $participant->city_id);
             }
 
-            if ($participant->parent_classification == 6) {
+            if ($participant->parent_classification > 5) {
                 $participant_individu->where("archery_event_participants.children_classification_id", $participant->children_classification_id);
             }
 

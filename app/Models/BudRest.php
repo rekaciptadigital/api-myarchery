@@ -306,10 +306,6 @@ class BudRest extends Model
             throw new BLoCException("parent calassification_id invalid");
         }
 
-        if ($parent_classifification_id == 5) {
-            throw new BLoCException("config not found");
-        }
-
         $tag = "club_id";
         $select_classification_query = "archery_event_participants.club_id";
 
@@ -328,7 +324,7 @@ class BudRest extends Model
             $select_classification_query = "archery_event_participants.city_id";
         }
 
-        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id > 5) { // jika berasal dari settingan admin
             $tag = "children_classification_id";
             $select_classification_query = "archery_event_participants.children_classification_id";
         }
@@ -359,7 +355,7 @@ class BudRest extends Model
             }
         }
 
-        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id > 5) { // jika berasal dari settingan admin
             $data = $data->join("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
         }
 
