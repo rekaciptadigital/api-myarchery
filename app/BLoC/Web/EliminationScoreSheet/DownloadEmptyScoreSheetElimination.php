@@ -4,6 +4,7 @@ namespace App\BLoC\Web\EliminationScoreSheet;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
+use App\Models\ParentClassificationMembers;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use Mpdf\Mpdf;
@@ -29,6 +30,18 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
         $archery_event = ArcheryEvent::find($category->event_id);
         if (!$archery_event) {
             throw new BLoCException("event not found");
+        }
+
+        $parent_classifification_id = $archery_event->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $title_parent = "";
+        $parent_classification = ParentClassificationMembers::find($parent_classifification_id);
+        if ($parent_classification) {
+            $title_parent = $parent_classification->title;
         }
 
         $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
@@ -66,7 +79,6 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
 
         if (strtolower($category->type) == "team") {
             $html = view('template.score_sheet_elimination_team', [
-                "with_contingent" => $archery_event->with_contingent,
                 'tim_1_name' => "",
                 'tim_2_name' => "",
                 'club_1' => "",
@@ -88,16 +100,25 @@ class DownloadEmptyScoreSheetElimination extends Retrieval
             ]);
         } else {
             $html = view('template.score_sheet_elimination', [
-                "with_contingent" => $archery_event->with_contingent,
+                "parent_classifification_type" => $parent_classifification_id,
+                "title_parent" => $title_parent,
                 'peserta1_name' => "",
-                'peserta2_name' => "",
-                'peserta1_club' => "",
-                'peserta1_city' => "",
-                'peserta2_club' => "",
-                'peserta2_city' => "",
+                'peserta1_club_name' => "",
+                'peserta1_country_name' => "",
+                'peserta1_province_name' => "",
+                'peserta1_city_name' => "",
+                'peserta1_children_classification_members_name' => "",
+                'peserta1_parent_classifification_type' => "",
                 'peserta1_rank' => "",
-                'peserta2_rank' => "",
                 'peserta1_category' => $label,
+                'peserta2_name' => "",
+                'peserta2_club_name' => "",
+                'peserta2_country_name' => "",
+                'peserta2_province_name' => "",
+                'peserta2_city_name' => "",
+                'peserta2_children_classification_members_name' => "",
+                'peserta2_parent_classifification_type' => "",
+                'peserta2_rank' => "",
                 'peserta2_category' => $label,
                 "qr" => "",
                 "event_name" => $event_name,

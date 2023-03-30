@@ -201,7 +201,6 @@ class GetParticipantMemberByCategory extends Retrieval
         $output["children_classification_member_id"] = $children_classification_member_id;
         $output["children_classification_member_name"] = $children_classification_member_name;
         $output["parent_classification_type"] = $participant->parent_classification;
-        $output['with_contingent'] = 1;
 
         return $output;
     }
