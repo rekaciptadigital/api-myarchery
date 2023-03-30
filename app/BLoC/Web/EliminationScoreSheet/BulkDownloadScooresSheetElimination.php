@@ -15,6 +15,7 @@ use App\Models\ArcheryEventEliminationGroupMatch;
 use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ParentClassificationMembers;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -76,7 +77,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         if (strtolower($category->type) == "team") {
             return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event->with_contingent);
         } else {
-            return $this->getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event->with_contingent);
+            return $this->getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event);
         }
     }
 
@@ -89,8 +90,20 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         ];
     }
 
-    private function getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $with_contingent)
+    private function getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, ArcheryEvent $event)
     {
+        $parent_classifification_id = $event->parent_classification;
+
+        if ($parent_classifification_id == 0) {
+            throw new BLoCException("parent calassification_id invalid");
+        }
+
+        $title_parent = "";
+        $parent_classification = ParentClassificationMembers::find($parent_classifification_id);
+        if ($parent_classification) {
+            $title_parent = $parent_classification->title;
+        }
+
         $elimination = ArcheryEventElimination::find($elimination_id);
         if (!$elimination) {
             throw new BLoCException("elimination not found");
@@ -131,36 +144,75 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             foreach ($value as $v) {
                 $name = "";
                 $rank = "";
-                $club = "";
-                $city = "";
                 $elimination_member = ArcheryEventEliminationMember::find($v->elimination_member_id);
                 if ($elimination_member) {
                     $participant_member_id = $elimination_member->member_id;
 
                     $detail_member = ArcheryEventParticipantMember::select(
-                        'archery_event_participant_members.name as name',
-                        'archery_clubs.name as club_name',
-                        'cities.name as city_name',
+                        'users.name as name',
                         'archery_event_participants.id as participant_id',
                         'archery_event_participants.user_id as user_id',
-                        'archery_event_participants.event_id'
+                        'archery_event_participants.event_id',
+                        "archery_event_participants.club_id as club_id",
+                        "archery_clubs.name as club_name",
+                        "archery_event_participants.classification_country_id as country_id",
+                        "countries.name as country_name",
+                        "archery_event_participants.classification_province_id as province_id",
+                        $event->classification_country_id == 102 ? "provinces.name as province_name" : "states.name as province_name",
+                        "archery_event_participants.city_id",
+                        $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
+                        "archery_event_participants.children_classification_id",
+                        "children_classification_members.title as children_classification_members_name"
                     )
-                        ->where('archery_event_participant_members.id', $participant_member_id)
-                        ->leftJoin('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
-                        ->leftJoin('archery_clubs', 'archery_clubs.id', 'archery_event_participants.club_id')
-                        ->leftJoin('cities', 'cities.id', 'archery_event_participants.city_id')
+
+                        ->join('archery_event_participants', 'archery_event_participants.id', 'archery_event_participant_members.archery_event_participant_id')
+                        ->join('users', "users.id", "=", "archery_event_participants.user_id");
+
+                    // jika mewakili club
+                    $detail_member = $detail_member->leftJoin("archery_clubs", "archery_clubs.id", "=", "archery_event_participants.club_id");
+
+                    // jika mewakili negara
+                    $detail_member = $detail_member->leftJoin("countries", "countries.id", "=", "archery_event_participants.classification_country_id");
+
+
+                    // jika mewakili provinsi
+                    if ($event->classification_country_id == 102) {
+                        $detail_member = $detail_member->leftJoin("provinces", "provinces.id", "=", "archery_event_participants.classification_province_id");
+                    } else {
+                        $detail_member = $detail_member->leftJoin("states", "states.id", "=", "archery_event_participants.classification_province_id");
+                    }
+
+                    // jika mewakili kota
+                    if ($event->classification_country_id == 102) {
+                        $detail_member = $detail_member->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id");
+                    } else {
+                        $detail_member = $detail_member->leftJoin("cities_of_countries", "cities_of_countries.id", "=", "archery_event_participants.city_id");
+                    }
+
+                    // jika berasal dari settingan admin
+                    $detail_member = $detail_member->leftJoin("children_classification_members", "children_classification_members.id", "=", "archery_event_participants.children_classification_id");
+
+                    $detail_member = $detail_member->where('archery_event_participant_members.id', $participant_member_id)
                         ->first();
+
                     $name = $detail_member['name'];
                     $rank = $elimination_member->elimination_ranked;
-                    $club = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
-                    $city = $detail_member['city_name'] ? $detail_member['city_name'] : "-";
+                    $club_name = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
+                    $country_name = $detail_member["country_name"] ? $detail_member["country_name"] : "-";
+                    $province_name = $detail_member["province_name"] ? $detail_member["province_name"] : "-";
+                    $city_name = $detail_member['city_name'] ? $detail_member['city_name'] : "-";
+                    $children_classification_members_name = $detail_member["children_classification_members_name"] ? $detail_member["children_classification_members_name"] : "-";
                 }
 
 
                 $result['name_athlete'][] = $name;
                 $result['rank'][] = $rank;
-                $result['club'][] = $club;
-                $result['city'][] = $city;
+                $result['club_name'][] = $club_name;
+                $result['country_name'][] = $country_name;
+                $result['province_name'][] = $province_name;
+                $result['city_name'][] = $city_name;
+                $result["children_classification_members_name"][] = $children_classification_members_name;
+                $result["parent_classifification_type"][] = $parent_classifification_id;
 
                 $category = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_id);
                 if ($category == "") {
@@ -171,16 +223,25 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination', [
-                "with_contingent" => $with_contingent,
+                "parent_classifification_type" => $parent_classifification_id,
+                "title_parent" => $title_parent,
                 'peserta1_name' => $result['name_athlete'][0],
-                'peserta2_name' => $result['name_athlete'][1],
-                'peserta1_club' => $result['club'][0],
-                'peserta2_club' => $result['club'][1],
-                'peserta1_city' => $result['city'][0],
-                'peserta2_city' => $result['city'][1],
+                'peserta1_club_name' => $result['club_name'][0],
+                'peserta1_country_name' => $result['country_name'][0],
+                'peserta1_province_name' => $result['province_name'][0],
+                'peserta1_city_name' => $result['city_name'][0],
+                'peserta1_children_classification_members_name' => $result['children_classification_members_name'][0],
+                'peserta1_parent_classifification_type' => $result['parent_classifification_type'][0],
                 'peserta1_rank' => $result['rank'][0],
-                'peserta2_rank' => $result['rank'][1],
                 'peserta1_category' => $result['category'][0],
+                'peserta2_name' => $result['name_athlete'][1],
+                'peserta2_club_name' => $result['club_name'][1],
+                'peserta2_country_name' => $result['country_name'][1],
+                'peserta2_province_name' => $result['province_name'][1],
+                'peserta2_city_name' => $result['city_name'][1],
+                'peserta2_children_classification_members_name' => $result['children_classification_members_name'][1],
+                'peserta2_parent_classifification_type' => $result['parent_classifification_type'][1],
+                'peserta2_rank' => $result['rank'][1],
                 'peserta2_category' => $result['category'][1],
                 "qr" => $base64,
                 "event_name" => $event_name,
