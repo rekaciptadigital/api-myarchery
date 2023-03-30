@@ -89,7 +89,7 @@
                         {{ ucwords(strtolower($data['detail_member']['province_name'])) }}
                     @elseif ($data['detail_member']['parent_classification_type'] == 4)
                         {{ ucwords(strtolower($data['detail_member']['city_name'])) }}
-                    @elseif ($data['detail_member']['parent_classification_type'] == 6)
+                    @elseif ($data['detail_member']['parent_classification_type'] > 5)
                         {{ ucwords(strtolower($data['detail_member']['children_classification_members_name'])) }}
                     @else
                         {{ ucwords(strtolower($data['detail_member']['club_name'])) }}

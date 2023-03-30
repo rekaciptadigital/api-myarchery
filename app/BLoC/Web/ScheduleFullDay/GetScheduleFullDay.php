@@ -38,7 +38,7 @@ class GetScheduleFullDay extends Retrieval
         if ($parent_classifification_id == 0) {
             throw new BLoCException("parent calassification_id invalid");
         }
-                
+
         $table_for_search = "archery_clubs.name";
 
         if ($parent_classifification_id == 2) { // jika mewakili negara
@@ -61,7 +61,7 @@ class GetScheduleFullDay extends Retrieval
             }
         }
 
-        if ($parent_classifification_id == 6) { // jika berasal dari settingan admin
+        if ($parent_classifification_id > 5) { // jika berasal dari settingan admin
             $table_for_search = "children_classification_members.title";
         }
 

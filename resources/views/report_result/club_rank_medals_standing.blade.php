@@ -105,7 +105,7 @@
                                 {{ $data['province_name'] }}
                             @elseif ($data['parent_classification_type'] == 4)
                                 {{ $data['city_name'] }}
-                            @elseif($data['parent_classification_type'] == 6)
+                            @elseif($data['parent_classification_type'] > 5)
                                 {{ $data['children_classification_members_name'] }}
                             @else
                                 {{ $data['club_name'] }}

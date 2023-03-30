@@ -85,7 +85,7 @@ class EntryByNameParticipantTeam extends Transactional
                         $participant_individu->where("city_id", $participant_team->city_id);
                     }
 
-                    if ($parent_classification == 6) {
+                    if ($parent_classification > 5) {
                         $participant_individu->where("children_classification_id", $participant_team->children_classification_id);
                     }
 
@@ -164,7 +164,7 @@ class EntryByNameParticipantTeam extends Transactional
                     $participant_individu_male->where("city_id", $participant_team->city_id);
                 }
 
-                if ($parent_classification == 6) {
+                if ($parent_classification > 5) {
                     $participant_individu_male->where("children_classification_id", $participant_team->children_classification_id);
                 }
 
@@ -192,7 +192,7 @@ class EntryByNameParticipantTeam extends Transactional
                     $participant_individu_female->where("city_id", $participant_team->city_id);
                 }
 
-                if ($parent_classification == 6) {
+                if ($parent_classification > 5) {
                     $participant_individu_female->where("children_classification_id", $participant_team->children_classification_id);
                 }
                 $participant_individu_female = $participant_individu_female->get();

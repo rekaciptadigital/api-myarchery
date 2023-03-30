@@ -106,7 +106,7 @@
                                             {{ ucwords(strtolower($m['detail_member']['province_name'])) }}
                                         @elseif ($m['detail_member']['parent_classification_type'] == 4)
                                             {{ ucwords(strtolower($m['detail_member']['city_name'])) }}
-                                        @elseif ($m['detail_member']['parent_classification_type'] == 6)
+                                        @elseif ($m['detail_member']['parent_classification_type'] > 5)
                                             {{ ucwords(strtolower($m['detail_member']['children_classification_members_name'])) }}
                                         @else
                                             {{ ucwords(strtolower($m['detail_member']['club_name'])) }}
