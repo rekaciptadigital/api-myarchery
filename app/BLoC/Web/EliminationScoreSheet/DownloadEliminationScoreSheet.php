@@ -54,7 +54,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         $event_name = $archery_event->event_name;
         $location_event = $archery_event->location;
         if (strtolower($category->type) == "team") {
-            return $this->getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event, $archery_event->with_contingent);
+            return $this->getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event);
         } else {
             return $this->getMember($elimination_id, $round, $match, $category_id, $event_name, $location_event, $archery_event);
         }
@@ -246,7 +246,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         return env('APP_HOSTNAME') . $full_path;
     }
 
-    private function getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event, $with_contingent)
+    private function getTeam($elimination_id, $round, $match, $category_id, $event_name, $location_event)
     {
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {

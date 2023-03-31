@@ -28,7 +28,6 @@ class GetMemberParticipantIndividual extends Retrieval
         // cari event category detail team berdasarkan id yang diinputkan user
         $category_id = $parameters->get("category_id");
         $event_id = $parameters->get("event_id");
-        // $club_or_city_id = $parameters->get("club_or_city_id");
         $classification_club_id = $parameters->get('classification_club_id');
         $classification_country_id = $parameters->get('classification_country_id');
         $classification_province_id = $parameters->get('classification_province_id');
@@ -36,7 +35,6 @@ class GetMemberParticipantIndividual extends Retrieval
         $classification_children_id = $parameters->get('classification_children_id');
 
         $event = ArcheryEvent::find($event_id);
-        // return $event;
         $event_category_team = ArcheryEventCategoryDetail::where("id", $category_id)
             ->where("event_id", $event_id)
             ->first();
@@ -66,75 +64,55 @@ class GetMemberParticipantIndividual extends Retrieval
                 }
             })->get();
 
-        if ($event->with_contingent == 1) {
-            if ($event->parent_classification == 1) {
-                if (!empty($classification_club_id)) {
-                    $club = ArcheryClub::find($classification_club_id);
 
-                    if (!$club) {
-                        throw new BLoCException("club not found");
-                    }
-                }
-                // $club = ArcheryClub::find($classification_club_id);
+        if ($event->parent_classification == 1) {
+            if (!empty($classification_club_id)) {
+                $club = ArcheryClub::find($classification_club_id);
 
-                // if (!$club) {
-                //     throw new BLoCException("club not found");
-                // }
-            } elseif ($event->parent_classification == 2) {
-                $country = Country::find($classification_country_id);
-
-                if (!$country) {
-                    throw new BLoCException("country not found");
-                }
-            } elseif ($event->parent_classification == 3) {
-                if ($event->classification_country_id == 102) {
-                    $province = Provinces::find($classification_province_id);
-                } else {
-                    $province = ProvinceCountry::where('id', '=', $classification_province_id)
-                        ->where('country_id', '=', $event->classification_country_id)
-                        ->first();
-                }
-
-                if (!$province) {
-                    throw new BLoCException("province not found");
-                }
-            } elseif ($event->parent_classification == 4) {
-                if ($event->classification_country_id == 102) {
-                    $city = City::find($classification_city_id);
-                } else {
-                    $city = CityCountry::where('state_id', '=', $event->province_id)
-                        ->where('country_id', '=', $event->classification_country_id)
-                        ->where('id', '=', $classification_city_id)
-                        ->first();
-                }
-
-                if (!$city) {
-                    throw new BLoCException("city not found");
-                }
-            } else {
-                $check_child = ChildrenClassificationMembers::where('parent_id', '=', $event->parent_classification)
-                    ->where('id', '=', $classification_children_id)
-                    ->first();
-
-                if (!$check_child) {
-                    throw new BLoCException("children classification not found");
+                if (!$club) {
+                    throw new BLoCException("club not found");
                 }
             }
-        }
+        } elseif ($event->parent_classification == 2) {
+            $country = Country::find($classification_country_id);
 
-        // if ($event->with_contingent == 1) {
-        //     $city = City::where("id", $club_or_city_id)
-        //         ->where("province_id", $event->province_id)
-        //         ->first();
-        //     if (!$city) {
-        //         throw new BLoCException("city not found");
-        //     }
-        // } else {
-        //     $club = ArcheryClub::find($club_or_city_id);
-        //     if (!$club) {
-        //         throw new BLoCException("club not found");
-        //     }
-        // }
+            if (!$country) {
+                throw new BLoCException("country not found");
+            }
+        } elseif ($event->parent_classification == 3) {
+            if ($event->classification_country_id == 102) {
+                $province = Provinces::find($classification_province_id);
+            } else {
+                $province = ProvinceCountry::where('id', '=', $classification_province_id)
+                    ->where('country_id', '=', $event->classification_country_id)
+                    ->first();
+            }
+
+            if (!$province) {
+                throw new BLoCException("province not found");
+            }
+        } elseif ($event->parent_classification == 4) {
+            if ($event->classification_country_id == 102) {
+                $city = City::find($classification_city_id);
+            } else {
+                $city = CityCountry::where('state_id', '=', $event->province_id)
+                    ->where('country_id', '=', $event->classification_country_id)
+                    ->where('id', '=', $classification_city_id)
+                    ->first();
+            }
+
+            if (!$city) {
+                throw new BLoCException("city not found");
+            }
+        } else {
+            $check_child = ChildrenClassificationMembers::where('parent_id', '=', $event->parent_classification)
+                ->where('id', '=', $classification_children_id)
+                ->first();
+
+            if (!$check_child) {
+                throw new BLoCException("children classification not found");
+            }
+        }
 
         $list_users = [];
 
@@ -160,28 +138,20 @@ class GetMemberParticipantIndividual extends Retrieval
                     ->where('archery_event_participants.event_category_id', $c->id)
                     ->where('archery_event_participants.status', 1);
 
-                if ($event->with_contingent == 1) {
-                    if ($event['parent_classification'] == 1) {
-                        if ($classification_club_id) {
-                            $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
-                        }
-                        // $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
-                    } elseif ($event['parent_classification'] == 2) {
-                        $participants =  $participants->where('archery_event_participants.classification_country_id', '=', $classification_country_id);
-                    } elseif ($event['parent_classification'] == 3) {
-                        $participants =  $participants->where('archery_event_participants.classification_province_id', '=', $classification_province_id);
-                    } elseif ($event['parent_classification'] == 4) {
-                        $participants = $participants->where('archery_event_participants.city_id', '=', $classification_city_id);
+
+                if ($event['parent_classification'] == 1) {
+                    if ($classification_club_id) {
+                        $participants = $participants->where("archery_event_participants.club_id", '=', $classification_club_id);
                     }
+                } elseif ($event['parent_classification'] == 2) {
+                    $participants =  $participants->where('archery_event_participants.classification_country_id', '=', $classification_country_id);
+                } elseif ($event['parent_classification'] == 3) {
+                    $participants =  $participants->where('archery_event_participants.classification_province_id', '=', $classification_province_id);
+                } elseif ($event['parent_classification'] == 4) {
+                    $participants = $participants->where('archery_event_participants.city_id', '=', $classification_city_id);
                 } else {
                     $participants =  $participants->where('archery_event_participants.children_classification', '=', $classification_children_id);
                 }
-
-                // if ($event->with_contingent == 1) {
-                //     $participants->where("archery_event_participants.city_id", $club_or_city_id);
-                // } else {
-                //     $participants->where("archery_event_participants.club_id", $club_or_city_id);
-                // }
 
                 $participants = $participants->get();
                 foreach ($participants as $key => $p) {

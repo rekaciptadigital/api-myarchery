@@ -71,8 +71,7 @@ class DownloadMemberBudrest extends Retrieval
             "archery_event_participants.city_id",
             $event->classification_country_id == 102 ? "cities.name as city_name" : "cities_of_countries.name as city_name",
             "archery_event_participants.children_classification_id",
-            "children_classification_members.title as children_classification_members_name",
-            "archery_events.with_contingent"
+            "children_classification_members.title as children_classification_members_name"
         )
             ->join("archery_event_qualification_time", "archery_event_qualification_time.id", "=", "archery_event_qualification_schedule_full_day.qalification_time_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_qualification_schedule_full_day.participant_member_id")
@@ -140,7 +139,6 @@ class DownloadMemberBudrest extends Retrieval
                     "children_classification_id" => $schedule["children_classification_id"],
                     "children_classification_members_name" => $schedule["children_classification_members_name"],
                     "parent_classification_type" => $event->parent_classification,
-                    "with_contingent" => $schedule->with_contingent
                 ];
             }
         }

@@ -560,34 +560,54 @@ class ClubRanked
 
         // end blok dapatkan medali kualifikasi dan eliminasi beregu
         foreach ($club_or_city_ids as $k => $v) {
-            // club
-            $club = ArcheryClub::find($k);
-            $club_logo = "";
+            $contingent_name = "";
+            $contingent_id = "";
+            $contingent_logo = "";
             $club_city_name = "";
-            if ($club) {
-                $club_logo = $club->logo;
-                $city_club = City::find($club->city);
-                if ($city_club) {
-                    $club_city_name = $city_club->name;
+            $club_logo = "";
+
+            if ($event->parent_classification == 1) {
+                $contingent_name = $v["club_name"];
+                $contingent_id = $v["club_id"];
+                $club = ArcheryClub::find($k);
+                if ($club) {
+                    $contingent_logo = $club->logo;
+                    $club_logo = $club->logo;
+                    $city_club = City::find($club->city);
+                    if ($city_club) {
+                        $club_city_name = $city_club->name;
+                    }
                 }
             }
 
-            // city
-            $contingent = City::find($v["city_id"]);
-            $contingent_name = "";
-            $contingent_logo = "";
-            $contingent_id = "";
-            if ($contingent) {
-                $contingent_name = $contingent->name;
-                $contingent_logo = $contingent->logo;
-                $contingent_id = $contingent->id;
+            if ($event->parent_classification == 2) {
+                $contingent_name = $v["country_name"];
+                $contingent_id = $v["country_id"];
+            }
+
+            if ($event->parent_classification == 3) {
+                $contingent_name = $v["province_name"];
+                $contingent_id = $v["province_id"];
+            }
+
+            if ($event->parent_classification == 4) {
+                $contingent_name = $v["city_name"];
+                $contingent_id = $v["city_id"];
+                $city = City::find($contingent_id);
+                if ($city) {
+                    $contingent_logo = $city->logo;
+                }
+            }
+
+            if ($event->parent_classification > 5) {
+                $contingent_name = $v["children_classification_members_name"];
+                $contingent_id = $v["children_classification_id"];
             }
 
             $total_gold = $v["gold"];
             $total_silver = $v["silver"];
             $total_bronze = $v["bronze"];
             $output[] = [
-                "with_contingent" => $event->with_contingent,
                 "contingent_id" => $contingent_id,
                 "club_logo" => $club_logo,
                 "club_city" => $club_city_name,

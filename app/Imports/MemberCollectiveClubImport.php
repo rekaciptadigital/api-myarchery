@@ -149,9 +149,6 @@ class MemberCollectiveClubImport implements ToCollection, WithHeadingRow
             if (!$event) {
                 throw new BLoCException("event tidak ditemukan");
             }
-            if ($event->with_contingent != 0) {
-                throw new BLoCException("event must be with_contingent_format == 0");
-            }
 
             // cek apakah user telah pernah mendaftar di categori tersebut
             $isExist = ArcheryEventParticipant::where('event_category_id', $category->id)

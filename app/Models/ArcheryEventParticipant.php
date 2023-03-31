@@ -149,7 +149,6 @@ class ArcheryEventParticipant extends Model
         $detail_club_with_medal_response["total_gold"] = $d["gold"];
         $detail_club_with_medal_response["total_silver"] = $d["silver"];
         $detail_club_with_medal_response["total_bronze"] = $d["bronze"];
-        $detail_club_with_medal_response["with_contingent"] = $d["with_contingent"];
         $detail_club_with_medal_response["parent_classification_type"] = $d["parent_classification_type"];
 
         foreach ($competition_category as $competition) {
