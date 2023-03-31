@@ -12,6 +12,7 @@ use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventEliminationGroupTeams;
 use App\Models\City;
 use App\Models\CityCountry;
+use App\Models\ParentClassificationMembers;
 use DAI\Utils\Exceptions\BLoCException;
 
 class ClubRanked
@@ -27,6 +28,11 @@ class ClubRanked
         $event = ArcheryEvent::find($event_id);
         if (!$event) {
             throw new BLoCException("event not found");
+        }
+
+        $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent not found");
         }
 
         if ($event->parent_classification == 2) {
@@ -624,6 +630,7 @@ class ClubRanked
                 "children_classification_id" => $v["children_classification_id"],
                 "children_classification_members_name" => $v["children_classification_members_name"],
                 "parent_classification_type" => $event->parent_classification,
+                "parent_classification_name" => $parent_classification->title,
                 "detail_medal" => $v["detail_medal"],
                 "gold" => $total_gold,
                 "silver" => $total_silver,
