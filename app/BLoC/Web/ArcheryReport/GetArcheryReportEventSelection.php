@@ -8,6 +8,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
+use App\Models\ParentClassificationMembers;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Carbon;
@@ -30,6 +31,11 @@ class GetArcheryReportEventSelection extends Retrieval
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
+        }
+
+        $parent_classification = ParentClassificationMembers::find($archery_event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent classification not found");
         }
 
         $logo_event = $archery_event->logo;
@@ -83,7 +89,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/qualification', [
-            "with_contingent" => $archery_event->with_contingent,
+            "parent_classification_title" => $parent_classification->title,
             'datas' => $all_result_qualification,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
@@ -119,7 +125,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/elimination', [
-            "with_contingent" => $archery_event->with_contingent,
+            "parent_classification_title" => $parent_classification->title,
             'datas' => $all_result_elimination,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
@@ -157,7 +163,7 @@ class GetArcheryReportEventSelection extends Retrieval
         }
 
         $pages[] = view('reports/event_selection/all_result_total_irat', [
-            "with_contingent" => $archery_event->with_contingent,
+            "parent_classification_title" => $parent_classification->title,
             'datas' => $all_result_total_irat,
             'logo_event' => $logo_event,
             'logo_archery' => $logo_archery,
