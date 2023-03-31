@@ -530,6 +530,11 @@ class ArcheryEventParticipant extends Model
       throw new BLoCException("event not found");
     }
 
+    $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+    if (!$parent_classification) {
+      throw new BLoCException("parent not found");
+    }
+
     $category_detail_male = ArcheryEventCategoryDetail::where("event_id", $category_detail_team->event_id)
       ->where("age_category_id", $category_detail_team->age_category_id)
       ->where("competition_category_id", $category_detail_team->competition_category_id)
@@ -746,6 +751,7 @@ class ArcheryEventParticipant extends Model
         "children_classification_id" => $value->children_classification_id,
         "children_classification_members_name" => $value->children_classification_members_name,
         "parent_classification_type" => $parent_classifification_id,
+        "parent_classification_name" => $parent_classification->title,
         "team" => $team,
         "total" => $total,
         "total_x_plus_ten" => isset($total_per_point["x"]) ? $total_per_point["x"] + $total_per_point["10"] : 0,
@@ -773,6 +779,11 @@ class ArcheryEventParticipant extends Model
     $event = ArcheryEvent::find($category_detail_team->event_id);
     if (!$event) {
       throw new BLoCException("event not found");
+    }
+
+    $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+    if (!$parent_classification) {
+      throw new BLoCException("parent not found");
     }
 
     $team_cat = ($category_detail_team->team_category_id) == "male_team" ? "individu male" : "individu female";
@@ -934,6 +945,7 @@ class ArcheryEventParticipant extends Model
         "children_classification_id" => $value->children_classification_id,
         "children_classification_members_name" => $value->children_classification_members_name,
         "parent_classification_type" => $parent_classifification_id,
+        "parent_classification_name" => $parent_classification->title,
         "is_special_team_member" => $value->is_special_team_member,
         "team" => $team,
         "total" => $total,

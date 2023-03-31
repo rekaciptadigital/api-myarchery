@@ -713,6 +713,16 @@ class ArcheryScoring extends Model
             throw new BLoCException("category not found");
         }
 
+        $event = ArcheryEvent::find($category->event_id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent not found");
+        }
+
         $parent_classifification_id = $category->parent_classification;
 
         if ($parent_classifification_id == 0) {
@@ -803,6 +813,7 @@ class ArcheryScoring extends Model
             $score["children_classification_id"] = $value->children_classification_id;
             $score["children_classification_members_name"] = $value->children_classification_members_name;
             $score["parent_classification_type"] = $parent_classifification_id;
+            $score["parent_classification_name"] = $parent_classification->title;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["have_coint_tost"] = $value->have_coint_tost;
@@ -960,6 +971,16 @@ class ArcheryScoring extends Model
             throw new BLoCException("category not found");
         }
 
+        $event = ArcheryEvent::find($category->event_id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent not found");
+        }
+
         $parent_classifification_id = $category->parent_classification;
 
         if ($parent_classifification_id == 0) {
@@ -1045,6 +1066,7 @@ class ArcheryScoring extends Model
             $score["children_classification_id"] = $value->children_classification_id;
             $score["children_classification_members_name"] = $value->children_classification_members_name;
             $score["parent_classification_type"] = $parent_classifification_id;
+            $score["parent_classification_name"] = $parent_classification->title;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $score["member"]["participant_number"] = ArcheryEventParticipantNumber::getNumber($value->participant_id);
@@ -1292,6 +1314,16 @@ class ArcheryScoring extends Model
             throw new BLoCException("category not found");
         }
 
+        $event = ArcheryEvent::find($category->event_id);
+        if (!$event) {
+            throw new BLoCException("event not found");
+        }
+
+        $parent_classification = ParentClassificationMembers::find($event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent not found");
+        }
+
         $parent_classifification_id = $category->parent_classification;
         $type_formula_irate = $category->type_formula_irate;
 
@@ -1376,6 +1408,7 @@ class ArcheryScoring extends Model
             $score["children_classification_id"] = $value->children_classification_id;
             $score["children_classification_members_name"] = $value->children_classification_members_name;
             $score["parent_classification_type"] = $parent_classifification_id;
+            $score["parent_classification_name"] = $parent_classification->title;
             $score["member"] = $value;
             $score["have_shoot_off"] = $value->have_shoot_off;
             $total_score_qualification = $score_qualification["total"];
