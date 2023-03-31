@@ -166,9 +166,7 @@ class MemberCollectiveImport implements ToCollection, WithHeadingRow
             if (!$event) {
                 throw new BLoCException("event tidak ditemukan");
             }
-            if ($event->with_contingent != 1) {
-                throw new BLoCException("event must be with_contingent_format");
-            }
+         
 
             // $archery_event_official_detail = ArcheryEventOfficialDetail::where("event_id", $event->id)
             //     ->first();

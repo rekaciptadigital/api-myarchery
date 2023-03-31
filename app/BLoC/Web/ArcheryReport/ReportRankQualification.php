@@ -9,6 +9,7 @@ use App\Models\ArcheryScoring;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryMasterCompetitionCategory;
+use App\Models\ParentClassificationMembers;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 
@@ -27,6 +28,11 @@ class ReportRankQualification extends Retrieval
         $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
 
         $archery_event = ArcheryEvent::find($event_id);
+
+        $parent_classification = ParentClassificationMembers::find($archery_event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent classification not found");
+        }
 
         $logo_event = $archery_event->logo;
 
@@ -48,6 +54,7 @@ class ReportRankQualification extends Retrieval
         }
 
         $pdf = PDFv2::loadView('qualification-rank', [
+            "parent_classification_title" => $parent_classification->title,
             'data' => $list_scoring_qualification,
             "logo_event" => $logo_event,
             "event_location_report" => $event_location_report,

@@ -75,7 +75,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         $file_name = $path . "scoore_sheet_elimination_" . $elimination_id . "_" . $round . ".pdf";
 
         if (strtolower($category->type) == "team") {
-            return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event->with_contingent);
+            return $this->getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name);
         } else {
             return $this->getMember($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $archery_event);
         }
@@ -258,7 +258,7 @@ class BulkDownloadScooresSheetElimination extends Retrieval
         ];
     }
 
-    private function getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name, $with_contingent)
+    private function getTeam($elimination_id, $round, $category_id, $event_name, $location_event, $mpdf, $path, $file_name)
     {
         $elimination = ArcheryEventEliminationGroup::find($elimination_id);
         if (!$elimination) {
@@ -304,8 +304,6 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             foreach ($value as $data) {
                 $team_name = "";
                 $rank = "";
-                $club_name = "";
-                $city_name = "";
                 $array_athlete = [];
                 $bud_rest_number = "";
 
@@ -331,14 +329,6 @@ class BulkDownloadScooresSheetElimination extends Retrieval
                         }
                     }
 
-                    if ($with_contingent != 1) {
-                        $club = ArcheryClub::find($participant->club_id);
-                        if (!$club) {
-                            throw new BLoCException("club not found");
-                        }
-                        $club_name = $club->name;
-                    }
-
                     $team_name = $elimination_group_tim->team_name;
                     $rank = $elimination_group_tim->elimination_ranked;
                     $bud_rest_number = $data->bud_rest != 0 ? $data->bud_rest . $data->target_face : "";
@@ -346,7 +336,6 @@ class BulkDownloadScooresSheetElimination extends Retrieval
 
                 $result['name_athlete'][] = $team_name;
                 $result['rank'][] = $rank;
-                $result['club'][] = $club_name;
                 $result["athlete"][] = $array_athlete;
                 $result["budrest"][] = $bud_rest_number;
 
@@ -359,11 +348,8 @@ class BulkDownloadScooresSheetElimination extends Retrieval
             }
 
             $html = view('template.score_sheet_elimination_team', [
-                "with_contingent" => $with_contingent,
                 'tim_1_name' => $result['name_athlete'][0],
                 'tim_2_name' => $result['name_athlete'][1],
-                'club_1' => $result['club'][0],
-                'club_2' => $result['club'][1],
                 'tim_1_rank' => $result['rank'][0],
                 'tim_2_rank' => $result['rank'][1],
                 "athlete_1" => $result["athlete"][0],

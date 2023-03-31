@@ -195,7 +195,7 @@ class UpdateParticipantCategory extends Transactional
             $member_rank = MemberRank::where("category_id", $current_category->id)
                 ->where("member_id", $participant_memmber->id)
                 ->first();
-                
+
             if ($member_rank) {
                 $member_rank->delete();
             }
@@ -261,18 +261,25 @@ class UpdateParticipantCategory extends Transactional
 
     private function changeToTeamCategoryTeam(ArcheryEventCategoryDetail $current_category, ArcheryEventParticipant $participant, ArcheryEventCategoryDetail $new_category, User $user, ArcheryEvent $event)
     {
-        $club_or_city_id = $participant->club_id;
-        if ($event->with_contingent == 1) {
-            $club_or_city_id = $participant->city_id;
+        if ($event->parent_classification == 2) {
+            $tag_classification = $participant->classification_country_id;
+        } elseif ($event->parent_classification == 3) {
+            $tag_classification = $participant->classification_province_id;
+        } elseif ($event->parent_classification == 4) {
+            $tag_classification = $participant->city_id;
+        } elseif ($event->parent_classification > 5) {
+            $tag_classification = $participant->children_classification_id;
+        } else {
+            $tag_classification = $participant->club_id;
         }
 
-        $total_participant_team = ArcheryEventParticipant::getCountParticipantTeamWithSameClubOrCity($new_category, $event, $club_or_city_id);
+        $total_participant_team = ArcheryEventParticipant::getCountParticipantTeamWithSameWithContingent($new_category, $event, $tag_classification);
 
         // validasi total peserta individu untuk pendaftaran beregu
         if ($new_category->team_category_id == "male_team" || $new_category->team_category_id == "female_team") {
 
             $team_category_id = $new_category->team_category_id == "male_team" ? "individu male" : "individu female";
-            $count_participant_individu = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, $team_category_id);
+            $count_participant_individu = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeamContingent($new_category, $event, $tag_classification, $team_category_id);
 
             if ($count_participant_individu == 0) {
                 throw new BLoCException("participant individu not found");
@@ -284,8 +291,8 @@ class UpdateParticipantCategory extends Transactional
                 throw new BLoCException("jumlah peserta tidak mencukupi, minimal peserta yang harus terdaftar adalah " . $total_member_individu_must_join . ". sedangkan total peserta individu saat ini adalah " . $count_participant_individu . " peserta");
             }
         } else {
-            $count_participant_individu_male = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, "individu male");
-            $count_participant_individu_female = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeam($new_category, $event, $club_or_city_id, "individu female");
+            $count_participant_individu_male = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeamContingent($new_category, $event, $tag_classification, "individu male");
+            $count_participant_individu_female = ArcheryEventParticipant::getCountParticipantIndividuByCategoryTeamContingent($new_category, $event, $tag_classification, "individu female");
 
             if ($count_participant_individu_male == 0 || $count_participant_individu_female == 0) {
                 throw new BLoCException("participant not enought");
