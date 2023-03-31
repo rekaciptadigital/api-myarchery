@@ -72,7 +72,7 @@
                         <strong>Rank</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black;font-size: 14pt ">
-                        <strong>Club/Contingent</strong>
+                        <strong>{{ $parent_classification_title }}</strong>
                     </th>
                     @foreach ($data[0]['sessions'] as $key => $item)
                         <th style="text-align: center;border: 1px solid black;font-size: 14pt">
