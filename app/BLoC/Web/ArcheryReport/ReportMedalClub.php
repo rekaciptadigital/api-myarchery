@@ -2,25 +2,14 @@
 
 namespace App\BLoC\Web\ArcheryReport;
 
-use App\Models\ArcheryEventEliminationMember;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
-use App\Models\ArcheryMasterTeamCategory;
-use App\Models\ArcheryScoring;
-use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
-use App\Models\ArcheryEventEliminationGroup;
-use App\Models\ArcheryEventEliminationGroupMatch;
-use App\Models\ArcheryEventEliminationGroupTeams;
-use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryMasterAgeCategory;
 use Illuminate\Support\Carbon;
 
 class ReportMedalClub extends Retrieval
@@ -40,6 +29,8 @@ class ReportMedalClub extends Retrieval
 
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+
+        $parent_classifification_id = $archery_event->parent_classification;
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -79,7 +70,6 @@ class ReportMedalClub extends Retrieval
 
         if ($data_medal_standing != [] && count($data_medal_standing["datatable"]) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
-                "with_contingent" => $archery_event->with_contingent,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
@@ -95,10 +85,14 @@ class ReportMedalClub extends Retrieval
 
 
             // =============================== data ======================================
-            foreach ($data_medal_standing['datatable'] as $key => $dms) {
+            foreach ($data_medal_standing['datatable'] as $key => $dms) {                
                 $pages[] = view('report_medal_club/dataTable', [
-                    "with_contingent" => $dms["with_contingent"],
-                    "contingent_name" => $dms["contingent_name"],
+                    "club_name" => $dms["club_name"],
+                    "country_name" => $dms["country_name"],
+                    "province_name" => $dms["province_name"],
+                    "city_name" => $dms["city_name"],
+                    "children_classification_members_name" => $dms["children_classification_members_name"],
+                    "parent_classification_type" => $parent_classifification_id,
                     'logo_event' => $logo_event,
                     "dms" => $dms,
                     'logo_archery' => $logo_archery,
@@ -108,7 +102,6 @@ class ReportMedalClub extends Retrieval
                     'headers' => $data_medal_standing['title_header']['category'],
                     "rank" => $key + 1,
                     "category" => $data_medal_standing["title_header"]["category"],
-                    "club_name" => $dms["club_name"],
                     "total_gold" => $dms["total_gold"],
                     "total_silver" => $dms["total_silver"],
                     "total_bronze" => $dms["total_bronze"],

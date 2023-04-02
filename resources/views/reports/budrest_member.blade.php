@@ -6,7 +6,7 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-   
+
     <title>DAFTAR BANTALAN</title>
 </head>
 
@@ -44,7 +44,17 @@
                         {{ $data['name'] }}
                     </td>
                     <td style="text-align: center;border: 1px solid black;">
-                        {{ $data['with_contingent'] == 0 ? $data['club_name'] : $data['city_name'] }}
+                        @if ($data['parent_classification_type'] == 2)
+                            {{ ucwords(strtolower($data['country_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 3)
+                            {{ ucwords(strtolower($data['province_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 4)
+                            {{ ucwords(strtolower($data['city_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 6)
+                            {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                        @else
+                            {{ ucwords(strtolower($data['club_name'])) }}
+                        @endif
                     </td>
                 </tr>
             @endforeach

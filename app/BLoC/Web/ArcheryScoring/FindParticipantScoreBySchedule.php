@@ -124,7 +124,6 @@ class FindParticipantScoreBySchedule extends Retrieval
             $output->session = $session;
             $output->scoring_id = $score ? $score->id : 0;
             $output->schedule_id = $value->id;
-            $output->with_contingent = $event->with_contingent;
             $output->is_updated = 1;
             if (isset($score->is_lock))
                 $output->is_updated = $score->is_lock == 1 ? 0 : 1;

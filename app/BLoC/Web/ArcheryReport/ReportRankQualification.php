@@ -4,13 +4,12 @@ namespace App\BLoC\Web\ArcheryReport;
 
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
-use Illuminate\Support\Facades\Auth;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryScoring;
-use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryMasterCompetitionCategory;
+use App\Models\ParentClassificationMembers;
 use DAI\Utils\Exceptions\BLoCException;
 use Illuminate\Support\Carbon;
 
@@ -23,8 +22,6 @@ class ReportRankQualification extends Retrieval
 
     protected function process($parameters)
     {
-
-        $admin = Auth::user();
         $event_id = $parameters->get('event_id');
         $category_id = $parameters->get("category_id");
 
@@ -32,16 +29,18 @@ class ReportRankQualification extends Retrieval
 
         $archery_event = ArcheryEvent::find($event_id);
 
+        $parent_classification = ParentClassificationMembers::find($archery_event->parent_classification);
+        if (!$parent_classification) {
+            throw new BLoCException("parent classification not found");
+        }
+
         $logo_event = $archery_event->logo;
 
         $category = ArcheryEventCategoryDetail::find($category_id);
 
         $competition = ArcheryMasterCompetitionCategory::find($category->competition_category_id);
 
-        $sessions = [];
-        for ($i = 1; $i <= $category->session_in_qualification; $i++) {
-            $sessions[] = $i;
-        }
+        $sessions = $category->getArraySessionCategory();
 
         $event_name_report = $archery_event->event_name;
         $start_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_start_datetime)->format('d-F-Y'), false);
@@ -55,7 +54,7 @@ class ReportRankQualification extends Retrieval
         }
 
         $pdf = PDFv2::loadView('qualification-rank', [
-            "with_contingent" => $archery_event->with_contingent,
+            "parent_classification_title" => $parent_classification->title,
             'data' => $list_scoring_qualification,
             "logo_event" => $logo_event,
             "event_location_report" => $event_location_report,

@@ -6,7 +6,6 @@ use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEvent;
-use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryEventParticipant;
@@ -22,8 +21,6 @@ class Upp extends Retrieval
 
     protected function process($parameters)
     {
-
-        $today = date("Y-m-d");
         $event_id = $parameters->get('event_id');
         $pages = array();
         $logo_archery = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="80%"></img>';
@@ -142,7 +139,7 @@ class Upp extends Retrieval
 
             }
             $pages[] = view('upp/data', [
-                "with_contingent" => $archery_event->with_contingent,
+                "parent_classification" => $archery_event->parent_classification,
                 'data_report' => $data_all_category_in_day,
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,

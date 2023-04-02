@@ -17,6 +17,7 @@ use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Storage;
 use PDFv2;
 use App\Libraries\EliminationFormatPDF;
+use App\Models\ArcheryEventParticipant;
 
 class DownloadEliminationDashboardDos extends Retrieval
 {
@@ -33,7 +34,7 @@ class DownloadEliminationDashboardDos extends Retrieval
         if (!$category) {
             throw new BLoCException("category not found");
         }
-        
+
         $event = ArcheryEvent::find($category->event_id);
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
 
@@ -43,16 +44,16 @@ class DownloadEliminationDashboardDos extends Retrieval
         }
 
         if (strtolower($team_category->type) == "team") {
-            $data_graph = EliminationFormatPDF::getDataGraphTeam($category);
+            $data_graph = ArcheryEventParticipant::getTemplateTeam($category);
         }
 
         if (strtolower($team_category->type) == "individual") {
-            $data_graph = EliminationFormatPDF::getDataGraphIndividu($category);
+            $data_graph = ArcheryEventParticipant::getTemplateIndividu($category, $event);
         }
 
         if ($data_graph) {
-            $title = $event->event_name .' ('. $category->label_category . ')';
-            if ($elimination){
+            $title = $event->event_name . ' (' . $category->label_category . ')';
+            if ($elimination) {
                 if ($elimination->count_participant == 16) {
                     $data = EliminationFormatPDF::getViewDataGraph16($data_graph);
                     $view_path = 'reports/dashboard_dos/elimination/graph_sixteen';
@@ -69,7 +70,6 @@ class DownloadEliminationDashboardDos extends Retrieval
                 $view_path = 'reports/dashboard_dos/elimination/graph_eight';
                 $pages[] = EliminationFormatPDF::renderPageGraph8($view_path, $data, $title);
             }
-
         }
 
         $pdf = PDFv2::loadView('report_result/all', ['pages' => $pages]);
@@ -85,7 +85,7 @@ class DownloadEliminationDashboardDos extends Retrieval
         ]);
 
         $digits = 3;
-        $fileName   = $event->event_name . ' - Elimination - ' . $category->label_category. ' - '. date("YmdHis") . '.pdf';
+        $fileName   = $event->event_name . ' - Elimination - ' . $category->label_category . ' - ' . date("YmdHis") . '.pdf';
         $path = 'asset/dashboard_dos';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
         $response = url(env('APP_HOSTNAME') . $path . '/' . $fileName . '');

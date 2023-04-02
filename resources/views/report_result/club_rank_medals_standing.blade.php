@@ -99,8 +99,14 @@
                     <tr>
                         <td style="text-align:center;">{{ $i }}</td>
                         <td>
-                            @if ($data['with_contingent'] == 1)
-                                {{ $data['contingent_name'] }}
+                            @if ($data['parent_classification_type'] == 2)
+                                {{ $data['country_name'] }}
+                            @elseif ($data['parent_classification_type'] == 3)
+                                {{ $data['province_name'] }}
+                            @elseif ($data['parent_classification_type'] == 4)
+                                {{ $data['city_name'] }}
+                            @elseif($data['parent_classification_type'] > 5)
+                                {{ $data['children_classification_members_name'] }}
                             @else
                                 {{ $data['club_name'] }}
                             @endif

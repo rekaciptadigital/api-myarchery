@@ -95,7 +95,17 @@
                             </td>
                             <td style="border-bottom: 1pt solid black;width: 340px; height: 30px;text-align: left;float: left;"
                                 colspan="3">
-                                {{ $with_contingent == 0 ? $m['detail_member']['club_name'] : $m['detail_member']['city_name'] }}
+                                @if ($m['detail_member']['parent_classification_type'] == 2)
+                                    {{ ucwords(strtolower($m['detail_member']['country_name'])) }}
+                                @elseif ($m['detail_member']['parent_classification_type'] == 3)
+                                    {{ ucwords(strtolower($m['detail_member']['province_name'])) }}
+                                @elseif ($m['detail_member']['parent_classification_type'] == 4)
+                                    {{ ucwords(strtolower($m['detail_member']['city_name'])) }}
+                                @elseif ($m['detail_member']['parent_classification_type'] > 5)
+                                    {{ ucwords(strtolower($m['detail_member']['children_classification_members_name'])) }}
+                                @else
+                                    {{ ucwords(strtolower($m['detail_member']['club_name'])) }}
+                                @endif
                             </td>
                         </tr>
                     </tbody>

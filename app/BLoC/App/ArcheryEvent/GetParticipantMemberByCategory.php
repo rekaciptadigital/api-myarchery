@@ -6,7 +6,12 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventParticipantMember;
+use App\Models\ChildrenClassificationMembers;
 use App\Models\City;
+use App\Models\CityCountry;
+use App\Models\Country;
+use App\Models\ProvinceCountry;
+use App\Models\Provinces;
 use App\Models\TeamMemberSpecial;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
@@ -22,14 +27,61 @@ class GetParticipantMemberByCategory extends Retrieval
     protected function process($parameters)
     {
         $participant_id = $parameters->get('participant_id');
-        $participant = ArcheryEventParticipant::select("archery_event_participants.*", "archery_events.with_contingent", "cities.name as city_name")
+        $participant = ArcheryEventParticipant::select(
+            "archery_event_participants.*",
+            "archery_events.parent_classification",
+            "archery_events.classification_country_id as classification_country"
+        )
             ->join("archery_events", "archery_events.id", "=", "archery_event_participants.event_id")
-            ->leftJoin("cities", "cities.id", "=", "archery_event_participants.city_id")
             ->where("archery_event_participants.id", $participant_id)
             ->where("archery_event_participants.status", 1)
             ->first();
 
+        $club_id = null;
+        $club_name = null;
         $club = ArcheryClub::find($participant->club_id);
+        if ($club) {
+            $club_id = $club->id;
+            $club_name = $club->name;
+        }
+
+        $country_id = null;
+        $country_name = null;
+        $country = Country::find($participant->classification_country_id);
+        if ($country) {
+            $country_id = $country->id;
+            $country_name = $country->name;
+        }
+
+        if ($participant->classification_country == 102) {
+            $province = Provinces::find($participant->classification_province_id);
+            $city = City::find($participant->city_id);
+        } else {
+            $province = ProvinceCountry::find($participant->classification_province_id);
+            $city = CityCountry::find($participant->city_id);
+        }
+
+        $province_id = null;
+        $province_name = null;
+        if ($province) {
+            $province_id = $province->id;
+            $province_name = $province->name;
+        }
+
+        $city_id = null;
+        $city_name = null;
+        if ($city) {
+            $city_id = $city->id;
+            $city_name = $city->name;
+        }
+
+        $children_classification_member_id = null;
+        $children_classification_member_name = null;
+        $children_classification = ChildrenClassificationMembers::find($participant->children_classification_id);
+        if ($children_classification) {
+            $children_classification_member_id = $children_classification->id;
+            $children_classification_member_name = $children_classification->title;
+        }
 
         $output = [];
 
@@ -53,10 +105,24 @@ class GetParticipantMemberByCategory extends Retrieval
                 ->where("archery_event_participants.competition_category_id", $participant->competition_category_id)
                 ->where("archery_event_participants.distance_id", $participant->distance_id);
 
-            if ($participant->with_contingent == 1) {
-                $participant_individu->where("archery_event_participants.city_id", $participant->city_id);
-            } else {
+            if ($participant->parent_classification == 1) {
                 $participant_individu->where("archery_event_participants.club_id", $participant->club_id);
+            }
+
+            if ($participant->parent_classification == 2) {
+                $participant_individu->where("archery_event_participants.classification_country_id", $participant->classification_country_id);
+            }
+
+            if ($participant->parent_classification == 3) {
+                $participant_individu->where("archery_event_participants.classification_province_id", $participant->classification_province_id);
+            }
+
+            if ($participant->parent_classification == 4) {
+                $participant_individu->where("archery_event_participants.city_id", $participant->city_id);
+            }
+
+            if ($participant->parent_classification > 5) {
+                $participant_individu->where("archery_event_participants.children_classification_id", $participant->children_classification_id);
             }
 
             $participant_individu = $participant_individu->where("archery_event_participants.status", 1)
@@ -123,9 +189,18 @@ class GetParticipantMemberByCategory extends Retrieval
         ];
         $output['event_category_detail'] = $event_category ? $event_category->getCategoryDetailById($event_category->id) : null;
         $output['member'] = $user_member;
-        $output['club'] = $club != null ? $club : [];
-        $output['city_name'] = $participant->city_name;
-        $output['with_contingent'] = $participant->with_contingent;
+        $output["club"] = $club != null ? $club : [];
+        $output['club_id'] = $club_id;
+        $output['club_name'] = $club_name;
+        $output['country_id'] = $country_id;
+        $output["country_name"] = $country_name;
+        $output["province_id"] = $province_id;
+        $output["province_name"] = $province_name;
+        $output["city_id"] = $city_id;
+        $output['city_name'] = $city_name;
+        $output["children_classification_member_id"] = $children_classification_member_id;
+        $output["children_classification_member_name"] = $children_classification_member_name;
+        $output["parent_classification_type"] = $participant->parent_classification;
 
         return $output;
     }

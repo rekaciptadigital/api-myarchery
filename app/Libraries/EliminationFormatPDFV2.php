@@ -162,11 +162,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round1[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name']) {
-                    //     $round2[] = self::substrName($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round2[] = 'bye';
-                    // }
                     $round1result[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round1status[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -183,11 +178,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round2[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name'] ) {
-                    //     $round3[] = self::substrName($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round3[] = 'bye';
-                    // }
                     $round2result[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round2status[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -204,11 +194,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round3[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['name']) {
-                    //     $round4[] = self::substrName($data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round4[] = 'bye';
-                    // }
                     $round3result[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round3status[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -225,11 +210,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'] != 'bye') {
 
                     $round4[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name']) {
-                    //     $round5[] = self::substrName($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name']);
-                    // } else {
-                    //     $round5[] = 'bye';
-                    // }
                     $round4result[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['result'] ?? '-';
                     $round4status[] = $data_graph['rounds'][3]['seeds'][0]['teams'][$i]['status'];
                 } else {
@@ -244,12 +224,6 @@ class EliminationFormatPDFV2
         for ($i = 0; $i < 1; $i++) {
             for ($i = 0; $i <= 1; $i++) {
                 if ($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['status'] != 'bye') {
-
-                    // if ($data_graph['rounds'][5]['seeds'][0]['teams'][$i]['name']) {
-                    //     $round6[] = self::substrName($data_graph['rounds'][5]['seeds'][0]['teams'][$i]['name']);
-                    // } else {
-                    //     $round6[] = 'bye';
-                    // }
                     $round5[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name'] ?? 'bye';
                     $round5result[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['result'] ?? '-';
                     $round5status[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['status'];
@@ -288,11 +262,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round1[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['name']) {
-                    //     $round1[] = self::substrName($data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round1[] = 'bye';
-                    // }
                     $round1result[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round1status[] = $data_graph['rounds'][0]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -309,11 +278,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round2[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name']) {
-                    //     $round2[] = self::substrName($data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round2[] = 'bye';
-                    // }
                     $round2result[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round2status[] = $data_graph['rounds'][1]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -330,11 +294,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round3[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name'] ) {
-                    //     $round3[] = self::substrName($data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round3[] = 'bye';
-                    // }
                     $round3result[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round3status[] = $data_graph['rounds'][2]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -351,11 +310,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['status'] != 'bye') {
 
                     $round4[] = $data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['name']) {
-                    //     $round4[] = self::substrName($data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['name']);
-                    // } else {
-                    //     $round4[] = 'bye';
-                    // }
                     $round4result[] = $data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['result'] ?? '-';
                     $round4status[] = $data_graph['rounds'][3]['seeds'][$a]['teams'][$i]['status'];
                 } else {
@@ -372,11 +326,6 @@ class EliminationFormatPDFV2
                 if ($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['status'] != 'bye') {
 
                     $round5[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name'] ?? 'bye';
-                    // if ($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name']) {
-                    //     $round5[] = self::substrName($data_graph['rounds'][4]['seeds'][0]['teams'][$i]['name']);
-                    // } else {
-                    //     $round5[] = 'bye';
-                    // }
                     $round5result[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['result'] ?? '-';
                     $round5status[] = $data_graph['rounds'][4]['seeds'][0]['teams'][$i]['status'];
                 } else {
@@ -391,12 +340,6 @@ class EliminationFormatPDFV2
         for ($i = 0; $i < 1; $i++) {
             for ($i = 0; $i <= 1; $i++) {
                 if ($data_graph['rounds'][5]['seeds'][0]['teams'][$i]['status'] != 'bye') {
-
-                    // if ($data_graph['rounds'][5]['seeds'][0]['teams'][$i]['name']) {
-                    //     $round6[] = self::substrName($data_graph['rounds'][5]['seeds'][0]['teams'][$i]['name']);
-                    // } else {
-                    //     $round6[] = 'bye';
-                    // }
                     $round6[] = $data_graph['rounds'][5]['seeds'][0]['teams'][$i]['name'] ?? 'bye';
                     $round6result[] = $data_graph['rounds'][5]['seeds'][0]['teams'][$i]['result'] ?? '-';
                     $round6status[] = $data_graph['rounds'][5]['seeds'][0]['teams'][$i]['status'];

@@ -52,93 +52,82 @@ class BookingTemporary extends Retrieval
         ];
 
 
-        if ($event['with_contingent'] == 1) {
-            if ($event['detail_parent_classification']['id'] == 1) {
-                if (!empty($get_club_id)) {
-                    $check_club = ArcheryClub::find($classificationArcheryClub);
 
-                    if (!$check_club) {
-                        throw new BLoCException("club not found!");
-                    }
+        if ($event['detail_parent_classification']['id'] == 1) {
+            if (!empty($get_club_id)) {
+                $check_club = ArcheryClub::find($classificationArcheryClub);
 
-                    // $club_id = $get_club_id;
-                    $data_classification_event_register['archery_club_id'] = $classificationArcheryClub;
-                } else {
-                    $data_classification_event_register['archery_club_id'] = 0;
+                if (!$check_club) {
+                    throw new BLoCException("club not found!");
                 }
-                // if (empty($classificationArcheryClub)) {
-                //     throw new BLoCException("classification from archery club is required!");
-                // } else {
-                //     $check_club = ArcheryClub::find($classificationArcheryClub);
-                //     if (!$check_club) {
-                //         throw new BLoCException("club not found!");
-                //     }
-                //     $data_classification_event_register['archery_club_id'] = $classificationArcheryClub;
-                // }
-            } elseif ($event['detail_parent_classification']['id'] == 2) {
-                if (empty($classificationCountryId)) {
-                    throw new BLoCException("classification country is required!");
-                } else {
-                    $check_country = Country::find($classificationCountryId);
-                    if (!$check_country) {
-                        throw new BLoCException("country not found!");
-                    }
-                    $data_classification_event_register['country_id'] = $classificationCountryId;
-                }
-            } elseif ($event['detail_parent_classification']['id'] == 3) {
-                if (empty($classificationProvinceId)) {
-                    throw new BLoCException("classification province is required!");
-                } else {
-                    $data_classification_event_register['country_id'] = $event['detail_country_classification']['id'];
-                    if ($event['detail_country_classification']['id'] == 102) {
-                        $check_province = Provinces::find($classificationProvinceId);
 
-                        if (!$check_province) {
-                            throw new BLoCException("province not found!");
-                        }
-                    } else {
-                        $check_province = ProvinceCountry::where('country_id', '=', $event['detail_country_classification']['id'])
-                            ->where('id', '=', $classificationProvinceId)
-                            ->get();
-
-                        if (!$check_province) {
-                            throw new BLoCException("province not found!");
-                        }
-                    }
-                    $data_classification_event_register['provinsi_id'] = $classificationProvinceId;
-                }
-            } elseif ($event['detail_parent_classification']['id'] == 4) {
-                if (empty($classificationCityId)) {
-                    throw new BLoCException("classification city is required!");
-                } else {
-                    $data_classification_event_register['country_id'] = $event['detail_country_classification']['id'];
-                    $data_classification_event_register['provinsi_id'] = $event['detail_province_classification']['id'];
-                    $data_classification_event_register['city_id'] = $classificationCityId;
-
-                    $check_city = false;
-                    if ($event['detail_country_classification']['id'] == 102) {
-                        $check_city = City::find($classificationCityId);
-                    } else {
-                        $check_city = CityCountry::where('country_id', '=', $event['detail_country_classification']['id'])
-                            ->where('state_id', '=', $event['detail_province_classification']['id'])
-                            ->where('id', '=', $classificationCityId)->get();
-                    }
-
-                    if (!$check_city) {
-                        throw new BLoCException("city not found!");
-                    }
-                }
+                $data_classification_event_register['archery_club_id'] = $classificationArcheryClub;
             } else {
-                if (empty($classificationChildren)) {
-                    throw new BLoCException("classification children is required!");
-                } else {
-                    $data_classification_event_register['children_classification'] = $classificationChildren;
-                    $check_child = ChildrenClassificationMembers::where('parent_id', '=', $event['detail_parent_classification']['id'])
-                        ->where('id', '=', $classificationChildren)->get();
+                $data_classification_event_register['archery_club_id'] = 0;
+            }
+        } elseif ($event['detail_parent_classification']['id'] == 2) {
+            if (empty($classificationCountryId)) {
+                throw new BLoCException("classification country is required!");
+            } else {
+                $check_country = Country::find($classificationCountryId);
+                if (!$check_country) {
+                    throw new BLoCException("country not found!");
+                }
+                $data_classification_event_register['country_id'] = $classificationCountryId;
+            }
+        } elseif ($event['detail_parent_classification']['id'] == 3) {
+            if (empty($classificationProvinceId)) {
+                throw new BLoCException("classification province is required!");
+            } else {
+                $data_classification_event_register['country_id'] = $event['detail_country_classification']['id'];
+                if ($event['detail_country_classification']['id'] == 102) {
+                    $check_province = Provinces::find($classificationProvinceId);
 
-                    if (!$check_child) {
-                        throw new BLoCException("children not found!");
+                    if (!$check_province) {
+                        throw new BLoCException("province not found!");
                     }
+                } else {
+                    $check_province = ProvinceCountry::where('country_id', '=', $event['detail_country_classification']['id'])
+                        ->where('id', '=', $classificationProvinceId)
+                        ->get();
+
+                    if (!$check_province) {
+                        throw new BLoCException("province not found!");
+                    }
+                }
+                $data_classification_event_register['provinsi_id'] = $classificationProvinceId;
+            }
+        } elseif ($event['detail_parent_classification']['id'] == 4) {
+            if (empty($classificationCityId)) {
+                throw new BLoCException("classification city is required!");
+            } else {
+                $data_classification_event_register['country_id'] = $event['detail_country_classification']['id'];
+                $data_classification_event_register['provinsi_id'] = $event['detail_province_classification']['id'];
+                $data_classification_event_register['city_id'] = $classificationCityId;
+
+                $check_city = false;
+                if ($event['detail_country_classification']['id'] == 102) {
+                    $check_city = City::find($classificationCityId);
+                } else {
+                    $check_city = CityCountry::where('country_id', '=', $event['detail_country_classification']['id'])
+                        ->where('state_id', '=', $event['detail_province_classification']['id'])
+                        ->where('id', '=', $classificationCityId)->get();
+                }
+
+                if (!$check_city) {
+                    throw new BLoCException("city not found!");
+                }
+            }
+        } else {
+            if (empty($classificationChildren)) {
+                throw new BLoCException("classification children is required!");
+            } else {
+                $data_classification_event_register['children_classification'] = $classificationChildren;
+                $check_child = ChildrenClassificationMembers::where('parent_id', '=', $event['detail_parent_classification']['id'])
+                    ->where('id', '=', $classificationChildren)->get();
+
+                if (!$check_child) {
+                    throw new BLoCException("children not found!");
                 }
             }
         }

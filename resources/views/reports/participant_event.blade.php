@@ -33,11 +33,6 @@
 
 
     <table style="width:100%;border: 1px solid black;">
-        <thead>
-            <!-- <tr>
-                <th>Table Heading</th>
-            </tr> -->
-        </thead>
         <tbody>
             <tr>
                 <th style="text-align: center; background: #FFFF00;"><strong>KODE KATEGORI</strong></th>
@@ -61,10 +56,6 @@
                 <th style="text-align: center; background: #FFFF00;"><strong>Negara (Asing)</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Kota Negara (Asing)</strong></th>
                 <th style="text-align: center; background: #FFFF00;"><strong>Nomor Passport (Asing)</strong></th>
-                {{-- <th style="text-align: center; background: #FFFF00;"><strong>FOTO KTP (WAJIB BAGI DOMISILI DKI
-                        JAKARTA)</strong></th> --}}
-                {{-- <th style="text-align: center; background: #FFFF00;"><strong>FOTO PESERTA</strong></th> --}}
-                {{-- <th style="text-align: center; background: #FFFF00;"><strong>FOTO BUKTI TRANSFER</strong></th> --}}
                 <th style="text-align: center; background: #FFFF00;"><strong>KLUB/KONTINGEN</strong></th>
             </tr>
             @foreach ($datas as $data)
@@ -92,16 +83,21 @@
                     </td>
                     <td style="text-align: center;">{{ $data['passport_number'] ? $data['passport_number'] : '-' }}
                     </td>
-                    {{-- <td style="text-align: center;">{{ $data['foto_ktp'] ? $data['foto_ktp'] : '-' }} </td> --}}
-                    {{-- <td style="text-align: center;">{{ $data['foto_peserta'] ? $data['foto_peserta'] : '-' }} </td> --}}
-                    {{-- <td style="text-align: center;">{{ $data['foto_bukti'] ? $data['foto_bukti'] : '-' }} </td> --}}
-                    <td style="text-align: left;">{{ $with_contingent == 0 ? $data['club'] : $data['contingent'] }}
+                    <td style="text-align: left;">
+                        @if ($data['parent_classification_type'] == 2)
+                            {{ ucwords(strtolower($data['country_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 3)
+                            {{ ucwords(strtolower($data['province_name'])) }}
+                        @elseif ($data['parent_classification_type'] == 4)
+                            {{ ucwords(strtolower($data['city_name'])) }}
+                        @elseif ($data['parent_classification_type'] > 5)
+                            {{ ucwords(strtolower($data['children_classification_members_name'])) }}
+                        @else
+                            {{ ucwords(strtolower($data['club_name'])) }}
+                        @endif
                     </td>
                 </tr>
             @endforeach
-            <!-- <tr>
-            <td colspan="3"></td>
-        </tr> -->
         </tbody>
     </table>
 </body>

@@ -34,9 +34,6 @@ class ExportmemberCollective extends Retrieval
         $list_members = $parameters->get("list_members");
 
         $event = ArcheryEvent::find($event_id);
-        if ($event->with_contingent != 1) {
-            throw new BLoCException("event must be with_contingent_format");
-        }
 
         $province_id = $event->province_id;
 

@@ -49,9 +49,7 @@ class GetDetailEventBySlugV2 extends Retrieval
             $response["more_information"] = $event->more_information;
             $response["event_price"] = $event->event_price;
             $response["can_register"] = $event->getCanRegister();
-            $response["with_contingent"] = $event->with_contingent;
             $response["province_id"] = $event->province_id;
-            $response['withContingent'] = $event->with_contingent;
             $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
             $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
             $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;

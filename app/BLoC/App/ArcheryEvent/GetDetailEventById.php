@@ -10,7 +10,6 @@ use App\Models\Provinces;
 use Illuminate\Support\Str;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
-use Illuminate\Support\Facades\Auth;
 
 class GetDetailEventById extends Retrieval
 {
@@ -62,7 +61,6 @@ class GetDetailEventById extends Retrieval
             "event_competition" => $data->event_competition,
             "public_information" => [
                 'event_name' => $data->event_name,
-                "with_contingent" => $data->with_contingent,
                 "province_id" => $data->province_id,
                 'event_banner' => $data->poster,
                 'event_description' => $data->description,

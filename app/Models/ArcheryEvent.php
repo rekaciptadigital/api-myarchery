@@ -526,7 +526,6 @@ class ArcheryEvent extends Model
                 $event = ArcheryEvent::find($data->id_event);
 
                 $detail['id'] = $data->id_event;
-                $detail['withContingent'] = $event->with_contingent;
                 $detail['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
                 $detail['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
                 $detail['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
@@ -853,7 +852,6 @@ class ArcheryEvent extends Model
             ],
             'more_information' => $moreinformations_data,
             'admins' => $admins_data,
-            'withContingent' => $data->with_contingent,
             'parentClassification' => !empty($data->detailParentClassification) ? $data->detailParentClassification['id'] : 0,
             'parentClassificationTitle' => !empty($data->detailParentClassification) ? $data->detailParentClassification['title'] : null,
             'classificationCountryId' => !empty($data->detailCountryClassification) ? $data->detailCountryClassification['id'] : 0,

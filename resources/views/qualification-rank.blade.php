@@ -72,7 +72,7 @@
                         <strong>Rank</strong>
                     </th>
                     <th style="text-align: center;border: 1px solid black;font-size: 14pt ">
-                        <strong>Club/Contingent</strong>
+                        <strong>{{ $parent_classification_title }}</strong>
                     </th>
                     @foreach ($data[0]['sessions'] as $key => $item)
                         <th style="text-align: center;border: 1px solid black;font-size: 14pt">
@@ -98,7 +98,17 @@
                             {{ $key + 1 }}
                         </td>
                         <td style="text-align: center;border: 1px solid black;font-size: 14pt">
-                            {{ $with_contingent == 0 ? $d['club_name'] : $d['city_name'] }}
+                            @if ($d['parent_classification_type'] == 2)
+                                {{ ucwords(strtolower($d['country_name'])) }}
+                            @elseif ($d['parent_classification_type'] == 3)
+                                {{ ucwords(strtolower($d['province_name'])) }}
+                            @elseif ($d['parent_classification_type'] == 4)
+                                {{ ucwords(strtolower($d['city_name'])) }}
+                            @elseif ($d['parent_classification_type'] > 5)
+                                {{ ucwords(strtolower($d['children_classification_members_name'])) }}
+                            @else
+                                {{ ucwords(strtolower($d['club_name'])) }}
+                            @endif
                         </td>
                         @foreach ($d['sessions'] as $key2 => $item)
                             <td style="text-align: center;border: 1px solid black;font-size: 14pt">
