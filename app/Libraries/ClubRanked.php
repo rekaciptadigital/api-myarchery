@@ -588,12 +588,12 @@ class ClubRanked
 
             if ($event->parent_classification == 2) {
                 $contingent_name = $v["country_name"];
-                $contingent_id = $v["country_id"];
+                $contingent_id = $v["classification_country_id"];
             }
 
             if ($event->parent_classification == 3) {
                 $contingent_name = $v["province_name"];
-                $contingent_id = $v["province_id"];
+                $contingent_id = $v["classification_province_id"];
             }
 
             if ($event->parent_classification == 4) {
