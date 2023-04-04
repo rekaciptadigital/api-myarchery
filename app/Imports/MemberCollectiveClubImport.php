@@ -114,13 +114,13 @@ class MemberCollectiveClubImport implements ToCollection, WithHeadingRow
             if ($category->is_age == 1) {
                 if ($category->max_age_master > 0) {
                     if ($user_new->age > $category->max_age_master) {
-                        throw new BLoCException("age invalid");
+                        // throw new BLoCException("age invalid");
                     }
                 }
 
                 if ($category->min_age_master > 0) {
                     if ($user_new->age < $category->min_age_master) {
-                        throw new BLoCException("age invalid");
+                        // throw new BLoCException("age invalid");
                     }
                 }
             } else {
