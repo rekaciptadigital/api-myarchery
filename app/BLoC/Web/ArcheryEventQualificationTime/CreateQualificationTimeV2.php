@@ -36,7 +36,7 @@ class CreateQualificationTimeV2 extends Transactional
 
         // validasi hanya bisa set jadwal sebelum event mulai
         if ($today > $date_time_event_start_timestamp) {
-            throw new BLoCException("hanya dapat diatur sebelum event dimulai");
+            // throw new BLoCException("hanya dapat diatur sebelum event dimulai");
         }
 
         foreach ($qualification_times as $qt) {
