@@ -4,7 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ClassificationEventRegisters;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -32,7 +32,6 @@ class SetConfigRegisterCategory extends Transactional
         $parentClassification = $parameters->get("parentClassification");
         $classificationCountryId = $parameters->get("classificationCountryId");
         $classificationProvinceId = $parameters->get("classificationProvinceId");
-        $classificationChildrenId = $parameters->get("classificationChildrenId");
 
         $event = ArcheryEvent::find($event_id);
         //reset contingent setting
@@ -79,15 +78,16 @@ class SetConfigRegisterCategory extends Transactional
             $lc->start_registration = null;
             $lc->end_registration = null;
             $lc->save();
+
+            $archery_event_qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $lc->id)->first();
+            if ($archery_event_qualification_time) {
+                $archery_event_qualification_time->delete();
+            }
         }
         // akhir reset config
 
 
         // set ulang tanggal pendaftaran event
-
-        // if (strtotime($default_datetime_start_register) < time()) {
-        //     throw new BLoCException("event start register invalid");
-        // }
 
         if (strtotime($default_datetime_end_register) <= strtotime($default_datetime_start_register)) {
             throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
