@@ -164,7 +164,7 @@ class DownloadReportWinnerQualificationByBudrest extends Retrieval
         ]);
 
         $digits = 3;
-        $fileName   = 'report_winner_by_budrest_' . $event_id . '.pdf';
+        $fileName   = 'report_winner_by_budrest_' . $event_id . time() . '.pdf';
         // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/report_winner_by_budrest';
         $generate   = $pdf->save('' . $path . '/' . $fileName . '');
