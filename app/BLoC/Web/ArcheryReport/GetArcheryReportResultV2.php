@@ -95,7 +95,8 @@ class GetArcheryReportResultV2 extends Retrieval
                 'headers' => $data_medal_standing['title_header']['category'],
                 'datatables' => $data_medal_standing['datatable'],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club'],
+                'parent_classification_member_title' => $parent_classification_member->title,
             ]);
         }
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
@@ -115,7 +116,11 @@ class GetArcheryReportResultV2 extends Retrieval
             $total_silver = 0;
             $total_bronze = 0;
             $total_all = 0;
+            $new_data = [];
             foreach ($data_medal_standing_2 as $key2 => $value_2) {
+                if ($value_2["total"] == 0) {
+                    continue;
+                }
                 $gold_individu += $value_2['detail_modal_by_group']['indiividu']['gold'];
                 $silver_individu += $value_2['detail_modal_by_group']['indiividu']['silver'];
                 $bronze_individu += $value_2['detail_modal_by_group']['indiividu']['bronze'];
@@ -130,6 +135,8 @@ class GetArcheryReportResultV2 extends Retrieval
                 $total_silver += $value_2['silver'];
                 $total_bronze += $value_2['bronze'];
                 $total_all += $value_2['total'];
+
+                $new_data[] = $value_2;
             }
             $pages[] = view('report_result/club_rank_medals_standing_2', [
                 'logo_event' => $logo_event,
@@ -137,7 +144,7 @@ class GetArcheryReportResultV2 extends Retrieval
                 'event_name_report' => $event_name_report,
                 'event_date_report' => $event_date_report,
                 'event_location_report' => $event_location_report,
-                'datatables' => $data_medal_standing_2,
+                'datatables' => $new_data,
                 'parent_classification_member_title' => $parent_classification_member->title,
                 "gold_individu" => $gold_individu,
                 "silver_individu" => $silver_individu,

@@ -140,6 +140,9 @@ class ArcheryEventParticipant extends Model
       $result = [];
       $detail_club_with_medal_response = [];
       foreach ($data as $key => $d) {
+        if ($d["total"] == 0) {
+          continue;
+        }
         $detail_club_with_medal_response["club_name"] = $d["club_name"];
         $detail_club_with_medal_response["country_name"] = $d["country_name"];
         $detail_club_with_medal_response["province_name"] = $d["province_name"];
