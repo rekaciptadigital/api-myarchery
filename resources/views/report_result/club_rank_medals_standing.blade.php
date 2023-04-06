@@ -25,7 +25,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">
@@ -57,38 +56,37 @@
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <h1 style="text-align: center">Medals Standing</h1>
-        <table class="table" style="width:100%; border-collapse: collapse; font-size: 14px;" border="1">
-            <thead></thead>
+        <table class="table" style="width:100%; border-collapse: collapse; font-size: 12pt;" border="1">
             <tbody>
                 <tr>
-                    <th rowspan="3" style="text-align: center;"><strong>NO</strong></th>
-                    <th rowspan="3" style="text-align: center;"><strong>KLUB/KONTINGEN</strong></th>
-                    <!-- foreach -->
+                    <th rowspan="3" style="text-align: center; padding:5px;"><strong>NO</strong></th>
+                    <th rowspan="3" style="text-align: center;">
+                        <strong>
+                            {{ $parent_classification_member_title }}
+                        </strong>
+                    </th>
                     @foreach ($headers as $key => $value)
                         <th colspan="{{ $value[0]['count_colspan'] }}" style="text-align: center;">
                             <strong>{{ $key }}</strong>
                         </th>
                     @endforeach
-                    <!-- foreach -->
                     <th rowspan="2" colspan="3" style="text-align: center;"><strong>TOTAL</strong></th>
                 </tr>
                 <tr>
                     @foreach ($headers as $key2 => $value2)
                         @foreach ($value2['age_category'] as $key3 => $value3)
-                            <th colspan="3" style="text-align:center;">{{ $key3 }}</th>
+                            <th colspan="3" style="text-align:center; padding:5px">{{ $key3 }}</th>
                         @endforeach
                     @endforeach
                 </tr>
                 <tr>
-                    <!-- foreach -->
                     @foreach ($headers as $key => $value2)
                         @foreach ($value2['age_category'] as $key => $value3)
-                            <th style="text-align:center; background: #e7ac54; width:20px;">E</th>
+                            <th style="text-align:center; background: #e7ac54; width:20px; padding:5px">E</th>
                             <th style="text-align:center; width:20px;">P</th>
                             <th style="text-align:center; background: #b78458; width:20px;">PR</th>
                         @endforeach
                     @endforeach
-                    <!-- endforeach -->
                     <th style="text-align:center; background: #e7ac54; width:20px;">E</th>
                     <th style="text-align:center; width:20px;">P</th>
                     <th style="text-align:center; background: #b78458; width:20px;">PR</th>
@@ -97,7 +95,7 @@
                 @php($i = 1)
                 @foreach ($datatables as $key => $data)
                     <tr>
-                        <td style="text-align:center;">{{ $i }}</td>
+                        <td style="text-align:center; padding:5px">{{ $i }}</td>
                         <td>
                             @if ($data['parent_classification_type'] == 2)
                                 {{ $data['country_name'] }}
@@ -122,7 +120,7 @@
                 @endforeach
 
                 <tr>
-                    <td colspan="2" style="text-align:center;"><strong>JUMLAH</strong></td>
+                    <td colspan="2" style="text-align:center;padding:5px"><strong>JUMLAH</strong></td>
                     @foreach ($total_medal_by_category as $value_medal_each_category)
                         <td style="text-align:center;"><strong>{{ $value_medal_each_category }}</strong></td>
                     @endforeach
@@ -130,9 +128,6 @@
                         <td style="text-align:center;"><strong>{{ $value_medal_total }}</strong></td>
                     @endforeach
                 </tr>
-                <!-- <tr>
-            <td colspan="3"></td>
-        </tr> -->
             </tbody>
         </table>
     </div>

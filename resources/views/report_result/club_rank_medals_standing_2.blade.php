@@ -57,7 +57,7 @@
 
         <hr style="height:3px;border:none;color:black;background-color:black;" />
         <h1 style="text-align: center">Medals Standing</h1>
-        <table class="table" style="width:100%; border-collapse: collapse; font-size: 14px;" border="1">
+        <table class="table" style="width:100%; border-collapse: collapse; font-size: 12pt;" border="1">
             <tbody>
                 <tr>
                     <th rowspan="2" style="text-align: center;"><strong>NO</strong></th>
@@ -66,7 +66,7 @@
                             {{ $parent_classification_member_title }}
                         </strong>
                     </th>
-                    <th colspan="4" style="text-align: center;">
+                    <th colspan="4" style="text-align: center; padding:5px">
                         <strong>Individual</strong>
                     </th>
                     <th colspan="4" style="text-align: center;">
@@ -76,7 +76,7 @@
                 </tr>
 
                 <tr>
-                    <th style="text-align:center;">G</th>
+                    <th style="text-align:center; padding:5px">G</th>
                     <th style="text-align:center;">S</th>
                     <th style="text-align:center;">B</th>
                     <th style="text-align:center;">Tot</th>
@@ -94,8 +94,8 @@
                 @php($i = 1)
                 @foreach ($datatables as $key => $data)
                     <tr>
-                        <td style="text-align:center;">{{ $i }}</td>
-                        <td>
+                        <td style="text-align:center; padding:5px">{{ $i }}</td>
+                        <td style="padding:5px">
                             @if ($data['parent_classification_type'] == 2)
                                 {{ $data['country_name'] }}
                             @elseif ($data['parent_classification_type'] == 3)
@@ -108,40 +108,42 @@
                                 {{ $data['club_name'] }}
                             @endif
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center; padding:5px">
                             {{ $data['detail_modal_by_group']['indiividu']['gold'] > 0 ? $data['detail_modal_by_group']['indiividu']['gold'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['indiividu']['silver'] > 0 ? $data['detail_modal_by_group']['indiividu']['silver'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['indiividu']['bronze'] ? $data['detail_modal_by_group']['indiividu']['bronze'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['indiividu']['total'] ? $data['detail_modal_by_group']['indiividu']['total'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['team']['gold'] > 0 ? $data['detail_modal_by_group']['team']['gold'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['team']['silver'] > 0 ? $data['detail_modal_by_group']['team']['silver'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['team']['bronze'] > 0 ? $data['detail_modal_by_group']['team']['bronze'] : '-' }}
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;padding:5px">
                             {{ $data['detail_modal_by_group']['team']['total'] > 0 ? $data['detail_modal_by_group']['team']['total'] : '-' }}
                         </td>
-                        <td style="text-align:center;">{{ $data['gold'] > 0 ? $data['gold'] : '-' }}</td>
-                        <td style="text-align:center;">{{ $data['silver'] > 0 ? $data['silver'] : '-' }}</td>
-                        <td style="text-align:center;">{{ $data['bronze'] > 0 ? $data['bronze'] : '-' }}</td>
-                        <td style="text-align:center;">{{ $data['total'] > 0 ? $data['total'] : '-' }}</td>
+                        <td style="text-align:center;padding:5px">{{ $data['gold'] > 0 ? $data['gold'] : '-' }}</td>
+                        <td style="text-align:center;padding:5px">{{ $data['silver'] > 0 ? $data['silver'] : '-' }}
+                        </td>
+                        <td style="text-align:center;padding:5px">{{ $data['bronze'] > 0 ? $data['bronze'] : '-' }}
+                        </td>
+                        <td style="text-align:center;padding:5px">{{ $data['total'] > 0 ? $data['total'] : '-' }}</td>
                     </tr>
                     @php($i++)
                 @endforeach
 
                 <tr>
-                    <td colspan="2" style="text-align:center;"><strong>JUMLAH</strong></td>
+                    <td colspan="2" style="text-align:center; padding:5px"><strong>JUMLAH</strong></td>
                     <td style="text-align:center;">
                         <strong>{{ $gold_individu }}</strong>
                     </td>
