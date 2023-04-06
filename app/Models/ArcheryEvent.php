@@ -428,6 +428,7 @@ class ArcheryEvent extends Model
         $datas = ArcheryEvent::select(
             '*',
             'archery_events.id as id_event',
+            'archery_events.logo',
             'archery_events.province_id as province_id_contingent',
             'cities.id as cities_id',
             'cities.name as cities_name',
