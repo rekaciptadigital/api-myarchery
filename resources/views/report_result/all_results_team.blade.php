@@ -17,6 +17,10 @@
             overflow: visible;
         }
 
+        * {
+            font-family: helvetica;
+        }
+
         div.page.table {
             font-size: 22pt;
         }
@@ -59,36 +63,36 @@
         <br>
         <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
         <h2 style="text-align: center">Qualification Report</h2>
-        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead>
-                <!-- <tr><th>Table Heading</th></tr> -->
-            </thead>
-            <tbody style="font-size: 24px;">
+        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt;">
+            <tbody>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
                         <strong>POS</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th
+                        style="text-align: center;border: 1px solid black; padding-left:10px;padding-top:5px;padding-bottom:5px;">
                         <strong>Athlete</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club/Kontingen</strong>
+                    <th
+                        style="text-align: center;border: 1px solid black; padding-left:10px;padding-top:5px;padding-bottom:5px;">
+                        <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%;">
                         <strong>Total</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
-                        <strong>X</strong>
-                    </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%;">
                         <strong>X+10</strong>
+                    </th>
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%;">
+                        <strong>X</strong>
                     </th>
                 </tr>
                 @foreach ($data_report as $key => $data)
                     @isset($data['teams'])
                         <tr style="border: 1px solid black;">
-                            <td style="text-align: center;border: 1px solid black;"> {{ $key + 1 }}</td>
-                            <td style="text-align: center;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;"> {{ $key + 1 }}</td>
+                            <td
+                                style="text-align: left;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                                 @if (sizeof($data['teams']) > 0)
                                     @foreach ($data['teams'] as $key => $team)
                                         {{ $team['name'] }} <br>
@@ -98,7 +102,8 @@
                                 @endif
 
                             </td>
-                            <td style="text-align: center;border: 1px solid black;">
+                            <td
+                                style="text-align: left;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                                 @if ($data['parent_classification_type'] == 2)
                                     {{ ucwords(strtolower($data['country_name'])) }}
                                 @elseif ($data['parent_classification_type'] == 3)
@@ -108,12 +113,14 @@
                                 @elseif ($data['parent_classification_type'] > 5)
                                     {{ ucwords(strtolower($data['children_classification_members_name'])) }}
                                 @else
-                                    {{ ucwords(strtolower($data['club_name'])) }}
+                                    {{ $data['club_name'] }}
                                 @endif
                             </td>
-                            <td style="text-align: center;border: 1px solid black;">{{ $data['total'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">{{ $data['total_x'] }}</td>
-                            <td style="text-align: center;border: 1px solid black;">{{ $data['total_x_plus_ten'] }}</td>
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">{{ $data['total'] }}</td>
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">
+                                {{ $data['total_x_plus_ten'] }}</td>
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">{{ $data['total_x'] }}
+                            </td>
                         </tr>
                     @endisset
                 @endforeach

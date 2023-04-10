@@ -1046,8 +1046,9 @@ class ArcheryEventParticipant extends Model
 
     if (count($members) > 0) {
       foreach ($members as $member) {
+        $category_detail = ArcheryEventCategoryDetail::find($member->category_details_id);
 
-        $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($member->category_details_id);
+        $categoryLabel = $category_detail->GetLabel2();
 
         if ($type == "elimination") {
           $elimination_rank = $member->elimination_ranked;
@@ -1647,7 +1648,7 @@ class ArcheryEventParticipant extends Model
               "parent_classification_type" => $event->parent_classification,
               'team_name' => $elimination_group_team->team_name,
               'elimination_ranked' => $elimination_group_team->elimination_ranked ?? 0,
-              'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail_id),
+              'category' => $category->GetLabel2(),
               'date' => $elimination_group->created_at->format('Y-m-d'),
               "member_team" => ArcheryEventEliminationGroupMemberTeam::select("users.name", "archery_event_participant_members.id as member_id")->where("participant_id", $elimination_group_team->participant_id)
                 ->join("archery_event_participant_members", "archery_event_participant_members.id", "=", "archery_event_elimination_group_member_team.member_id")

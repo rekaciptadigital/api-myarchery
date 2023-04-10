@@ -226,13 +226,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'data_report' => $data_report[0],
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
-                                        'category' => $data_report[0][0]['category'],
+                                        'category' => $category_detail->GetLabel2(),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
                                         'type' => ucfirst($type),
                                         'event_name_report' => $event_name_report,
                                         'event_date_report' => $event_date_report,
-                                        'event_location_report' => $event_location_report
+                                        'event_location_report' => $event_location_report,
+                                        'parent_classification_member_title' => $parent_classification_member->title,
                                     ]);
                                 }
                             }
@@ -244,13 +245,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'data_report' => $data_elimination_team,
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
-                                        'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                        'category' => $category_detail->GetLabel2(),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
                                         'type' => ucfirst($type),
                                         'event_name_report' => $event_name_report,
                                         'event_date_report' => $event_date_report,
-                                        'event_location_report' => $event_location_report
+                                        'event_location_report' => $event_location_report,
+                                        'parent_classification_member_title' => $parent_classification_member->title,
                                     ]);
                                 }
                             }
@@ -269,13 +271,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'data_report' => $data_report[0],
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
-                                        'category' => $data_report[0][0]['category'],
+                                        'category' => $category_detail->GetLabel2(),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
                                         'type' => ucfirst($type),
                                         'event_name_report' => $event_name_report,
                                         'event_date_report' => $event_date_report,
-                                        'event_location_report' => $event_location_report
+                                        'event_location_report' => $event_location_report,
+                                        'parent_classification_member_title' => $parent_classification_member->title,
                                     ]);
                                 }
                             }
@@ -291,13 +294,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                             'data_report' => $data_qualification,
                                             'competition' => $competition->competition_category,
                                             'report' => $report,
-                                            'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                            'category' => $category_detail->GetLabel2(),
                                             'logo_event' => $logo_event,
                                             'logo_archery' => $logo_archery,
                                             'type' => ucfirst($type),
                                             'event_name_report' => $event_name_report,
                                             'event_date_report' => $event_date_report,
-                                            'event_location_report' => $event_location_report
+                                            'event_location_report' => $event_location_report,
+                                            'parent_classification_member_title' => $parent_classification_member->title,
                                         ]);
                                     }
                                 } else {
@@ -306,13 +310,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'data_report' => $data_qualification,
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
-                                        'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                        'category' => $category_detail->GetLabel2(),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
                                         'type' => ucfirst($type),
                                         'event_name_report' => $event_name_report,
                                         'event_date_report' => $event_date_report,
-                                        'event_location_report' => $event_location_report
+                                        'event_location_report' => $event_location_report,
+                                        'parent_classification_member_title' => $parent_classification_member->title,
                                     ]);
                                 }
                             }
@@ -355,13 +360,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'data_report' => $data_qualification,
                                         'competition' => $competition->competition_category,
                                         'report' => $report,
-                                        'category' => $data_report[0][0]['category'],
+                                        'category' => $category_detail->GetLabel2(),
                                         'logo_event' => $logo_event,
                                         'logo_archery' => $logo_archery,
                                         'type' => ucfirst($type),
                                         'event_name_report' => $event_name_report,
                                         'event_date_report' => $event_date_report,
-                                        'event_location_report' => $event_location_report
+                                        'event_location_report' => $event_location_report,
+                                        'parent_classification_member_title' => $parent_classification_member->title,
                                     ]);
                                 }
                             }
@@ -391,13 +397,14 @@ class GetArcheryReportResultV2 extends Retrieval
                                     'data_report' => $data_qualification,
                                     'competition' => $competition->competition_category,
                                     'report' => $report,
-                                    'category' => ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id),
+                                    'category' => $category_detail->GetLabel2(),
                                     'logo_event' => $logo_event,
                                     'logo_archery' => $logo_archery,
                                     'type' => ucfirst($type),
                                     'event_name_report' => $event_name_report,
                                     'event_date_report' => $event_date_report,
-                                    'event_location_report' => $event_location_report
+                                    'event_location_report' => $event_location_report,
+                                    'parent_classification_member_title' => $parent_classification_member->title,
                                 ]);
                                 //end print all result qualification
                             }

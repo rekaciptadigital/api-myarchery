@@ -17,6 +17,10 @@
             overflow: visible;
         }
 
+        * {
+            font-family: helvetica;
+        }
+
         div.page.table {
             font-size: 22pt;
         }
@@ -57,28 +61,25 @@
         <br>
         <h1 style="text-align: center">{{ $category }}</h1>
         <h2 style="text-align: center">Elimination</h2>
-        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead>
-                <!-- <tr><th>Table Heading</th></tr> -->
-            </thead>
-            <tbody style="font-size: 24px;">
+        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size:14pt">
+            <tbody>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; " colspan="5">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;" colspan="5">
                         <strong>Medalist by Event</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black;">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
                         <strong>Category</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px;">
                         <strong>Date</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
                         <strong>Medal</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club/Kontingen</strong>
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
+                        <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
                 </tr>
                 @php
@@ -95,33 +96,36 @@
                                 $rowid = 0;
                                 $rowspan = count($data_report);
                             @endphp
-                            <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
-                                {{ $data['category'] ? $data['category'] : '-' }}
+                            <td style="text-align: center;border: 1px solid black; padding:5px;"
+                                rowspan="{{ $rowspan }}">
+                                {{ $category ? $category : '-' }}
                             </td>
-                            <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;"
+                                rowspan="{{ $rowspan }}">
                                 {{ $data['date'] ? $data['date'] : '-' }}
                             </td>
                         @endif
                         <!-- start initiate medals -->
                         @if ($data['elimination_ranked'] == '1')
-                            <td style="text-align: left;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">
                                 Gold
                             </td>
                         @elseif ($data['elimination_ranked'] == '2')
-                            <td style="text-align: left;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">
                                 Silver
                             </td>
                         @elseif ($data['elimination_ranked'] == '3')
-                            <td style="text-align: left;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">
                                 Bronze
                             </td>
                         @else
-                            <td style="text-align: left;border: 1px solid black;">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;">
                                 Bronze
                             </td>
                         @endif
                         <!-- end medals -->
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td
+                            style="text-align: left;border: 1px solid black; padding-left:10px; padding-top:5px; padding-bottom:5px">
                             {{ $data['team_name'] ? $data['team_name'] : '-' }}
                         </td>
                     </tr>

@@ -40,6 +40,9 @@ class CreateQualificationTimeV2 extends Transactional
         }
 
         foreach ($qualification_times as $qt) {
+            if (!isset($qt['category_detail_id'])) {
+                continue;
+            }
             $category_detail_id = $qt['category_detail_id'];
 
             $category = ArcheryEventCategoryDetail::find($category_detail_id);

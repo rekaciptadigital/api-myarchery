@@ -17,6 +17,10 @@
             overflow: visible;
         }
 
+        * {
+            font-family: helvetica;
+        }
+
         div.page.table {
             font-size: 22pt;
         }
@@ -25,7 +29,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">
@@ -61,34 +64,44 @@
         <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
         <h2 style="text-align: center">Qualification Report</h2>
 
-        <table style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead>
-                <!-- <tr>
-                <th>Table Heading</th>
-            </tr> -->
-            </thead>
-            <tbody style="font-size: 24px;">
-
+        <table style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 14pt;">
+            <tbody>
                 <tr style="border: 1px solid black;">
-
-                    <th style="text-align: center; border: 1px solid black;"><strong>RANK</strong></th>
-                    <th style="text-align: center; border: 1px solid black;"><strong>NAME</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>CLUB/KONTINGEN</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>SESI 1</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>SESI 2</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>TOTAL</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>X</strong></th>
-                    <th style="text-align: center;border: 1px solid black; "><strong>X+10</strong></th>
-
+                    <th style="text-align: center; border: 1px solid black; padding:5px;"><strong>RANK</strong></th>
+                    <th
+                        style="text-align: center; border: 1px solid black; padding-left:10px; padding-top:5px; padding-bottom:5px;">
+                        <strong>NAME</strong>
+                    </th>
+                    <th
+                        style="text-align: center;border: 1px solid black; padding-left:10px; padding-top:5px; padding-bottom:5px;">
+                        <strong>{{ $parent_classification_member_title }}</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; padding:5px; width:10%;">
+                        <strong>SESI 1</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; padding:5px; width:10%;">
+                        <strong>SESI 2</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; padding:5px;width:10%;">
+                        <strong>TOTAL</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; padding:5px; width:10%;">
+                        <strong>X+10</strong>
+                    </th>
+                    <th style="text-align: center;border: 1px solid black; padding:5px;width:10%;">
+                        <strong>X</strong>
+                    </th>
                 </tr>
                 @php $i = 1 @endphp
                 @foreach ($data_report as $data)
                     <tr style="border: 1px solid black;">
-
-                        <td style="text-align: center;border: 1px solid black;">{{ $i++ }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['member'] ? $data['member']['name'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">{{ $i++ }}</td>
+                        <td
+                            style="text-align: left;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
+                            {{ $data['member'] ? ucwords(strtolower($data['member']['name'])) : '-' }}
+                        </td>
+                        <td
+                            style="text-align: left;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                             @if ($data['parent_classification_type'] == 2)
                                 {{ ucwords(strtolower($data['country_name'])) }}
                             @elseif ($data['parent_classification_type'] == 3)
@@ -98,26 +111,23 @@
                             @elseif ($data['parent_classification_type'] > 5)
                                 {{ ucwords(strtolower($data['children_classification_members_name'])) }}
                             @else
-                                {{ ucwords(strtolower($data['club_name'])) }}
+                                {{ $data['club_name'] }}
                             @endif
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">
                             {{ $data['sessions']['1'] ? $data['sessions']['1']['total'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">
                             {{ isset($data['sessions']['2']) ? $data['sessions']['2']['total'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">
                             {{ $data['total'] ? $data['total'] : '0' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['total_x'] ? $data['total_x'] : '0' }}</td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['total_x_plus_ten'] ? $data['total_x_plus_ten'] : '0' }}</td>
-
-
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">
+                            {{ $data['total_x_plus_ten'] ? $data['total_x_plus_ten'] : '0' }}
+                        </td>
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">
+                            {{ $data['total_x'] ? $data['total_x'] : '0' }}
+                        </td>
                     </tr>
                 @endforeach
-                <!-- <tr>
-            <td colspan="3"></td>
-        </tr> -->
             </tbody>
         </table>
     </div>
