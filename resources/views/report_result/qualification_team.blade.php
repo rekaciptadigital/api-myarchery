@@ -123,10 +123,11 @@
                                 </td>
                                 <td style="text-align: center;border: 1px solid black;padding:5px;">{{ $data['total'] }}
                                 </td>
-                                <td style="text-align: center;border: 1px solid black;padding:5px;">{{ $data['total_x'] }}
-                                </td>
                                 <td style="text-align: center;border: 1px solid black;padding:5px;">
                                     {{ $data['total_x_plus_ten'] }}
+                                </td>
+                                <td style="text-align: center;border: 1px solid black;padding:5px;">
+                                    {{ $data['total_x'] }}
                                 </td>
                             </tr>
                         @endisset
