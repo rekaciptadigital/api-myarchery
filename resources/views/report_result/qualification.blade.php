@@ -62,7 +62,7 @@
         <br>
         <p style="text-align: center; font-size: 30px;"><strong>{{ $category }}</strong></p>
         <h2 style="text-align: center">Qualification</h2>
-        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 12pt;">
+        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 14pt;">
             <tbody>
                 <tr style="border: 1px solid black;">
                     <th style="text-align: center;border: 1px solid black; padding:5px;">
@@ -74,19 +74,19 @@
                     <th style="text-align: center;border: 1px solid black; padding:5px;">
                         <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; padding:5px;">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;width:10%">
                         <strong>Sesi 1</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black; padding:5px;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%">
                         <strong>Sesi 2</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black; padding:5px;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%">
                         <strong>Total</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black; padding:5px;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%">
                         <strong>X+10</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black; padding:5px;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%">
                         <strong>X</strong>
                     </th>
                 </tr>

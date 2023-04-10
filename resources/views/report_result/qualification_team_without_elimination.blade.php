@@ -66,22 +66,24 @@
         <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 14pt;">
             <tbody>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
                         <strong>Medal</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th
+                        style="text-align: center;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                         <strong>Athlete</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th
+                        style="text-align: center;border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                         <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px; width:10%;">
                         <strong>Total</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black;padding:5px; width:10%;">
                         <strong>X+10</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black;padding:5px; width:10%;">
                         <strong>X</strong>
                     </th>
                 </tr>
@@ -99,7 +101,7 @@
                                 @endif
                                 <!-- end medals -->
                                 <td
-                                    style="text-align: center;border: 1px solid black; padding-left:10px;padding-top:5px;padding-bottom:5px;">
+                                    style="text-align: left;border: 1px solid black; padding-left:10px;padding-top:5px;padding-bottom:5px;">
                                     @if (sizeof($data['teams']) > 0)
                                         @foreach ($data['teams'] as $key => $team)
                                             {{ $team['name'] }} <br>
