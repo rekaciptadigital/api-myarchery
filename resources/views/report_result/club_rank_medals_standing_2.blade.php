@@ -60,8 +60,8 @@
         <table class="table" style="width:100%; border-collapse: collapse; font-size: 12pt;" border="1">
             <tbody>
                 <tr>
-                    <th rowspan="2" style="text-align: center;"><strong>NO</strong></th>
-                    <th rowspan="2" style="text-align: center;">
+                    <th rowspan="2" style="text-align: center;padding:5px"><strong>NO</strong></th>
+                    <th rowspan="2" style="text-align: center;padding:5px">
                         <strong>
                             {{ $parent_classification_member_title }}
                         </strong>
@@ -69,25 +69,25 @@
                     <th colspan="4" style="text-align: center; padding:5px">
                         <strong>Individual</strong>
                     </th>
-                    <th colspan="4" style="text-align: center;">
+                    <th colspan="4" style="text-align: center;padding:5px">
                         <strong>Team</strong>
                     </th>
-                    <th colspan="4" style="text-align: center;"><strong>Total</strong></th>
+                    <th colspan="4" style="text-align: center;padding:5px"><strong>Total</strong></th>
                 </tr>
 
                 <tr>
-                    <th style="text-align:center; padding:5px">G</th>
-                    <th style="text-align:center;">S</th>
-                    <th style="text-align:center;">B</th>
-                    <th style="text-align:center;">Tot</th>
-                    <th style="text-align:center;">G</th>
-                    <th style="text-align:center;">S</th>
-                    <th style="text-align:center;">B</th>
-                    <th style="text-align:center;">Tot</th>
-                    <th style="text-align:center;">G</th>
-                    <th style="text-align:center;">S</th>
-                    <th style="text-align:center;">B</th>
-                    <th style="text-align:center;">Tot</th>
+                    <th style="text-align:center;padding:5px">G</th>
+                    <th style="text-align:center;padding:5px">S</th>
+                    <th style="text-align:center;padding:5px">B</th>
+                    <th style="text-align:center;padding:5px">Tot</th>
+                    <th style="text-align:center;padding:5px">G</th>
+                    <th style="text-align:center;padding:5px">S</th>
+                    <th style="text-align:center;padding:5px">B</th>
+                    <th style="text-align:center;padding:5px">Tot</th>
+                    <th style="text-align:center;padding:5px">G</th>
+                    <th style="text-align:center;padding:5px">S</th>
+                    <th style="text-align:center;padding:5px">B</th>
+                    <th style="text-align:center;padding:5px">Tot</th>
                 </tr>
 
 
@@ -95,7 +95,7 @@
                 @foreach ($datatables as $key => $data)
                     <tr>
                         <td style="text-align:center; padding:5px">{{ $i }}</td>
-                        <td style="padding:5px">
+                        <td style="padding-left:15px;padding-top:5px;padding-bottom:5px">
                             @if ($data['parent_classification_type'] == 2)
                                 {{ $data['country_name'] }}
                             @elseif ($data['parent_classification_type'] == 3)
@@ -144,40 +144,40 @@
 
                 <tr>
                     <td colspan="2" style="text-align:center; padding:5px"><strong>JUMLAH</strong></td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center; padding:5px">
                         <strong>{{ $gold_individu }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center; padding:5px">
                         <strong>{{ $silver_individu }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $bronze_individu }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_medal_individu }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $gold_team }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $silver_team }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $bronze_team }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_medal_team }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_gold }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_silver }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_bronze }}</strong>
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;padding:5px">
                         <strong>{{ $total_all }}</strong>
                     </td>
                 </tr>
