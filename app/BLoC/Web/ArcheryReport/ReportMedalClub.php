@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryReport;
 
+use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -10,6 +11,7 @@ use App\Models\ArcheryEvent;
 use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryEventParticipant;
+use App\Models\ParentClassificationMembers;
 use Illuminate\Support\Carbon;
 
 class ReportMedalClub extends Retrieval
@@ -37,6 +39,12 @@ class ReportMedalClub extends Retrieval
         $end_date_event = dateFormatTranslate(Carbon::parse($archery_event->event_end_datetime)->format('d-F-Y'), false);
         $event_date_report = $start_date_event . ' - ' . $end_date_event;
         $event_location_report = $archery_event->location;
+
+        $parent_classifification_id = $archery_event->parent_classification;
+        $parent_classification_member = ParentClassificationMembers::find($parent_classifification_id);
+        if (!$parent_classification_member) {
+            throw new BLoCException("parent_classification_members not found");
+        }
 
         $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))
             ->where("event_id", $event_id)
@@ -67,9 +75,8 @@ class ReportMedalClub extends Retrieval
 
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
         $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id);
-
-        if ($data_medal_standing != [] && count($data_medal_standing["datatable"]) > 0) {
-            $pages[] = view('report_result/club_rank_medals_standing', [
+        if (count($data_medal_standing) > 0) {
+            $pages[] = view('report_medal_club/club_rank_medals_standing', [
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
@@ -78,14 +85,75 @@ class ReportMedalClub extends Retrieval
                 'headers' => $data_medal_standing['title_header']['category'],
                 'datatables' => $data_medal_standing['datatable'],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club'],
+                'parent_classification_member_title' => $parent_classification_member->title,
             ]);
-            // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
+        }
+        // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
+        $data_medal_standing_2 = ClubRanked::getEventRanked($event_id, 1);
+        if (count($data_medal_standing_2) > 0) {
+            $gold_individu = 0;
+            $silver_individu = 0;
+            $bronze_individu = 0;
+            $total_medal_individu = 0;
+            $gold_team = 0;
+            $silver_team = 0;
+            $bronze_team = 0;
+            $total_medal_team = 0;
+            $total_gold = 0;
+            $total_silver = 0;
+            $total_bronze = 0;
+            $total_all = 0;
+            $new_data = [];
+            foreach ($data_medal_standing_2 as $key2 => $value_2) {
+                if ($value_2["total"] == 0) {
+                    continue;
+                }
+                $gold_individu += $value_2['detail_modal_by_group']['indiividu']['gold'];
+                $silver_individu += $value_2['detail_modal_by_group']['indiividu']['silver'];
+                $bronze_individu += $value_2['detail_modal_by_group']['indiividu']['bronze'];
+                $total_medal_individu += $value_2['detail_modal_by_group']['indiividu']['total'];
 
+                $gold_team += $value_2['detail_modal_by_group']['team']['gold'];
+                $silver_team += $value_2['detail_modal_by_group']['team']['silver'];
+                $bronze_team += $value_2['detail_modal_by_group']['team']['bronze'];
+                $total_medal_team += $value_2['detail_modal_by_group']['team']['total'];
 
+                $total_gold += $value_2['gold'];
+                $total_silver += $value_2['silver'];
+                $total_bronze += $value_2['bronze'];
+                $total_all += $value_2['total'];
+
+                $new_data[] = $value_2;
+            }
+
+            $pages[] = view('report_result/club_rank_medals_standing_2', [
+                'logo_event' => $logo_event,
+                'logo_archery' => $logo_archery,
+                'event_name_report' => $event_name_report,
+                'event_date_report' => $event_date_report,
+                'event_location_report' => $event_location_report,
+                'datatables' => $new_data,
+                'parent_classification_member_title' => $parent_classification_member->title,
+                "gold_individu" => $gold_individu,
+                "silver_individu" => $silver_individu,
+                "bronze_individu" => $bronze_individu,
+                "total_medal_individu" => $total_medal_individu,
+                "gold_team" => $gold_team,
+                "silver_team" => $silver_team,
+                "bronze_team" => $bronze_team,
+                "total_medal_team" => $total_medal_team,
+                "total_gold" => $total_gold,
+                "total_silver" => $total_silver,
+                "total_bronze" => $total_bronze,
+                "total_all" => $total_all
+            ]);
+        }
+
+        if ($data_medal_standing != [] && count($data_medal_standing["datatable"]) > 0) {
             // =============================== data ======================================
-            foreach ($data_medal_standing['datatable'] as $key => $dms) {                
+            foreach ($data_medal_standing['datatable'] as $key => $dms) {
                 $pages[] = view('report_medal_club/dataTable', [
                     "club_name" => $dms["club_name"],
                     "country_name" => $dms["country_name"],
@@ -106,7 +174,8 @@ class ReportMedalClub extends Retrieval
                     "total_silver" => $dms["total_silver"],
                     "total_bronze" => $dms["total_bronze"],
                     'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-                    'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                    'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club'],
+                    'parent_classification_member_title' => $parent_classification_member->title,
                 ]);
             }
         }
