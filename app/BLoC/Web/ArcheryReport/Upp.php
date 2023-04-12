@@ -10,6 +10,7 @@ use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventQualificationTime;
+use App\Models\ParentClassificationMembers;
 use Illuminate\Support\Carbon;
 
 class Upp extends Retrieval
@@ -62,7 +63,8 @@ class Upp extends Retrieval
                 'headers' => $data_medal_standing['title_header']['category'],
                 'datatables' => $data_medal_standing['datatable'],
                 'total_medal_by_category' => $data_medal_standing['total_medal_by_category'],
-                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club']
+                'total_medal_by_category_all_club' => $data_medal_standing['total_medal_by_category_all_club'],
+                'parent_classification_member_title' => $parent_classification_member->title,
             ]);
         }
 
