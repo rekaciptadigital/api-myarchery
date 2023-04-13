@@ -128,7 +128,7 @@ class ReportMedalClub extends Retrieval
                 $new_data[] = $value_2;
             }
 
-            $pages[] = view('report_result/club_rank_medals_standing_2', [
+            $pages[] = view('report_medal_club/club_rank_medals_standing_2', [
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
