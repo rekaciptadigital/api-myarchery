@@ -101,11 +101,9 @@ class ArcheryEventParticipant extends Model
     return $count_participant_individu;
   }
 
-  public static function getMedalStanding($event_id)
+  public static function getMedalStanding($event_id, $data_medal_standing)
   {
-    $data = ClubRanked::getEventRanked($event_id, 1, null);
-
-    if (count($data) > 0) {
+    if (count($data_medal_standing) > 0) {
       $title_header = array();
       $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))
         ->where("event_id", $event_id)
@@ -139,7 +137,7 @@ class ArcheryEventParticipant extends Model
 
       $result = [];
       $detail_club_with_medal_response = [];
-      foreach ($data as $key => $d) {
+      foreach ($data_medal_standing as $key => $d) {
         if ($d["total"] == 0) {
           continue;
         }

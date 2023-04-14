@@ -2,6 +2,7 @@
 
 namespace App\BLoC\Web\ArcheryReport;
 
+use App\Libraries\ClubRanked;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -51,7 +52,8 @@ class Upp extends Retrieval
         // ------------------------------------------ END PRINT COVER ---------------------------
         // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
 
-        $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id);
+        $data_medal_standing_2 = ClubRanked::getEventRanked($event_id, 1);
+        $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id, $data_medal_standing_2);
 
         if (count($data_medal_standing) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
