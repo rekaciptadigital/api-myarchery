@@ -24,18 +24,13 @@ class EliminationFormatPDF
         $elimination = ArcheryEventElimination::where("event_category_id", $event_category_id)->first();
         $elimination_id = 0;
         if ($elimination) {
-            $match_type = $elimination->elimination_type;
             $elimination_member_count = $elimination->count_participant;
-            $gender = $elimination->gender;
             $elimination_id = $elimination->id;
         }
 
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         $score_type = 1; // 1 for type qualification
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-            $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
 
         $fix_members = ArcheryEventEliminationMatch::select(
             "archery_event_elimination_members.position_qualification",
@@ -154,11 +149,6 @@ class EliminationFormatPDF
         $elimination_member_count = $category_team->default_elimination_count;
         if ($elimination) {
             $elimination_id = $elimination->id;
-        }
-
-        $session = [];
-        for ($i = 0; $i < $category_team->session_in_qualification; $i++) {
-            $session[] = $i + 1;
         }
 
         $fix_teams_1 = ArcheryEventEliminationGroupMatch::select(
