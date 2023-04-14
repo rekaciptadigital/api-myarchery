@@ -502,10 +502,7 @@ class ArcheryEventParticipant extends Model
     $event = ArcheryEvent::find($category->event_id);
     if (!$event) throw new BLoCException("CATEGORY INVALID");
 
-    $session = [];
-    for ($i = 0; $i < $category->session_in_qualification; $i++) {
-      $session[] = $i + 1;
-    }
+    $session = $category->getArraySessionCategory();
 
     if ($category->category_team == "Individual") {
       $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name, false, 1);
