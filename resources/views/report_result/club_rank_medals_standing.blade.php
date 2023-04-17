@@ -55,8 +55,8 @@
             </tbody>
         </table>
         <hr style="height:3px;border:none;color:black;background-color:black;" />
-        <h1 style="text-align: center">Medals Standing</h1>
-        <table class="table" style="width:100%; border-collapse: collapse; font-size: 12pt;" border="1">
+        <h1 style="text-align: center; font-size: 30pt;">Medals Standing 1</h1>
+        <table class="table" style="width:100%; border-collapse: collapse; font-size: 18pt;" border="1">
             <tbody>
                 <tr>
                     <th rowspan="3" style="text-align: center; padding:5px;"><strong>NO</strong></th>

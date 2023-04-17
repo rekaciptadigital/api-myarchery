@@ -217,6 +217,16 @@ class ClubRanked
                 if (!isset($cat_detail[$lc_value->id])) {
                     $cat_detail[$lc_value->id] = $lc_value;
                 }
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["gold"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["silver"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["bronze"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["total"] = 0;
+
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["gold"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["silver"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["bronze"] = 0;
+                $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["total"] = 0;
+
                 $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["gold"] = 0;
                 $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["silver"] = 0;
                 $club_or_city_ids[$d[$tag_ranked]]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["bronze"] = 0;
@@ -240,10 +250,19 @@ class ClubRanked
                     $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]][$medal_qualification] + 1;
                     $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] = $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
                     $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_qualification] + 1;
+
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["qualification"][$medal_qualification] =
+                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["qualification"][$medal_qualification] + 1;
+
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["qualification"]["total"] =
+                        $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["qualification"]["total"] + 1;
+
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] =
                         $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_qualification] + 1;
+
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] =
                         $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["qualification"] + 1;
+
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_qualification] =
                         $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_qualification] + 1;
                 }
@@ -255,10 +274,19 @@ class ClubRanked
                 $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] =  $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] + 1;
                 $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] =  $club_or_city_ids[$value[$tag_ranked]]["individu"]["total"] + 1;
                 $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] = $club_or_city_ids[$value[$tag_ranked]]["individu"][$medal_elimination] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"][$medal_elimination] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"][$medal_elimination] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"]["total"] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"]["total"] + 1;
+
                 $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] =
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
+
                 $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"] =
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"] + 1;
+
                 $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination] =
                     $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination] + 1;
             }
@@ -342,10 +370,19 @@ class ClubRanked
                         $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]][$medal_mix_team] + 1;
                         $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$mrank[$tag_ranked]]["team"]["total"] + 1;
                         $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] = $club_or_city_ids[$mrank[$tag_ranked]]["team"][$medal_mix_team] + 1;
+
+                        $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"][$medal_mix_team] =
+                            $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"][$medal_mix_team] + 1;
+
+                        $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"]["total"] =
+                            $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"]["total"] + 1;
+
                         $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] =
                             $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_mix_team] + 1;
+
                         $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"] =
                             $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"] + 1;
+
                         $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_mix_team] =
                             $club_or_city_ids[$mrank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_mix_team] + 1;
                     }
@@ -391,12 +428,21 @@ class ClubRanked
                         $club_or_city_ids[$rank[$tag_ranked]][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]][$medal_team] + 1;
                         $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$rank[$tag_ranked]]["team"]["total"] + 1;
                         $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] = $club_or_city_ids[$rank[$tag_ranked]]["team"][$medal_team] + 1;
-                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team]
-                            = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] + 1;
-                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"]
-                            = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"] + 1;
-                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_team]
-                            = $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_team] + 1;
+
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"][$medal_team] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"][$medal_team] + 1;
+
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"]["total"] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id]["qualification"]["total"] + 1;
+
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$medal_team] + 1;
+
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category]["qualification"] + 1;
+
+                        $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_team] =
+                            $club_or_city_ids[$rank[$tag_ranked]]["detail_medal"]["category"][$team->competition_category_id][$team->label_age_category][$team->team_category_id][$medal_team] + 1;
                     }
 
 
@@ -408,8 +454,8 @@ class ClubRanked
             }
             // end dapatkan rank kualifikasi beregu
         }
-        // dapatkan data eliminasi beregu
 
+        // dapatkan data eliminasi beregu
         $group = ArcheryEventParticipant::select(
             "archery_event_elimination_group_teams.*",
             "archery_event_participants.club_id as club_id",
@@ -504,12 +550,21 @@ class ClubRanked
                 $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] = $club_or_city_ids[$value[$tag_ranked]][$medal_elimination] + 1;
                 $club_or_city_ids[$value[$tag_ranked]]["team"]["total"] = $club_or_city_ids[$value[$tag_ranked]]["team"]["total"] + 1;
                 $club_or_city_ids[$value[$tag_ranked]]["team"][$medal_elimination] = $club_or_city_ids[$value[$tag_ranked]]["team"][$medal_elimination] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination]
-                    = $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"]
-                    = $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"] + 1;
-                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination]
-                    = $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"][$medal_elimination] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"][$medal_elimination] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"]["total"] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id]["elimination"]["total"] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$medal_elimination] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age]["elimination"] + 1;
+
+                $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination] =
+                    $club_or_city_ids[$value[$tag_ranked]]["detail_medal"]["category"][$category_detail->competition_category_id][$value->label_age][$category_detail->team_category_id][$medal_elimination] + 1;
             }
         }
 
@@ -551,6 +606,16 @@ class ClubRanked
                         if (!isset($cat_detail[$lc_value->id])) {
                             $cat_detail[$lc_value->id] = $lc_value;
                         }
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["gold"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["silver"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["bronze"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["qualification"]["total"] = 0;
+
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["gold"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["silver"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["bronze"] = 0;
+                        $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id]["elimination"]["total"] = 0;
+
                         $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["gold"] = 0;
                         $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["silver"] = 0;
                         $club_or_city_ids[$lcity_value->id]["detail_medal"]["category"][$lc_value->competition_category_id][$lc_value->label]["bronze"] = 0;
