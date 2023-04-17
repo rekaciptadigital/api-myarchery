@@ -85,7 +85,7 @@ class GetArcheryReportResultV2 extends Retrieval
 
         $data_medal_standing_2 = ClubRanked::getEventRanked($event_id, 1);
 
-        // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
+        // ------------------------------------------ PRINT MEDAL STANDING 1 ------------------------------------------ //
         $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id, $data_medal_standing_2);
         if (count($data_medal_standing) > 0) {
             $pages[] = view('report_result/club_rank_medals_standing', [
@@ -103,7 +103,7 @@ class GetArcheryReportResultV2 extends Retrieval
         }
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
-        // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
+        // ------------------------------------------ PRINT MEDAL STANDING 2 ------------------------------------------ //
         if (count($data_medal_standing_2) > 0) {
             $gold_individu = 0;
             $silver_individu = 0;
@@ -163,7 +163,7 @@ class GetArcheryReportResultV2 extends Retrieval
         }
         // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
 
-        // ------------------------------------------ PRINT MEDAL STANDING ------------------------------------------ //
+        // ------------------------------------------ PRINT MEDAL STANDING 3 ------------------------------------------ //
         if (count($data_medal_standing_2) > 0) {
             $new_data = [];
             $title_header = array();
