@@ -40,6 +40,12 @@ class Upp extends Retrieval
         $event_location_report = $archery_event->location;
         $list_category_with_day = ArcheryEventQualificationTime::getCategoryByDate($event_id);
 
+        $parent_classifification_id = $archery_event->parent_classification;
+        $parent_classification_member = ParentClassificationMembers::find($parent_classifification_id);
+        if (!$parent_classification_member) {
+            throw new BLoCException("parent_classification_members not found");
+        }
+
         // ------------------------------------------ PRINT COVER ------------------------------------------ //
         $logo_archery_cover = '<img src="https://api-staging.myarchery.id/new-logo-archery.png" alt="" width="60%"></img>';
         $cover_page = view('upp/cover', [
