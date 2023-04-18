@@ -6,6 +6,7 @@ use App\Models\ArcheryEvent;
 use App\Libraries\PaymentGateWay;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\OrderEvent;
+use App\Models\TransactionLog;
 use App\Models\User;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
@@ -76,7 +77,7 @@ class DetailEventOrder extends Retrieval
             }
         }
         $transaction_info = PaymentGateWay::transactionLogPaymentInfo($order_event->transaction_log_id);
-
+        $status_label = TransactionLog::getStatus($order_event->status);
         $output = [
             "order_event_id" => $order_event->id,
             "total_price" => (int)$order_event->total_price,
@@ -98,6 +99,9 @@ class DetailEventOrder extends Retrieval
             "list_member" => $list_member,
             "transaction_info" => $transaction_info,
             "category" => $detail_category,
+            "status_label" => $status_label,
+            "order_date" => $transaction_info != false ? $transaction_info->order_date->format("Y-m-d H:i:s") : $order_event->created_at->format("Y-m-d H:i:s"),
+            "status_id" => $order_event->status
         ];
         return $output;
     }
