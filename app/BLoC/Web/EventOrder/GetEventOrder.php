@@ -70,11 +70,13 @@ class GetEventOrder extends Retrieval
         foreach ($data as $key => $d) {
             $archery_event = ArcheryEvent::find($d->event_id);
             $transaction_info = PaymentGateWay::transactionLogPaymentInfo($d->transaction_log_id);
-            $data[$key]->status_label = TransactionLog::getStatus($d->status);
+            $status_label = TransactionLog::getStatus($d->status);
             $output[] = [
                 "archery_event" => $archery_event,
                 "order_id" => $d->id,
                 "transaction_info" => $transaction_info,
+                "status_label" => $status_label,
+                "order_date" => $transaction_info != false ? date("Y-m-d H:i:s", strtotime($transaction_info["order_date"]["date"])) : $d->created_at
             ];
         }
 
