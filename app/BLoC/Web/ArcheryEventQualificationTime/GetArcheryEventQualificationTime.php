@@ -4,7 +4,6 @@ namespace App\BLoC\Web\ArcheryEventQualificationTime;
 
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventQualificationTime;
-use DAI\Utils\Abstracts\Transactional;
 use Illuminate\Support\Facades\Auth;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Exceptions\BLoCException;
