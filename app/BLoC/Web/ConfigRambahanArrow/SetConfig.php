@@ -7,6 +7,7 @@ use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ArcheryMasterCompetitionCategory;
 use App\Models\ArcheryMasterDistanceCategory;
+use App\Models\ArcheryScoring;
 use App\Models\CategoryConfig;
 use App\Models\CategoryConfigMappingArrowRambahan;
 use App\Models\ConfigArrowRambahan;
@@ -36,6 +37,14 @@ class SetConfig extends Transactional
         // cek pemilik event
         if ($event->admin_id != $admin->id) {
             throw new BLoCException("you are not owner this event");
+        }
+
+        $check = ArcheryScoring::join('archery_event_participant_members', 'archery_scorings.participant_member_id', '=', 'archery_event_participant_members.id')
+            ->join('archery_event_participants', 'archery_event_participant_members.archery_event_participant_id', '=', 'archery_event_participants.id')
+            ->where("archery_event_participants.event_id", $event_id)
+            ->count();
+        if ($check > 0) {
+            throw new BLoCException("gagal update aturan menembak karna sudah tahap skoring");
         }
 
 
