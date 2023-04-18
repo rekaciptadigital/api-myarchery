@@ -76,7 +76,7 @@ class GetEventOrder extends Retrieval
                 "order_id" => $d->id,
                 "transaction_info" => $transaction_info,
                 "status_label" => $status_label,
-                "order_date" => $transaction_info != false ? date("Y-m-d H:i:s", strtotime($transaction_info["order_date"]["date"])) : $d->created_at
+                "order_date" => $transaction_info != false ? $transaction_info->order_date->format("Y-m-d H:i:s") : $d->created_at->format("Y-m-d H:i:s")
             ];
         }
 
