@@ -13,6 +13,7 @@ use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ParentClassificationMembers;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Upp extends Retrieval
 {
@@ -62,7 +63,7 @@ class Upp extends Retrieval
         $data_medal_standing = ArcheryEventParticipant::getMedalStanding($event_id, $data_medal_standing_2);
 
         if (count($data_medal_standing) > 0) {
-            $pages[] = view('report_result/club_rank_medals_standing', [
+            $pages[] = view('report_medal_club/club_rank_medals_standing', [
                 'logo_event' => $logo_event,
                 'logo_archery' => $logo_archery,
                 'event_name_report' => $event_name_report,
@@ -76,7 +77,208 @@ class Upp extends Retrieval
             ]);
         }
 
-        // ------------------------------------------ END PRINT MEDAL STANDING ------------------------------------------ //
+        // ========================================== PRINT MEDAL STANDING 2 ===============================================
+        if (count($data_medal_standing_2) > 0) {
+            $gold_individu = 0;
+            $silver_individu = 0;
+            $bronze_individu = 0;
+            $total_medal_individu = 0;
+            $gold_team = 0;
+            $silver_team = 0;
+            $bronze_team = 0;
+            $total_medal_team = 0;
+            $total_gold = 0;
+            $total_silver = 0;
+            $total_bronze = 0;
+            $total_all = 0;
+            $new_data = [];
+            foreach ($data_medal_standing_2 as $key2 => $value_2) {
+                if ($value_2["total"] == 0) {
+                    continue;
+                }
+                $gold_individu += $value_2['detail_modal_by_group']['indiividu']['gold'];
+                $silver_individu += $value_2['detail_modal_by_group']['indiividu']['silver'];
+                $bronze_individu += $value_2['detail_modal_by_group']['indiividu']['bronze'];
+                $total_medal_individu += $value_2['detail_modal_by_group']['indiividu']['total'];
+
+                $gold_team += $value_2['detail_modal_by_group']['team']['gold'];
+                $silver_team += $value_2['detail_modal_by_group']['team']['silver'];
+                $bronze_team += $value_2['detail_modal_by_group']['team']['bronze'];
+                $total_medal_team += $value_2['detail_modal_by_group']['team']['total'];
+
+                $total_gold += $value_2['gold'];
+                $total_silver += $value_2['silver'];
+                $total_bronze += $value_2['bronze'];
+                $total_all += $value_2['total'];
+
+                $new_data[] = $value_2;
+            }
+
+            $pages[] = view('report_medal_club/club_rank_medals_standing_2', [
+                'logo_event' => $logo_event,
+                'logo_archery' => $logo_archery,
+                'event_name_report' => $event_name_report,
+                'event_date_report' => $event_date_report,
+                'event_location_report' => $event_location_report,
+                'datatables' => $new_data,
+                'parent_classification_member_title' => $parent_classification_member->title,
+                "gold_individu" => $gold_individu,
+                "silver_individu" => $silver_individu,
+                "bronze_individu" => $bronze_individu,
+                "total_medal_individu" => $total_medal_individu,
+                "gold_team" => $gold_team,
+                "silver_team" => $silver_team,
+                "bronze_team" => $bronze_team,
+                "total_medal_team" => $total_medal_team,
+                "total_gold" => $total_gold,
+                "total_silver" => $total_silver,
+                "total_bronze" => $total_bronze,
+                "total_all" => $total_all
+            ]);
+        }
+        // ========================================== END PRINT MEDAL STANDING 2 ==================================================
+
+        // ------------------------------------------ PRINT MEDAL STANDING 3 ------------------------------------------ //
+        if (count($data_medal_standing_2) > 0) {
+            $new_data = [];
+            $title_header = array();
+            $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))
+                ->where("event_id", $event_id)
+                ->orderBy('competition_category_id', 'DESC')
+                ->get();
+
+            foreach ($competition_category as $competition) {
+                $title_header[$competition->competition_category]["qualification"] = [
+                    'g' => null,
+                    's' => null,
+                    'b' => null,
+                ];
+
+                $title_header[$competition->competition_category]["elimination"] = [
+                    'g' => null,
+                    's' => null,
+                    'b' => null,
+                ];
+
+                array_push($title_header[$competition->competition_category]);
+            }
+
+            $detail_total_medal_for_last_row = [];
+            foreach ($title_header as $key_title_header => $value_title_header) {
+                $detail_total_medal_for_last_row[$key_title_header] = [
+                    "qualification" => [
+                        "gold" => 0,
+                        "silver" => 0,
+                        "bronze" => 0,
+                    ],
+                    "elimination" => [
+                        "gold" => 0,
+                        "silver" => 0,
+                        "bronze" => 0,
+                    ]
+                ];
+                foreach ($data_medal_standing_2 as $key_data_medal_standing_2 => $value_data_medal_standing_2) {
+                    foreach ($value_data_medal_standing_2["detail_medal"]["category"] as $key_value_data_medal_standing_2 => $value_value_data_medal_standing_2) {
+                        if ($key_value_data_medal_standing_2 == $key_title_header) {
+                            $detail_total_medal_for_last_row[$key_title_header]["qualification"]["gold"] += $value_value_data_medal_standing_2["qualification"]["gold"];
+                            $detail_total_medal_for_last_row[$key_title_header]["qualification"]["silver"] += $value_value_data_medal_standing_2["qualification"]["silver"];
+                            $detail_total_medal_for_last_row[$key_title_header]["qualification"]["bronze"] += $value_value_data_medal_standing_2["qualification"]["bronze"];
+
+                            $detail_total_medal_for_last_row[$key_title_header]["elimination"]["gold"] += $value_value_data_medal_standing_2["elimination"]["gold"];
+                            $detail_total_medal_for_last_row[$key_title_header]["elimination"]["silver"] += $value_value_data_medal_standing_2["elimination"]["silver"];
+                            $detail_total_medal_for_last_row[$key_title_header]["elimination"]["bronze"] += $value_value_data_medal_standing_2["elimination"]["bronze"];
+                        }
+                    }
+                }
+            }
+
+            $detail_club_with_medal_response = [];
+            $detail_sum_medal_last_row = [
+                "gold" => 0,
+                "silver" => 0,
+                "bronze" => 0,
+            ];
+
+            foreach ($data_medal_standing_2 as $key2 => $value_2) {
+                if ($value_2["total"] == 0) {
+                    continue;
+                }
+
+                $detail_club_with_medal_response["contingent_name"] = $value_2["contingent_name"];
+
+                $total_all_gold = 0;
+                $total_all_silver = 0;
+                $total_all_bronze = 0;
+
+                foreach ($competition_category as $competition) {
+                    $gold_qualification = 0;
+                    $silver_qualification = 0;
+                    $bronze_qualification = 0;
+
+                    $gold_elimination = 0;
+                    $silver_elimination = 0;
+                    $bronze_elimination = 0;
+
+
+                    $gold_qualification += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["gold"];
+                    $total_all_gold += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["gold"];
+
+                    $silver_qualification += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["silver"];
+                    $total_all_silver += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["silver"];
+
+                    $bronze_qualification += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["bronze"];
+                    $total_all_bronze += $value_2["detail_medal"]["category"][$competition->competition_category]["qualification"]["bronze"];
+
+                    $gold_elimination += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["gold"];
+                    $total_all_gold += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["gold"];
+
+                    $silver_elimination += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["silver"];
+                    $total_all_silver += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["silver"];
+
+                    $bronze_elimination += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["bronze"];
+                    $total_all_bronze += $value_2["detail_medal"]["category"][$competition->competition_category]["elimination"]["bronze"];
+
+
+                    $detail_club_with_medal_response[$competition->competition_category]["qualification"] = [
+                        "gold" => $gold_qualification,
+                        "silver" => $silver_qualification,
+                        "bronze" => $bronze_qualification
+                    ];
+
+                    $detail_club_with_medal_response[$competition->competition_category]["elimination"] = [
+                        "gold" => $gold_elimination,
+                        "silver" => $silver_elimination,
+                        "bronze" => $bronze_elimination
+                    ];
+                }
+
+                $detail_club_with_medal_response["total_all_gold"] = $total_all_gold;
+                $detail_club_with_medal_response["total_all_silver"] = $total_all_silver;
+                $detail_club_with_medal_response["total_all_bronze"] = $total_all_bronze;
+
+                $detail_sum_medal_last_row["gold"] += $total_all_gold;
+                $detail_sum_medal_last_row["silver"] += $total_all_silver;
+                $detail_sum_medal_last_row["bronze"] += $total_all_bronze;
+
+                $new_data[] = $detail_club_with_medal_response;
+            }
+
+
+            $pages[] = view('report_medal_club/club_rank_medal_standing_3', [
+                'logo_event' => $logo_event,
+                'logo_archery' => $logo_archery,
+                'event_name_report' => $event_name_report,
+                'event_date_report' => $event_date_report,
+                'event_location_report' => $event_location_report,
+                'datatables' => $new_data,
+                'parent_classification_member_title' => $parent_classification_member->title,
+                'title_header' => $title_header,
+                "detail_sum_medal_last_row" => $detail_sum_medal_last_row,
+                "detail_total_medal_for_last_row" => $detail_total_medal_for_last_row
+            ]);
+        }
+        // ============================================ END PRINT MEDAL STANDING 3 ===============================================
+
         foreach ($list_category_with_day as $key1 => $value1) {
             $data_all_category_in_day = [];
             foreach ($value1["category"] as $key2 => $value2) {
