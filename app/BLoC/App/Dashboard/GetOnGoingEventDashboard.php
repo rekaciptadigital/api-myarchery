@@ -2,6 +2,7 @@
 
 namespace App\BLoC\App\Dashboard;
 
+use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventParticipant;
 use DAI\Utils\Abstracts\Retrieval;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,11 @@ class GetOnGoingEventDashboard extends Retrieval
 
     protected function process($parameters)
     {
-        $event_id = $parameters->get("event_id");
         $user = Auth::guard('app-api')->user();
+        $archery_event = ArcheryEvent::where("event_start_datetime", ">", date("Y-m-d H:i:s", time()))
+            ->orderBy("event_start_datetime", "desc")
+            ->first();
+
         $archery_event_participants = ArcheryEventParticipant::select(
             "archery_master_competition_categories.label as competition",
             "archery_master_age_categories.label as age",
@@ -31,22 +35,34 @@ class GetOnGoingEventDashboard extends Retrieval
             ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_participants.team_category_id")
             ->join("archery_event_participant_members", "archery_event_participant_members.archery_event_participant_id", "=", "archery_event_participants.id")
             ->join("archery_event_qualification_schedule_full_day", "archery_event_qualification_schedule_full_day.participant_member_id", "=", "archery_event_participant_members.id")
-            ->where("archery_event_participants.event_id", $event_id)
+            ->where("archery_event_participants.event_id", $archery_event->id)
             ->where("archery_event_participants.status", 1)
             ->where("archery_event_participants.user_id", $user->id)
             ->orderBy("archery_master_competition_categories.label")
             ->get();
 
-        $data = [];
+        $data = null;
 
-        foreach ($archery_event_participants as $value_archery_event_participants) {
-            $data[] = (object)[
-                "budrest_number" => $value_archery_event_participants->bud_rest_number != 0 ? $value_archery_event_participants->bud_rest_number . $value_archery_event_participants->target_face : "",
-                "competition" => $value_archery_event_participants->competition,
-                "age" => $value_archery_event_participants->age,
-                "distance" => $value_archery_event_participants->distance,
-                "team" => $value_archery_event_participants->team,
+        if ($archery_event_participants->count() > 0) {
+            $data = (object)[];
+            $data->detail_event = (object)[
+                "id" => $archery_event->id,
+                "name" => $archery_event->event_name,
+                "start_event" => $archery_event->event_start_datetime,
+                "end_event" => $archery_event->event_end_datetime,
+                "poster" => $archery_event->poster,
+                "location" => $archery_event->location
             ];
+
+            foreach ($archery_event_participants as $value_archery_event_participants) {
+                $data->list_category[] = (object)[
+                    "budrest_number" => $value_archery_event_participants->bud_rest_number != 0 ? $value_archery_event_participants->bud_rest_number . $value_archery_event_participants->target_face : "",
+                    "competition" => $value_archery_event_participants->competition,
+                    "age" => $value_archery_event_participants->age,
+                    "distance" => $value_archery_event_participants->distance,
+                    "team" => $value_archery_event_participants->team,
+                ];
+            }
         }
 
         return $data;
@@ -54,8 +70,6 @@ class GetOnGoingEventDashboard extends Retrieval
 
     protected function validation($parameters)
     {
-        return [
-            "event_id" => "required|exists:archery_events,id"
-        ];
+        return [];
     }
 }
