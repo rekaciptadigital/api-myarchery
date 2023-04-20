@@ -295,6 +295,7 @@ class Upp extends Retrieval
                         $data_report_by_team_qualification_individu["team"] = "individual";
                         $data_report_by_team_qualification_individu["data"] = $data_report_qualification_individu;
                         $data_report_by_team_qualification_individu["type"] = "qualification";
+                        $data_report_by_team_qualification_individu['parent_classification_member_title'] = $parent_classification_member->title;
                         $data_all_category_in_day[] = $data_report_by_team_qualification_individu;
                     }
                 }
@@ -314,8 +315,9 @@ class Upp extends Retrieval
                         // end blok : daptkan juara 1 2 3 kualifikasi beregu
                         $data_report_by_team_qualification_team["team"] = "team";
                         $data_report_by_team_qualification_team["data"] = $new_data_qualification_best_of_three;
-                        $data_report_by_team_qualification_team["category_label"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                        $data_report_by_team_qualification_team["category_label"] = $category_detail->GetLabel2();
                         $data_report_by_team_qualification_team["type"] = "qualification";
+                        $data_report_by_team_qualification_team['parent_classification_member_title'] = $parent_classification_member->title;
                         $data_all_category_in_day[] = $data_report_by_team_qualification_team;
                     }
                 }
@@ -330,6 +332,7 @@ class Upp extends Retrieval
                         $data_report_by_team_elimination_individu["data"] = $data_report_elimination_individu;
                         $data_report_by_team_elimination_individu["type"] = "elimination";
                         $data_report_by_team_elimination_individu["category_label"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                        $data_report_by_team_elimination_individu['parent_classification_member_title'] = $parent_classification_member->title;
                         $data_all_category_in_day[] = $data_report_by_team_elimination_individu;
                     }
                 }
@@ -341,7 +344,7 @@ class Upp extends Retrieval
                         $data_report_by_team_elimination_team["team"] = "team";
                         $data_report_by_team_elimination_team["data"] = $data_elimination_team;
                         $data_report_by_team_elimination_team["type"] = "elimination";
-                        $data_report_by_team_elimination_team["category_label"] = ArcheryEventCategoryDetail::getCategoryLabelComplete($category_detail->id);
+                        $data_report_by_team_elimination_team["category_label"] = $category_detail->GetLabel2();
                         $data_all_category_in_day[] = $data_report_by_team_elimination_team;
                     }
                 }
