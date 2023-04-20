@@ -36,7 +36,8 @@ class GetOnGoingEventDashboard extends Retrieval
             "archery_master_distances.label as distance",
             "archery_master_team_categories.label as team",
             "archery_event_qualification_schedule_full_day.bud_rest_number",
-            "archery_event_qualification_schedule_full_day.target_face"
+            "archery_event_qualification_schedule_full_day.target_face",
+            "archery_event_participants.event_category_id as category_id"
         )
             ->join("archery_master_competition_categories", "archery_master_competition_categories.id", "=", "archery_event_participants.competition_category_id")
             ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_participants.age_category_id")
@@ -63,6 +64,7 @@ class GetOnGoingEventDashboard extends Retrieval
 
             foreach ($archery_event_participants as $value_archery_event_participants) {
                 $data->list_category[] = (object)[
+                    "id" => $value_archery_event_participants->category_id,
                     "budrest_number" => $value_archery_event_participants->bud_rest_number != 0 ? $value_archery_event_participants->bud_rest_number . $value_archery_event_participants->target_face : "",
                     "competition" => $value_archery_event_participants->competition,
                     "age" => $value_archery_event_participants->age,
