@@ -2,11 +2,15 @@
 
 $router->group(['prefix' => 'app'], function () use ($router) {
     $router->group(['prefix' => 'v1'], function () use ($router) {
-        // {{url}}/app/v1/archery/users/check-email-is-register
         $router->group(["prefix" => "archery"], function () use ($router) {
             $router->group(["prefix" => "users", "middleware" => "auth.user"], function () use ($router) {
                 $router->post('/check-email-is-register', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:checkEmailIsRegister']);
             });
+        });
+
+        $router->group(["prefix" => "dashboard", 'middleware' => 'auth.user'], function () use ($router) {
+            $router->get("/get-upcoming-event", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getOnGoingEventDashboard']);
+            $router->get("/get-last-event", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getLastEvent']);
         });
 
         $router->group(['prefix' => 'auth'], function () use ($router) {
