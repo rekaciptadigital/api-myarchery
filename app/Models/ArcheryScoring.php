@@ -521,6 +521,7 @@ class ArcheryScoring extends Model
             "12" => 0,
             "x" => 0,
             "m" => 0,
+            "one_to_nine" => 0,
         ];
         $member_scors = $this->where("participant_member_id", $participant_member_id)
             ->whereIn("scoring_session", $filter_session)
@@ -535,11 +536,12 @@ class ArcheryScoring extends Model
                 "total_tmp" => 0,
                 "session" => $s,
                 "total_x" => 0,
+                "total_ten" => 0,
+                "total_one_to_nine" => 0,
                 "total_x_plus_ten" => 0
             );
         }
         $total = 0;
-        $total_tmp = 0;
         $count_shot_arrows = 0;
         foreach ($member_scors as $k => $score) {
             $score_detail = json_decode($score->scoring_detail);
@@ -558,6 +560,8 @@ class ArcheryScoring extends Model
                     $total_per_session = $total_per_session + $arrows->value;
                     $total_per_points[$arrows->id] = $total_per_points[$arrows->id] + 1;
                     $sessions[$score->scoring_session]["total_per_point"][$arrows->id] = $sessions[$score->scoring_session]["total_per_point"][$arrows->id] + 1;
+                    $total_per_points["one_to_nine"] = $arrows->id != "" && $arrows->id != "m" && $arrows->id != "x" && $arrows->id != "10" ? $total_per_points["one_to_nine"] + 1 : $total_per_points["one_to_nine"] + 0;
+                    $sessions[$score->scoring_session]["total_per_point"]["one_to_nine"] = $arrows->id != "" && $arrows->id != "m" && $arrows->id != "x" && $arrows->id != "10" ? $sessions[$score->scoring_session]["total_per_point"]["one_to_nine"] + 1 : $sessions[$score->scoring_session]["total_per_point"]["one_to_nine"] + 0;
                 }
                 $score_rambahan[$ks] = $get_score;
             }
@@ -567,6 +571,8 @@ class ArcheryScoring extends Model
             $sessions[$score->scoring_session]["scoring_id"] = $score->id;
             $sessions[$score->scoring_session]["total_x"] = $sessions[$score->scoring_session]["total_per_point"]["x"];
             $sessions[$score->scoring_session]["total_x_plus_ten"] = $sessions[$score->scoring_session]["total_per_point"]["x"] + $sessions[$score->scoring_session]["total_per_point"]["10"];
+            $sessions[$score->scoring_session]["total_ten"] = $sessions[$score->scoring_session]["total_per_point"]["10"];
+            $sessions[$score->scoring_session]["total_one_to_nine"] = $sessions[$score->scoring_session]["total_per_point"]["one_to_nine"];
         }
 
         // cek apakah member tersebut melakukan shot off atau tidak
@@ -595,10 +601,6 @@ class ArcheryScoring extends Model
             throw new BLoCException("PARTICIPANT TIDAK ADA");
         }
 
-        $total_fix = $total + $total_shot_off;
-
-        $category_detail = ArcheryEventCategoryDetail::where('id', $participant->event_category_id)->first();
-        $total_arrow = ($category_detail->count_stage * $category_detail->count_shot_in_stage) * $category_detail->session_in_qualification;
         $total_irat = $count_shot_arrows == 0 ? 0 : round(($total / $count_shot_arrows), 3);
 
         $output = [
@@ -611,7 +613,9 @@ class ArcheryScoring extends Model
             "total_x_plus_ten" => $total_per_points["x"] + $total_per_points["10"],
             "total_tmp" => $participant->is_present == 1 ? $this->getTotalTmp($total_per_points, $total) : 0,
             "total_arrow" => $count_shot_arrows,
-            "total_irat" => $total_irat
+            "total_irat" => $total_irat,
+            "total_ten" => $total_per_points["10"],
+            "total_one_to_nine" => $total_per_points["one_to_nine"],
         ];
         return $output;
     }

@@ -17,9 +17,18 @@ class GetOnGoingEventDashboard extends Retrieval
     protected function process($parameters)
     {
         $user = Auth::guard('app-api')->user();
-        $archery_event = ArcheryEvent::where("event_start_datetime", ">", date("Y-m-d H:i:s", time()))
-            ->orderBy("event_start_datetime", "desc")
+        $data = null;
+        $archery_event = ArcheryEvent::select("archery_events.*")
+            ->join("archery_event_participants", "archery_event_participants.event_id", "=", "archery_events.id")
+            ->where("archery_events.event_start_datetime", ">", date("Y-m-d H:i:s", time()))
+            ->where("archery_event_participants.user_id", $user->id)
+            ->where("archery_event_participants.status", 1)
+            ->orderBy("archery_events.event_start_datetime")
             ->first();
+
+        if (!$archery_event) {
+            return $data;
+        }
 
         $archery_event_participants = ArcheryEventParticipant::select(
             "archery_master_competition_categories.label as competition",
@@ -40,8 +49,6 @@ class GetOnGoingEventDashboard extends Retrieval
             ->where("archery_event_participants.user_id", $user->id)
             ->orderBy("archery_master_competition_categories.label")
             ->get();
-
-        $data = null;
 
         if ($archery_event_participants->count() > 0) {
             $data = (object)[];

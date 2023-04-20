@@ -62,6 +62,7 @@ use App\BLoC\App\Enterprise\GetInfoOrderProduct;
 use App\BLoC\App\Enterprise\AddOrderVenueProduct;
 use App\BLoC\App\Enterprise\GetTransactionVenueUser;
 use App\BLoC\App\ClassificationMembers\GetChildrenClassification;
+use App\BLoC\App\Dashboard\GetLastEvent;
 use App\BLoC\App\Dashboard\GetOnGoingEventDashboard;
 use App\BLoC\Web\EventOrder\AddEventOrderTeam;
 use App\BLoC\Web\EventOrder\AddEventOrderV2;
@@ -118,6 +119,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("updateParticipantMember", UpdateParticipantMember::class);
         $this->registerService("getDetailEventById", GetDetailEventById::class);
         $this->registerService("getOnGoingEventDashboard", GetOnGoingEventDashboard::class);
+        $this->registerService("getLastEvent", GetLastEvent::class);
 
 
         // classification member
