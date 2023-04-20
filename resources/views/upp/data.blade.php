@@ -25,7 +25,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px; font-size: 14pt" border="0">
             <tbody>
                 <tr style="height: 40px;">
@@ -71,13 +70,13 @@
                                 <strong>Medal</strong>
                             </th>
                             <th
-                                style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px; width:25%;">
                                 <strong>Athlete</strong>
                             </th>
                             <th
-                                style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px; width:25%;">
                                 <strong>
-                                    Club/Kontingen
+                                    {{ $item['parent_classification_member_title'] }}
                                 </strong>
                             </th>
                             @for ($s = 1; $s <= $item['data'][0][0]['count_session']; $s++)
@@ -162,7 +161,7 @@
                                 @for ($s = 1; $s <= $item['data'][0][0]['count_session']; $s++)
                                     <td
                                         style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
-                                        {{ $data['scoring']['sessions'][$s] ? $data['scoring']['sessions'][$s]['total'] : '-' }}
+                                        {{ $data['scoring']['sessions'][$s] && $data['scoring']['sessions'][$s]['total'] > 0 ? $data['scoring']['sessions'][$s]['total'] : '-' }}
                                     </td>
                                 @endfor
 
@@ -199,11 +198,11 @@
                                     <strong>Medal</strong>
                                 </th>
                                 <th
-                                    style="text-align: center;border: 1px solid black; padding-top:5px;padding-bottom:5px;">
+                                    style="text-align: center;border: 1px solid black; padding-top:5px;padding-bottom:5px; width:30%;">
                                     <strong>Athlete</strong>
                                 </th>
                                 <th
-                                    style="text-align: center;border: 1px solid black; padding-top:5px;padding-bottom:5px;">
+                                    style="text-align: center;border: 1px solid black; padding-top:5px;padding-bottom:5px; width:30%;">
                                     <strong>Nama Tim</strong>
                                 </th>
                                 <th
@@ -272,33 +271,37 @@
 
             @if ($item['type'] == 'elimination' && $item['team'] == 'individual')
                 @if ($item['data'][0] != [])
-                    <p style="text-align: center;">
-                        <strong>{{ $item['category_label'] }}</strong>
-                    </p>
                     <h2 style="text-align: center;">Elimination</h2>
-                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                    <table class="table"
+                        style="width:100%;border: 1px solid black; border-collapse: collapse; font-size:12pt;">
                         <tbody>
                             <tr style="border: 1px solid black;">
-                                <th style="text-align: center;border: 1px solid black; " colspan="5">
+                                <th style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px; font-size:16pt;"
+                                    colspan="5">
                                     <strong>Medalist by Event</strong>
                                 </th>
                             </tr>
                             <tr style="border: 1px solid black;">
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Category</strong>
                                 </th>
-                                <th style="text-align: center; border: 1px solid black;">
+                                <th
+                                    style="text-align: center; border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Date</strong>
                                 </th>
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Medal</strong>
                                 </th>
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px; width:25%;">
                                     <strong>Athlete</strong>
                                 </th>
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px; width:25%;">
                                     <strong>
-                                        Club/Kontingen
+                                        {{ $item['parent_classification_member_title'] }}
                                     </strong>
                                 </th>
                             </tr>
@@ -316,20 +319,24 @@
                                             $rowid = 0;
                                             $rowspan = count($item['data'][0]);
                                         @endphp
-                                        <td style="text-align: center;border: 1px solid black;"
+                                        <td style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;"
                                             rowspan="{{ $rowspan }}">
                                             {{ $data['category'] ? $data['category'] : '-' }}</td>
-                                        <td style="text-align: center;border: 1px solid black;"
+                                        <td style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;"
                                             rowspan="{{ $rowspan }}">
                                             {{ $data['date'] ? $data['date'] : '-' }}</td>
                                     @endif
-                                    <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
+                                    <td
+                                        style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                        {{ $data['medal'] }} </td>
                                     <!-- start initiate medals -->
 
                                     <!-- end medals -->
-                                    <td style="text-align: center;border: 1px solid black;">
+                                    <td
+                                        style="text-align: left;border: 1px solid black; padding-top:5px; padding-bottom:5px; padding-left:10px;">
                                         {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}</td>
-                                    <td style="text-align: center;border: 1px solid black;">
+                                    <td
+                                        style="text-align: left;border: 1px solid black; padding-top:5px; padding-bottom:5px;padding-left:10px;">
                                         @if ($data['parent_classification_type'] == 2)
                                             {{ ucwords(strtolower($data['country_name'])) }}
                                         @elseif ($data['parent_classification_type'] == 3)
@@ -351,28 +358,34 @@
 
             @if ($item['type'] == 'elimination' && $item['team'] == 'team')
                 @if ($item['data'] != [])
-                    <p style="text-align: center;">
-                        <strong>{{ $item['category_label'] }}</strong>
-                    </p>
+                    <h2 style="text-align: center;">
+                        {{ $item['category_label'] }}
+                    </h2>
                     <h2 style="text-align: center;">Elimination</h2>
-                    <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
+                    <table class="table"
+                        style="width:100%;border: 1px solid black; border-collapse: collapse; font-size:12pt;">
                         <tbody>
                             <tr style="border: 1px solid black;">
-                                <th style="text-align: center;border: 1px solid black;" colspan="5">
+                                <th style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;"
+                                    colspan="5">
                                     <strong>Medalist by Event</strong>
                                 </th>
                             </tr>
                             <tr style="border: 1px solid black;">
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Category</strong>
                                 </th>
-                                <th style="text-align: center; border: 1px solid black;">
+                                <th
+                                    style="text-align: center; border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Date</strong>
                                 </th>
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Medal</strong>
                                 </th>
-                                <th style="text-align: center;border: 1px solid black;">
+                                <th
+                                    style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
                                     <strong>Nama Tim</strong>
                                 </th>
                             </tr>
@@ -390,25 +403,34 @@
                                             $rowid = 0;
                                             $rowspan = count($item['data']);
                                         @endphp
-                                        <td style="text-align: center;border: 1px solid black;"
+                                        <td style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;"
                                             rowspan="{{ $rowspan }}">
                                             {{ $data['category'] ? $data['category'] : '-' }}</td>
-                                        <td style="text-align: center;border: 1px solid black;"
+                                        <td style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;"
                                             rowspan="{{ $rowspan }}">
                                             {{ $data['date'] ? $data['date'] : '-' }}</td>
                                     @endif
                                     <!-- start initiate medals -->
                                     @if ($data['elimination_ranked'] == '1')
-                                        <td style="text-align: left;border: 1px solid black;">Gold</td>
+                                        <td
+                                            style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                            Gold</td>
                                     @elseif ($data['elimination_ranked'] == '2')
-                                        <td style="text-align: left;border: 1px solid black;">Silver</td>
+                                        <td
+                                            style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                            Silver</td>
                                     @elseif ($data['elimination_ranked'] == '3')
-                                        <td style="text-align: left;border: 1px solid black;">Bronze </td>
+                                        <td
+                                            style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                            Bronze </td>
                                     @else
-                                        <td style="text-align: left;border: 1px solid black;">Bronze</td>
+                                        <td
+                                            style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                            Bronze</td>
                                     @endif
                                     <!-- end medals -->
-                                    <td style="text-align: center;border: 1px solid black;">
+                                    <td
+                                        style="text-align: left;border: 1px solid black; padding-top:5px; padding-bottom:5px; padding-left:10px;">
                                         {{ $data['team_name'] ? $data['team_name'] : '-' }}
                                     </td>
                                 </tr>
@@ -417,6 +439,7 @@
                     </table>
                 @endif
             @endif
+            <br>
         @endforeach
     </div>
 </body>
