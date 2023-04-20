@@ -98,6 +98,7 @@ class GetLastEvent extends Retrieval
                     }
                 }
                 $data->list_category[] = (object)[
+                    "id" => $archery_event_category_detail->id,
                     "competition" => $value_archery_event_participants->competition,
                     "age" => $value_archery_event_participants->age,
                     "distance" => $value_archery_event_participants->distance,
