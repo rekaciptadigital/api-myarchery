@@ -101,11 +101,9 @@ class ArcheryEventParticipant extends Model
     return $count_participant_individu;
   }
 
-  public static function getMedalStanding($event_id)
+  public static function getMedalStanding($event_id, $data_medal_standing)
   {
-    $data = ClubRanked::getEventRanked($event_id, 1, null);
-
-    if (count($data) > 0) {
+    if (count($data_medal_standing) > 0) {
       $title_header = array();
       $competition_category = ArcheryEventCategoryDetail::select(DB::RAW('distinct competition_category_id as competition_category'))
         ->where("event_id", $event_id)
@@ -139,7 +137,7 @@ class ArcheryEventParticipant extends Model
 
       $result = [];
       $detail_club_with_medal_response = [];
-      foreach ($data as $key => $d) {
+      foreach ($data_medal_standing as $key => $d) {
         if ($d["total"] == 0) {
           continue;
         }
@@ -502,10 +500,7 @@ class ArcheryEventParticipant extends Model
     $event = ArcheryEvent::find($category->event_id);
     if (!$event) throw new BLoCException("CATEGORY INVALID");
 
-    $session = [];
-    for ($i = 0; $i < $category->session_in_qualification; $i++) {
-      $session[] = $i + 1;
-    }
+    $session = $category->getArraySessionCategory();
 
     if ($category->category_team == "Individual") {
       $qualification_member = ArcheryScoring::getScoringRankByCategoryId($category->id, $score_type, $session, false, $name, false, 1);
@@ -738,7 +733,19 @@ class ArcheryEventParticipant extends Model
         }
       }
 
-      $team = $value["classification_name"] . " " . $sequence[$value[$tag_ranked]];
+      if ($parent_classifification_id == 1) {
+        $classfication_name = $value->club_name;
+      } elseif ($parent_classifification_id == 2) {
+        $classfication_name = $value->country_name;
+      } elseif ($parent_classifification_id == 3) {
+        $classfication_name = $value->province_name;
+      } elseif ($parent_classifification_id == 4) {
+        $classfication_name = $value->city_name;
+      } else {
+        $classfication_name = $value->children_classification_members_name;
+      }
+
+      $team = $classfication_name . " " . $sequence[$value[$tag_ranked]];
 
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
@@ -1078,10 +1085,7 @@ class ArcheryEventParticipant extends Model
         $city = $member->city_name;
 
         $category = ArcheryEventCategoryDetail::find($member->category_details_id);
-        $session = [];
-        for ($i = 0; $i < $category->session_in_qualification; $i++) {
-          $session[] = $i + 1;
-        }
+        $session = $category->getArraySessionCategory();
         $scoring = ArcheryScoring::generateScoreBySession($member->participant_member_id, 1, $session);
 
         $data_report[] = array(
@@ -1105,6 +1109,7 @@ class ArcheryEventParticipant extends Model
           "children_classification_id" => $member["children_classification_id"],
           "children_classification_members_name" => $member["children_classification_members_name"],
           "parent_classification_type" => $event->parent_classification,
+          "count_session" => count($session)
         );
 
         $category_id = $member->category_details_id;

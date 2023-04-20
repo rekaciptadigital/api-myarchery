@@ -161,13 +161,13 @@
                                     </th>
                                     <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                     </td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                     </td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                     </td>
                                 @else
                                     <th style="text-align: center;border: 1px solid black; ">
@@ -175,13 +175,13 @@
                                     </th>
                                     <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                     </td>
-                                    <td style="text-align: center;border: 1px solid black;">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                    <td style="text-align: center;border: 1px solid black; ">
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                     </td>
-                                    <td style="text-align: center;border: 1px solid black;">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                    <td style="text-align: center;border: 1px solid black; ">
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                     </td>
                                 @endif
                             </tr>
@@ -189,13 +189,13 @@
                             <tr>
                                 <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                 </td>
                             </tr>
                         @endif
