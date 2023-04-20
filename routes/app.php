@@ -10,6 +10,7 @@ $router->group(['prefix' => 'app'], function () use ($router) {
 
         $router->group(["prefix" => "dashboard", 'middleware' => 'auth.user'], function () use ($router) {
             $router->get("/get-upcoming-event", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getOnGoingEventDashboard']);
+            $router->get("/get-last-event", ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getLastEvent']);
         });
 
         $router->group(['prefix' => 'auth'], function () use ($router) {
