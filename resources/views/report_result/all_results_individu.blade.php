@@ -76,12 +76,11 @@
                         style="text-align: center;border: 1px solid black; padding-left:10px; padding-top:5px; padding-bottom:5px;">
                         <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; padding:5px; width:10%;">
-                        <strong>SESI 1</strong>
-                    </th>
-                    <th style="text-align: center;border: 1px solid black; padding:5px; width:10%;">
-                        <strong>SESI 2</strong>
-                    </th>
+                    @for ($s = 1; $s <= $count_session; $s++)
+                        <th style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                            <strong>Sesi {{ $s }}</strong>
+                        </th>
+                    @endfor
                     <th style="text-align: center;border: 1px solid black; padding:5px;width:10%;">
                         <strong>TOTAL</strong>
                     </th>
@@ -114,10 +113,12 @@
                                 {{ $data['club_name'] }}
                             @endif
                         </td>
-                        <td style="text-align: center;border: 1px solid black; padding:5px;">
-                            {{ $data['sessions']['1'] ? $data['sessions']['1']['total'] : '-' }}</td>
-                        <td style="text-align: center;border: 1px solid black; padding:5px;">
-                            {{ isset($data['sessions']['2']) ? $data['sessions']['2']['total'] : '-' }}</td>
+                        @for ($s = 1; $s <= $count_session; $s++)
+                            <td
+                                style="text-align: center;border: 1px solid black; padding-top:5px; padding-bottom:5px;">
+                                {{ $data['sessions'][$s] && $data['sessions'][$s]['total'] > 0 ? $data['sessions'][$s]['total'] : '-' }}
+                            </td>
+                        @endfor
                         <td style="text-align: center;border: 1px solid black; padding:5px;">
                             {{ $data['total'] ? $data['total'] : '0' }}</td>
                         <td style="text-align: center;border: 1px solid black; padding:5px;">

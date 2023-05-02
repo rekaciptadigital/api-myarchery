@@ -16,7 +16,6 @@ use App\Libraries\EliminationFormatPDF;
 use App\Libraries\EliminationFormatPDFV2;
 use App\Models\ArcheryEventEliminationGroup;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryMasterAgeCategory;
 use App\Models\ParentClassificationMembers;
 use App\Models\UrlReport;
 use Illuminate\Support\Carbon;
@@ -421,6 +420,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'event_date_report' => $event_date_report,
                                         'event_location_report' => $event_location_report,
                                         'parent_classification_member_title' => $parent_classification_member->title,
+                                        'count_session' => $category_detail->session_in_qualification
                                     ]);
                                 }
                             }
@@ -510,6 +510,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'event_date_report' => $event_date_report,
                                         'event_location_report' => $event_location_report,
                                         'parent_classification_member_title' => $parent_classification_member->title,
+                                        'count_session' => $category_detail->session_in_qualification
                                     ]);
                                 }
                             }
@@ -579,15 +580,14 @@ class GetArcheryReportResultV2 extends Retrieval
             'enable-toc-back-links' => true,
         ]);
 
-        $digits = 3;
         $fileName   = 'report_result_' . date("YmdHis") . '.pdf';
-        // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/report-result';
-        $generate   = $pdf->save('' . $path . '/' . $fileName . '');
+        $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
 
+        // save pdf to db
         $url_report = new UrlReport();
         $url_report->url = $response["file_path"];
         $url_report->type = "report_event";

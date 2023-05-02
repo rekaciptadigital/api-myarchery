@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryEventQualificationTime;
 use App\Models\ParentClassificationMembers;
+use App\Models\UrlReport;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +31,13 @@ class Upp extends Retrieval
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) {
             throw new BLoCException("event tidak terdaftar");
+        }
+
+        $check_is_exist_report = UrlReport::where("event_id", $event_id)->where("type", "upp")->first();
+        if ($check_is_exist_report) {
+            return [
+                "file_path" => $check_is_exist_report->url
+            ];
         }
 
         $logo_event = $archery_event->logo;
@@ -384,13 +392,18 @@ class Upp extends Retrieval
         ]);
 
         $fileName   = 'upp_' . $event_id . "_" . time() . '.pdf';
-        // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/upp';
-        $generate   = $pdf->save('' . $path . '/' . $fileName . '');
+        $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
 
+        // save url pdf db
+        $url_report = new UrlReport();
+        $url_report->url = $response["file_path"];
+        $url_report->type = "upp";
+        $url_report->event_id = $event_id;
+        $url_report->save();
 
         // set generate date of report
         $key = env("REDIS_KEY_PREFIX") . ":report:date-generate:event-" . $event_id . ":updated";
