@@ -12,6 +12,7 @@ use PDFv2;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ParentClassificationMembers;
+use App\Models\UrlReport;
 use Illuminate\Support\Carbon;
 
 class ReportMedalClub extends Retrieval
@@ -31,6 +32,13 @@ class ReportMedalClub extends Retrieval
 
         $archery_event = ArcheryEvent::find($event_id);
         if (!$archery_event) throw new BLoCException("event tidak terdaftar");
+
+        $check_is_exist_report = UrlReport::where("event_id", $event_id)->where("type", "medal_recapitulation")->first();
+        if ($check_is_exist_report) {
+            return [
+                "file_path" => $check_is_exist_report->url
+            ];
+        }
 
         $parent_classifification_id = $archery_event->parent_classification;
 
@@ -345,14 +353,19 @@ class ReportMedalClub extends Retrieval
             // 'enable-toc-back-links' => true,
         ]);
 
-        $digits = 3;
         $fileName   = 'report_result_medal_club_' . $event_id . "_" . time() . '.pdf';
-        // $fileName   = 'report_result_' . rand(pow(10, $digits - 1), pow(10, $digits) - 1) . '.pdf';
         $path = 'asset/report_result_medal_club';
-        $generate   = $pdf->save('' . $path . '/' . $fileName . '');
+        $pdf->save('' . $path . '/' . $fileName . '');
         $response = [
             'file_path' => url(env('APP_HOSTNAME') . $path . '/' . $fileName . '')
         ];
+
+        // save url pdf db
+        $url_report = new UrlReport();
+        $url_report->url = $response["file_path"];
+        $url_report->type = "medal_recapitulation";
+        $url_report->event_id = $event_id;
+        $url_report->save();
 
 
         // set generate date of report
