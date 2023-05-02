@@ -421,6 +421,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'event_date_report' => $event_date_report,
                                         'event_location_report' => $event_location_report,
                                         'parent_classification_member_title' => $parent_classification_member->title,
+                                        'count_session' => $category_detail->session_in_qualification
                                     ]);
                                 }
                             }
@@ -510,6 +511,7 @@ class GetArcheryReportResultV2 extends Retrieval
                                         'event_date_report' => $event_date_report,
                                         'event_location_report' => $event_location_report,
                                         'parent_classification_member_title' => $parent_classification_member->title,
+                                        'count_session' => $category_detail->session_in_qualification
                                     ]);
                                 }
                             }
