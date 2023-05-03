@@ -74,7 +74,7 @@ class GetLastEvent extends Retrieval
                 $sessions = [];
                 foreach ($qualification_score_all_member as $key_qualification_score_all_member => $value_qualification_score_all_member) {
                     if ($value_qualification_score_all_member["member"]["id"] == $value_archery_event_participants->member_id) {
-                        $rank = $value_qualification_score_all_member["total"] == 0 ? "" : $value_qualification_score_all_member["rank"];
+                        $rank = $value_qualification_score_all_member["total"] == 0 ? 0 : $value_qualification_score_all_member["rank"];
                         for ($s = 1; $s <= $value_archery_event_participants->session_in_qualification; $s++) {
                             $sessions[] = (object)[
                                 "session_name" => "sesi " . $s,
