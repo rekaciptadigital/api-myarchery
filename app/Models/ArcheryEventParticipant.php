@@ -940,7 +940,19 @@ class ArcheryEventParticipant extends Model
         }
       }
 
-      $team = $value["classification_name"] . " " . $sequence[$value[$tag_ranked]];
+      if ($parent_classifification_id == 1) {
+        $classfication_name = $value->club_name;
+      } elseif ($parent_classifification_id == 2) {
+        $classfication_name = $value->country_name;
+      } elseif ($parent_classifification_id == 3) {
+        $classfication_name = $value->province_name;
+      } elseif ($parent_classifification_id == 4) {
+        $classfication_name = $value->city_name;
+      } else {
+        $classfication_name = $value->children_classification_members_name;
+      }
+
+      $team = $classfication_name . " " . $sequence[$value[$tag_ranked]];
 
       $participant_club_or_city[] = [
         "participant_id" => $value->id,
