@@ -9,6 +9,10 @@
             height: 150px;
         }
 
+        * {
+            font-family: helvetica;
+        }
+
         div.page {
             page-break-after: always;
             page-break-inside: avoid;
@@ -57,28 +61,28 @@
         <br>
         <h1 style="text-align: center">{{ $category }}</h1>
         <h2 style="text-align: center">Elimination</h2>
-        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <tbody style="font-size: 24px;">
+        <table class="table" style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 14pt;">
+            <tbody>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; " colspan="5">
+                    <th style="text-align: center;border: 1px solid black; padding:5px" colspan="5">
                         <strong>Medalist by Event</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black;">
+                    <th style="text-align: center;border: 1px solid black; padding:5px">
                         <strong>Category</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; padding:5px">
                         <strong>Date</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; padding:5px">
                         <strong>Medal</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; padding:5px">
                         <strong>Athlete</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
-                        <strong>Club/Kontingen</strong>
+                    <th style="text-align: center;border: 1px solid black; padding:5px;">
+                        <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
                 </tr>
                 @php
@@ -95,18 +99,20 @@
                                 $rowid = 0;
                                 $rowspan = count($data_report);
                             @endphp
-                            <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;"
+                                rowspan="{{ $rowspan }}">
                                 {{ $data['category'] ? $data['category'] : '-' }}
                             </td>
-                            <td style="text-align: center;border: 1px solid black;" rowspan="{{ $rowspan }}">
+                            <td style="text-align: center;border: 1px solid black; padding:5px;"
+                                rowspan="{{ $rowspan }}">
                                 {{ $data['date'] ? $data['date'] : '-' }}
                             </td>
                         @endif
-                        <td style="text-align: left;border: 1px solid black;">{{ $data['medal'] }} </td>
-                        <td style="text-align: center;border: 1px solid black;">
-                            {{ $data['athlete'] ? $data['athlete'] : '-' }}
+                        <td style="text-align: center;border: 1px solid black; padding:5px;">{{ $data['medal'] }} </td>
+                        <td style="border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px">
+                            {{ $data['athlete'] ? ucwords(strtolower($data['athlete'])) : '-' }}
                         </td>
-                        <td style="text-align: center;border: 1px solid black;">
+                        <td style="border: 1px solid black; padding-left:10px; padding-top:5px;padding-bottom:5px;">
                             @if ($data['parent_classification_type'] == 2)
                                 {{ ucwords(strtolower($data['country_name'])) }}
                             @elseif ($data['parent_classification_type'] == 3)
@@ -116,7 +122,7 @@
                             @elseif ($data['parent_classification_type'] > 5)
                                 {{ ucwords(strtolower($data['children_classification_members_name'])) }}
                             @else
-                                {{ ucwords(strtolower($data['club_name'])) }}
+                                {{ $data['club_name'] }}
                             @endif
                         </td>
                     </tr>

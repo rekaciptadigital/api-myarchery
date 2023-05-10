@@ -25,7 +25,6 @@
 
 <body>
     <div class="page" style="break-after:page">
-        <!-- <img src="https://i.postimg.cc/ZRR5vW05/header.png" alt="Trulli" width="100%"> -->
         <table style="width: 100%; height: 40px;" border="0">
             <tbody>
                 <tr style="height: 40px;">
@@ -37,7 +36,11 @@
                     <td style="width: 1%; height: 50px;" rowspan="2"></td>
                     <td style="width: 42%; height: 50px; ">
                         <p style="text-align: left; font-size: 18pt; font-family: helvetica;">
-                            <strong><span style="font-size: 30px;">{{ $event_name_report }}</span></strong> <br /><br />
+                            <strong>
+                                <span style="font-size: 30px;">
+                                    {{ $event_name_report }}
+                                </span>
+                            </strong> <br /><br />
                             {{ $event_location_report }}<br />
                             {{ $event_date_report }}
                         </p>
@@ -68,28 +71,28 @@
             @elseif ($parent_classification_type > 5)
                 {{ ucwords(strtolower($children_classification_members_name)) }}
             @else
-                {{ ucwords(strtolower($club_name)) }}
+                {{ $club_name }}
             @endif
         </h2>
 
-        <table style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead style="font-size: 24px;">
+        <table style="width:100%;border: 1px solid black; border-collapse: collapse; font-size: 12pt;">
+            <thead>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; " colspan="5">
-                        <strong>Medalist by Club/Contingent</strong>
+                    <th style="text-align: center;border: 1px solid black; font-size:16pt" colspan="5">
+                        <strong>Medalist by {{ $parent_classification_member_title }}</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black;">
-                        <strong>Club/Contingent</strong>
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
+                        <strong>{{ $parent_classification_member_title }}</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; font-size:14pt;">
                         <strong>Gold</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Silver</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Bronze</strong>
                     </th>
                 </tr>
@@ -106,7 +109,7 @@
                         @elseif ($parent_classification_type > 5)
                             {{ ucwords(strtolower($children_classification_members_name)) }}
                         @else
-                            {{ ucwords(strtolower($club_name)) }}
+                            {{ $club_name }}
                         @endif
                     </td>
                     <td style="text-align: center;border: 1px solid black;">{{ $total_gold }}</td>
@@ -118,27 +121,27 @@
 
         <br>
         <h2 style="text-align: center">Detail Medal</h2>
-        <table style="width:100%;border: 1px solid black; border-collapse: collapse;">
-            <thead style="font-size: 24px;">
+        <table style="width:100%;border: 1px solid black; border-collapse: collapse;font-size: 12pt;">
+            <thead>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black; " colspan="5">
-                        <strong>Medalist by Club/Contingent</strong>
+                    <th style="text-align: center;border: 1px solid black; font-size:16pt;" colspan="5">
+                        <strong>Medalist by {{ $parent_classification_member_title }}</strong>
                     </th>
                 </tr>
                 <tr style="border: 1px solid black;">
-                    <th style="text-align: center;border: 1px solid black;">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Competition Type</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black;">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Class</strong>
                     </th>
-                    <th style="text-align: center; border: 1px solid black;">
+                    <th style="text-align: center; border: 1px solid black; font-size:14pt;">
                         <strong>Gold</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Silver</strong>
                     </th>
-                    <th style="text-align: center;border: 1px solid black; ">
+                    <th style="text-align: center;border: 1px solid black; font-size:14pt;">
                         <strong>Bronze</strong>
                     </th>
                 </tr>
@@ -158,13 +161,13 @@
                                     </th>
                                     <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                     </td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                     </td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                     </td>
                                 @else
                                     <th style="text-align: center;border: 1px solid black; ">
@@ -172,13 +175,13 @@
                                     </th>
                                     <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                     <td style="text-align: center;border: 1px solid black; ">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                     </td>
-                                    <td style="text-align: center;border: 1px solid black;">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                    <td style="text-align: center;border: 1px solid black; ">
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                     </td>
-                                    <td style="text-align: center;border: 1px solid black;">
-                                        {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                    <td style="text-align: center;border: 1px solid black; ">
+                                        {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                     </td>
                                 @endif
                             </tr>
@@ -186,13 +189,13 @@
                             <tr>
                                 <td style="text-align: center;border: 1px solid black; ">{{ $key2 }}</td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['gold'] > 0 ? $dms['category'][$key]['age_category'][$key2]['gold'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['silver'] > 0 ? $dms['category'][$key]['age_category'][$key2]['silver'] : '-' }}
                                 </td>
                                 <td style="text-align: center;border: 1px solid black; ">
-                                    {{ isset($dms['category'][$key]['age_category'][$key2]) ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
+                                    {{ isset($dms['category'][$key]['age_category'][$key2]) && $dms['category'][$key]['age_category'][$key2]['bronze'] > 0 ? $dms['category'][$key]['age_category'][$key2]['bronze'] : '-' }}
                                 </td>
                             </tr>
                         @endif
