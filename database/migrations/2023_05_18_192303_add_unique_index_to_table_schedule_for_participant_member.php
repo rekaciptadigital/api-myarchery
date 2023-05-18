@@ -14,7 +14,7 @@ class AddUniqueIndexToTableScheduleForParticipantMember extends Migration
     public function up()
     {
         Schema::table('archery_event_qualification_schedule_full_day', function (Blueprint $table) {
-            $table->unique("participant_member_id");
+            $table->unique("participant_member_id", "unique_member_id");
         });
     }
 
