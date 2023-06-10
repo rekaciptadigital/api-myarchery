@@ -353,7 +353,7 @@ class PaymentGateWay
             "step" => "select-payment-method",
             "include_admin_fee" => self::$fee_payment_gateway_to_user ? true : false,
             "expiration" => date('Y-m-d H:i:s', $expired_time),
-            "list_disabled_payment_methods" => implode(",", ["CREDIT_CARD", "DEBIT_CARD", "OFFLINE_CASH_IN"])
+            "list_disabled_payment_methods" => "VA,CREDIT_CARD,QRIS,EWALLET,OFFLINE_CASH_IN,BANK_TRANSFER"
         ];
 
         $client = new \GuzzleHttp\Client();

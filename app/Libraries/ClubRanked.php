@@ -293,7 +293,7 @@ class ClubRanked
         }
         // end blok dapatkan medali kualifikasi dan eliminasi individu
 
-        // start blok dapatkan medali kualifikasi dan eliminasi beregu
+        // start blok dapatkan medali kualifikasi dan eliminasi beregu ===============================================
         $list_category_team = ArcheryEventCategoryDetail::select("archery_event_category_details.*", "archery_master_age_categories.label as label_age_category")
             ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
             ->where("event_id", $event_id)
@@ -455,7 +455,7 @@ class ClubRanked
             // end dapatkan rank kualifikasi beregu
         }
 
-        // dapatkan data eliminasi beregu
+        // dapatkan data eliminasi beregu =========================================================
         $group = ArcheryEventParticipant::select(
             "archery_event_elimination_group_teams.*",
             "archery_event_participants.club_id as club_id",
@@ -629,7 +629,10 @@ class ClubRanked
             }
         }
 
-        // end blok dapatkan medali kualifikasi dan eliminasi beregu
+        // end blok dapatkan medali kualifikasi dan eliminasi beregu ========================================
+
+
+        // susun response ========================
         foreach ($club_or_city_ids as $k => $v) {
             $contingent_name = "";
             $contingent_id = "";
@@ -707,6 +710,9 @@ class ClubRanked
                 ]
             ];
         }
+        // end susun response ======================
+
+        // ====== sorting ===================
         usort($output, function ($a, $b) {
             if ($a["gold"] == $b["gold"]) {
                 if ($a["silver"] == $b["silver"]) {
@@ -726,6 +732,7 @@ class ClubRanked
             }
             return -1;
         });
+        // ================= end sorting ====================
 
 
         return $output;

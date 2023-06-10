@@ -32,7 +32,7 @@ class ForgotPasswordEmailJob extends Job
     public function handle()
     {
         Mail::to($this->data['email'])->send(new ForgotPasswordEmail($this->data));
-        $this->log("success", "Email sent to ".$this->data['email']);
+        $this->log("success", "Email sent to " . $this->data['email']);
     }
 
     public function failed($exception)
@@ -42,7 +42,7 @@ class ForgotPasswordEmailJob extends Job
 
     private function log($status, $message)
     {
-        Logging::setFileName("email-forgot-password-". date("Y-m-d"))->setLogPath("email-log")->add([
+        Logging::setFileName("email-forgot-password-" . date("Y-m-d"))->setLogPath("email-log")->add([
             "status" => $status,
             "message" => $message,
             "email" => $this->data['email'],

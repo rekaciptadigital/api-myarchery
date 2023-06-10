@@ -2,6 +2,7 @@
 
 use Illuminate\Database\CsvtoArray;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProvincesSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class ProvincesSeeder extends Seeder
         error_log($file);
         $header = array('id', 'name');
         $data = $Csv->csv_to_array($file, $header);
-        \DB::table('provinces')->insert($data);
+        DB::table('provinces')->insert($data);
     }
 }

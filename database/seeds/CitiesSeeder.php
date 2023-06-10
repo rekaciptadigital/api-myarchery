@@ -15,7 +15,7 @@ class CitiesSeeder extends Seeder
         $data = $Csv->csv_to_array($file, $header);
         $collection = collect($data);
         foreach($collection->chunk(50) as $chunk) {
-            \DB::table('cities')->insert($chunk->toArray());
+            DB::table('cities')->insert($chunk->toArray());
         }
     }
 }
