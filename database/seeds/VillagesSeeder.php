@@ -2,6 +2,7 @@
 
 use Illuminate\Database\CsvtoArray;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class VillagesSeeder extends Seeder
 {
@@ -13,7 +14,7 @@ class VillagesSeeder extends Seeder
         $data = $Csv->csv_to_array($file, $header);
         $collection = collect($data);
         foreach($collection->chunk(50) as $chunk) {
-            \DB::table('villages')->insert($chunk->toArray());
+            DB::table('villages')->insert($chunk->toArray());
         }
     }
 
