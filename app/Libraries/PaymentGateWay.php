@@ -481,8 +481,6 @@ class PaymentGateWay
             'timeout' => 50,
         ]);
 
-        echo $response;
-
         $result = json_decode((string) $response->getBody());
         if (!$result->success) {
             return false;
@@ -492,6 +490,7 @@ class PaymentGateWay
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
+        dd("ok");
         $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
