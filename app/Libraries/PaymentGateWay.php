@@ -491,6 +491,8 @@ class PaymentGateWay
             return false;
         }
 
+        dd($result);
+
 
         $status = 3;
         if ($result->data->status == 'complete') {
