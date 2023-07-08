@@ -481,6 +481,8 @@ class PaymentGateWay
             'timeout' => 50,
         ]);
 
+        echo $response;
+
         $result = json_decode((string) $response->getBody());
         if (!$result->success) {
             return false;
