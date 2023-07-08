@@ -491,8 +491,7 @@ class PaymentGateWay
             return false;
         }
 
-        dd($result);
-
+        
         $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
@@ -501,13 +500,13 @@ class PaymentGateWay
         } else if ($result->data->status == 'expired') {
             $status = 2;
         }
-
+        
         $transaction_log->status = $status;
         $activity = \json_decode($transaction_log->transaction_log_activity, true);
         $activity["notification_callback_" . $status] = \json_encode($result);
         $transaction_log->transaction_log_activity = \json_encode($activity);
         $transaction_log->save();
-
+        
         if (substr($transaction_log->order_id, 0, strlen(env("ORDER_OFFICIAL_ID_PREFIX"))) == env("ORDER_OFFICIAL_ID_PREFIX")) {
             if ($status == 1) {
                 return self::orderOfficial($transaction_log, $status);
@@ -530,7 +529,8 @@ class PaymentGateWay
                 return self::orderVenue($transaction_log, $status);
             }
         }
-
+        
+        dd($result);
         return true;
     }
 
