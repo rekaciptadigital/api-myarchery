@@ -4,7 +4,7 @@ namespace App\BLoC\Web\ArcheryCategoryDetail;
 
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
-use App\Models\ClassificationEventRegisters;
+use App\Models\ArcheryEventQualificationTime;
 use App\Models\ConfigCategoryRegister;
 use App\Models\ConfigSpecialCategoryMaping;
 use App\Models\ConfigSpecialMaping;
@@ -32,7 +32,6 @@ class SetConfigRegisterCategory extends Transactional
         $parentClassification = $parameters->get("parentClassification");
         $classificationCountryId = $parameters->get("classificationCountryId");
         $classificationProvinceId = $parameters->get("classificationProvinceId");
-        $classificationChildrenId = $parameters->get("classificationChildrenId");
 
         $event = ArcheryEvent::find($event_id);
         //reset contingent setting
@@ -79,15 +78,16 @@ class SetConfigRegisterCategory extends Transactional
             $lc->start_registration = null;
             $lc->end_registration = null;
             $lc->save();
+
+            $archery_event_qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $lc->id)->first();
+            if ($archery_event_qualification_time) {
+                $archery_event_qualification_time->delete();
+            }
         }
         // akhir reset config
 
 
         // set ulang tanggal pendaftaran event
-
-        // if (strtotime($default_datetime_start_register) < time()) {
-        //     throw new BLoCException("event start register invalid");
-        // }
 
         if (strtotime($default_datetime_end_register) <= strtotime($default_datetime_start_register)) {
             throw new BLoCException("tanggal mulai registrasi harus sebelum tanggal akhir registrasi");
@@ -98,7 +98,7 @@ class SetConfigRegisterCategory extends Transactional
         }
 
         if (strtotime($default_datetime_end_register) > strtotime("-1 day", strtotime($schedule_start_event))) {
-            throw new BLoCException("event end register harus h-1 sebelum mulai event");
+            // throw new BLoCException("event end register harus h-1 sebelum mulai event");
         }
 
 
@@ -126,7 +126,7 @@ class SetConfigRegisterCategory extends Transactional
                     }
 
                     if (strtotime($lc["date_time_end_register_config"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                        throw new BLoCException("event end register harus h-1 sebelum mulai event");
+                        // throw new BLoCException("event end register harus h-1 sebelum mulai event");
                     }
                 }
 
@@ -152,7 +152,7 @@ class SetConfigRegisterCategory extends Transactional
                             }
 
                             if (strtotime($sc["date_time_end_register_special_category"]) > strtotime("-1 day", strtotime($event->event_start_datetime))) {
-                                throw new BLoCException("event end register harus h-1 sebelum mulai event");
+                                // throw new BLoCException("event end register harus h-1 sebelum mulai event");
                             }
                         } else {
                             throw new BLoCException("event start register dan event end register harus diiisi");
@@ -213,57 +213,7 @@ class SetConfigRegisterCategory extends Transactional
             }
         }
 
-        // susun response
-        $response = [];
-        $response["event_id"] = $event->id;
-        $response["default_datetime_register"] = [
-            "start" => $event->registration_start_datetime,
-            "end" => $event->registration_end_datetime
-        ];
-
-        $response["schedule_event"] = [
-            "start" => $event->event_start_datetime,
-            "end" => $event->event_end_datetime,
-        ];
-
-        // get contingent classification
-        $response['withContingent'] = $event->with_contingent;
-        $response['parentClassification'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['id'] : 0;
-        $response['parentClassificationTitle'] = !empty($event->detailParentClassification) ? $event->detailParentClassification['title'] : null;
-        $response['classificationCountryId'] = !empty($event->detailCountryClassification) ? $event->detailCountryClassification['id'] : 0;
-        $response['classificationCountryName'] = !empty($event->detailCountryClassification) ?  $event->detailCountryClassification['name'] : null;
-        $response['classificationProvinceId'] = !empty($event->detailProvinceClassification) ?  $event->detailProvinceClassification['id'] : 0;
-        $response['classificationProvinceName'] = !empty($event->detailProvinceClassification) ? $event->detailProvinceClassification['name'] : null;
-
-        $config = ConfigCategoryRegister::where("event_id", $event_id)->get();
-        $enable_config = 0;
-        if ($config->count() > 0) {
-            $enable_config = 1;
-        }
-
-        $response["enable_config"] = $enable_config;
-
-        foreach ($config as $c) {
-            if ($c->is_have_special == 1) {
-                $list_special_config = [];
-                $config_special_mapping = ConfigSpecialMaping::where("config_id", $c->id)->get();
-                foreach ($config_special_mapping as $csm) {
-                    $categories = [];
-                    $config_special_category_mapping = ConfigSpecialCategoryMaping::where("special_config_id", $csm->id)->get();
-                    foreach ($config_special_category_mapping as $cscm) {
-                        $label = ArcheryEventCategoryDetail::getCategoryLabelComplete($cscm->category_id);
-                        $cscm->label = $label;
-                        $categories[] = $cscm;
-                    }
-                    $csm->categories = $categories;
-                    $list_special_config[] = $csm;
-                }
-                $c->list_special_config = $list_special_config;
-            }
-            $response["list_config"][] = $c;
-        }
-
-        return $response;
+        return "success";
     }
 
     protected function validation($parameters)
