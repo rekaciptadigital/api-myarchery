@@ -518,6 +518,9 @@ class PaymentGateWay
                 $p->save();
             }
             $order_event = OrderEvent::where("transaction_log_id", $transaction_log->id)->first();
+            if (!$order_event) {
+                throw new BLoCException("data order event not found");
+            }
             $order_event->status = $status;
             $order_event->save();
             if ($status == 1) {
@@ -530,7 +533,6 @@ class PaymentGateWay
             }
         }
         
-        dd($result);
         return true;
     }
 
