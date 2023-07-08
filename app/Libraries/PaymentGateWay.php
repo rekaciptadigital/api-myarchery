@@ -491,7 +491,7 @@ class PaymentGateWay
             return false;
         }
 
-        
+
         $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
@@ -500,13 +500,13 @@ class PaymentGateWay
         } else if ($result->data->status == 'expired') {
             $status = 2;
         }
-        
+
         $transaction_log->status = $status;
         $activity = \json_decode($transaction_log->transaction_log_activity, true);
         $activity["notification_callback_" . $status] = \json_encode($result);
         $transaction_log->transaction_log_activity = \json_encode($activity);
         $transaction_log->save();
-        
+
         if (substr($transaction_log->order_id, 0, strlen(env("ORDER_OFFICIAL_ID_PREFIX"))) == env("ORDER_OFFICIAL_ID_PREFIX")) {
             if ($status == 1) {
                 return self::orderOfficial($transaction_log, $status);
@@ -518,11 +518,10 @@ class PaymentGateWay
                 $p->save();
             }
             $order_event = OrderEvent::where("transaction_log_id", $transaction_log->id)->first();
-            if (!$order_event) {
-                throw new BLoCException("data order event not found");
+            if ($order_event) {
+                $order_event->status = $status;
+                $order_event->save();
             }
-            $order_event->status = $status;
-            $order_event->save();
             if ($status == 1) {
                 self::$oy_callback = $result->data;
                 return self::orderEvent($transaction_log, $status);
@@ -532,7 +531,7 @@ class PaymentGateWay
                 return self::orderVenue($transaction_log, $status);
             }
         }
-        
+
         return true;
     }
 
