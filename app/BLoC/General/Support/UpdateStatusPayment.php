@@ -7,7 +7,7 @@ use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Retrieval;
 use DAI\Utils\Abstracts\Transactional;
 
-class UpdateStatusPayment extends Retrieval
+class UpdateStatusPayment extends Transactional
 {
     public function getDescription()
     {

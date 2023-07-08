@@ -490,7 +490,9 @@ class PaymentGateWay
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
-        
+
+        dd($result);
+
         $status = 3;
         if ($result->data->status == 'complete') {
             $status = 1;
