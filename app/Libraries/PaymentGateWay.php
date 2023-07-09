@@ -486,12 +486,10 @@ class PaymentGateWay
             return false;
         }
 
-        $transaction_log = TransactionLog::where("order_id", $order_id)->first();
+        $transaction_log = TransactionLog::where("order_id", $order_id)->where("gateway", "OY")->first();
         if (!$transaction_log || $transaction_log->status == 1) {
             return false;
         }
-
-        dd($result);
 
 
         $status = 3;
