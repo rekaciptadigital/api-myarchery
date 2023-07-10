@@ -5,6 +5,7 @@ namespace App\BLoC\General\Support;
 use App\Libraries\PaymentGateWay;
 use App\Models\TransactionLog;
 use DAI\Utils\Abstracts\Transactional;
+use Exception;
 
 class UpdateStatusPayment extends Transactional
 {
@@ -23,7 +24,7 @@ class UpdateStatusPayment extends Transactional
                 print_r($checkout);
                 echo "\n\n";
             } catch (\Throwable $th) {
-                $th->getMessage();
+                echo $th->getMessage();
                 continue;
             }
         }
