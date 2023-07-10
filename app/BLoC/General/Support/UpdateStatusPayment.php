@@ -23,6 +23,7 @@ class UpdateStatusPayment extends Transactional
                 print_r($checkout);
                 echo "\n\n";
             } catch (\Throwable $th) {
+                $th->getMessage();
                 continue;
             }
         }
