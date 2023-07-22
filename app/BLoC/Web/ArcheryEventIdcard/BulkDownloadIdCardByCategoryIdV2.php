@@ -184,7 +184,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $final_doc['doc'][] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}', '{%gender%}'],
-                [$user->name, $avatar, $categoryLabel, $tag_ranked, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
+                [$user->name, $avatar, $categoryLabel, $tag_ranked, $background, $logo, $event->location_and_date_event, $qr_code_data, $status, $event->status, $budrest_number, $gender],
                 $html_template
             );
         }
