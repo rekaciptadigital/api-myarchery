@@ -4,19 +4,10 @@ namespace App\BLoC\Web\EventElimination;
 
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
-use App\Models\ArcheryEventEliminationSchedule;
-use App\Models\ArcheryEventEliminationMatch;
 use App\Models\ArcheryEventCategoryDetail;
 use DAI\Utils\Exceptions\BLoCException;
-use App\Models\ArcheryScoring;
-use App\Models\ArcheryEventElimination;
-use App\Models\ArcheryEventEliminationGroup;
-use App\Models\ArcheryEventEliminationGroupMatch;
-use App\Models\ArcheryEventEliminationGroupMemberTeam;
 use App\Models\ArcheryEventParticipant;
-use App\Models\ArcheryEventParticipantMember;
 use App\Models\ArcheryMasterTeamCategory;
-use App\Models\ArcheryScoringEliminationGroup;
 
 class GetEventEliminationTemplate extends Retrieval
 {
