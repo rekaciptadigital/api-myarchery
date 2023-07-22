@@ -14,7 +14,12 @@ use App\Models\ArcheryClub;
 use App\Models\ArcheryEventOfficial;
 use App\Models\User;
 use App\Models\ArcheryEventQualificationScheduleFullDay;
+use App\Models\ChildrenClassificationMembers;
 use App\Models\City;
+use App\Models\CityCountry;
+use App\Models\Country;
+use App\Models\ProvinceCountry;
+use App\Models\Provinces;
 use Illuminate\Support\Facades\Auth;
 
 class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
@@ -51,11 +56,10 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         $background = $idcard_event->background;
         $logo = !empty($idcard_event->logo_event) ? $idcard_event->logo_event : "https://i.ibb.co/pXx14Zr/logo-email-archery.png";
         $location_and_date_event = $archery_event->location_date_event;
-        $with_contingent = $archery_event->with_contingent;
 
         if ($type == 1) {
             $status = "Peserta";
-            $final_doc = $this->generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $with_contingent);
+            $final_doc = $this->generateArrayParticipant($archery_event, $category_id, $background, $html_template, $logo, $status, $type);
         } elseif ($type == 2) {
             $status = "Official";
             $final_doc = $this->generateArrayOfficial($event_id, $location_and_date_event, $background, $html_template, $logo, $status, $type);
@@ -86,22 +90,18 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
         return $validator;
     }
 
-    private function generateArrayParticipant($category_id, $location_and_date_event, $background, $html_template, $logo, $status, $type, $event_id, $with_contingent)
+    private function generateArrayParticipant(ArcheryEvent $event, $category_id, $background, $html_template, $logo, $status, $type)
     {
-        $category = ArcheryEventCategoryDetail::find($category_id);
+        $category = ArcheryEventCategoryDetail::where("event_id", $event->id)->where("id", $category_id)->first();
 
         if (!$category) {
             throw new BLoCException("category not found");
         }
 
-        if ($category->event_id != $event_id) {
-            throw new BLoCException("forbiden");
-        }
-
         $categoryLabel = ArcheryEventCategoryDetail::getCategoryLabelComplete($category->id);
 
         $participants = ArcheryEventParticipant::where("event_category_id", $category_id)->where("status", 1)->get();
-        if ($participants->isEmpty()) {
+        if ($participants->count() == 0) {
             throw new BLoCException("tidak ada partisipan");
         }
 
@@ -118,33 +118,65 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
                 throw new BLoCException("user not found");
             }
 
-            $gender = "";
-            if ($user->gender != null) {
-                if ($user->gender == "male") {
-                    $gender = "Laki-Laki";
-                } else {
-                    $gender = "Perempuan";
-                }
+            if ($user->gender == "male") {
+                $gender = "Laki-Laki";
+            } elseif ($user->gender == "female") {
+                $gender = "Perempuan";
+            } else {
+                $gender = "";
             }
 
-            $qr_code_data = $event_id . " " . $type . "-" . $member->id;
+            $qr_code_data = $event->id . " " . $type . "-" . $member->id;
             $schedule = ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $member->id)->first();
             $budrest_number = "";
             if ($schedule && $schedule->bud_rest_number != 0) {
                 $budrest_number = $schedule->bud_rest_number . $schedule->target_face;
             }
 
-            $club_name = "";
-            $city_name = "";
-            if ($with_contingent == 1) {
-                $city = City::find($participant->city_id);
-                if ($city) {
-                    $city_name = $city->name;
-                }
-            } else {
+            $tag_ranked = "";
+
+            if ($event->parent_classification == 1) { // jika mewakili club
                 $club = ArcheryClub::find($participant->club_id);
                 if ($club) {
-                    $club_name = $club->name;
+                    $tag_ranked = $club->name;
+                }
+            }
+
+            if ($event->parent_classification == 2) { // jika mewakili negara
+                $country = Country::find($participant->classification_country_id);
+                if ($country) {
+                    $tag_ranked = $country->name;
+                }
+            }
+
+            if ($event->parent_classification == 3) { // jika mewakili provinsi
+                if ($event->classification_country_id == 102) {
+                    $province = Provinces::find($participant->classification_province_id);
+                } else {
+                    $province = ProvinceCountry::find($participant->classification_province_id);
+                }
+
+                if ($province) {
+                    $tag_ranked = $province->name;
+                }
+            }
+
+            if ($event->parent_classification == 4) { // jika mewakili kota
+                if ($event->classification_country_id == 102) {
+                    $city = City::find($participant->classification_city_id);
+                } else {
+                    $city = CityCountry::find($participant->classification_city_id);
+                }
+
+                if ($city) {
+                    $tag_ranked = $city->name;
+                }
+            }
+
+            if ($event->parent_classification > 5) { // jika berasal dari settingan admin
+                $children_classification_member = ChildrenClassificationMembers::find($participant->children_classification_id);
+                if ($children_classification_member) {
+                    $tag_ranked = $children_classification_member->title;
                 }
             }
 
@@ -152,7 +184,7 @@ class BulkDownloadIdCardByCategoryIdV2 extends Retrieval
 
             $final_doc['doc'][] = str_replace(
                 ['{%player_name%}', '{%avatar%}', '{%category%}', '{%club_member%}', "{%background%}", '{%logo%}', '{%location_and_date%}', '{%certificate_verify_url%}', '{%status_event%}', '{%budrest_number%}', '{%gender%}'],
-                [$user->name, $avatar, $categoryLabel, $with_contingent == 0 ? $club_name : $city_name, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
+                [$user->name, $avatar, $categoryLabel, $tag_ranked, $background, $logo, $location_and_date_event, $qr_code_data, $status, $budrest_number, $gender],
                 $html_template
             );
         }

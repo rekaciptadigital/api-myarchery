@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\Web\ClassificationMembers;
+namespace App\BLoC\App\ClassificationMembers;
 
 use App\Models\ChildrenClassificationMembers;
 use App\Models\ParentClassificationMembers;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BLoC\Web\EventElimination;
+namespace App\BLoC\Web\DashboardDos;
 
 use App\Models\ArcheryEvent;
 use DAI\Utils\Abstracts\Retrieval;
@@ -9,7 +9,7 @@ use DAI\Utils\Exceptions\BLoCException;
 use App\Models\ArcheryEventParticipant;
 use App\Models\ArcheryMasterTeamCategory;
 
-class GetEventEliminationTemplate extends Retrieval
+class GetEventEliminationDos extends Retrieval
 {
     public function getDescription()
     {
