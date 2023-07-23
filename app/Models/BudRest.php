@@ -266,13 +266,14 @@ class BudRest extends Model
                 throw new BLoCException("jadwal belum ditentukan");
             }
 
-            $jadwal =  ArcheryEventQualificationScheduleFullDay::where("qalification_time_id", $q_time->id)->where("participant_member_id", $participant_member->id)->first();
+            $jadwal =  ArcheryEventQualificationScheduleFullDay::where("participant_member_id", $participant_member->id)->first();
             if (!$jadwal) {
-                ArcheryEventQualificationScheduleFullDay::create([
-                    'qalification_time_id' => $q_time->id,
-                    'participant_member_id' => $participant_member->id,
-                ]);
+                $jadwal = new ArcheryEventQualificationScheduleFullDay();
             }
+
+            $jadwal->qalification_time_id = $q_time->id;
+            $jadwal->participant_member_id = $participant_member->id;
+            $jadwal->save();
         }
 
         $qualification_time = ArcheryEventQualificationTime::where("category_detail_id", $category_id)->first();
