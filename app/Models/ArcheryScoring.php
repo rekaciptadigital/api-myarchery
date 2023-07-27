@@ -802,7 +802,7 @@ class ArcheryScoring extends Model
             $participants_query->where("archery_event_participants.is_present", 1);
         }
 
-        $participants_collection = $participants_query->get();
+        $participants_collection = $participants_query->distinct()->get();
         $archery_event_score = [];
         foreach ($participants_collection as $key => $value) {
             $score = $this->generateScoreBySession($value->id, $score_type, $sessions);
