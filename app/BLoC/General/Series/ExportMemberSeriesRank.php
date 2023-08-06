@@ -28,7 +28,7 @@ class ExportMemberSeriesRank extends Retrieval
             $data[] = $response;
         }
 
-        $file_name = "series_rank_".$series_id;
+        $file_name = "series_rank_" . $series_id;
         $final_doc = '/Series/' . $series_id . '/' . $file_name . '.xlsx';
         $excel = new MemberSeriesExport($data);
         $download = Excel::store($excel, $final_doc, 'public');
