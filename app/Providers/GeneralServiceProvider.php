@@ -13,7 +13,7 @@ use App\BLoC\General\GetProvinceCountry;
 use App\BLoC\General\ImportMemberCollective;
 use App\BLoC\General\ImportMemberCollectiveTeam;
 use App\BLoC\General\InsertDataParticipantToClassificationEvent;
-use App\BloC\General\Series\ExportMemberSeriesRank;
+use App\BLoC\General\Series\ExportMemberSeriesRank;
 use App\BLoC\General\Support\DownloadTemplateMemberCollectiveClub;
 use App\BLoC\General\Support\ImportMemberCollectiveClub;
 use App\BLoC\General\Support\UpdateLogoCity;
