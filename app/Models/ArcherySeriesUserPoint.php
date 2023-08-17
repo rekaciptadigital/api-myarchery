@@ -246,6 +246,9 @@ class ArcherySeriesUserPoint extends Model
                     $score_details = json_decode($score->scoring_detail);
                     foreach ($score_details as $score_detail) {
                         foreach ($score_detail as $sd) {
+                            if (!isset($sd->id)) {
+                                continue;
+                            }
                             $member_score_details[$sd->id] = $member_score_details[$sd->id] + 1;
                             $member_score_detail_qualification[$sd->id] = $member_score_detail_qualification[$sd->id] + 1;
                         }
@@ -361,6 +364,9 @@ class ArcherySeriesUserPoint extends Model
                     $score_details = json_decode($score->scoring_detail);
                     foreach ($score_details as $score_detail) {
                         foreach ($score_detail as $sd) {
+                            if (!isset($sd->id)) {
+                                continue;
+                            }
                             $member_score_details[$sd->id] = $member_score_details[$sd->id] + 1;
                             $member_score_detail_qualification[$sd->id] = $member_score_detail_qualification[$sd->id] + 1;
                         }
