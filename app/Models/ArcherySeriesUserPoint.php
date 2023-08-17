@@ -15,6 +15,7 @@ use App\Models\ArcheryScoring;
 use App\Models\ArcherySeriesMasterPoint;
 use DAI\Utils\Exceptions\BLoCException;
 use DAI\Utils\Helpers\BLoC;
+use Exception;
 
 class ArcherySeriesUserPoint extends Model
 {
@@ -202,6 +203,9 @@ class ArcherySeriesUserPoint extends Model
     protected function getUserSeriePointByCategory($category_serie_id)
     {
         $category_series = ArcherySeriesCategory::find($category_serie_id);
+        if (!$category_series) {
+            throw new Exception("category series not found");
+        }
         $archery_user_point = ArcherySeriesUserPoint::where("event_category_id", $category_series->id)
             ->where("status", 1)
             ->get();
