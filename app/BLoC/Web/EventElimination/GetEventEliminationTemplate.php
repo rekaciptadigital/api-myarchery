@@ -21,12 +21,13 @@ class GetEventEliminationTemplate extends Retrieval
         $event_category_id = $parameters->get("event_category_id");
         $event_id = $parameters->get("event_id");
 
-        $event = ArcheryEvent::find($event_id);
-
+        
         $category = ArcheryEventCategoryDetail::find($event_category_id);
         if (!$category) {
             throw new BLoCException("category not found");
         }
+        
+        $event = ArcheryEvent::find($category->event_id);
 
         $team_category = ArcheryMasterTeamCategory::find($category->team_category_id);
         if (!$team_category) {
