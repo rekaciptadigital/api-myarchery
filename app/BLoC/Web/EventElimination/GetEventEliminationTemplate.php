@@ -19,7 +19,6 @@ class GetEventEliminationTemplate extends Retrieval
     protected function process($parameters)
     {
         $event_category_id = $parameters->get("event_category_id");
-        $event_id = $parameters->get("event_id");
 
         
         $category = ArcheryEventCategoryDetail::find($event_category_id);
@@ -47,6 +46,8 @@ class GetEventEliminationTemplate extends Retrieval
 
     protected function validation($parameters)
     {
-        return [];
+        return [
+            "event_category_id" => "required|exists:archery_event_category_details,id"
+        ];
     }
 }
