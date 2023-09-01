@@ -64,6 +64,7 @@ use App\BLoC\App\Enterprise\GetTransactionVenueUser;
 use App\BLoC\App\ClassificationMembers\GetChildrenClassification;
 use App\BLoC\App\Dashboard\GetLastEvent;
 use App\BLoC\App\Dashboard\GetOnGoingEventDashboard;
+use App\BLoC\App\Webhook\OyCreatePaymentLink;
 use App\BLoC\Web\EventOrder\AddEventOrderTeam;
 use App\BLoC\Web\EventOrder\AddEventOrderV2;
 use App\BLoC\Web\EventOrder\CheckEmailIsRegister;
@@ -143,6 +144,9 @@ class AppServiceProvider extends ServiceProvider
         $this->registerService("getDetailSeriesById", GetDetailSeriesById::class);
         $this->registerService("getEventOrderV2", getEventOrderV2::class);
         $this->registerService("cancelBuyEvent", CancelBuyEvent::class);
+
+        // Webhook
+        $this->registerService("oyCreatePaymentLink", OyCreatePaymentLink::class);
     }
 
     private function registerService($serviceName, $className)
