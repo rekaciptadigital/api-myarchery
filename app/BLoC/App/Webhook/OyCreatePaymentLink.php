@@ -23,7 +23,7 @@ class OyCreatePaymentLink extends Retrieval
             'email' => $parameters->get('email'),
             'phone_number' => $parameters->get('phone_number'),
             'sender_name' => $parameters->get('sender_name'),
-            'list_enabled_banks' => '008,002,009,013,022,213,016,484,011,014',
+            'list_enabled_banks' => '002,008,009,013,022,213,451,016,484,011,QRIS',
             'list_enabled_ewallet' => 'shopeepay_ewallet,dana_ewallet,linkaja_ewallet,ovo_ewallet',
             'amount' => $parameters->get('amount'),
             "include_admin_fee" => false,
