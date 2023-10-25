@@ -195,7 +195,7 @@ class ArcheryEventParticipant extends Model
 
       // start: total medal emas, perak, perunggu dari setiap kategori semua klub
       $array_of_total_medal_by_category = [];
-      $total_array_category = count($result[0]['medal_array']);
+      $total_array_category = $result == [] ? 0 : count($result[0]['medal_array']);
       for ($i = 0; $i < $total_array_category; $i++) {
         $total_medal_by_category = 0;
         for ($j = 0; $j < count($result); $j++) {
