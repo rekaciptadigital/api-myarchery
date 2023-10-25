@@ -457,7 +457,7 @@ class PaymentGateWay
             "order_id" => $transaction_log->order_id,
             "total" => $transaction_log->total_amount == 0 ? $transaction_log->amount : $transaction_log->total_amount,
             "gateway" => $transaction_log->gateway,
-            "opt" => json_decode($transaction_log->opt),
+            "opt" => $transaction_log->gateway == "midtrans" || $transaction_log->gateway == "" ? null : json_decode($transaction_log->opt),
             "status_id" => $status,
             "status" => TransactionLog::getStatus($status),
             "transaction_log_id" => $transaction_log->id,

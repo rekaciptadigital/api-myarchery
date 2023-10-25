@@ -138,4 +138,9 @@ $router->group(['prefix' => 'app'], function () use ($router) {
         });
     });
     // ----------------------------------------------------------- End Archery Enterprise ----------------------------------------------------------- //
+
+    // ------------------------------------------------------------- Webhook ------------------------------------------------------------- //
+    $router->group(['prefix' => 'webhook'], function () use ($router) {
+        $router->post('/oy-create-payment-link', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:oyCreatePaymentLink']);
+    });
 });
