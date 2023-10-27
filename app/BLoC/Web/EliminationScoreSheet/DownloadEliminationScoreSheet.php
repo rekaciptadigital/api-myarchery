@@ -172,7 +172,8 @@ class DownloadEliminationScoreSheet extends Retrieval
                     ->first();
 
                 $name = $detail_member['name'];
-                $rank = $elimination_member->elimination_ranked;
+                $rank = $elimination_member->position_qualification;
+                $target = $data->bud_rest . $data->target_face;
                 $club_name = $detail_member['club_name'] ? $detail_member['club_name'] : "-";
                 $country_name = $detail_member["country_name"] ? $detail_member["country_name"] : "-";
                 $province_name = $detail_member["province_name"] ? $detail_member["province_name"] : "-";
@@ -183,6 +184,7 @@ class DownloadEliminationScoreSheet extends Retrieval
 
             $result['name_athlete'][] = $name;
             $result['rank'][] = $rank;
+            $result['target'][] = $target;
             $result['club_name'][] = $club_name;
             $result['country_name'][] = $country_name;
             $result['province_name'][] = $province_name;
@@ -223,6 +225,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta1_children_classification_members_name' => $result['children_classification_members_name'][0],
             'peserta1_parent_classifification_type' => $result['parent_classifification_type'][0],
             'peserta1_rank' => $result['rank'][0],
+            'peserta1_target' => $result['target'][0],
             'peserta1_category' => $result['category'][0],
             'peserta2_name' => $result['name_athlete'][1],
             'peserta2_club_name' => $result['club_name'][1],
@@ -232,6 +235,7 @@ class DownloadEliminationScoreSheet extends Retrieval
             'peserta2_children_classification_members_name' => $result['children_classification_members_name'][1],
             'peserta2_parent_classifification_type' => $result['parent_classifification_type'][1],
             'peserta2_rank' => $result['rank'][1],
+            'peserta2_target' => $result['target'][1],
             'peserta2_category' => $result['category'][1],
             "qr" => $base64,
             "event_name" => $event_name,
@@ -285,6 +289,7 @@ class DownloadEliminationScoreSheet extends Retrieval
         foreach ($match_tim as $data) {
             $team_name = "";
             $rank = "";
+            $target = "";
             $club_name = "";
             $city_name = "";
             $array_athlete = [];
@@ -323,13 +328,15 @@ class DownloadEliminationScoreSheet extends Retrieval
                 }
 
                 $team_name = $elimination_group_tim->team_name;
-                $rank = $elimination_group_tim->elimination_ranked;
+                $rank = $elimination_group_tim->positio;
+                $target = $data->bud_rest . $data->target_face;
 
                 $bud_rest_number = $data->bud_rest != 0 ? $data->bud_rest . $data->target_face : "";
             }
 
             $result['name_athlete'][] = $team_name;
             $result['rank'][] = $rank;
+            $result['target'][] = $target;
             $result['club'][] = $club_name;
             $result['city'][] = $city_name;
             $result["athlete"][] = $array_athlete;
