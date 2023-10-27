@@ -117,7 +117,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                 <tr>
                     <td style="">Target</td>
                     <td>:</td>
-                    <td>-</td>
+                    <td>{{ $peserta1_target }}</td>
                     <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
                 </tr>
             </table>
@@ -161,7 +161,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                 <tr>
                     <td style="">Target</td>
                     <td>:</td>
-                    <td>-</td>
+                    <td>{{ $peserta2_target }}</td>
                     <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
                 </tr>
             </table>
