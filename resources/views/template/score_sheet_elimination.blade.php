@@ -86,7 +86,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td style="width: 50%">{{ $peserta1_name }}</td>
                     <td style="width: 15%"></td>
                     <td style="width: 25%; text-align:center; border-left:1px solid black;background-color: #808080">
-                        TARGET</td>
+                        Rank</td>
                 </tr>
                 <tr>
                     <td>{{ $title_parent }}</td>
@@ -106,7 +106,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     </td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
-                        rowspan="3">{{ $budrest_1 }}</td>
+                        rowspan="3">{{ $peserta1_rank }}</td>
                 </tr>
                 <tr>
                     <td style="">Category</td>
@@ -115,9 +115,9 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td style="width:200px;"></td>
                 </tr>
                 <tr>
-                    <td style="">Peringkat</td>
+                    <td style="">Target</td>
                     <td>:</td>
-                    <td>{{ $peserta1_rank }}</td>
+                    <td>{{ $peserta1_target }}</td>
                     <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
                 </tr>
             </table>
@@ -130,7 +130,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td style="width: 50%">{{ $peserta2_name }}</td>
                     <td style="width: 15%"></td>
                     <td style="width: 25%; text-align:center; border-left:1px solid black;background-color: #808080">
-                        TARGET</td>
+                        Rank</td>
                 </tr>
                 <tr>
                     <td>{{ $title_parent }}</td>
@@ -150,7 +150,7 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     </td>
                     <td></td>
                     <td style="font-size: 22pt; text-align:center; border-left:1px solid black;background-color: #808080;"
-                        rowspan="3">{{ $budrest_2 }}</td>
+                        rowspan="3">{{ $peserta2_rank }}</td>
                 </tr>
                 <tr>
                     <td style="">Category</td>
@@ -159,9 +159,9 @@ if ($elimination_scoring_type == 1 || $elimination_scoring_type == 0) {
                     <td style="width:200px;"></td>
                 </tr>
                 <tr>
-                    <td style="">Peringkat</td>
+                    <td style="">Target</td>
                     <td>:</td>
-                    <td>{{ $peserta2_rank }}</td>
+                    <td>{{ $peserta2_target }}</td>
                     <td style="text-align:center;border: 1px solid black;border-right:none;">TARGET -</td>
                 </tr>
             </table>
