@@ -384,7 +384,9 @@ class BudRest extends Model
 
 
         foreach ($schedules as $key => $value) {
-            $club_or_city_ids[$value[$tag]]["total"] += 1;
+            if (isset($club_or_city_ids[$value[$tag]])) {
+                $club_or_city_ids[$value[$tag]]["total"] += 1;
+            }
         }
 
         usort($club_or_city_ids, function ($a, $b) {
