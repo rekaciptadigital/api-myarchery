@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\BLoC\General\Certificate\BulkDownloadWinerCertificateByEventId;
 use App\BLoC\General\Dos\GetMedalParticipantByEventId;
 use App\BLoC\General\ExportClubRankedGroupByTeamCategory;
 use App\BLoC\General\ExportmemberCollective;
@@ -59,7 +60,8 @@ class GeneralServiceProvider extends ServiceProvider
 
         // new condition register with classification or contingent history
         $this->registerService("insertDataParticipantToClassificationEvent", InsertDataParticipantToClassificationEvent::class);
-
+        
+        $this->registerService("bulkDownloadWinerCertificateByEventId", BulkDownloadWinerCertificateByEventId::class);
 
         // ======================================= End ==============================================
     }
