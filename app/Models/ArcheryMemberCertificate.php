@@ -361,7 +361,6 @@ class ArcheryMemberCertificate extends Model
         $array_doc = [];
 
         foreach ($members as $key => $value) {
-            $item["{%member_name%}"] = strtoupper($value->member_name);
             $elimination_member = ArcheryEventEliminationMember::where("member_id", $value->id)->first();
             $files = [];
 
@@ -375,6 +374,7 @@ class ArcheryMemberCertificate extends Model
                 if ($type == "participant") {
                     if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")) {
                         $category = "Peserta - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+                        $item["{%member_name%}"] = strtoupper($value->member_name);
                     }
                 }
 
@@ -389,6 +389,7 @@ class ArcheryMemberCertificate extends Model
                         }
                         $item["{%ranked%}"] = $elimination_member->elimination_ranked;
                         $category = "Juara " . $elimination_member->elimination_ranked . " Eliminasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+                        $item["{%member_name%}"] = strtoupper($value->member_name);
                     }
 
                     if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")) {
@@ -397,6 +398,7 @@ class ArcheryMemberCertificate extends Model
                         }
                         $item["{%ranked%}"] = $elimination_member->position_qualification;
                         $category = "Juara " . $elimination_member->position_qualification . " Kualifikasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+                        $item["{%member_name%}"] = strtoupper($value->member_name);
                     }
                 }
 
