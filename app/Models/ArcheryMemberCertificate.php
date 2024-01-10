@@ -429,12 +429,12 @@ class ArcheryMemberCertificate extends Model
         if (!file_exists(public_path() . "/" . $file_name)) {
             PdfLibrary::setArrayDoc($array_doc)->setFileName($file_name)->savePdf();
         }
-        $files[] = [
-            "name" => $type_certificate_label,
+        $files = [
+            "name" => "",
             "url" =>  env('APP_HOSTNAME') . $file_name
         ];
 
-        return $user_certificate_by_categories;
+        return $files;
     }
 
     public static function bulkPrepareUserCertificateByCategoryTeam(ArcheryEventCategoryDetail $category_team)
