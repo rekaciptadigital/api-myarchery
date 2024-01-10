@@ -59,7 +59,7 @@ class BulkDownloadWinerCertificateByEventId extends Retrieval
     {
         return [
             "category_id" => "required|integer|exists:archery_event_category_details,id",
-            "type" => "in:Individual,Team"
+            "type" => "required|in:participant,winner"
         ];
     }
 }

@@ -327,7 +327,7 @@ class ArcheryMemberCertificate extends Model
         return $user_certificate_by_categories;
     }
 
-    public static function bulkPrepareUserCertificateByCategoryIndividu(ArcheryEventCategoryDetail $category_individu)
+    public static function bulkPrepareUserCertificateByCategoryIndividu(ArcheryEventCategoryDetail $category_individu, $type = "winer")
     {
         $certificate_templates = ArcheryEventCertificateTemplates::where("event_id", $category_individu->event_id)->get();
         $user_certificate_by_categories = [];
@@ -371,30 +371,35 @@ class ArcheryMemberCertificate extends Model
 
                 $category = "";
 
-                $type_certificate_label = ArcheryEventCertificateTemplates::getCertificateLabelByType($type_certificate);
-                if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")) {
-                    $category = "Peserta - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+
+                if ($type == "participant") {
+                    if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("participant")) {
+                        $category = "Peserta - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+                    }
                 }
 
                 if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("elimination")) {
                     continue;
                 }
 
-                if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("winner")) {
-                    if (!$elimination_member || $elimination_member->elimination_ranked < 1 || $elimination_member->elimination_ranked > 3) {
-                        continue;
+                if ($type == "winer") {
+                    if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("winner")) {
+                        if (!$elimination_member || $elimination_member->elimination_ranked < 1 || $elimination_member->elimination_ranked > 3) {
+                            continue;
+                        }
+                        $item["{%ranked%}"] = $elimination_member->elimination_ranked;
+                        $category = "Juara " . $elimination_member->elimination_ranked . " Eliminasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
                     }
-                    $item["{%ranked%}"] = $elimination_member->elimination_ranked;
-                    $category = "Juara " . $elimination_member->elimination_ranked . " Eliminasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+
+                    if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")) {
+                        if (!$elimination_member || $elimination_member->position_qualification < 1 || $elimination_member->position_qualification > 3) {
+                            continue;
+                        }
+                        $item["{%ranked%}"] = $elimination_member->position_qualification;
+                        $category = "Juara " . $elimination_member->position_qualification . " Kualifikasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
+                    }
                 }
 
-                if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("qualification_winner")) {
-                    if (!$elimination_member || $elimination_member->position_qualification < 1 || $elimination_member->position_qualification > 3) {
-                        continue;
-                    }
-                    $item["{%ranked%}"] = $elimination_member->position_qualification;
-                    $category = "Juara " . $elimination_member->position_qualification . " Kualifikasi - " . $value->label_competition . " " . $value->label_age . " " . $value->label_distance . " - " . $value->label_team;
-                }
 
                 if (empty($category)) {
                     continue;
@@ -419,16 +424,15 @@ class ArcheryMemberCertificate extends Model
             };
         }
 
-        $path = "asset/certificate/event_" . $category_individu->event_id;
+        $path = "asset/certificate/event_" . $category_individu->event_id . "/category";
         if (!file_exists(public_path() . "/" . $path)) {
             mkdir(public_path() . "/" . $path, 0775);
         }
 
-        $file_name = $path . "/" . $category_individu->id . ".pdf";
+        $file_name = $path . "/" . $category_individu->id . "_" . $type . ".pdf";
 
-        if (!file_exists(public_path() . "/" . $file_name)) {
-            PdfLibrary::setArrayDoc($array_doc)->setFileName($file_name)->savePdf();
-        }
+        PdfLibrary::setArrayDoc($array_doc)->setFileName($file_name)->savePdf();
+
         $files = [
             "name" => "",
             "url" =>  env('APP_HOSTNAME') . $file_name
