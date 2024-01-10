@@ -39,7 +39,7 @@ class BulkDownloadWinerCertificateByEventId extends Retrieval
         $output = [];
 
         if ($category->category_team == ArcheryEventCategoryDetail::INDIVIDUAL_TYPE) {
-            $certificate = ArcheryMemberCertificate::bulkPrepareUserCertificateByCategoryIndividu($category);
+            $certificate = ArcheryMemberCertificate::bulkPrepareUserCertificateByCategoryIndividu($category, $parameters->get("type"));
         } else {
             $certificate = ArcheryMemberCertificate::bulkPrepareUserCertificateByCategoryTeam($category);
         }

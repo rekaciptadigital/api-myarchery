@@ -327,7 +327,7 @@ class ArcheryMemberCertificate extends Model
         return $user_certificate_by_categories;
     }
 
-    public static function bulkPrepareUserCertificateByCategoryIndividu(ArcheryEventCategoryDetail $category_individu, $type = "winer")
+    public static function bulkPrepareUserCertificateByCategoryIndividu(ArcheryEventCategoryDetail $category_individu, $type = "winner")
     {
         $certificate_templates = ArcheryEventCertificateTemplates::where("event_id", $category_individu->event_id)->get();
         $user_certificate_by_categories = [];
@@ -382,7 +382,7 @@ class ArcheryMemberCertificate extends Model
                     continue;
                 }
 
-                if ($type == "winer") {
+                if ($type == "winner") {
                     if ($type_certificate == ArcheryEventCertificateTemplates::getCertificateType("winner")) {
                         if (!$elimination_member || $elimination_member->elimination_ranked < 1 || $elimination_member->elimination_ranked > 3) {
                             continue;
