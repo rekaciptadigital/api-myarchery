@@ -391,7 +391,7 @@ class AddEventOrderV2 extends Transactional
             ->addItemDetail($event->id, (int)$total_price, $event->event_name)
             ->feePaymentsToUser($this->have_fee_payment_gateway)
             ->setMyarcheryFee($this->myarchery_fee)
-            ->createSnap();
+            ->createSnap($event->event_name);
         if (!$payment->status) {
             throw new BLoCException($payment->message);
         }
