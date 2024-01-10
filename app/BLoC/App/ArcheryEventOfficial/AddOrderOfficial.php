@@ -152,7 +152,7 @@ class AddOrderOfficial extends Retrieval
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
             ->feePaymentsToUser($this->have_fee_payment_gateway)
             ->setMyarcheryFee($myarchery_fee)
-            ->createSnap();
+            ->createSnap("", "ofc");
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;
         $archery_event_official->save();

@@ -299,7 +299,7 @@ class PaymentGateWay
         return array($first_name, $last_name);
     }
 
-    public static function createSnap($event_name = "")
+    public static function createSnap($event_name = "", $type = "event")
     {
         if (empty(self::$gateway))
             self::$gateway = env("PAYMENT_GATEWAY", "midtrans");
@@ -311,18 +311,18 @@ class PaymentGateWay
                 break;
 
             default:
-                return self::createLinkOY($event_name);
+                return self::createLinkOY($event_name, $type);
                 break;
         }
     }
 
-    public static function createLinkOY($event_name = "")
+    public static function createLinkOY($event_name = "", $type = "event")
     {
         $customer_details = self::$customer_details;
         $expired_time = strtotime("+" . env("MIDTRANS_EXPIRE_DURATION_SNAP_TOKEN_ON_MINUTE", 90) . " minutes", time());
         self::$expired_time = $expired_time;
         $payment_methode_detail = self::$payment_methode_detail;
-        $desc = $event_name;
+        $desc = $type == "ofc" ? "ofc " . $event_name : $event_name;
         $string_clean = preg_replace("/[^a-zA-Z0-9\s]/", "", $desc);
         $invoice_items = [];
         $amount = 0;
