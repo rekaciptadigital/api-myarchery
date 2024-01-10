@@ -40,6 +40,10 @@ $router->group(['prefix' => 'api', 'namespace' => '\App\Http\Controllers'], func
         $router->get('/template', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventEliminationTemplate']);
     });
 
+    $router->group(['prefix' => 'certificate'], function () use ($router) {
+        $router->get('/BulkDownloadWinerCertificateByEventId', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:bulkDownloadWinerCertificateByEventId']);
+    });
+
     $router->group(['prefix' => 'event-ranked'], function () use ($router) {
         $router->get('/club', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:getEventClubRanked']);
         $router->get('/exportClubRankedGroupByTeamCategory', ['uses' => 'BLoCController@execute', 'middleware' => 'bloc:exportClubRankedGroupByTeamCategory']);
