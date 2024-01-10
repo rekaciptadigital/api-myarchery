@@ -148,12 +148,11 @@ class AddOrderOfficial extends Retrieval
         }
 
         $payment = PaymentGateWay::setTransactionDetail((int)$archery_event_official_detail->fee, $order_official_id)
-            ->setGateway("midtrans")
             ->setCustomerDetails($user_login->name, $user_login->email, $user_login->phone_number)
             ->addItemDetail($archery_event_official_detail->id, (int)$archery_event_official_detail->fee, $event->event_name)
             ->feePaymentsToUser($this->have_fee_payment_gateway)
             ->setMyarcheryFee($myarchery_fee)
-            ->createSnap();
+            ->createSnap("", "ofc");
 
         $archery_event_official->transaction_log_id = $payment->transaction_log_id;
         $archery_event_official->save();
