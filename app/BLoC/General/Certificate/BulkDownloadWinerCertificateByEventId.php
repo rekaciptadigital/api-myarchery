@@ -20,7 +20,18 @@ class BulkDownloadWinerCertificateByEventId extends Retrieval
         // parameter
         $category_id = $parameters->get("category_id");
 
-        $category = ArcheryEventCategoryDetail::find($category_id);
+        $category = ArcheryEventCategoryDetail::select(
+            "archery_event_category_details.*",
+            "archery_master_competition_categories.label as label_competition",
+            "archery_master_distances.label as label_distance",
+            "archery_master_age_categories.label as label_age",
+            "archery_master_team_categories.label as label_team"
+        )->join("archery_master_competition_categories", "archery_master_competition_categories.id", "=", "archery_event_category_details.competition_category_id")
+            ->join("archery_master_distances", "archery_master_distances.id", "=", "archery_event_category_details.distance_id")
+            ->join("archery_master_age_categories", "archery_master_age_categories.id", "=", "archery_event_category_details.age_category_id")
+            ->join("archery_master_team_categories", "archery_master_team_categories.id", "=", "archery_event_category_details.team_category_id")
+            ->where("archery_event_category_details.id", $category_id)
+            ->first();
         if (!$category) {
             throw new BLoCException("category tidak ditemukan");
         }
