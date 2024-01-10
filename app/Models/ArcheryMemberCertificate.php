@@ -586,9 +586,7 @@ class ArcheryMemberCertificate extends Model
 
         $file_name = $path . "/" . $category_team->id . ".pdf";
 
-        if (!file_exists(public_path() . "/" . $file_name)) {
-            PdfLibrary::setArrayDoc($array_doc)->setFileName($file_name)->savePdf();
-        }
+        PdfLibrary::setArrayDoc($array_doc)->setFileName($file_name)->savePdf();
 
         $files = [
             "name" => "",
