@@ -330,7 +330,6 @@ class ArcheryMemberCertificate extends Model
     public static function bulkPrepareUserCertificateByCategoryIndividu(ArcheryEventCategoryDetail $category_individu, $type = "winner")
     {
         $certificate_templates = ArcheryEventCertificateTemplates::where("event_id", $category_individu->event_id)->get();
-        $user_certificate_by_categories = [];
 
         $members = ArcheryEventParticipantMember::select(
             "archery_event_participant_members.id",
@@ -407,7 +406,7 @@ class ArcheryMemberCertificate extends Model
                     continue;
                 }
 
-                $item["{%category_name%}"] = $category;
+                $item["{%category_name%}"] = strtoupper($category);
 
                 $member_certificate_id = $value->id . "-" . $template->id;
                 $validate_link = env("WEB_URL") . "/certificate/validate/" . $member_certificate_id;
@@ -479,7 +478,7 @@ class ArcheryMemberCertificate extends Model
                                 $list_data_document[] = [
                                     "member_name" => strtoupper($member->name),
                                     "rank" => $egt->elimination_ranked,
-                                    "label" => "Juara " . $egt->elimination_ranked . " Eliminasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team,
+                                    "label" => strtoupper("Juara " . $egt->elimination_ranked . " Eliminasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team),
                                     "background" => $template->background_url,
                                     "html_template_with_masking" => $html_template_with_masking
                                 ];
@@ -498,7 +497,7 @@ class ArcheryMemberCertificate extends Model
                                 $list_data_document[] = [
                                     "member_name" => strtoupper($lst_value["name"]),
                                     "rank" => $rank,
-                                    "label" => "Juara " . $rank . " Kualifikasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team,
+                                    "label" => strtoupper("Juara " . $rank . " Kualifikasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team),
                                     "background" => $template->background_url,
                                     "html_template_with_masking" => $html_template_with_masking
                                 ];
@@ -531,7 +530,7 @@ class ArcheryMemberCertificate extends Model
                                 $list_data_document[] = [
                                     "member_name" => strtoupper($member->name),
                                     "rank" => $egt->elimination_ranked,
-                                    "label" => "Juara " . $egt->elimination_ranked . " Eliminasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team,
+                                    "label" => strtoupper("Juara " . $egt->elimination_ranked . " Eliminasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team),
                                     "background" => $template->background_url,
                                     "html_template_with_masking" => $html_template_with_masking
                                 ];
@@ -550,7 +549,7 @@ class ArcheryMemberCertificate extends Model
                                 $list_data_document[] = [
                                     "member_name" => strtoupper($lst_value["name"]),
                                     "rank" => $rank,
-                                    "label" => "Juara " . $rank . " Kualifikasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team,
+                                    "label" => strtoupper("Juara " . $rank . " Kualifikasi - " . $category_team->label_competition . " " . $category_team->label_age . " " . $category_team->label_distance . " - " . $category_team->label_team),
                                     "background" => $template->background_url,
                                     "html_template_with_masking" => $html_template_with_masking
                                 ];
