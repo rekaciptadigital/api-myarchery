@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Jobs\SuccessImportExcellJob;
+use App\Models\ArcheryClub;
 use App\Models\ArcheryEvent;
 use App\Models\ArcheryEventCategoryDetail;
 use App\Models\ArcheryEventParticipant;
@@ -67,9 +68,17 @@ class ParticipantImport implements WithValidation, ToCollection
                 }
             }
 
+            $club_id = 0;
+            if(!empty($row[4])){
+                $club=ArcheryClub::find($row[4]);
+                if (!$club) {
+                    throw new BLoCException("club not found with id" . $row[1]);
+                }
+                $club_id = $club->id;
+            }
             // insert data participant
             $participant = ArcheryEventParticipant::create([
-                'club_id' => 0,
+                'club_id' => $club_id,
                 'user_id' => $user->id,
                 'status' => 1,
                 'event_id' => $event->id,
@@ -124,7 +133,8 @@ class ParticipantImport implements WithValidation, ToCollection
             "0" => "required|string",
             '1' => "required|email:rfc,dns",
             "2" => "required|in:male,female",
-            "3" => "exists:archery_event_category_details,id"
+            "3" => "required|exists:archery_event_category_details,id",
+            "4" => "exists:archery_clubs,id"
         ];
     }
     public function customValidationAttributes()
@@ -133,7 +143,8 @@ class ParticipantImport implements WithValidation, ToCollection
             "0" => "name",
             '1' => 'email',
             "2" => "gender",
-            "3" => "category_id"
+            "3" => "category_id",
+            "4" => "club_id"
         ];
     }
 }
